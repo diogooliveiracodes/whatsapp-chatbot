@@ -12,4 +12,9 @@ class Company extends Model
     use HasFactory;
 
     protected $table = 'companies';
+
+    public function users(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(User::class);
+    }
 }
