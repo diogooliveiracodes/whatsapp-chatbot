@@ -20,6 +20,10 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call(
+            UnitSeeder::class
+        );
+
+        $this->call(
             UserRoleSeeder::class
         );
 
