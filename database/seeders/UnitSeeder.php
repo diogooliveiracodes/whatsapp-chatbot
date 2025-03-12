@@ -13,6 +13,6 @@ class UnitSeeder extends Seeder
      */
     public function run(): void
     {
-        Unit::factory()->create(3);
+        Unit::factory()->count(3)->create();
     }
 }

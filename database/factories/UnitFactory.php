@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Database\Seeders\DataMocks;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,8 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class UnitFactory extends Factory
 {
-    const FIRST_COMPANY_ID = 1;
     const ACTIVE = 1;
+
     /**
      * Define the model's default state.
      *
@@ -20,7 +21,7 @@ class UnitFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->city(),
-            'company_id' => self::FIRST_COMPANY_ID,
+            'company_id' => DataMocks::getCompanyId(),
             'active' => self::ACTIVE
         ];
     }

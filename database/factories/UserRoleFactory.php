@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Database\Seeders\DataMocks;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class UserRoleFactory extends Factory
 {
-    const FIRST_COMPANY_ID = 1;
+
     /**
      * Define the model's default state.
      *
@@ -20,7 +21,7 @@ class UserRoleFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'active' => $this->faker->boolean(),
-            'company_id' => self::FIRST_COMPANY_ID,
+            'company_id' => DataMocks::getCompanyId()
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enum\CustomerTypeEnum;
+use Database\Seeders\DataMocks;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,9 +11,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CustomerFactory extends Factory
 {
-    const EMPLOYEE_USERS_IDS = [3, 4, 5];
-    const FIRST_COMPANY_ID = 1;
-
     /**
      * Define the model's default state.
      *
@@ -22,8 +20,9 @@ class CustomerFactory extends Factory
     {
         return [
             'active' => $this->faker->boolean(),
-            'company_id' => self::FIRST_COMPANY_ID,
-            'user_id' => $this->faker->randomElement(self::EMPLOYEE_USERS_IDS),
+            'company_id' => DataMocks::getCompanyId(),
+            'user_id' => $this->faker->randomElement(DataMocks::getEmployeesIdList()),
+            'unit_id' => $this->faker->randomNumber(1),
             'type' => $this->faker->randomElement([CustomerTypeEnum::INDIVIDUAL, CustomerTypeEnum::COMPANY]),
             'name' => $this->faker->name(),
             'document_number' => $this->faker->unique()->numerify('###########'),
