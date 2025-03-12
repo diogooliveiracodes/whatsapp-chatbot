@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->boolean('active')->default(true);
             $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('unit_id')->constrained('units');
             $table->tinyInteger('type')->default(0)
                 ->comment('1 - Individual, 2 - Company');
             $table->string('name', 120);
