@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained('companies');
             $table->foreignId('user_role_id')->constrained('user_roles');
             $table->foreignId('unit_id')->constrained('units');
+            $table->boolean('active')->default(true);
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

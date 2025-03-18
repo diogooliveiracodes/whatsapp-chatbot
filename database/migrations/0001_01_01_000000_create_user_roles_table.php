@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->foreignId('company_id')->constrained('companies');
             $table->json('permissions')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }
