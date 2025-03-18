@@ -24,8 +24,14 @@ class Company extends Model
         return $this->hasMany(UserRole::class);
     }
 
-    public function customers(): HasMany
+    public function chat_sessions(): HasMany
     {
-        return $this->hasMany(Customer::class);
+        return $this->hasMany(ChatSession::class);
     }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
 }
