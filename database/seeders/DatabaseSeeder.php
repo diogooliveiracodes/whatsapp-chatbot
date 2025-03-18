@@ -34,5 +34,13 @@ class DatabaseSeeder extends Seeder
         $this->call(
             CustomerSeeder::class
         );
+
+        $this->call(
+            ChatSessionSeeder::class
+        );
+
+        $this->call(
+            MessageSeeder::class
+        );
     }
 }

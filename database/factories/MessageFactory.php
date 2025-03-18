@@ -17,7 +17,11 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'active' => $this->faker->boolean(90), // 90% de chance de ser true
+            'content' => $this->faker->sentence(),
+            'type' => 'text',
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }
