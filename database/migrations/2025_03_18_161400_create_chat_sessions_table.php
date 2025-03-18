@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('unit_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('closed_by')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('closed_by')->nullable()->constrained('users')->nullOnDelete();
             $table->dateTime('closed_at')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
