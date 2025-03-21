@@ -10,11 +10,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @method create(array $array)
  * @method where(string $string, true $true)
+ * @property int $id
  */
 class ChatSession extends Model
 {
     /** @use HasFactory<\Database\Factories\ChatSessionFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'company_id',
+        'unit_id',
+        'customer_id',
+        'user_id',
+        'active',
+        'closed_by',
+        'closed_at',
+    ];
 
     protected $table = 'chat_sessions';
 
