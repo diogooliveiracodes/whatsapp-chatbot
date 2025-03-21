@@ -20,6 +20,7 @@ class Message extends Model
         'unit_id',
         'customer_id',
         'user_id',
+        'chat_session_id',
         'active',
         'content',
         'type'

@@ -20,24 +20,28 @@ class MessageSeeder extends Seeder
                 'unit_id' => $chatSession->unit_id,
                 'customer_id' => $chatSession->customer_id,
                 'user_id' => null,
+                'chat_session_id' => $chatSession->id,
             ]);
             Message::factory()->count(1)->create([
                 'company_id' => $chatSession->company_id,
                 'unit_id' => $chatSession->unit_id,
                 'customer_id' => null,
                 'user_id' => $chatSession->user_id,
+                'chat_session_id' => $chatSession->id,
             ]);
             Message::factory()->count(1)->create([
                 'company_id' => $chatSession->company_id,
                 'unit_id' => $chatSession->unit_id,
                 'customer_id' => $chatSession->customer_id,
                 'user_id' => null,
+                'chat_session_id' => $chatSession->id,
             ]);
             Message::factory()->count(2)->create([
                 'company_id' => $chatSession->company_id,
                 'unit_id' => $chatSession->unit_id,
                 'customer_id' => null,
                 'user_id' => $chatSession->user_id,
+                'chat_session_id' => $chatSession->id,
             ]);
         }
     }
