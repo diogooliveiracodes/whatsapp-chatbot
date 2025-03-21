@@ -6,12 +6,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @method static create(array $array)
+ * @property string $content
+ */
 class Message extends Model
 {
     /** @use HasFactory<\Database\Factories\MessageFactory> */
     use HasFactory;
 
-    protected $fillable = [];
+    protected $fillable = [
+        'company_id',
+        'unit_id',
+        'customer_id',
+        'user_id',
+        'active',
+        'content',
+        'type'
+    ];
 
     protected $table = 'messages';
 

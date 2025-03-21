@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('unit_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('chat_session_id')->constrained()->cascadeOnDelete();
             $table->boolean('active')->default(true);
             $table->text('content');
             $table->enum('type', ['text', 'image', 'video', 'audio', 'file'])->default('text');
