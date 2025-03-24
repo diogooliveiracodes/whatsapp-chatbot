@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method create(array $array)
  * @method where(string $string, true $true)
  * @property int $id
+ * @property string $channel
  */
 class ChatSession extends Model
 {
@@ -25,6 +26,7 @@ class ChatSession extends Model
         'active',
         'closed_by',
         'closed_at',
+        'channel'
     ];
 
     protected $table = 'chat_sessions';

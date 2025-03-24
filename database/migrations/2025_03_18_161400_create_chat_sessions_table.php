@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('closed_by')->nullable()->constrained('users')->nullOnDelete();
             $table->dateTime('closed_at')->nullable();
             $table->boolean('active')->default(true);
+            $table->string('channel')->nullable();
             $table->timestamps();
         });
     }

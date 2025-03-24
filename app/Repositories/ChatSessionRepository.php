@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\ChatSession;
+use Illuminate\Support\Str;
 
 class ChatSessionRepository
 {
@@ -22,6 +23,7 @@ class ChatSessionRepository
             'customer_id' => $data['customer_id'] ?? null,
             'user_id' => $data['user_id'] ?? null,
             'active' => true,
+            'channel' => Str::uuid()
         ]);
     }
 
