@@ -51,7 +51,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="max-w-2xl mx-auto p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
+            <div class="mx-auto p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
                 <div class="mb-6 font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
                     {{$chatSession->customer_name}}
                 </div>
