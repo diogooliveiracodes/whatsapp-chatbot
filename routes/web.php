@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ChatSessionController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +28,16 @@ Route::middleware('auth')->group(function () {
         Route::put('/{customer}', [CustomerController::class, 'update'])->name('customers.update');
         Route::delete('/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
     });
+
+    Route::group(['prefix' => 'chatSessions'], function () {
+        Route::get('/', [ChatSessionController::class, 'index'])->name('chatSessions.index');
+        Route::get('/{channel}', [ChatSessionController::class, 'show'])->name('chatSessions.show');
+        Route::post('/store-message', [ChatSessionController::class, 'storeMessage'])->name('chatSessions.storeMessage');
+//        Route::delete('/{session}', [ChatSessionController::class, 'destroy'])->name('chatSessions.destroy');
+    });
 });
+
+Route::get('/teste/{channelId}', [\App\Http\Controllers\TesteController::class, 'index']);
+Route::get('/event/{channel}', [\App\Http\Controllers\PusherController::class, 'event']);
 
 require __DIR__.'/auth.php';
