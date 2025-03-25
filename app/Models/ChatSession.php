@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method where(string $string, true $true)
  * @property int $id
  * @property string $channel
+ * @property int $company_id
+ * @property int $unit_id
  */
 class ChatSession extends Model
 {
