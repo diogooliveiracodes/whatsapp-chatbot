@@ -1,9 +1,7 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold text-gray-100 leading-tight">
-            Edit Customer
-        </h2>
-    </x-slot>
+    <x-header>
+        {{ __('Editar Cliente') }}
+    </x-header>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
