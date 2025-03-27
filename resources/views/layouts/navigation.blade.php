@@ -11,13 +11,13 @@
         <!-- Navigation Links -->
         <nav class="flex flex-col space-y-2">
             <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+                {{ __('pages.dashboard') }}
             </x-nav-link>
             <x-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
-                {{ __('Customers') }}
+                {{ __('pages.customers') }}
             </x-nav-link>
             <x-nav-link :href="route('chatSessions.index')" :active="request()->routeIs('chatSessions.*')">
-                {{ __('Chat Sessions') }}
+                {{ __('pages.chatSession') }}
             </x-nav-link>
         </nav>
     </div>
