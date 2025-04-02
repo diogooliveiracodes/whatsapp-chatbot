@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CompanySettings;
 use App\Models\User;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -17,6 +18,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(
             CompanySeeder::class
+        );
+
+        $this->call(
+          CompanySettingsSeeder::class
         );
 
         $this->call(
