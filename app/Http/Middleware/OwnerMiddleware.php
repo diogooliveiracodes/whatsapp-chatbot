@@ -19,7 +19,7 @@ class OwnerMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (
-            auth()->check() && auth()->user()->user_roles->user_role_id === UserRoleEnum::OWNER
+            auth()->check() && auth()->user()->user_role_id === UserRoleEnum::OWNER
         ) {
             return $next($request);
         }
