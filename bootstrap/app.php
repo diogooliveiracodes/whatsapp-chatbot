@@ -17,8 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(SetLocale::class);
-        $middleware->alias(['owner' => OwnerMiddleware::class]);
-        $middleware->alias(['admin' => AdminMiddleware::class]);
+        $middleware->alias([
+            'owner' => OwnerMiddleware::class,
+            'admin' => AdminMiddleware::class
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
