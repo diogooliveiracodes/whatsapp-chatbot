@@ -22,6 +22,7 @@ class UpdateCompanySettingsRequest extends FormRequest
      */
     public function rules(): array
     {
+//        dd($this->all());
         return [
             'company_id' => ['sometimes', 'exists:companies,id'],
             'name' => ['sometimes', 'string', 'max:255'],
@@ -31,8 +32,8 @@ class UpdateCompanySettingsRequest extends FormRequest
             'whatsapp_number' => ['nullable', 'string', 'max:20'],
             'default_language' => ['nullable', 'string', 'max:5'],
             'timezone' => ['nullable', 'string', 'max:50'],
-            'working_hour_start' => ['nullable', 'date_format:H:i:s'],
-            'working_hour_end' => ['nullable', 'date_format:H:i:s'],
+            'working_hour_start' => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
+            'working_hour_end' => ['nullable', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
             'working_day_start' => ['nullable', Rule::in([1, 2, 3, 4, 5, 6, 7])],
             'working_day_end' => ['nullable', Rule::in([1, 2, 3, 4, 5, 6, 7])],
             'use_ai_chatbot' => ['boolean'],
