@@ -1,6 +1,7 @@
 <div x-data="{ open: false }" class="flex h-screen w-64">
     <!-- Sidebar -->
-    <div class="w-64 fixed flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col h-full">
+    <div
+        class="w-64 fixed flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col h-full">
         <!-- Logo -->
         <div class="shrink-0 flex items-center mb-4">
             <a href="{{ route('dashboard') }}">
@@ -19,6 +20,12 @@
             <x-nav-link :href="route('chatSessions.index')" :active="request()->routeIs('chatSessions.*')">
                 {{ __('pages.chatSession') }}
             </x-nav-link>
+            @if(auth()->user()->isOwner())
+                <x-nav-link :href="route('company-settings.show', ['company_settings' => auth()->user()->company->companySettings->id])"
+                            :active="request()->routeIs('company-settings.*')">
+                    {{ __('pages.companySettings') }}
+                </x-nav-link>
+            @endif
         </nav>
     </div>
 </div>
