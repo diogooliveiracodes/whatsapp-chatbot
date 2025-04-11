@@ -18,4 +18,6 @@ return [
     'back' => 'Back',
     'business_hours' => 'Business Hours',
     'edit' => 'Edit',
+    'inactive' => 'Inactive',
+    'update-success' => 'Update Success',
 ];

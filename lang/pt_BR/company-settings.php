@@ -18,5 +18,7 @@ return [
     'back' => 'Voltar',
     'business_hours' => 'Horário de Funcionamento',
     'edit' => 'Editar',
+    'inactive' => 'Inativo',
+    'update-success' => 'Atualizado com sucesso!',
 ];
 
