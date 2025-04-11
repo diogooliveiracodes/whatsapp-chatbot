@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatSessionController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MessageController;
@@ -32,6 +33,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/{channel}', [ChatSessionController::class, 'show'])->name('chatSessions.show');
         Route::post('/store-message', [ChatSessionController::class, 'storeMessage'])->name('chatSessions.storeMessage');
 //        Route::delete('/{session}', [ChatSessionController::class, 'destroy'])->name('chatSessions.destroy');
+    });
+
+    Route::group([
+        'prefix' => 'company-settings',
+        'middleware' => ['auth', 'owner'],
+    ], function () {
+        Route::get('/{companies}', [CompanyController::class, 'show'])->name('companies.show');
+        Route::patch('/{companies}', [CompanyController::class, 'update'])->name('companies.update');
     });
 });
 
