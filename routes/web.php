@@ -1,10 +1,9 @@
 <?php
 
 use App\Http\Controllers\ChatSessionController;
-use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CompanySettingsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,8 +38,9 @@ Route::middleware('auth')->group(function () {
         'prefix' => 'company-settings',
         'middleware' => ['auth', 'owner'],
     ], function () {
-        Route::get('/{companies}', [CompanyController::class, 'show'])->name('companies.show');
-        Route::patch('/{companies}', [CompanyController::class, 'update'])->name('companies.update');
+        Route::get('/{company_settings}', [CompanySettingsController::class, 'show'])->name('company-settings.show');
+        Route::get('edit/{company_settings}', [CompanySettingsController::class, 'edit'])->name('company-settings.edit');
+        Route::patch('/{company_settings}', [CompanySettingsController::class, 'update'])->name('company-settings.update');
     });
 });
 
