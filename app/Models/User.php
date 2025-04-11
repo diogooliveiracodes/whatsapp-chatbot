@@ -3,12 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enum\UserRoleEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property int $user_role_id
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -26,7 +30,8 @@ class User extends Authenticatable
         'email',
         'password',
         'company_id',
-        'role_id'
+        'role_id',
+        'user_role_id'
     ];
 
     /**
@@ -80,5 +85,15 @@ class User extends Authenticatable
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->user_role_id === UserRoleEnum::ADMIN;
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->user_role_id === UserRoleEnum::OWNER;
     }
 }
