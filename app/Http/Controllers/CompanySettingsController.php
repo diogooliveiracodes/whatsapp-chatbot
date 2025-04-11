@@ -3,64 +3,53 @@
 namespace App\Http\Controllers;
 
 use App\Models\CompanySettings;
-use App\Http\Requests\StoreCompanySettingsRequest;
 use App\Http\Requests\UpdateCompanySettingsRequest;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
 class CompanySettingsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function __construct()
     {
-        //
     }
 
     /**
-     * Show the form for creating a new resource.
+     * @param CompanySettings $companySettings
+     * @return View
      */
-    public function create()
+    public function show(CompanySettings $companySettings): View
     {
-        //
+        return view('company_settings.show', compact('companySettings'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @param CompanySettings $companySettings
+     * @return View
      */
-    public function store(StoreCompanySettingsRequest $request)
+    public function edit(CompanySettings $companySettings): View
     {
-        //
+        return view('company_settings.edit', compact('companySettings'));
     }
 
     /**
-     * Display the specified resource.
+     * @param UpdateCompanySettingsRequest $request
+     * @param CompanySettings $companySettings
+     * @return RedirectResponse
      */
-    public function show(CompanySettings $companySettings)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CompanySettings $companySettings)
+    public function update(UpdateCompanySettingsRequest $request, CompanySettings $companySettings): RedirectResponse
     {
-        //
-    }
+        try {
+            $companySettings->update($request->validated());
+            return redirect()
+                ->route('company-settings.show', $companySettings)
+                ->with('success', __('company-settings.update-success'));
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCompanySettingsRequest $request, CompanySettings $companySettings)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(CompanySettings $companySettings)
-    {
-        //
+        } catch (\Throwable $th) {
+            return redirect()
+                ->back()
+                ->withErrors(['update_error' => 'Could not update settings. Try again later.']);
+        }
     }
 }
