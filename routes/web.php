@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     ], function () {
         Route::get('/{company_settings}', [CompanySettingsController::class, 'show'])->name('company-settings.show');
         Route::get('edit/{company_settings}', [CompanySettingsController::class, 'edit'])->name('company-settings.edit');
-        Route::patch('/{company_settings}', [CompanySettingsController::class, 'update'])->name('company-settings.update');
+        Route::put('/{company_settings}', [CompanySettingsController::class, 'update'])->name('company-settings.update');
     });
 });
 
