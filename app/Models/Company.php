@@ -6,6 +6,7 @@ use Database\Factories\CompanyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Company extends Model
 {
@@ -32,6 +33,11 @@ class Company extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class);
+    }
+
+    public function companySettings(): HasOne
+    {
+        return $this->hasOne(CompanySettings::class);
     }
 
 }
