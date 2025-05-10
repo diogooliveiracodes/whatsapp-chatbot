@@ -1,0 +1,87 @@
+services:
+
+    app-client:
+        build: ./app-client
+        container_name: app-client
+        working_dir: /application
+        volumes:
+            - './app-client:/application'
+        ports:
+            - '8000:8000'
+            - '5174:5174'
+        command: >
+            sh -c "
+                php artisan serve --host=0.0.0.0 --port=8000 & 
+                npm run dev -- --host 0.0.0.0 & 
+                php artisan queue:work &
+                wait
+            "
+    whatsapp-sender:
+        build: ./whatsapp-sender
+        container_name: whatsapp-sender
+        working_dir: /application
+        volumes:
+            - './whatsapp-sender:/application'
+        ports:
+            - '8001:8000'
+        command: >
+            sh -c "
+                composer install &&
+                if [ ! -f .env ]; then cp .env.example .env; fi &&
+                if [ -z \"$(grep ^APP_KEY= .env | cut -d '=' -f2)\" ]; then php artisan key:generate; fi &&
+                php artisan serve --host=0.0.0.0 --port=8000
+            "
+    whatsapp-receiver:
+        build: ./whatsapp-receiver
+        container_name: whatsapp-receiver
+        working_dir: /application
+        volumes:
+        - './whatsapp-receiver:/application'
+        ports:
+        - '8002:8000'
+        command: >
+            sh -c "
+                composer install &&
+                if [ ! -f .env ]; then cp .env.example .env; fi &&
+                if [ -z \"$(grep ^APP_KEY= .env | cut -d '=' -f2)\" ]; then php artisan key:generate; fi &&
+                php artisan serve --host=0.0.0.0 --port=8000
+            "
+
+    rabbitmq:
+        image: rabbitmq:4.1.0-management
+        ports:
+        - "5672:5672" # RabbitMQ default port
+        - "15672:15672" # RabbitMQ management UI
+        environment:
+            RABBITMQ_DEFAULT_USER: admin
+            RABBITMQ_DEFAULT_PASS: admin
+
+    database:
+        image: 'mysql:8.0'
+        working_dir: /application
+        volumes:
+            - '.:/application'
+        environment:
+            - MYSQL_ROOT_PASSWORD=laravel
+            - MYSQL_DATABASE=laravel
+            - MYSQL_USER=laravel
+            - MYSQL_PASSWORD=laravel
+        ports:
+            - '3307:3306'
+
+    builder:
+        build: ./app-client
+        container_name: builder
+        working_dir: /application
+        volumes:
+            - './app-client:/application'
+        depends_on:
+            - database
+        command: >
+            sh -c "
+                if [ ! -f .env ]; then cp .env.example .env; fi &&
+                composer install &&
+                npm install &&
+                php artisan key:generate &&
+                php artisan migrate:fresh --seed
+            "
