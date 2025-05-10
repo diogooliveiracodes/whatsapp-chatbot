@@ -80,8 +80,8 @@ class ChatSessionController extends Controller
      */
     public function show(string $channel): View
     {
-        $pusher = env('PUSHER_APP_KEY');
-        $cluster = env('PUSHER_APP_CLUSTER');
+        $pusher = config('broadcasting.connections.pusher.key');
+        $cluster = config('broadcasting.connections.pusher.options.cluster');
         $messages = $this->chatSessionRepository->getMessagesByChatSessionChannel($channel);
         $chatSession = $this->chatSessionRepository->findByChannel($channel);
 
