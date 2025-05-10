@@ -35,7 +35,7 @@ return [
         ],
     ],
     'guzzle' => [
-        'verify' => !app()->environment('local'),
+        'verify' => env('APP_ENV') !== 'local',
     ]
 
 ];
