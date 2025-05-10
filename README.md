@@ -23,3 +23,20 @@ Please wait until the `app-client` service finishes building. This may take a fe
 Once the build is complete, the application will be available at:
 
 [http://localhost:8000](http://localhost:8000)
+
+## Access
+
+- RabbitMQ: [http://localhost:15672](http://localhost:15672)
+    - User: admin
+    - Password: admin
+
+- app-client: [http://localhost:8000](http://localhost:8000)
+    - User Admin: admin@email.com
+    - Password: 123456789
+
+    - User Owner: owner@email.com
+    - Password: 123456789
+
+    - User Employee: employee1@email.com, employee2@email.com or employee3@email.com
+    - Password: 123456789
+

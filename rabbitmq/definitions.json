@@ -1,0 +1,102 @@
+{
+  "users": [
+    {
+        "name": "admin",
+        "password": "admin",
+        "tags": "administrator"
+    },
+    {
+      "name": "app-client",
+      "password": "password",
+      "tags": "management"
+    },
+    {
+      "name": "whatsapp-receiver",
+      "password": "password",
+      "tags": "management"
+    },
+    {
+      "name": "whatsapp-sender",
+      "password": "password",
+      "tags": "management"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "app-client",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "whatsapp-receiver",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "whatsapp-sender",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "main_exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false
+    }
+  ],
+  "queues": [
+    {
+      "name": "pairing_queue",
+      "vhost": "/",
+      "durable": true
+    },
+    {
+      "name": "to_whatsapp_sender_queue",
+      "vhost": "/",
+      "durable": true
+    },
+    {
+      "name": "from_whatsapp_receiver_queue",
+      "vhost": "/",
+      "durable": true
+    }
+  ],
+  "bindings": [
+    {
+      "source": "main_exchange",
+      "vhost": "/",
+      "destination": "pairing_queue",
+      "destination_type": "queue",
+      "routing_key": "pairing"
+    },
+    {
+      "source": "main_exchange",
+      "vhost": "/",
+      "destination": "to_whatsapp_sender_queue",
+      "destination_type": "queue",
+      "routing_key": "to_sender"
+    },
+    {
+      "source": "main_exchange",
+      "vhost": "/",
+      "destination": "from_whatsapp_receiver_queue",
+      "destination_type": "queue",
+      "routing_key": "from_receiver"
+    }
+  ]
+}

@@ -52,9 +52,9 @@ services:
         ports:
         - "5672:5672" # RabbitMQ default port
         - "15672:15672" # RabbitMQ management UI
-        environment:
-            RABBITMQ_DEFAULT_USER: admin
-            RABBITMQ_DEFAULT_PASS: admin
+        volumes:
+            - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+            - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
 
     database:
         image: 'mysql:8.0'
