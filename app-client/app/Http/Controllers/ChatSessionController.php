@@ -29,8 +29,10 @@ class ChatSessionController extends Controller
      */
     public function index(): View
     {
+        $search = request()->input('search');
         return view('chat_sessions.index', [
-            'chatSessions' => $this->chatSessionRepository->getChatSessionList()
+            'chatSessions' => $this->chatSessionRepository->getChatSessionList($search),
+            'search' => $search
         ]);
     }
 
@@ -84,8 +86,10 @@ class ChatSessionController extends Controller
         $cluster = config('broadcasting.connections.pusher.options.cluster');
         $messages = $this->chatSessionRepository->getMessagesByChatSessionChannel($channel);
         $chatSession = $this->chatSessionRepository->findByChannel($channel);
+        $search = request()->input('search');
+        $chatSessions = $this->chatSessionRepository->getChatSessionList($search);
 
-        return view('chat_sessions.show', compact(['channel', 'pusher', 'cluster', 'messages', 'chatSession']));
+        return view('chat_sessions.show', compact(['channel', 'pusher', 'cluster', 'messages', 'chatSession', 'chatSessions', 'search']));
     }
 
     /**

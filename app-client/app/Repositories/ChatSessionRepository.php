@@ -60,9 +60,9 @@ class ChatSessionRepository
      * Retrieve active chat sessions filtered by the authenticated user's ID
      * @return object
      */
-    public function getChatSessionList(): object
+    public function getChatSessionList(?string $search = null): object
     {
-        return $this->model
+        $query = $this->model
             ->join('customers', 'customers.id', '=', 'chat_sessions.customer_id')
             ->where('chat_sessions.active', true)
             ->where('chat_sessions.user_id', Auth::user()->id)
@@ -77,8 +77,16 @@ class ChatSessionRepository
                 'chat_sessions.updated_at',
                 'customers.name',
                 'customers.phone',
-            ])
-            ->get();
+            ]);
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('customers.name', 'like', "%{$search}%")
+                  ->orWhere('customers.phone', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->get();
     }
 
     public function getMessagesByChatSessionChannel(string $channel): Collection
