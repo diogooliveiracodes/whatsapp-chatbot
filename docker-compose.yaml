@@ -67,7 +67,7 @@ services:
             - MYSQL_USER=laravel
             - MYSQL_PASSWORD=laravel
         ports:
-            - '3307:3306'
+            - '3312:3306'
 
     builder:
         build: ./app-client
@@ -83,5 +83,8 @@ services:
                 composer install &&
                 npm install &&
                 php artisan key:generate &&
-                php artisan migrate:fresh --seed
+                while ! php artisan migrate:fresh --seed; do
+                    echo 'Waiting for database connection...'
+                    sleep 2
+                done
             "
