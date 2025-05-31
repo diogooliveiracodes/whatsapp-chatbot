@@ -156,7 +156,8 @@
                     service_type: event.extendedProps.service_type,
                     start: event.start,
                     end: event.end,
-                    notes: event.extendedProps.notes
+                    notes: event.extendedProps.notes,
+                    status: event.extendedProps.status
                 }
             }));
         }
