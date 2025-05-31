@@ -16,14 +16,14 @@ class ScheduleService
     ) {
     }
 
-    public function isOutsideWorkingDays($date, $companySettings): bool
+    public function isOutsideWorkingDays($date, $unitSettings): bool
     {
-        return $this->workingDaysValidator->isOutsideWorkingDays($date, $companySettings);
+        return $this->workingDaysValidator->isOutsideWorkingDays($date, $unitSettings);
     }
 
-    public function isOutsideWorkingHours($startTime, $endTime, $companySettings): bool
+    public function isOutsideWorkingHours($startTime, $endTime, $unitSettings): bool
     {
-        return $this->workingHoursValidator->isOutsideWorkingHours($startTime, $endTime, $companySettings);
+        return $this->workingHoursValidator->isOutsideWorkingHours($startTime, $endTime, $unitSettings);
     }
 
     public function hasConflict($unitId, $scheduleDate, $startTime, $endTime, $currentScheduleId): bool

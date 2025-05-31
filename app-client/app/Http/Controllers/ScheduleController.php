@@ -33,7 +33,7 @@ class ScheduleController extends Controller
         $unit = $request->user()->unit;
         $schedules = $this->scheduleService->getSchedulesByUnit($unit->id);
         $customers = $this->customerService->getCustomersByUnit($unit);
-        $unit->load('company.companySettings');
+        $unit->load('unitSettings');
 
         return view('schedules.index', [
             'schedules' => ScheduleResource::collection($schedules),
@@ -56,14 +56,14 @@ class ScheduleController extends Controller
         try {
             $validated = $request->validated();
             $unit = $request->user()->unit;
-            $companySettings = $unit->company->companySettings;
+            $unitSettings = $unit->unitSettings;
 
             $scheduleDate = Carbon::parse($validated['schedule_date']);
-            if ($this->scheduleService->isOutsideWorkingDays($scheduleDate, $companySettings)) {
+            if ($this->scheduleService->isOutsideWorkingDays($scheduleDate, $unitSettings)) {
                 throw new OutsideWorkingDaysException();
             }
 
-            if ($this->scheduleService->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $companySettings)) {
+            if ($this->scheduleService->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $unitSettings)) {
                 throw new OutsideWorkingHoursException();
             }
 
@@ -96,14 +96,14 @@ class ScheduleController extends Controller
         try {
             $validated = $request->validated();
             $unit = $request->user()->unit;
-            $companySettings = $unit->company->companySettings;
+            $unitSettings = $unit->unitSettings;
 
             $scheduleDate = Carbon::parse($validated['schedule_date']);
-            if ($this->scheduleService->isOutsideWorkingDays($scheduleDate, $companySettings)) {
+            if ($this->scheduleService->isOutsideWorkingDays($scheduleDate, $unitSettings)) {
                 throw new OutsideWorkingDaysException();
             }
 
-            if ($this->scheduleService->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $companySettings)) {
+            if ($this->scheduleService->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $unitSettings)) {
                 throw new OutsideWorkingHoursException();
             }
 
