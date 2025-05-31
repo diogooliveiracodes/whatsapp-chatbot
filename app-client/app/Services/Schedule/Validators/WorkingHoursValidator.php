@@ -3,16 +3,33 @@
 namespace App\Services\Schedule\Validators;
 
 use App\Services\Schedule\Interfaces\WorkingHoursValidatorInterface;
+use Carbon\Carbon;
 
 class WorkingHoursValidator implements WorkingHoursValidatorInterface
 {
-    public function isOutsideWorkingHours(string $startTime, string $endTime, $companySettings): bool
+    public function isOutsideWorkingHours(string $startTime, string $endTime, $unitSettings): bool
     {
-        $startTime = substr($startTime, 0, 5);
-        $endTime = substr($endTime, 0, 5);
-        $workingHourStart = substr($companySettings->working_hour_start, 0, 5);
-        $workingHourEnd = substr($companySettings->working_hour_end, 0, 5);
+        // Helper function to parse time string to Carbon instance
+        $parseTime = function($time) {
+            // Extract only the time part (HH:mm) from the string
+            if (preg_match('/(\d{1,2}:\d{2})/', $time, $matches)) {
+                $time = $matches[1];
+            }
 
-        return $startTime < $workingHourStart || $endTime > $workingHourEnd;
+            // Split hours and minutes
+            list($hours, $minutes) = explode(':', $time);
+
+            // Create Carbon instance with today's date and the given time
+            return Carbon::today()->setHour((int)$hours)->setMinute((int)$minutes);
+        };
+
+        // Parse all times
+        $startTime = $parseTime($startTime);
+        $endTime = $parseTime($endTime);
+        $workingHourStart = $parseTime($unitSettings->working_hour_start);
+        $workingHourEnd = $parseTime($unitSettings->working_hour_end);
+
+        // Compare times using Carbon
+        return $startTime->lt($workingHourStart) || $endTime->gt($workingHourEnd);
     }
 }
