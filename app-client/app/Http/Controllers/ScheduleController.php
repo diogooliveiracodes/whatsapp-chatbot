@@ -80,7 +80,7 @@ class ScheduleController extends Controller
 
             $this->scheduleService->createSchedule($scheduleData);
 
-            return $this->httpResponse->success(__('schedules.messages.created'));
+            return redirect()->route('schedules.index')->with('success', __('schedules.messages.created'));
         } catch (ScheduleException $e) {
             return $this->httpResponse->error(__('schedules.messages.create_error'));
         } catch (\Exception $e) {
@@ -118,7 +118,7 @@ class ScheduleController extends Controller
         } catch (\Exception|ScheduleException  $e) {
             $this->errorLogService->logError($e);
             return $this->httpResponse->error(
-                __('schedules.messages.update_error')
+                __('schedules.messages.update_error', ['message' => $e->getMessage()])
             );
         }
     }
