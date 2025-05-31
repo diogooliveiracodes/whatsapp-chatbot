@@ -16,6 +16,7 @@ class Schedule extends Model
         'unit_id',
         'customer_id',
         'user_id',
+        'schedule_date',
         'start_time',
         'end_time',
         'status',
@@ -25,8 +26,9 @@ class Schedule extends Model
     ];
 
     protected $casts = [
-        'start_time' => 'datetime',
-        'end_time' => 'datetime',
+        'schedule_date' => 'date',
+        'start_time' => 'string',
+        'end_time' => 'string',
         'is_confirmed' => 'boolean'
     ];
 
