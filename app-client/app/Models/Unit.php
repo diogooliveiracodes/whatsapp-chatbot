@@ -49,4 +49,9 @@ class Unit extends Model
     {
         return $this->hasOne(ScheduleSettings::class);
     }
+
+    public function unitSettings(): HasOne
+    {
+        return $this->hasOne(UnitSettings::class);
+    }
 }
