@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-header>
-        {{ __('Editar Cliente') }}
+        {{ __('customers.edit') }}
     </x-header>
 
     <div class="py-12">
@@ -25,7 +25,7 @@
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <!-- Name Field -->
                             <div>
-                                <label for="name" class="label-style">Name</label>
+                                <label for="name" class="label-style">{{ __('customers.name') }}</label>
                                 <input type="text" id="name" name="name" value="{{ old('name', $customer->name) }}"
                                        class="input-style"
                                        required>
@@ -33,135 +33,42 @@
 
                             <!-- Phone Field -->
                             <div>
-                                <label for="phone" class="label-style">Phone</label>
+                                <label for="phone" class="label-style">{{ __('customers.phone') }}</label>
                                 <input type="text" id="phone" name="phone" value="{{ old('phone', $customer->phone) }}"
-                                       class="input-style"
-                                       required>
-                            </div>
-
-                            <!-- Document Number -->
-                            <div>
-                                <label for="document_number" class="label-style">Document
-                                    Number</label>
-                                <input type="text" id="document_number" name="document_number"
-                                       value="{{ old('document_number', $customer->document_number) }}"
-                                       class="input-style"
-                                       required>
-                            </div>
-
-                            <!-- Prospect Origin -->
-                            <div>
-                                <label for="prospect_origin" class="label-style">Prospect
-                                    Origin</label>
-                                <input type="text" id="prospect_origin" name="prospect_origin"
-                                       value="{{ old('prospect_origin', $customer->prospect_origin) }}"
                                        class="input-style"
                                        required>
                             </div>
 
                             <!-- Active Status -->
                             <div>
-                                <label for="active" class="label-style">Active</label>
+                                <label for="active" class="label-style">{{ __('customers.active') }}</label>
                                 <div class="mt-1">
                                     <label class="inline-flex items-center mr-4">
                                         <input type="radio" id="active_yes" name="active" value="1"
                                                {{ old('active', $customer->active) == 1 ? 'checked' : '' }}
                                                class="form-radio text-indigo-500">
-                                        <span class="ml-2 dark:text-gray-300">Yes</span>
+                                        <span class="ml-2 dark:text-gray-300">{{ __('customers.yes') }}</span>
                                     </label>
                                     <label class="inline-flex items-center">
                                         <input type="radio" id="active_no" name="active" value="0"
                                                {{ old('active', $customer->active) == 0 ? 'checked' : '' }}
                                                class="form-radio text-indigo-500">
-                                        <span class="ml-2 dark:text-gray-300">No</span>
+                                        <span class="ml-2 dark:text-gray-300">{{ __('customers.no') }}</span>
                                     </label>
                                 </div>
                             </div>
-
-                            <div>
-                                <label for="type" class="label-style">Type</label>
-                                <div class="mt-1">
-                                    <label class="inline-flex items-center mr-4">
-                                        <input type="radio" id="type_cpf" name="type" value="1"
-                                               {{ old('type', $customer->type) == 1 ? 'checked' : '' }}
-                                               class="form-radio text-indigo-500">
-                                        <span class="ml-2 dark:text-gray-300">CPF</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" id="type_cnpj" name="type" value="2"
-                                               {{ old('type', $customer->type) == 2 ? 'checked' : '' }}
-                                               class="form-radio text-indigo-500">
-                                        <span class="ml-2 dark:text-gray-300">CNPJ</span>
-                                    </label>
-                                </div>
-                            </div>
-
-
                         </div>
-
-                        <h4 class="mt-4 text-2xl dark:text-gray-300">
-                            Adress
-                        </h4>
-                        <hr class="dark:text-white">
-                        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 pt-4">
-                            <!-- Street -->
-                            <div>
-                                <label for="street" class="label-style">Street</label>
-                                <input type="text" id="street" name="street"
-                                       value="{{ old('street', $customer->street) }}"
-                                       class="input-style"
-                                       placeholder="Street" required>
-                            </div>
-
-                            <!-- Number -->
-                            <div>
-                                <label for="number" class="label-style">Number</label>
-                                <input type="text" id="number" name="number"
-                                       value="{{ old('number', $customer->number) }}"
-                                       class="input-style"
-                                       placeholder="Number" required>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-6 md:grid-cols-3 pt-4">
-                            <!-- Neighborhood -->
-                            <div>
-                                <label for="neighborhood"
-                                       class="label-style">Neighborhood</label>
-                                <input type="text" id="neighborhood" name="neighborhood"
-                                       value="{{ old('neighborhood', $customer->neighborhood) }}"
-                                       class="input-style"
-                                       placeholder="Neighborhood" required>
-                            </div>
-
-                            <!-- City -->
-                            <div>
-                                <label for="city" class="label-style">City</label>
-                                <input type="text" id="city" name="city" value="{{ old('city', $customer->city) }}"
-                                       class="input-style"
-                                       placeholder="City" required>
-                            </div>
-
-                            <!-- State -->
-                            <div>
-                                <label for="state" class="label-style">State</label>
-                                <input type="text" id="state" name="state" value="{{ old('state', $customer->state) }}"
-                                       class="input-style"
-                                       placeholder="State" required>
-                            </div>
-                        </div>
-
 
                         <!-- Action Buttons -->
                         <div class="mt-6 flex justify-between">
                             <!-- Back Button -->
                             <x-cancel-link :href="route('customers.index')">
-                                Back
+                                {{ __('customers.back') }}
                             </x-cancel-link>
 
                             <!-- Save Button -->
                             <x-primary-button type="submit">
-                                Save Changes
+                                {{ __('customers.save_changes') }}
                             </x-primary-button>
                         </div>
                     </form>
