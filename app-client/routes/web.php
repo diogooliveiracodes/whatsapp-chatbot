@@ -32,17 +32,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ChatSessionController::class, 'index'])->name('chatSessions.index');
         Route::get('/{channel}', [ChatSessionController::class, 'show'])->name('chatSessions.show');
         Route::post('/store-message', [ChatSessionController::class, 'storeMessage'])->name('chatSessions.storeMessage');
-//        Route::delete('/{session}', [ChatSessionController::class, 'destroy'])->name('chatSessions.destroy');
+        //        Route::delete('/{session}', [ChatSessionController::class, 'destroy'])->name('chatSessions.destroy');
     });
 
-    Route::group([
-        'prefix' => 'company-settings',
-        'middleware' => ['auth', 'owner'],
-    ], function () {
-        Route::get('/{company_settings}', [CompanySettingsController::class, 'show'])->name('company-settings.show');
-        Route::get('edit/{company_settings}', [CompanySettingsController::class, 'edit'])->name('company-settings.edit');
-        Route::put('/{company_settings}', [CompanySettingsController::class, 'update'])->name('company-settings.update');
-    });
+    Route::group(
+        [
+            'prefix' => 'company-settings',
+            'middleware' => ['auth', 'owner'],
+        ],
+        function () {
+            Route::get('/{company_settings}', [CompanySettingsController::class, 'show'])->name('company-settings.show');
+            Route::get('edit/{company_settings}', [CompanySettingsController::class, 'edit'])->name('company-settings.edit');
+            Route::put('/{company_settings}', [CompanySettingsController::class, 'update'])->name('company-settings.update');
+        },
+    );
 
     Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
     Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
@@ -50,7 +53,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 });
 
-Route::get('/teste/{channelId}', [\App\Http\Controllers\TesteController::class, 'index']);
-Route::get('/event/{channel}', [\App\Http\Controllers\PusherController::class, 'event']);
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
