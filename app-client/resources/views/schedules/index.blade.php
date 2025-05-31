@@ -10,6 +10,6 @@
         </div>
     </x-slot>
 
-    <x-schedule-calendar :schedules="$schedules" :companySettings="$unit->company->companySettings" />
+    <x-schedule-calendar :schedules="$schedules" :unitSettings="$unit->unitSettings" />
     <x-schedule-modal />
 </x-app-layout>
