@@ -7,9 +7,9 @@ use Carbon\Carbon;
 
 class WorkingDaysValidator implements WorkingDaysValidatorInterface
 {
-    public function isOutsideWorkingDays(Carbon $date, $companySettings): bool
+    public function isOutsideWorkingDays(Carbon $date, $unitSettings): bool
     {
         $dayOfWeek = $date->dayOfWeek + 1;
-        return $dayOfWeek < $companySettings->working_day_start || $dayOfWeek > $companySettings->working_day_end;
+        return $dayOfWeek < $unitSettings->working_day_start || $dayOfWeek > $unitSettings->working_day_end;
     }
 }
