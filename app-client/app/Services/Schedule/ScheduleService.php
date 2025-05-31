@@ -1,40 +1,38 @@
 <?php
 namespace App\Services\Schedule;
 
-use App\Models\Schedule;
-use Carbon\Carbon;
+use App\Services\Schedule\Interfaces\WorkingDaysValidatorInterface;
+use App\Services\Schedule\Interfaces\WorkingHoursValidatorInterface;
+use App\Services\Schedule\Interfaces\ScheduleConflictValidatorInterface;
 
 class ScheduleService
 {
-    public function isOutsideWorkingDays(Carbon $date, $companySettings): bool
+    private WorkingDaysValidatorInterface $workingDaysValidator;
+    private WorkingHoursValidatorInterface $workingHoursValidator;
+    private ScheduleConflictValidatorInterface $scheduleConflictValidator;
+
+    public function __construct(
+        WorkingDaysValidatorInterface $workingDaysValidator,
+        WorkingHoursValidatorInterface $workingHoursValidator,
+        ScheduleConflictValidatorInterface $scheduleConflictValidator
+    ) {
+        $this->workingDaysValidator = $workingDaysValidator;
+        $this->workingHoursValidator = $workingHoursValidator;
+        $this->scheduleConflictValidator = $scheduleConflictValidator;
+    }
+
+    public function isOutsideWorkingDays($date, $companySettings): bool
     {
-        $dayOfWeek = $date->dayOfWeek + 1;
-        return $dayOfWeek < $companySettings->working_day_start || $dayOfWeek > $companySettings->working_day_end;
+        return $this->workingDaysValidator->isOutsideWorkingDays($date, $companySettings);
     }
 
     public function isOutsideWorkingHours($startTime, $endTime, $companySettings): bool
     {
-        $startTime = substr($startTime, 0, 5);
-        $endTime = substr($endTime, 0, 5);
-        $workingHourStart = substr($companySettings->working_hour_start, 0, 5);
-        $workingHourEnd = substr($companySettings->working_hour_end, 0, 5);
-
-        return $startTime < $workingHourStart || $endTime > $workingHourEnd;
+        return $this->workingHoursValidator->isOutsideWorkingHours($startTime, $endTime, $companySettings);
     }
 
     public function hasConflict($unitId, $scheduleDate, $startTime, $endTime, $currentScheduleId): bool
     {
-        return Schedule::where('unit_id', $unitId)
-            ->where('id', '!=', $currentScheduleId)
-            ->where('schedule_date', $scheduleDate)
-            ->where(function ($query) use ($startTime, $endTime) {
-                $query->where(function ($q) use ($startTime) {
-                    $q->where('start_time', '<=', $startTime)
-                        ->where('end_time', '>', $startTime);
-                })->orWhere(function ($q) use ($endTime) {
-                    $q->where('start_time', '<', $endTime)
-                        ->where('end_time', '>=', $endTime);
-                });
-            })->exists();
+        return $this->scheduleConflictValidator->hasConflict($unitId, $scheduleDate, $startTime, $endTime, $currentScheduleId);
     }
 }
