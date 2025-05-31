@@ -12,6 +12,15 @@ class UnitSettingsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $units = \App\Models\Unit::all();
+        foreach ($units as $unit) {
+            \App\Models\UnitSettings::factory()->create([
+                'company_id' => $unit->company_id,
+                'unit_id' => $unit->id,
+                'name' => $unit->name,
+                'default_language' => 'pt-BR',
+                'timezone' => 'America/Sao_Paulo',
+            ]);
+        }
     }
 }

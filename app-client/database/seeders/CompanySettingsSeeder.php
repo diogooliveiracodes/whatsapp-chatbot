@@ -14,9 +14,11 @@ class CompanySettingsSeeder extends Seeder
      */
     public function run(): void
     {
-        CompanySettings::factory()->count(1)->create([
-            'company_id' => Company::first()->id,
-            'name' => Company::first()->name,
-        ]);
+        $companies = \App\Models\Company::all();
+        foreach ($companies as $company) {
+            \App\Models\CompanySettings::factory()->create([
+                'company_id' => $company->id,
+            ]);
+        }
     }
 }

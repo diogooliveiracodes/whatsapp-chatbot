@@ -29,6 +29,10 @@ class DatabaseSeeder extends Seeder
         );
 
         $this->call(
+            UnitSettingsSeeder::class
+        );
+
+        $this->call(
             UserRoleSeeder::class
         );
 

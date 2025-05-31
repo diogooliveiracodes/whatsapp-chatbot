@@ -15,6 +15,13 @@ class ScheduleSeeder extends Seeder
         // Criar uma unidade de teste
         $unit = Unit::factory()->create();
 
+        // Criar configurações para a unidade
+        \App\Models\UnitSettings::factory()->create([
+            'company_id' => $unit->company_id,
+            'unit_id' => $unit->id,
+            'name' => $unit->name,
+        ]);
+
         // Criar alguns usuários para a unidade
         $users = User::factory()->count(3)->create([
             'unit_id' => $unit->id,
