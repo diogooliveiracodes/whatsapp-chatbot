@@ -41,7 +41,7 @@
     </div>
 
     <div class="flex justify-end space-x-3 mt-6">
-        <x-secondary-button type="button" onclick="closeModal()" class="dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+        <x-secondary-button type="button" onclick="window.closeScheduleModal()" class="dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
             Cancelar
         </x-secondary-button>
         <x-primary-button type="submit" class="dark:bg-indigo-600 dark:hover:bg-indigo-700">

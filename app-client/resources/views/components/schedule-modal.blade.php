@@ -14,16 +14,16 @@
 
 @push('scripts')
 <script>
-    function openModal() {
+    window.openScheduleModal = function() {
         document.getElementById('scheduleModal').classList.remove('hidden');
     }
 
-    function closeModal() {
+    window.closeScheduleModal = function() {
         document.getElementById('scheduleModal').classList.add('hidden');
         document.getElementById('scheduleForm').reset();
     }
 
-    // Listen for schedule events
+    // Listen for schedule edit events only
     window.addEventListener('schedule-edit', function(e) {
         const { id, customer, service_type, start, end, notes } = e.detail;
 
@@ -41,27 +41,7 @@
 
         document.getElementById('notes').value = notes || '';
 
-        openModal();
-    });
-
-    window.addEventListener('schedule-create', function(e) {
-        const { start, end } = e.detail;
-
-        document.getElementById('modalTitle').textContent = 'Novo Agendamento';
-        document.getElementById('schedule_id').value = '';
-        document.getElementById('customer_id').value = '';
-        document.getElementById('service_type').value = '';
-
-        const startDate = new Date(start);
-        document.getElementById('schedule_date').value = startDate.toISOString().split('T')[0];
-        document.getElementById('start_time').value = startDate.toTimeString().slice(0, 5);
-
-        const endDate = new Date(end);
-        document.getElementById('end_time').value = endDate.toTimeString().slice(0, 5);
-
-        document.getElementById('notes').value = '';
-
-        openModal();
+        window.openScheduleModal();
     });
 </script>
 @endpush
