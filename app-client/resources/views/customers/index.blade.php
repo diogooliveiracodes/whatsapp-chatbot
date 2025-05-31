@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-header>
-        {{ __('Clientes') }}
+        {{ __('pages.customers') }}
     </x-header>
 
     <div class="py-12">
