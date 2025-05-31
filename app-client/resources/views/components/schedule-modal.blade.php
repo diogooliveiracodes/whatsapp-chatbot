@@ -25,12 +25,13 @@
 
     // Listen for schedule edit events only
     window.addEventListener('schedule-edit', function(e) {
-        const { id, customer, service_type, start, end, notes } = e.detail;
+        const { id, customer, service_type, start, end, notes, status } = e.detail;
 
         document.getElementById('modalTitle').textContent = 'Editar Agendamento';
         document.getElementById('schedule_id').value = id;
         document.getElementById('customer_id').value = customer.id;
         document.getElementById('service_type').value = service_type;
+        document.getElementById('status').value = status || 'pending';
 
         const startDate = new Date(start);
         document.getElementById('schedule_date').value = startDate.toISOString().split('T')[0];

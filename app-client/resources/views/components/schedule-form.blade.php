@@ -13,6 +13,17 @@
     </div>
 
     <div>
+        <x-input-label for="status" value="Status" class="text-gray-700 dark:text-gray-300" />
+        <select id="status" name="status"
+            class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+            <option value="pending" {{ $schedule?->status === 'pending' ? 'selected' : '' }}>Pendente</option>
+            <option value="confirmed" {{ $schedule?->status === 'confirmed' ? 'selected' : '' }}>Confirmado</option>
+            <option value="cancelled" {{ $schedule?->status === 'cancelled' ? 'selected' : '' }}>Cancelado</option>
+            <option value="completed" {{ $schedule?->status === 'completed' ? 'selected' : '' }}>Concluído</option>
+        </select>
+    </div>
+
+    <div>
         <x-input-label for="schedule_date" value="Data" class="text-gray-700 dark:text-gray-300" />
         <x-text-input id="schedule_date" name="schedule_date" type="date"
             class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
@@ -80,7 +91,7 @@
         formattedData.append('schedule_date', scheduleDate);
         formattedData.append('start_time', startTime);
         formattedData.append('end_time', endTime);
-        formattedData.append('status', 'pending');
+        formattedData.append('status', formData.get('status') || 'pending');
 
         const url = scheduleId ? `/schedules/${scheduleId}` : '/schedules';
 
