@@ -42,6 +42,15 @@ class ScheduleController extends Controller
         ]);
     }
 
+    public function create(Request $request)
+    {
+        $customers = $this->customerService->getCustomersByUnit();
+
+        return view('schedules.create', [
+            'customers' => $customers
+        ]);
+    }
+
     public function store(StoreScheduleRequest $request)
     {
         try {
