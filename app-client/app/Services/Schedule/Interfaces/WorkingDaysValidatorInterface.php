@@ -6,5 +6,5 @@ use Carbon\Carbon;
 
 interface WorkingDaysValidatorInterface
 {
-    public function isOutsideWorkingDays(Carbon $date, $companySettings): bool;
+    public function isOutsideWorkingDays(Carbon $date, $unitSettings): bool;
 }
