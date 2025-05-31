@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('service_type');
             $table->boolean('is_confirmed')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
