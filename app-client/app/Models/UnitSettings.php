@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class UnitSettings extends Model
 {
@@ -32,10 +33,30 @@ class UnitSettings extends Model
     ];
 
     protected $casts = [
-        'working_hour_start' => 'datetime',
-        'working_hour_end' => 'datetime',
+        'working_hour_start' => 'string',
+        'working_hour_end' => 'string',
         'use_ai_chatbot' => 'boolean'
     ];
+
+    public function getWorkingHourStartAttribute($value)
+    {
+        return $value ? date('H:i:s', strtotime($value)) : null;
+    }
+
+    public function setWorkingHourStartAttribute($value)
+    {
+        $this->attributes['working_hour_start'] = $value ? date('H:i:s', strtotime($value)) : null;
+    }
+
+    public function getWorkingHourEndAttribute($value)
+    {
+        return $value ? date('H:i:s', strtotime($value)) : null;
+    }
+
+    public function setWorkingHourEndAttribute($value)
+    {
+        $this->attributes['working_hour_end'] = $value ? date('H:i:s', strtotime($value)) : null;
+    }
 
     public function company()
     {
