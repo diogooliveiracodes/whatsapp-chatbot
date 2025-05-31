@@ -19,18 +19,8 @@ class Customer extends Model
         'company_id',
         'user_id',
         'unit_id',
-        'type',
         'name',
-        'document_number',
-        'phone',
-        'zip_code',
-        'state',
-        'city',
-        'neighborhood',
-        'street',
-        'number',
-        'complement',
-        'prospect_origin'
+        'phone'
     ];
 
     public function company(): BelongsTo

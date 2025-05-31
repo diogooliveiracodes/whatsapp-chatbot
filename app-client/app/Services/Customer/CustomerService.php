@@ -19,7 +19,6 @@ class CustomerService
     {
         $data['user_id'] = Auth::id();
         $data['active'] = true;
-        $data['prospect_origin'] = 'manual';
 
         return $this->repository->create($data);
     }

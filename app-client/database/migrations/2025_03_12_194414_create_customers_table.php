@@ -16,19 +16,8 @@ return new class extends Migration {
             $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('unit_id')->constrained('units');
-            $table->tinyInteger('type')->default(0)
-                ->comment('1 - Individual, 2 - Company');
             $table->string('name', 120);
-            $table->string('document_number', 20)->nullable();
             $table->string('phone', 20)->nullable();
-            $table->string('zip_code', 10)->nullable();
-            $table->string('state', 2)->nullable();
-            $table->string('city')->nullable();
-            $table->string('neighborhood')->nullable();
-            $table->string('street')->nullable();
-            $table->string('number')->nullable();
-            $table->string('complement')->nullable();
-            $table->string('prospect_origin')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
