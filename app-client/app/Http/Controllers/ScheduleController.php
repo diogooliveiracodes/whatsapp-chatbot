@@ -40,6 +40,9 @@ class ScheduleController extends Controller
 
         $customers = Customer::where('unit_id', $unit->id)->get();
 
+        // Eager load company settings
+        $unit->load('company.companySettings');
+
         Log::info('Schedules data:', ['schedules' => $schedules->toArray()]);
 
         return view('schedules.index', [
@@ -59,8 +62,36 @@ class ScheduleController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        $unit = $request->user()->unit;
+        $companySettings = $unit->company->companySettings;
+
+        // Convert schedule times to Carbon instances
+        $startTime = \Carbon\Carbon::parse($validated['start_time']);
+        $endTime = \Carbon\Carbon::parse($validated['end_time']);
+
+        // Check if the day of week is within working days
+        $dayOfWeek = $startTime->dayOfWeek + 1; // Convert to 1-7 format
+        if ($dayOfWeek < $companySettings->working_day_start || $dayOfWeek > $companySettings->working_day_end) {
+            return response()->json([
+                'success' => false,
+                'message' => 'O agendamento não pode ser feito fora dos dias úteis.'
+            ], 422);
+        }
+
+        // Check if the time is within working hours
+        $startTimeOfDay = $startTime->format('H:i:s');
+        $endTimeOfDay = $endTime->format('H:i:s');
+
+        if ($startTimeOfDay < $companySettings->working_hour_start ||
+            $endTimeOfDay > $companySettings->working_hour_end) {
+            return response()->json([
+                'success' => false,
+                'message' => 'O agendamento deve estar dentro do horário de funcionamento.'
+            ], 422);
+        }
+
         $schedule = Schedule::create([
-            'unit_id' => $request->user()->unit->id,
+            'unit_id' => $unit->id,
             'user_id' => $request->user()->id,
             'customer_id' => $validated['customer_id'],
             'start_time' => $validated['start_time'],
@@ -85,6 +116,34 @@ class ScheduleController extends Controller
             'status' => 'required|in:pending,confirmed,cancelled,completed',
             'notes' => 'nullable|string',
         ]);
+
+        $unit = $request->user()->unit;
+        $companySettings = $unit->company->companySettings;
+
+        // Convert schedule times to Carbon instances
+        $startTime = \Carbon\Carbon::parse($validated['start_time']);
+        $endTime = \Carbon\Carbon::parse($validated['end_time']);
+
+        // Check if the day of week is within working days
+        $dayOfWeek = $startTime->dayOfWeek + 1; // Convert to 1-7 format
+        if ($dayOfWeek < $companySettings->working_day_start || $dayOfWeek > $companySettings->working_day_end) {
+            return response()->json([
+                'success' => false,
+                'message' => 'O agendamento não pode ser feito fora dos dias úteis.'
+            ], 422);
+        }
+
+        // Check if the time is within working hours
+        $startTimeOfDay = $startTime->format('H:i:s');
+        $endTimeOfDay = $endTime->format('H:i:s');
+
+        if ($startTimeOfDay < $companySettings->working_hour_start ||
+            $endTimeOfDay > $companySettings->working_hour_end) {
+            return response()->json([
+                'success' => false,
+                'message' => 'O agendamento deve estar dentro do horário de funcionamento.'
+            ], 422);
+        }
 
         $schedule->update($validated);
 

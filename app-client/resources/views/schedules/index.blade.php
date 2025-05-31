@@ -96,6 +96,13 @@
                 return;
             }
 
+            // Get company settings from the server
+            const companySettings = @json($unit->company->companySettings);
+            const workingDays = [];
+            for (let i = companySettings.working_day_start; i <= companySettings.working_day_end; i++) {
+                workingDays.push(i);
+            }
+
             try {
                 const calendar = new FullCalendar.Calendar(calendarEl, {
                     initialView: 'timeGridWeek',
@@ -113,7 +120,22 @@
                     weekends: true,
                     eventClick: handleEventClick,
                     select: handleDateSelect,
-                    height: 'auto'
+                    height: 'auto',
+                    // Configure business hours
+                    businessHours: {
+                        daysOfWeek: workingDays,
+                        startTime: companySettings.working_hour_start,
+                        endTime: companySettings.working_hour_end,
+                    },
+                    // Disable selection outside business hours
+                    selectConstraint: 'businessHours',
+                    // Disable event dragging outside business hours
+                    eventConstraint: 'businessHours',
+                    // Hide non-working days
+                    hiddenDays: [0, 1, 2, 3, 4, 5, 6].filter(day => !workingDays.includes(day + 1)),
+                    // Set min and max time to match business hours
+                    slotMinTime: companySettings.working_hour_start,
+                    slotMaxTime: companySettings.working_hour_end,
                 });
                 console.log('Calendar created');
                 calendar.render();
@@ -137,6 +159,16 @@
         }
 
         function handleDateSelect(info) {
+            // Check if the selected time is within business hours
+            const companySettings = @json($unit->company->companySettings);
+            const startTime = info.start.toTimeString().slice(0, 8);
+            const endTime = info.end.toTimeString().slice(0, 8);
+
+            if (startTime < companySettings.working_hour_start || endTime > companySettings.working_hour_end) {
+                alert('O agendamento deve estar dentro do horário de funcionamento.');
+                return;
+            }
+
             document.getElementById('modalTitle').textContent = 'Novo Agendamento';
             document.getElementById('schedule_id').value = '';
             document.getElementById('customer_id').value = '';
