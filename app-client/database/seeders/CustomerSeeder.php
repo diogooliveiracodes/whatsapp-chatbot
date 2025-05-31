@@ -17,7 +17,7 @@ class CustomerSeeder extends Seeder
         $employeeList = DataMocks::getEmployees();
 
         foreach ($employeeList as $employee) {
-            Customer::factory()->count(rand(50, 100))->create([
+            Customer::factory()->count(3)->create([
                 'user_id' => $employee['id'],
                 'unit_id' => $employee['unit_id'],
             ]);
