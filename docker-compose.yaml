@@ -16,45 +16,45 @@ services:
                 php artisan queue:work &
                 wait
             "
-    whatsapp-sender:
-        build: ./whatsapp-sender
-        container_name: whatsapp-sender
-        working_dir: /application
-        volumes:
-            - './whatsapp-sender:/application'
-        ports:
-            - '8001:8000'
-        command: >
-            sh -c "
-                composer install &&
-                if [ ! -f .env ]; then cp .env.example .env; fi &&
-                if [ -z \"$(grep ^APP_KEY= .env | cut -d '=' -f2)\" ]; then php artisan key:generate; fi &&
-                php artisan serve --host=0.0.0.0 --port=8000
-            "
-    whatsapp-receiver:
-        build: ./whatsapp-receiver
-        container_name: whatsapp-receiver
-        working_dir: /application
-        volumes:
-        - './whatsapp-receiver:/application'
-        ports:
-        - '8002:8000'
-        command: >
-            sh -c "
-                composer install &&
-                if [ ! -f .env ]; then cp .env.example .env; fi &&
-                if [ -z \"$(grep ^APP_KEY= .env | cut -d '=' -f2)\" ]; then php artisan key:generate; fi &&
-                php artisan serve --host=0.0.0.0 --port=8000
-            "
+    # whatsapp-sender:
+    #     build: ./whatsapp-sender
+    #     container_name: whatsapp-sender
+    #     working_dir: /application
+    #     volumes:
+    #         - './whatsapp-sender:/application'
+    #     ports:
+    #         - '8001:8000'
+    #     command: >
+    #         sh -c "
+    #             composer install &&
+    #             if [ ! -f .env ]; then cp .env.example .env; fi &&
+    #             if [ -z \"$(grep ^APP_KEY= .env | cut -d '=' -f2)\" ]; then php artisan key:generate; fi &&
+    #             php artisan serve --host=0.0.0.0 --port=8000
+    #         "
+    # whatsapp-receiver:
+    #     build: ./whatsapp-receiver
+    #     container_name: whatsapp-receiver
+    #     working_dir: /application
+    #     volumes:
+    #     - './whatsapp-receiver:/application'
+    #     ports:
+    #     - '8002:8000'
+    #     command: >
+    #         sh -c "
+    #             composer install &&
+    #             if [ ! -f .env ]; then cp .env.example .env; fi &&
+    #             if [ -z \"$(grep ^APP_KEY= .env | cut -d '=' -f2)\" ]; then php artisan key:generate; fi &&
+    #             php artisan serve --host=0.0.0.0 --port=8000
+    #         "
 
-    rabbitmq:
-        image: rabbitmq:4.1.0-management
-        ports:
-        - "5672:5672" # RabbitMQ default port
-        - "15672:15672" # RabbitMQ management UI
-        volumes:
-            - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
-            - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    # rabbitmq:
+    #     image: rabbitmq:4.1.0-management
+    #     ports:
+    #     - "5672:5672" # RabbitMQ default port
+    #     - "15672:15672" # RabbitMQ management UI
+    #     volumes:
+    #         - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+    #         - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
 
     database:
         image: 'mysql:8.0'
