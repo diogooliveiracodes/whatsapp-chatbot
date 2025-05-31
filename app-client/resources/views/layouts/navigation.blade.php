@@ -20,6 +20,9 @@
             <x-nav-link :href="route('chatSessions.index')" :active="request()->routeIs('chatSessions.*')">
                 {{ __('pages.chatSession') }}
             </x-nav-link>
+            <x-nav-link :href="route('schedules.index')" :active="request()->routeIs('schedules.*')">
+                {{ __('pages.schedules') }}
+            </x-nav-link>
             @if(auth()->user()->isOwner())
                 <x-nav-link :href="route('company-settings.show', ['company_settings' => auth()->user()->company->companySettings->id])"
                             :active="request()->routeIs('company-settings.*')">

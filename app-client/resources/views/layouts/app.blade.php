@@ -19,6 +19,8 @@
 
     <!-- Pusher -->
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+
+    @stack('styles')
 </head>
 <body class="font-sans antialiased">
 <div class="min-h-screen flex bg-gray-100 dark:bg-gray-900">
@@ -40,5 +42,7 @@
         </main>
     </div>
 </div>
+
+@stack('scripts')
 </body>
 </html>
