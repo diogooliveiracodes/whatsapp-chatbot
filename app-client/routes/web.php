@@ -5,6 +5,7 @@ use App\Http\Controllers\CompanySettingsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -42,6 +43,11 @@ Route::middleware('auth')->group(function () {
         Route::get('edit/{company_settings}', [CompanySettingsController::class, 'edit'])->name('company-settings.edit');
         Route::put('/{company_settings}', [CompanySettingsController::class, 'update'])->name('company-settings.update');
     });
+
+    Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
+    Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
+    Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
+    Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 });
 
 Route::get('/teste/{channelId}', [\App\Http\Controllers\TesteController::class, 'index']);
