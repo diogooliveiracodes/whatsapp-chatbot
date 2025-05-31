@@ -87,10 +87,10 @@
                     customer: schedule.customer,
                     user: schedule.user
                 },
-                backgroundColor: schedule.status === 'confirmed' ? '#10B981' : schedule.status ===
-                    'pending' ? '#F59E0B' : schedule.status === 'cancelled' ? '#EF4444' : '#6B7280',
-                borderColor: schedule.status === 'confirmed' ? '#059669' : schedule.status ===
-                    'pending' ? '#D97706' : schedule.status === 'cancelled' ? '#DC2626' : '#4B5563'
+                backgroundColor: schedule.status === 'confirmed' ? '#22C55E' : schedule.status ===
+                    'pending' ? '#3B82F6' : schedule.status === 'cancelled' ? '#EF4444' : '#6B7280',
+                borderColor: schedule.status === 'confirmed' ? '#16A34A' : schedule.status ===
+                    'pending' ? '#2563EB' : schedule.status === 'cancelled' ? '#DC2626' : '#4B5563'
             }));
 
             const workingDays = [];
@@ -135,8 +135,8 @@
                     return {
                         html: `
                                 <div class="fc-content">
-                                    <div class="fc-title font-medium text-gray-900 dark:text-gray-100">${arg.event.title}</div>
-                                    <div class="fc-description text-sm text-gray-600 dark:text-gray-400">${arg.event.extendedProps.service_type}</div>
+                                    <div class="fc-title font-medium text-white">${arg.event.title}</div>
+                                    <div class="fc-description text-sm text-white/90">${arg.event.extendedProps.service_type}</div>
                                 </div>
                             `
                     };
