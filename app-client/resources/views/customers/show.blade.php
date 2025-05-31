@@ -89,16 +89,14 @@
                     <!-- Action Buttons -->
                     <div class="mt-6 flex justify-between">
                         <!-- Back Button -->
-                        <a href="{{ route('customers.index') }}"
-                           class="inline-block px-4 py-2 text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        <x-cancel-link href="{{ route('customers.index') }}">
                             Back
-                        </a>
+                        </x-cancel-link>
 
                         <!-- Edit Button -->
-                        <a href="{{ route('customers.edit', $customer->id) }}"
-                           class="inline-block px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <x-confirm-link href="{{ route('customers.edit', $customer->id) }}">
                             Edit
-                        </a>
+                        </x-confirm-link>
                     </div>
                 </div>
             </div>

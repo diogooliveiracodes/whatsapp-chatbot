@@ -155,16 +155,14 @@
                         <!-- Action Buttons -->
                         <div class="mt-6 flex justify-between">
                             <!-- Back Button -->
-                            <a href="{{ route('customers.index') }}"
-                               class="back-button-style">
+                            <x-cancel-link :href="route('customers.index')">
                                 Back
-                            </a>
+                            </x-cancel-link>
 
                             <!-- Save Button -->
-                            <button type="submit"
-                                    class="save-button-style">
+                            <x-primary-button type="submit">
                                 Save Changes
-                            </button>
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>
