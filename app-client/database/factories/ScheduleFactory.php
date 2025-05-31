@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\User;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Carbon\Carbon;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Schedule>
@@ -27,9 +28,9 @@ class ScheduleFactory extends Factory
      */
     public function definition(): array
     {
-        $startTime = $this->faker->dateTimeBetween('now', '+2 months');
-        $endTime = clone $startTime;
-        $endTime->modify('+' . $this->faker->numberBetween(1, 4) . ' hours');
+        $scheduleDate = $this->faker->dateTimeBetween('now', '+2 months');
+        $startTime = Carbon::parse($scheduleDate)->setTimeFromTimeString($this->faker->time('H:i'));
+        $endTime = (clone $startTime)->addHours($this->faker->numberBetween(1, 4));
 
         $serviceTypes = [
             'Consulta',
@@ -44,8 +45,9 @@ class ScheduleFactory extends Factory
             'unit_id' => Unit::factory(),
             'user_id' => User::factory(),
             'customer_id' => Customer::factory(),
-            'start_time' => $startTime,
-            'end_time' => $endTime,
+            'schedule_date' => $scheduleDate->format('Y-m-d'),
+            'start_time' => $startTime->format('H:i'),
+            'end_time' => $endTime->format('H:i'),
             'service_type' => $this->faker->randomElement($serviceTypes),
             'notes' => $this->faker->optional(0.7)->sentence(),
             'status' => $this->faker->randomElement(['pending', 'confirmed', 'completed']),
