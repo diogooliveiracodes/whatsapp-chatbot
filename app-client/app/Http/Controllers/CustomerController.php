@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
-use App\Services\CustomerService;
+use App\Services\Customer\CustomerService;
 use App\Services\ErrorLog\ErrorLogService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -48,7 +48,7 @@ class CustomerController extends Controller
     public function index(): View
     {
         try {
-            $customers = $this->customerService->getCustomersByUser();
+            $customers = $this->customerService->getCustomersByUnit();
             return view('customers.index', compact('customers'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, ['action' => 'index']);

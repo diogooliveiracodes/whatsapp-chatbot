@@ -34,12 +34,6 @@ class CustomerRepository
         return $customer->delete();
     }
 
-    public function findByUserId(int $userId)
-    {
-        return $this->model->where('user_id', $userId)
-            ->select('id', 'name', 'phone', 'active', 'prospect_origin', 'created_at')
-            ->get();
-    }
 
     public function searchByQuery(string $query, int $userId)
     {
@@ -50,6 +44,13 @@ class CustomerRepository
             })
             ->select('id', 'name', 'phone')
             ->limit(10)
+            ->get();
+    }
+
+    public function getCustomersByUnit($unit)
+    {
+        return $this->model->where('unit_id', $unit->id)
+            ->select('id', 'name', 'phone')
             ->get();
     }
 }

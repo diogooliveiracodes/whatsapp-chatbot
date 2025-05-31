@@ -2,13 +2,46 @@
 
 namespace App\Services\Customer;
 
-use App\Models\Customer;
+use App\Repositories\CustomerRepository;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Unit;
 
 class CustomerService
 {
-    public function getCustomersByUnit(Unit $unit)
+    protected $repository;
+
+    public function __construct(CustomerRepository $repository)
     {
-        return Customer::where('unit_id', $unit->id)->get();
+        $this->repository = $repository;
+    }
+
+    public function createCustomer(array $data)
+    {
+        $data['user_id'] = Auth::id();
+        $data['active'] = true;
+        $data['prospect_origin'] = 'manual';
+
+        return $this->repository->create($data);
+    }
+
+    public function searchCustomers(string $query)
+    {
+        return $this->repository->searchByQuery($query, Auth::id());
+    }
+
+    public function updateCustomer($customer, array $data)
+    {
+        return $this->repository->update($customer, $data);
+    }
+
+    public function deleteCustomer($customer)
+    {
+        return $this->repository->delete($customer);
+    }
+
+    public function getCustomersByUnit()
+    {
+        $unit = Auth::user()->unit;
+        return $this->repository->getCustomersByUnit($unit);
     }
 }
