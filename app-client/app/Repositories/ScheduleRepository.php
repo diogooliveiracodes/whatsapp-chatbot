@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Models\Schedule;
+use App\Repositories\Interfaces\ScheduleRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
+
+class ScheduleRepository implements ScheduleRepositoryInterface
+{
+    public function __construct(protected Schedule $model)
+    {
+    }
+
+    public function findById(int $id): ?Schedule
+    {
+        return $this->model->find($id);
+    }
+
+    public function findByUnitId(int $unitId): Collection
+    {
+        return $this->model->with(['customer', 'user'])
+            ->where('unit_id', $unitId)
+            ->get();
+    }
+
+    public function create(array $data): Schedule
+    {
+        return $this->model->create($data);
+    }
+
+    public function update(Schedule $schedule, array $data): bool
+    {
+        return $schedule->update($data);
+    }
+
+    public function delete(Schedule $schedule): bool
+    {
+        return $schedule->delete();
+    }
+
+    public function findConflictingSchedule(int $unitId, string $scheduleDate, string $startTime, string $endTime, ?int $currentScheduleId = null): ?Schedule
+    {
+        return $this->model->where('unit_id', $unitId)
+            ->when($currentScheduleId, function ($query) use ($currentScheduleId) {
+                return $query->where('id', '!=', $currentScheduleId);
+            })
+            ->where('schedule_date', $scheduleDate)
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->where(function ($q) use ($startTime) {
+                    $q->where('start_time', '<=', $startTime)
+                        ->where('end_time', '>', $startTime);
+                })->orWhere(function ($q) use ($endTime) {
+                    $q->where('start_time', '<', $endTime)
+                        ->where('end_time', '>=', $endTime);
+                });
+            })->first();
+    }
+}
