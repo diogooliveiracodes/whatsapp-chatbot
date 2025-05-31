@@ -96,4 +96,17 @@ return [
     ],
     'prohibited' => 'O campo :attribute é proibido.',
     'prohibited_if' => 'O campo :attribute é proibido quando :other for :value.',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Generic Validation Messages
+    |--------------------------------------------------------------------------
+    |
+    | Generic messages used for validation errors that should be shown to users
+    |
+    */
+
+    'generic' => [
+        'validation_error' => 'Ocorreu um erro na validação dos dados. Por favor, entre em contato com o suporte.',
+    ],
 ];

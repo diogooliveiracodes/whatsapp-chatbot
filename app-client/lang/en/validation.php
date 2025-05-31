@@ -193,4 +193,17 @@ return [
 
     'attributes' => [],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Generic Validation Messages
+    |--------------------------------------------------------------------------
+    |
+    | Generic messages used for validation errors that should be shown to users
+    |
+    */
+
+    'generic' => [
+        'validation_error' => 'A validation error occurred. Please contact support.',
+    ],
+
 ];
