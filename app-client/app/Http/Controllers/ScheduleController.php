@@ -5,160 +5,125 @@ namespace App\Http\Controllers;
 use App\Models\Schedule;
 use App\Models\Unit;
 use App\Models\Customer;
+use App\Services\ErrorLog\ErrorLogService;
+use App\Services\Customer\CustomerService;
+use App\Services\Http\HttpResponseService;
+use App\Http\Requests\StoreScheduleRequest;
+use App\Http\Requests\UpdateScheduleRequest;
+use App\Http\Resources\ScheduleResource;
+use App\Exceptions\Schedule\ScheduleException;
+use App\Exceptions\Schedule\OutsideWorkingDaysException;
+use App\Exceptions\Schedule\OutsideWorkingHoursException;
+use App\Exceptions\Schedule\ScheduleConflictException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use App\Services\Schedule\ScheduleService;
 
 class ScheduleController extends Controller
 {
+    public function __construct(
+        protected ErrorLogService $errorLogService,
+        protected ScheduleService $scheduleService,
+        protected CustomerService $customerService,
+        protected HttpResponseService $httpResponse
+    ) {}
+
     public function index(Request $request)
     {
         $unit = $request->user()->unit;
-
-        $schedules = Schedule::with(['customer', 'user'])
-            ->where('unit_id', $unit->id)
-            ->get()
-            ->map(function ($schedule) {
-                return [
-                    'id' => $schedule->id,
-                    'title' => $schedule->customer->name,
-                    'start' => $schedule->start_time,
-                    'end' => $schedule->end_time,
-                    'status' => $schedule->status,
-                    'service_type' => $schedule->service_type,
-                    'notes' => $schedule->notes,
-                    'customer' => [
-                        'id' => $schedule->customer->id,
-                        'name' => $schedule->customer->name,
-                    ],
-                    'user' => [
-                        'id' => $schedule->user->id,
-                        'name' => $schedule->user->name,
-                    ],
-                ];
-            });
-
-        $customers = Customer::where('unit_id', $unit->id)->get();
-
-        // Eager load company settings
+        $schedules = $this->scheduleService->getSchedulesByUnit($unit->id);
+        $customers = $this->customerService->getCustomersByUnit($unit);
         $unit->load('company.companySettings');
 
-        Log::info('Schedules data:', ['schedules' => $schedules->toArray()]);
-
         return view('schedules.index', [
-            'schedules' => $schedules,
+            'schedules' => ScheduleResource::collection($schedules),
             'customers' => $customers,
             'unit' => $unit,
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreScheduleRequest $request)
     {
-        $validated = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
-            'service_type' => 'required|string',
-            'notes' => 'nullable|string',
-        ]);
+        try {
+            $validated = $request->validated();
+            $unit = $request->user()->unit;
+            $companySettings = $unit->company->companySettings;
 
-        $unit = $request->user()->unit;
-        $companySettings = $unit->company->companySettings;
+            $scheduleDate = Carbon::parse($validated['schedule_date']);
+            if ($this->scheduleService->isOutsideWorkingDays($scheduleDate, $companySettings)) {
+                throw new OutsideWorkingDaysException();
+            }
 
-        // Convert schedule times to Carbon instances
-        $startTime = \Carbon\Carbon::parse($validated['start_time']);
-        $endTime = \Carbon\Carbon::parse($validated['end_time']);
+            if ($this->scheduleService->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $companySettings)) {
+                throw new OutsideWorkingHoursException();
+            }
 
-        // Check if the day of week is within working days
-        $dayOfWeek = $startTime->dayOfWeek + 1; // Convert to 1-7 format
-        if ($dayOfWeek < $companySettings->working_day_start || $dayOfWeek > $companySettings->working_day_end) {
-            return response()->json([
-                'success' => false,
-                'message' => 'O agendamento não pode ser feito fora dos dias úteis.'
-            ], 422);
+            if ($this->scheduleService->hasConflict($unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'], null)) {
+                throw new ScheduleConflictException();
+            }
+
+            $scheduleData = array_merge($validated, [
+                'unit_id' => $unit->id,
+                'user_id' => $request->user()->id,
+                'status' => 'pending',
+                'is_confirmed' => false,
+            ]);
+
+            $this->scheduleService->createSchedule($scheduleData);
+
+            return $this->httpResponse->success(__('schedules.messages.created'));
+        } catch (ScheduleException $e) {
+            return $this->httpResponse->error(__('schedules.messages.create_error'));
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e);
+            return $this->httpResponse->error(
+                __('schedules.messages.create_error')
+            );
         }
-
-        // Check if the time is within working hours
-        $startTimeOfDay = $startTime->format('H:i:s');
-        $endTimeOfDay = $endTime->format('H:i:s');
-
-        if ($startTimeOfDay < $companySettings->working_hour_start ||
-            $endTimeOfDay > $companySettings->working_hour_end) {
-            return response()->json([
-                'success' => false,
-                'message' => 'O agendamento deve estar dentro do horário de funcionamento.'
-            ], 422);
-        }
-
-        $schedule = Schedule::create([
-            'unit_id' => $unit->id,
-            'user_id' => $request->user()->id,
-            'customer_id' => $validated['customer_id'],
-            'start_time' => $validated['start_time'],
-            'end_time' => $validated['end_time'],
-            'service_type' => $validated['service_type'],
-            'notes' => $validated['notes'],
-            'status' => 'pending',
-            'is_confirmed' => false,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Agendamento criado com sucesso!'
-        ]);
     }
 
-    public function update(Request $request, Schedule $schedule)
+    public function update(UpdateScheduleRequest $request, Schedule $schedule)
     {
-        $validated = $request->validate([
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
-            'status' => 'required|in:pending,confirmed,cancelled,completed',
-            'notes' => 'nullable|string',
-        ]);
+        try {
+            $validated = $request->validated();
+            $unit = $request->user()->unit;
+            $companySettings = $unit->company->companySettings;
 
-        $unit = $request->user()->unit;
-        $companySettings = $unit->company->companySettings;
+            $scheduleDate = Carbon::parse($validated['schedule_date']);
+            if ($this->scheduleService->isOutsideWorkingDays($scheduleDate, $companySettings)) {
+                throw new OutsideWorkingDaysException();
+            }
 
-        // Convert schedule times to Carbon instances
-        $startTime = \Carbon\Carbon::parse($validated['start_time']);
-        $endTime = \Carbon\Carbon::parse($validated['end_time']);
+            if ($this->scheduleService->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $companySettings)) {
+                throw new OutsideWorkingHoursException();
+            }
 
-        // Check if the day of week is within working days
-        $dayOfWeek = $startTime->dayOfWeek + 1; // Convert to 1-7 format
-        if ($dayOfWeek < $companySettings->working_day_start || $dayOfWeek > $companySettings->working_day_end) {
-            return response()->json([
-                'success' => false,
-                'message' => 'O agendamento não pode ser feito fora dos dias úteis.'
-            ], 422);
+            if ($this->scheduleService->hasConflict($unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'], $schedule->id)) {
+                throw new ScheduleConflictException();
+            }
+
+            $this->scheduleService->updateSchedule($schedule, $validated);
+
+            return $this->httpResponse->success(__('schedules.messages.updated'));
+
+        } catch (\Exception|ScheduleException  $e) {
+            $this->errorLogService->logError($e);
+            return $this->httpResponse->error(
+                __('schedules.messages.update_error')
+            );
         }
-
-        // Check if the time is within working hours
-        $startTimeOfDay = $startTime->format('H:i:s');
-        $endTimeOfDay = $endTime->format('H:i:s');
-
-        if ($startTimeOfDay < $companySettings->working_hour_start ||
-            $endTimeOfDay > $companySettings->working_hour_end) {
-            return response()->json([
-                'success' => false,
-                'message' => 'O agendamento deve estar dentro do horário de funcionamento.'
-            ], 422);
-        }
-
-        $schedule->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Agendamento atualizado com sucesso!'
-        ]);
     }
 
     public function destroy(Schedule $schedule)
     {
-        $schedule->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Agendamento excluído com sucesso!'
-        ]);
+        try {
+            $this->scheduleService->deleteSchedule($schedule);
+            return $this->httpResponse->success(__('schedules.messages.deleted'));
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e);
+            return $this->httpResponse->error(
+                __('schedules.messages.delete_error')
+            );
+        }
     }
 }
