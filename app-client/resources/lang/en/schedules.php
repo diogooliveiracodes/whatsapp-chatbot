@@ -21,4 +21,5 @@ return [
         'end_time_after_start' => 'End time must be after start time',
         'service_type_required' => 'Service type is required',
     ],
+    'new_schedule' => 'New Schedule',
 ];

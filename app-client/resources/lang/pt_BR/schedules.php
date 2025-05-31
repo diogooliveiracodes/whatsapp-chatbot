@@ -21,4 +21,5 @@ return [
         'end_time_after_start' => 'A hora de término deve ser posterior à hora de início',
         'service_type_required' => 'O tipo de serviço é obrigatório',
     ],
+    'new_schedule' => 'Novo Agendamento',
 ];
