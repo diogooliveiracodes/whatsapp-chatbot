@@ -44,7 +44,7 @@
         <x-secondary-button type="button" onclick="window.closeScheduleModal()" class="dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
             Cancelar
         </x-secondary-button>
-        <x-primary-button type="submit" class="dark:bg-indigo-600 dark:hover:bg-indigo-700">
+        <x-primary-button type="submit">
             Salvar
         </x-primary-button>
     </div>
