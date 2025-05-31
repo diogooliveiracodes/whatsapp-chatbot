@@ -1,9 +1,10 @@
 <?php
 
 return [
-    'dashboard' => 'Painel de Controle',
+    'dashboard' => 'Dashboard',
     'customers' => 'Clientes',
-    'chatSession' => 'Sessões de Chat',
+    'chatSession' => 'Chat',
+    'schedules' => 'Agenda',
     'companySettings' => 'Configurações da Empresa',
     'editCompanySettings' => 'Editar Configurações da Empresa'
 ];
