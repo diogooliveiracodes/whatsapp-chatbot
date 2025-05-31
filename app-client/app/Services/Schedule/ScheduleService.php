@@ -50,4 +50,11 @@ class ScheduleService
     {
         return $this->scheduleRepository->delete($schedule);
     }
+
+    public function cancelSchedule($schedule)
+    {
+        $schedule->status = 'cancelled';
+        $schedule->save();
+        return $this->scheduleRepository->delete($schedule);
+    }
 }

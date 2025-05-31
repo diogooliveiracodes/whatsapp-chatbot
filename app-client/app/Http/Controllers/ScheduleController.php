@@ -135,4 +135,17 @@ class ScheduleController extends Controller
             );
         }
     }
+
+    public function cancel(Schedule $schedule)
+    {
+        try {
+            $this->scheduleService->cancelSchedule($schedule);
+            return $this->httpResponse->success(__('schedules.messages.cancelled'));
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e);
+            return $this->httpResponse->error(
+                __('schedules.messages.cancel_error')
+            );
+        }
+    }
 }
