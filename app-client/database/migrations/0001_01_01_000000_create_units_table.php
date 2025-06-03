@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 100);
             $table->foreignId('company_id')->constrained('companies');
             $table->boolean('active')->default(true);
             $table->timestamps();
