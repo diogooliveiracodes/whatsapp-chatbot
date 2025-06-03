@@ -5,6 +5,10 @@ return [
     'customers' => 'Customers',
     'chatSession' => 'Chat Sessions',
     'schedules' => 'Schedules',
-    'companySettings' => 'Company Settings',
-    'editCompanySettings' => 'Edit Company Settings',
+    'settings' => 'Settings',
+    'units' => 'Units',
+    'configure_units' => 'Configure Units',
+    'unitSettings' => 'Unit Settings',
+    'editUnitSettings' => 'Edit Unit Settings',
+    'no_units' => 'No units available',
 ];

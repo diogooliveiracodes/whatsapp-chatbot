@@ -3,8 +3,12 @@
 return [
     'dashboard' => 'Dashboard',
     'customers' => 'Clientes',
-    'chatSession' => 'Chat',
-    'schedules' => 'Agenda',
-    'companySettings' => 'Configurações da Empresa',
-    'editCompanySettings' => 'Editar Configurações da Empresa'
+    'chatSession' => 'Sessões de Chat',
+    'schedules' => 'Agendamentos',
+    'settings' => 'Configurações',
+    'units' => 'Unidades',
+    'configure_units' => 'Configurar Unidades',
+    'unitSettings' => 'Configurações da Unidade',
+    'editUnitSettings' => 'Editar Configurações da Unidade',
+    'no_units' => 'Nenhuma unidade disponível',
 ];
