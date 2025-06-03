@@ -25,8 +25,8 @@ return [
         ],
     ],
     'attributes' => [
-        'name' => 'unit name',
-        'active' => 'active status',
+        'name' => 'name',
+        'active' => 'active',
     ],
     'success' => [
         'created' => 'Unit created successfully',
