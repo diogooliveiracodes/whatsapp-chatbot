@@ -66,7 +66,20 @@ return [
     'ipv4' => 'O campo :attribute deve ser um endereço IPv4 válido.',
     'ipv6' => 'O campo :attribute deve ser um endereço IPv6 válido.',
     'json' => 'O campo :attribute deve ser uma string JSON válida.',
+    'list' => 'O campo :attribute deve ser uma lista.',
     'lowercase' => 'O campo :attribute deve estar em minúsculas.',
+    'lt' => [
+        'array' => 'O campo :attribute deve ter menos de :value itens.',
+        'file' => 'O campo :attribute deve ter menos de :value kilobytes.',
+        'numeric' => 'O campo :attribute deve ser menor que :value.',
+        'string' => 'O campo :attribute deve ter menos de :value caracteres.',
+    ],
+    'lte' => [
+        'array' => 'O campo :attribute não deve ter mais de :value itens.',
+        'file' => 'O campo :attribute deve ser menor ou igual a :value kilobytes.',
+        'numeric' => 'O campo :attribute deve ser menor ou igual a :value.',
+        'string' => 'O campo :attribute deve ter no máximo :value caracteres.',
+    ],
     'mac_address' => 'O campo :attribute deve ser um endereço MAC válido.',
     'max' => [
         'array' => 'O campo :attribute não deve ter mais de :max itens.',
@@ -85,17 +98,89 @@ return [
     ],
     'min_digits' => 'O campo :attribute deve ter pelo menos :min dígitos.',
     'missing' => 'O campo :attribute deve estar ausente.',
+    'missing_if' => 'O campo :attribute deve estar ausente quando :other for :value.',
+    'missing_unless' => 'O campo :attribute deve estar ausente a menos que :other esteja em :values.',
+    'missing_with' => 'O campo :attribute deve estar ausente quando :values estiver presente.',
+    'missing_with_all' => 'O campo :attribute deve estar ausente quando :values estiverem presentes.',
     'multiple_of' => 'O campo :attribute deve ser um múltiplo de :value.',
     'not_in' => 'O valor selecionado para o campo :attribute é inválido.',
     'not_regex' => 'O formato do campo :attribute é inválido.',
     'numeric' => 'O campo :attribute deve ser um número.',
     'password' => [
         'letters' => 'O campo :attribute deve conter pelo menos uma letra.',
+        'mixed' => 'O campo :attribute deve conter pelo menos uma letra maiúscula e uma minúscula.',
         'numbers' => 'O campo :attribute deve conter pelo menos um número.',
         'symbols' => 'O campo :attribute deve conter pelo menos um símbolo.',
+        'uncompromised' => 'O :attribute fornecido apareceu em um vazamento de dados. Por favor, escolha um :attribute diferente.',
     ],
+    'present' => 'O campo :attribute deve estar presente.',
+    'present_if' => 'O campo :attribute deve estar presente quando :other for :value.',
+    'present_unless' => 'O campo :attribute deve estar presente a menos que :other esteja em :values.',
+    'present_with' => 'O campo :attribute deve estar presente quando :values estiver presente.',
+    'present_with_all' => 'O campo :attribute deve estar presente quando :values estiverem presentes.',
     'prohibited' => 'O campo :attribute é proibido.',
     'prohibited_if' => 'O campo :attribute é proibido quando :other for :value.',
+    'prohibited_if_accepted' => 'O campo :attribute é proibido quando :other for aceito.',
+    'prohibited_if_declined' => 'O campo :attribute é proibido quando :other for recusado.',
+    'prohibited_unless' => 'O campo :attribute é proibido a menos que :other esteja em :values.',
+    'prohibits' => 'O campo :attribute proíbe :other de estar presente.',
+    'regex' => 'O formato do campo :attribute é inválido.',
+    'required' => 'O campo :attribute é obrigatório.',
+    'required_array_keys' => 'O campo :attribute deve conter entradas para: :values.',
+    'required_if' => 'O campo :attribute é obrigatório quando :other for :value.',
+    'required_if_accepted' => 'O campo :attribute é obrigatório quando :other for aceito.',
+    'required_if_declined' => 'O campo :attribute é obrigatório quando :other for recusado.',
+    'required_unless' => 'O campo :attribute é obrigatório a menos que :other esteja em :values.',
+    'required_with' => 'O campo :attribute é obrigatório quando :values estiver presente.',
+    'required_with_all' => 'O campo :attribute é obrigatório quando :values estiverem presentes.',
+    'required_without' => 'O campo :attribute é obrigatório quando :values não estiver presente.',
+    'required_without_all' => 'O campo :attribute é obrigatório quando nenhum dos :values estiverem presentes.',
+    'same' => 'O campo :attribute deve corresponder a :other.',
+    'size' => [
+        'array' => 'O campo :attribute deve conter :size itens.',
+        'file' => 'O campo :attribute deve ter :size kilobytes.',
+        'numeric' => 'O campo :attribute deve ser :size.',
+        'string' => 'O campo :attribute deve ter :size caracteres.',
+    ],
+    'starts_with' => 'O campo :attribute deve começar com um dos seguintes valores: :values.',
+    'string' => 'O campo :attribute deve ser uma string.',
+    'timezone' => 'O campo :attribute deve ser um fuso horário válido.',
+    'unique' => 'O :attribute já está sendo utilizado.',
+    'uploaded' => 'O upload do :attribute falhou.',
+    'uppercase' => 'O campo :attribute deve estar em maiúsculas.',
+    'url' => 'O campo :attribute deve ser uma URL válida.',
+    'ulid' => 'O campo :attribute deve ser um ULID válido.',
+    'uuid' => 'O campo :attribute deve ser um UUID válido.',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Validation Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify custom validation messages for attributes using the
+    | convention "attribute.rule" to name the lines. This makes it quick to
+    | specify a specific custom language line for a given attribute rule.
+    |
+    */
+
+    'custom' => [
+        'attribute-name' => [
+            'rule-name' => 'custom-message',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Validation Attributes
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines are used to swap our attribute placeholder
+    | with something more reader friendly such as "E-Mail Address" instead
+    | of "email". This simply helps us make our message more expressive.
+    |
+    */
+
+    'attributes' => [],
 
     /*
     |--------------------------------------------------------------------------
@@ -109,4 +194,5 @@ return [
     'generic' => [
         'validation_error' => 'Ocorreu um erro na validação dos dados. Por favor, entre em contato com o suporte.',
     ],
+
 ];
