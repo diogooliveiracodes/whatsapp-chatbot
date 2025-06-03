@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\ChatSessionController;
-use App\Http\Controllers\CompanySettingsController;
+use App\Http\Controllers\UnitSettingsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -35,15 +36,25 @@ Route::middleware('auth')->group(function () {
         //        Route::delete('/{session}', [ChatSessionController::class, 'destroy'])->name('chatSessions.destroy');
     });
 
+    Route::group(['prefix' => 'units'], function () {
+        Route::get('/', [UnitController::class, 'index'])->name('units.index');
+        Route::get('/{unit}', [UnitController::class, 'show'])->name('units.show');
+        Route::get('/{unit}/edit', [UnitController::class, 'edit'])->name('units.edit');
+        Route::put('/{unit}', [UnitController::class, 'update'])->name('units.update');
+        Route::delete('/{unit}', [UnitController::class, 'destroy'])->name('units.destroy');
+        Route::get('/create', [UnitController::class, 'create'])->name('units.create');
+        Route::post('/', [UnitController::class, 'store'])->name('units.store');
+    });
+
     Route::group(
         [
-            'prefix' => 'company-settings',
+            'prefix' => 'unit-settings',
             'middleware' => ['auth', 'owner'],
         ],
         function () {
-            Route::get('/{company_settings}', [CompanySettingsController::class, 'show'])->name('company-settings.show');
-            Route::get('edit/{company_settings}', [CompanySettingsController::class, 'edit'])->name('company-settings.edit');
-            Route::put('/{company_settings}', [CompanySettingsController::class, 'update'])->name('company-settings.update');
+            Route::get('/{unit_settings}', [UnitSettingsController::class, 'show'])->name('unit-settings.show');
+            Route::get('edit/{unit_settings}', [UnitSettingsController::class, 'edit'])->name('unit-settings.edit');
+            Route::put('/{unit_settings}', [UnitSettingsController::class, 'update'])->name('unit-settings.update');
         },
     );
 
