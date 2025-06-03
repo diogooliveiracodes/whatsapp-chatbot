@@ -1,4 +1,4 @@
-<div x-data="{ open: false }" class="flex h-screen w-64">
+<div x-data="{ open: false, settingsOpen: false }" class="flex h-screen w-64">
     <!-- Sidebar -->
     <div
         class="w-64 fixed flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col h-full">
@@ -23,10 +23,15 @@
             <x-nav-link :href="route('schedules.index')" :active="request()->routeIs('schedules.*')">
                 {{ __('pages.schedules') }}
             </x-nav-link>
-            @if(auth()->user()->isOwner())
-                <x-nav-link :href="route('company-settings.show', ['company_settings' => auth()->user()->company->companySettings->id])"
-                            :active="request()->routeIs('company-settings.*')">
-                    {{ __('pages.companySettings') }}
+            @if(auth()->user()->isOwner() && auth()->user()->company)
+            <hr>
+            <div class="mt-4 mb-2">
+                    <h3 class="px-0 text-s font-semibold text-gray-500 uppercase tracking-wider">
+                        {{ __('pages.settings') }}
+                    </h3>
+                </div>
+                <x-nav-link :href="route('units.index')" :active="request()->routeIs('units.*')">
+                    {{ __('pages.units') }}
                 </x-nav-link>
             @endif
         </nav>
