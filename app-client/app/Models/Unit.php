@@ -13,6 +13,14 @@ class Unit extends Model
     /** @use HasFactory<\Database\Factories\UnitFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'company_id',
+        'name',
+        'description',
+        'address',
+        'city',
+    ];
+
     protected $table = 'units';
 
     public function company(): BelongsTo
