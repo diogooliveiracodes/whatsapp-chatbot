@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class UnitSettings extends Model
 {
     /** @use HasFactory<\Database\Factories\UnitSettingsFactory> */
     use HasFactory;
 
+    protected $table = 'unit_settings';
     protected $fillable = [
         'company_id',
         'unit_id',
@@ -25,6 +26,8 @@ class UnitSettings extends Model
         'zipcode',
         'whatsapp_webhook_url',
         'whatsapp_number',
+        'default_language',
+        'timezone',
         'working_hour_start',
         'working_hour_end',
         'working_day_start',
@@ -58,12 +61,12 @@ class UnitSettings extends Model
         $this->attributes['working_hour_end'] = $value ? date('H:i:s', strtotime($value)) : null;
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function unit()
+    public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
     }

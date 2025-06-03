@@ -40,4 +40,14 @@ class Company extends Model
         return $this->hasOne(CompanySettings::class);
     }
 
+    public function units(): HasMany
+    {
+        return $this->hasMany(Unit::class);
+    }
+
+    public function unitSettings(): HasMany
+    {
+        return $this->HasMany(UnitSettings::class);
+    }
+
 }
