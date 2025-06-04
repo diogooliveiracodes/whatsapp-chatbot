@@ -32,14 +32,31 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
      */
     public function update(UnitSettings $unitSettings, array $data): UnitSettings
     {
-        // Ensure all days are explicitly set
+        $processedData = $this->processDaysData($data);
+        $unitSettings->update($processedData);
+        return $unitSettings;
+    }
+
+    /**
+     * Process days data to ensure all days are explicitly set and handle their times
+     *
+     * @param array $data
+     * @return array
+     */
+    private function processDaysData(array $data): array
+    {
         $days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
         foreach ($days as $day) {
             $data[$day] = isset($data[$day]);
+
+            if (!$data[$day]) {
+                $data[$day . '_start'] = null;
+                $data[$day . '_end'] = null;
+            }
         }
 
-        $unitSettings->update($data);
-        return $unitSettings;
+        return $data;
     }
 
     /**
