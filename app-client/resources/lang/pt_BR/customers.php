@@ -14,4 +14,5 @@ return [
     'view' => 'Visualizar',
     'delete' => 'Excluir',
     'confirm_delete' => 'Tem certeza que deseja excluir?',
+    'select' => 'Selecione um cliente',
 ];

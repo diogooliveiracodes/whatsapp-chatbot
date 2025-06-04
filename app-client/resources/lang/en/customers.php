@@ -14,4 +14,5 @@ return [
     'view' => 'View',
     'delete' => 'Delete',
     'confirm_delete' => 'Are you sure you want to delete?',
+    'select' => 'Select a customer',
 ];

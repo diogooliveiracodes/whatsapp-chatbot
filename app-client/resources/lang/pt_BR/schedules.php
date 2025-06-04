@@ -25,4 +25,11 @@ return [
         'service_type_required' => 'Tipo de serviço é obrigatório',
     ],
     'new_schedule' => 'Novo Agendamento',
+    'date' => 'Data',
+    'start_time' => 'Horário de Início',
+    'end_time' => 'Horário de Término',
+    'service_type' => 'Tipo de Serviço',
+    'notes' => 'Observações',
+    'back' => 'Voltar',
+    'create' => 'Criar Agendamento',
 ];

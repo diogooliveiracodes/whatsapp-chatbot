@@ -25,4 +25,11 @@ return [
         'service_type_required' => 'Service type is required',
     ],
     'new_schedule' => 'New Schedule',
+    'date' => 'Date',
+    'start_time' => 'Start Time',
+    'end_time' => 'End Time',
+    'service_type' => 'Service Type',
+    'notes' => 'Notes',
+    'back' => 'Back',
+    'create' => 'Create Schedule',
 ];
