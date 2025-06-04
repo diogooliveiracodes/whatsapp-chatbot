@@ -7,12 +7,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface UnitSettingsRepositoryInterface
 {
-    /**
-     * Get all unit settings for the current company
-     *
-     * @return Collection
-     */
-    public function getUnitSettingsByAuthUser(): Collection;
 
     /**
      * Create new unit settings

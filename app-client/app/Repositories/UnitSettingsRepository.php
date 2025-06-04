@@ -12,16 +12,6 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
     public function __construct(protected UnitSettings $model) {}
 
     /**
-     * Get all unit settings for the current company
-     *
-     * @return Collection
-     */
-    public function getUnitSettingsByAuthUser(): Collection
-    {
-        return $this->model->where('company_id', Auth::user()->company_id)->get();
-    }
-
-    /**
      * Create new unit settings
      *
      * @param array $data
