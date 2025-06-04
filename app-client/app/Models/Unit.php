@@ -62,4 +62,9 @@ class Unit extends Model
     {
         return $this->hasOne(UnitSettings::class);
     }
+
+    public function UnitSettingsId(): HasOne
+    {
+        return $this->hasOne(UnitSettings::class, 'unit_id', 'id')->select(['id', 'unit_id']);
+    }
 }
