@@ -32,7 +32,8 @@
                 throw new Error('Unit settings is null or undefined');
             }
 
-            if (!unitSettings.working_day_start || !unitSettings.working_day_end) {
+            if (!unitSettings.sunday && !unitSettings.monday && !unitSettings.tuesday && !unitSettings.wednesday &&
+                !unitSettings.thursday && !unitSettings.friday && !unitSettings.saturday) {
                 throw new Error('Working days not configured in unit settings');
             }
 
@@ -94,10 +95,21 @@
             }));
 
             const workingDays = [];
-            for (let i = unitSettings.working_day_start; i <= unitSettings.working_day_end; i++) {
-                workingDays.push(i);
-            }
+            const dayMapping = {
+                'sunday': unitSettings.sunday,
+                'monday': unitSettings.monday,
+                'tuesday': unitSettings.tuesday,
+                'wednesday': unitSettings.wednesday,
+                'thursday': unitSettings.thursday,
+                'friday': unitSettings.friday,
+                'saturday': unitSettings.saturday
+            };
 
+            Object.entries(dayMapping).forEach(([day, value], index) => {
+                if (value === true) {
+                    workingDays.push(index);
+                }
+            });
 
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
@@ -125,7 +137,7 @@
                 },
                 selectConstraint: 'businessHours',
                 eventConstraint: 'businessHours',
-                hiddenDays: [0, 1, 2, 3, 4, 5, 6].filter(day => !workingDays.includes(day + 1)),
+                hiddenDays: [0, 1, 2, 3, 4, 5, 6].filter(day => !workingDays.includes(day)),
                 slotMinTime: workingHourStart,
                 slotMaxTime: workingHourEnd,
                 slotDuration: '00:30:00',
