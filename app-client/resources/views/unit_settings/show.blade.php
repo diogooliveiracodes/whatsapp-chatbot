@@ -24,6 +24,10 @@
 
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <!-- Basic Information -->
+                        <div class="col-span-2">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.basic_info_section') }}</h3>
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium text-gray-300">{{ __('unitSettings.name') }}</label>
                             <p class="text-md dark:text-gray-300">{{ $unitSettings->name }}</p>
@@ -35,6 +39,10 @@
                         </div>
 
                         <!-- Address Information -->
+                        <div class="col-span-2">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.address_section') }}</h3>
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium text-gray-300">{{ __('unitSettings.street') }}</label>
                             <p class="text-md dark:text-gray-300">{{ $unitSettings->street ?? '-' }}</p>
@@ -71,6 +79,10 @@
                         </div>
 
                         <!-- WhatsApp Configuration -->
+                        <div class="col-span-2">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.whatsapp_section') }}</h3>
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium text-gray-300">{{ __('unitSettings.whatsapp_webhook_url') }}</label>
                             <p class="text-md dark:text-gray-300">{{ $unitSettings->whatsapp_webhook_url ?? '-' }}</p>
@@ -82,6 +94,10 @@
                         </div>
 
                         <!-- Working Hours -->
+                        <div class="col-span-2">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.working_hours_section') }}</h3>
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium text-gray-300">{{ __('unitSettings.working_hour_start') }}</label>
                             <p class="text-md dark:text-gray-300">{{ $unitSettings->working_hour_start ?? '-' }}</p>
@@ -93,19 +109,38 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-300">{{ __('unitSettings.working_day_start') }}</label>
-                            <p class="text-md dark:text-gray-300">{{ $unitSettings->working_day_start ? __('unitSettings.days.' . $unitSettings->working_day_start) : '-' }}</p>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300">{{ __('unitSettings.working_day_end') }}</label>
-                            <p class="text-md dark:text-gray-300">{{ $unitSettings->working_day_end ? __('unitSettings.days.' . $unitSettings->working_day_end) : '-' }}</p>
+                            <label class="block text-sm font-medium text-gray-300">{{ __('unitSettings.working_days') }}</label>
+                            <div class="mt-1 space-y-1">
+                                @if($unitSettings->sunday)
+                                    <p class="text-md dark:text-gray-300">{{ __('unitSettings.sunday') }}</p>
+                                @endif
+                                @if($unitSettings->monday)
+                                    <p class="text-md dark:text-gray-300">{{ __('unitSettings.monday') }}</p>
+                                @endif
+                                @if($unitSettings->tuesday)
+                                    <p class="text-md dark:text-gray-300">{{ __('unitSettings.tuesday') }}</p>
+                                @endif
+                                @if($unitSettings->wednesday)
+                                    <p class="text-md dark:text-gray-300">{{ __('unitSettings.wednesday') }}</p>
+                                @endif
+                                @if($unitSettings->thursday)
+                                    <p class="text-md dark:text-gray-300">{{ __('unitSettings.thursday') }}</p>
+                                @endif
+                                @if($unitSettings->friday)
+                                    <p class="text-md dark:text-gray-300">{{ __('unitSettings.friday') }}</p>
+                                @endif
+                                @if($unitSettings->saturday)
+                                    <p class="text-md dark:text-gray-300">{{ __('unitSettings.saturday') }}</p>
+                                @endif
+                                @if(!$unitSettings->sunday && !$unitSettings->monday && !$unitSettings->tuesday && !$unitSettings->wednesday && !$unitSettings->thursday && !$unitSettings->friday && !$unitSettings->saturday)
+                                    <p class="text-md dark:text-gray-300">-</p>
+                                @endif
+                            </div>
                         </div>
 
                         <!-- Additional Settings -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-300">{{ __('unitSettings.use_ai_chatbot') }}</label>
-                            <p class="text-md dark:text-gray-300">{{ $unitSettings->use_ai_chatbot ? __('unitSettings.yes') : __('unitSettings.no') }}</p>
+                        <div class="col-span-2">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.additional_settings_section') }}</h3>
                         </div>
 
                         <div>

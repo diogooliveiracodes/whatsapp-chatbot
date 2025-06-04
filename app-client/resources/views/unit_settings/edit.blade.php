@@ -25,6 +25,10 @@
 
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <!-- Basic Information -->
+                            <div class="col-span-2">
+                                <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.basic_info_section') }}</h3>
+                            </div>
+
                             <div>
                                 <label for="name" class="label-style">{{ __('unitSettings.name') }}</label>
                                 <input type="text" id="name" name="name" value="{{ old('name', $unitSettings->name) }}"
@@ -39,6 +43,10 @@
                             </div>
 
                             <!-- Address Information -->
+                            <div class="col-span-2">
+                                <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.address_section') }}</h3>
+                            </div>
+
                             <div>
                                 <label for="street" class="label-style">{{ __('unitSettings.street') }}</label>
                                 <input type="text" id="street" name="street" value="{{ old('street', $unitSettings->street) }}"
@@ -82,6 +90,10 @@
                             </div>
 
                             <!-- WhatsApp Configuration -->
+                            <div class="col-span-2">
+                                <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.whatsapp_section') }}</h3>
+                            </div>
+
                             <div>
                                 <label for="whatsapp_webhook_url" class="label-style">{{ __('unitSettings.whatsapp_webhook_url') }}</label>
                                 <input type="text" id="whatsapp_webhook_url" name="whatsapp_webhook_url"
@@ -97,6 +109,10 @@
                             </div>
 
                             <!-- Working Hours -->
+                            <div class="col-span-2">
+                                <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.working_hours_section') }}</h3>
+                            </div>
+
                             <div>
                                 <label for="working_hour_start" class="label-style">{{ __('unitSettings.working_hour_start') }}</label>
                                 <input type="time" id="working_hour_start" name="working_hour_start"
@@ -111,45 +127,58 @@
                                        class="input-style">
                             </div>
 
-                            <div>
-                                <label for="working_day_start" class="label-style">{{ __('unitSettings.working_day_start') }}</label>
-                                <select id="working_day_start" name="working_day_start" class="input-style">
-                                    @foreach(range(1, 7) as $day)
-                                        <option value="{{ $day }}" {{ old('working_day_start', $unitSettings->working_day_start) == $day ? 'selected' : '' }}>
-                                            {{ __('unitSettings.days.' . $day) }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="working_day_end" class="label-style">{{ __('unitSettings.working_day_end') }}</label>
-                                <select id="working_day_end" name="working_day_end" class="input-style">
-                                    @foreach(range(1, 7) as $day)
-                                        <option value="{{ $day }}" {{ old('working_day_end', $unitSettings->working_day_end) == $day ? 'selected' : '' }}>
-                                            {{ __('unitSettings.days.' . $day) }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                            <!-- Working Days -->
+                            <div class="col-span-2">
+                                <label class="label-style">{{ __('unitSettings.working_days') }}</label>
+                                <div class="mt-2 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="sunday" value="1"
+                                               {{ old('sunday', $unitSettings->sunday) ? 'checked' : '' }}
+                                               class="form-checkbox text-indigo-500">
+                                        <span class="ml-2 dark:text-gray-300">{{ __('unitSettings.sunday') }}</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="monday" value="1"
+                                               {{ old('monday', $unitSettings->monday) ? 'checked' : '' }}
+                                               class="form-checkbox text-indigo-500">
+                                        <span class="ml-2 dark:text-gray-300">{{ __('unitSettings.monday') }}</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="tuesday" value="1"
+                                               {{ old('tuesday', $unitSettings->tuesday) ? 'checked' : '' }}
+                                               class="form-checkbox text-indigo-500">
+                                        <span class="ml-2 dark:text-gray-300">{{ __('unitSettings.tuesday') }}</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="wednesday" value="1"
+                                               {{ old('wednesday', $unitSettings->wednesday) ? 'checked' : '' }}
+                                               class="form-checkbox text-indigo-500">
+                                        <span class="ml-2 dark:text-gray-300">{{ __('unitSettings.wednesday') }}</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="thursday" value="1"
+                                               {{ old('thursday', $unitSettings->thursday) ? 'checked' : '' }}
+                                               class="form-checkbox text-indigo-500">
+                                        <span class="ml-2 dark:text-gray-300">{{ __('unitSettings.thursday') }}</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="friday" value="1"
+                                               {{ old('friday', $unitSettings->friday) ? 'checked' : '' }}
+                                               class="form-checkbox text-indigo-500">
+                                        <span class="ml-2 dark:text-gray-300">{{ __('unitSettings.friday') }}</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="saturday" value="1"
+                                               {{ old('saturday', $unitSettings->saturday) ? 'checked' : '' }}
+                                               class="form-checkbox text-indigo-500">
+                                        <span class="ml-2 dark:text-gray-300">{{ __('unitSettings.saturday') }}</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <!-- Additional Settings -->
-                            <div>
-                                <label for="use_ai_chatbot" class="label-style">{{ __('unitSettings.use_ai_chatbot') }}</label>
-                                <div class="mt-1">
-                                    <label class="inline-flex items-center mr-4">
-                                        <input type="radio" id="use_ai_chatbot_yes" name="use_ai_chatbot" value="1"
-                                               {{ old('use_ai_chatbot', $unitSettings->use_ai_chatbot) == 1 ? 'checked' : '' }}
-                                               class="form-radio text-indigo-500">
-                                        <span class="ml-2 dark:text-gray-300">{{ __('unitSettings.yes') }}</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" id="use_ai_chatbot_no" name="use_ai_chatbot" value="0"
-                                               {{ old('use_ai_chatbot', $unitSettings->use_ai_chatbot) == 0 ? 'checked' : '' }}
-                                               class="form-radio text-indigo-500">
-                                        <span class="ml-2 dark:text-gray-300">{{ __('unitSettings.no') }}</span>
-                                    </label>
-                                </div>
+                            <div class="col-span-2">
+                                <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.additional_settings_section') }}</h3>
                             </div>
 
                             <div>
