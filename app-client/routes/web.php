@@ -49,10 +49,10 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'unitSettings'], function () {
         Route::post('/', [UnitSettingsController::class, 'store'])->name('unitSettings.store');
         Route::get('/create', [UnitSettingsController::class, 'create'])->name('unitSettings.create');
-        Route::get('/{unit}', [UnitSettingsController::class, 'show'])->name('unitSettings.show');
-        Route::get('/{unit}/edit', [UnitSettingsController::class, 'edit'])->name('unitSettings.edit');
+        Route::get('/{unitSettings}', [UnitSettingsController::class, 'show'])->name('unitSettings.show');
+        Route::get('/{unitSettings}/edit', [UnitSettingsController::class, 'edit'])->name('unitSettings.edit');
         Route::put('/{unit}', [UnitSettingsController::class, 'update'])->name('unitSettings.update');
-        Route::delete('/{unit}', [UnitSettingsController::class, 'destroy'])->name('unitSettings.destroy');
+        Route::delete('/{unitSettings}', [UnitSettingsController::class, 'destroy'])->name('unitSettings.destroy');
     });
 
 
