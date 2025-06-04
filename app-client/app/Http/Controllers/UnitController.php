@@ -29,7 +29,7 @@ class UnitController extends Controller
     public function index(): View
     {
         try {
-            $units = $this->unitService->getUnits();
+            $units = $this->unitService->getUnits()->load('UnitSettingsId');
             return view('units.index', compact('units'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
@@ -94,6 +94,7 @@ class UnitController extends Controller
     public function show(Unit $unit): View|RedirectResponse
     {
         try {
+            $unit = $unit->load('UnitSettingsId');
             return view('units.show', compact('unit'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
@@ -116,6 +117,7 @@ class UnitController extends Controller
     public function edit(Unit $unit): View|RedirectResponse
     {
         try {
+            $unit = $unit->load('UnitSettingsId');
             return view('units.edit', compact('unit'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
