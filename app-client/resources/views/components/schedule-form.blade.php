@@ -26,7 +26,7 @@
     <div>
         <x-input-label for="schedule_date" value="Data" class="text-gray-700 dark:text-gray-300" />
         <x-text-input id="schedule_date" name="schedule_date" type="date"
-            class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+            class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm [color-scheme:light] dark:[color-scheme:dark]"
             value="{{ $schedule?->schedule_date }}" required />
     </div>
 
@@ -34,13 +34,13 @@
         <div>
             <x-input-label for="start_time" value="Início" class="text-gray-700 dark:text-gray-300" />
             <x-text-input id="start_time" name="start_time" type="time"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm [color-scheme:light] dark:[color-scheme:dark]"
                 value="{{ $schedule?->start_time }}" required />
         </div>
         <div>
             <x-input-label for="end_time" value="Fim" class="text-gray-700 dark:text-gray-300" />
             <x-text-input id="end_time" name="end_time" type="time"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm [color-scheme:light] dark:[color-scheme:dark]"
                 value="{{ $schedule?->end_time }}" required />
         </div>
     </div>
@@ -125,7 +125,6 @@
             }
         })
         .catch(error => {
-            console.error('Error:', error);
             alert(error.message || 'Erro ao processar o agendamento');
         });
     });
