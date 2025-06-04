@@ -9,10 +9,12 @@ return [
     'no' => 'No',
 
     // Basic Information
+    'basic_info_section' => 'Basic Information',
     'name' => 'Name',
     'phone' => 'Phone',
 
     // Address Information
+    'address_section' => 'Address',
     'street' => 'Street',
     'number' => 'Number',
     'complement' => 'Complement',
@@ -22,10 +24,12 @@ return [
     'zipcode' => 'ZIP Code',
 
     // WhatsApp Configuration
+    'whatsapp_section' => 'WhatsApp Settings',
     'whatsapp_webhook_url' => 'WhatsApp Webhook URL',
     'whatsapp_number' => 'WhatsApp Number',
 
     // Working Hours
+    'working_hours_section' => 'Working Hours',
     'working_hour_start' => 'Working Hour Start',
     'working_hour_end' => 'Working Hour End',
     'working_days' => 'Working Days',
@@ -38,6 +42,7 @@ return [
     'saturday' => 'Saturday',
 
     // Additional Settings
+    'additional_settings_section' => 'Additional Settings',
     'use_ai_chatbot' => 'Use AI Chatbot',
     'default_language' => 'Default Language',
     'timezone' => 'Timezone',
