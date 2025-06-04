@@ -20,6 +20,13 @@ class UnitSettingsSeeder extends Seeder
                 'name' => $unit->name,
                 'default_language' => 'pt-BR',
                 'timezone' => 'America/Sao_Paulo',
+                'sunday' => false,
+                'monday' => true,
+                'tuesday' => true,
+                'wednesday' => true,
+                'thursday' => true,
+                'friday' => true,
+                'saturday' => false,
             ]);
         }
     }

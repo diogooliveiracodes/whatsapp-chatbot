@@ -32,6 +32,12 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
      */
     public function update(UnitSettings $unitSettings, array $data): UnitSettings
     {
+        // Ensure all days are explicitly set
+        $days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        foreach ($days as $day) {
+            $data[$day] = isset($data[$day]);
+        }
+
         $unitSettings->update($data);
         return $unitSettings;
     }

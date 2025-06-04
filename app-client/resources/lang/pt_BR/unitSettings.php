@@ -28,8 +28,14 @@ return [
     // Working Hours
     'working_hour_start' => 'Horário de Início',
     'working_hour_end' => 'Horário de Término',
-    'working_day_start' => 'Dia de Início',
-    'working_day_end' => 'Dia de Término',
+    'working_days' => 'Dias de Funcionamento',
+    'sunday' => 'Domingo',
+    'monday' => 'Segunda-feira',
+    'tuesday' => 'Terça-feira',
+    'wednesday' => 'Quarta-feira',
+    'thursday' => 'Quinta-feira',
+    'friday' => 'Sexta-feira',
+    'saturday' => 'Sábado',
 
     // Additional Settings
     'use_ai_chatbot' => 'Usar Chatbot com IA',

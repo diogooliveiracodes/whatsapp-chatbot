@@ -9,9 +9,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class UnitSettingsFactory extends Factory
 {
-    const MONDAY = 1;
-    const FRIDAY = 6;
-
     /**
      * Define the model's default state.
      *
@@ -35,8 +32,13 @@ class UnitSettingsFactory extends Factory
             'whatsapp_number' => $this->faker->phoneNumber,
             'working_hour_start' => '08:00:00',
             'working_hour_end' => '18:00:00',
-            'working_day_start' => self::MONDAY,
-            'working_day_end' => self::FRIDAY,
+            'sunday' => false,
+            'monday' => true,
+            'tuesday' => true,
+            'wednesday' => true,
+            'thursday' => true,
+            'friday' => true,
+            'saturday' => false,
             'use_ai_chatbot' => $this->faker->boolean,
         ];
     }

@@ -31,14 +31,26 @@ class UnitSettings extends Model
         'timezone',
         'working_hour_start',
         'working_hour_end',
-        'working_day_start',
-        'working_day_end',
+        'sunday',
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
         'use_ai_chatbot'
     ];
 
     protected $casts = [
         'working_hour_start' => 'string',
         'working_hour_end' => 'string',
+        'sunday' => 'boolean',
+        'monday' => 'boolean',
+        'tuesday' => 'boolean',
+        'wednesday' => 'boolean',
+        'thursday' => 'boolean',
+        'friday' => 'boolean',
+        'saturday' => 'boolean',
         'use_ai_chatbot' => 'boolean'
     ];
 

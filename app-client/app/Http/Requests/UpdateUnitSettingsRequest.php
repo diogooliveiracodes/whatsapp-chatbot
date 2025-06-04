@@ -40,6 +40,13 @@ class UpdateUnitSettingsRequest extends FormRequest
             'use_ai_chatbot' => ['boolean'],
             'default_language' => ['nullable', 'string', 'max:5'],
             'timezone' => ['nullable', 'string', 'max:50'],
+            'sunday' => ['boolean'],
+            'monday' => ['boolean'],
+            'tuesday' => ['boolean'],
+            'wednesday' => ['boolean'],
+            'thursday' => ['boolean'],
+            'friday' => ['boolean'],
+            'saturday' => ['boolean'],
         ];
     }
 

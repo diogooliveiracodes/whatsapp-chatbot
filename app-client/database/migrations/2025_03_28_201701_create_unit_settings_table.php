@@ -27,8 +27,13 @@ return new class extends Migration {
             $table->string('whatsapp_number')->nullable();
             $table->time('working_hour_start')->nullable();
             $table->time('working_hour_end')->nullable();
-            $table->enum('working_day_start', [1, 2, 3, 4, 5, 6, 7])->nullable();
-            $table->enum('working_day_end', [1, 2, 3, 4, 5, 6, 7])->nullable();
+            $table->boolean('sunday')->default(false);
+            $table->boolean('monday')->default(true);
+            $table->boolean('tuesday')->default(false);
+            $table->boolean('wednesday')->default(false);
+            $table->boolean('thursday')->default(false);
+            $table->boolean('friday')->default(true);
+            $table->boolean('saturday')->default(false);
             $table->boolean('use_ai_chatbot')->default(false);
             $table->string('default_language', 5)->nullable();
             $table->string('timezone')->nullable();
