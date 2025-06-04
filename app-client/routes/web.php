@@ -46,6 +46,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [UnitController::class, 'store'])->name('units.store');
     });
 
+    Route::group(['prefix' => 'unitSettings'], function () {
+        Route::post('/', [UnitSettingsController::class, 'store'])->name('unitSettings.store');
+        Route::get('/create', [UnitSettingsController::class, 'create'])->name('unitSettings.create');
+        Route::get('/{unit}', [UnitSettingsController::class, 'show'])->name('unitSettings.show');
+        Route::get('/{unit}/edit', [UnitSettingsController::class, 'edit'])->name('unitSettings.edit');
+        Route::put('/{unit}', [UnitSettingsController::class, 'update'])->name('unitSettings.update');
+        Route::delete('/{unit}', [UnitSettingsController::class, 'destroy'])->name('unitSettings.destroy');
+    });
+
+
     Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
     Route::get('/schedules/create', [ScheduleController::class, 'create'])->name('schedules.create');
     Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
