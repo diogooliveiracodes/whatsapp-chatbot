@@ -38,12 +38,15 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ $unit->name }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ $unit->active ? __('units.yes') : __('units.no') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                    <x-actions.view :route="route('units.show', $unit->id)" />
-                                    <x-actions.edit :route="route('units.edit', $unit->id)" />
-                                    <x-actions.delete
-                                        :route="route('units.destroy', $unit->id)"
-                                        :confirmMessage="__('units.confirm_delete')"
-                                    />
+                                    <div class="flex items-center space-x-2">
+                                        <x-actions.view :route="route('units.show', $unit->id)" />
+                                        <x-actions.edit :route="route('units.edit', $unit->id)" />
+                                        <x-actions.delete
+                                            :route="route('units.destroy', $unit->id)"
+                                            :confirmMessage="__('units.confirm_delete')"
+                                        />
+                                        <x-actions.settings :route="route('unitSettings.show', $unit->id)" />
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
