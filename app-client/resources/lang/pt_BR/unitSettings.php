@@ -2,10 +2,17 @@
 
 return [
     'title' => 'Configurações da Unidade',
-    'edit' => 'Editar Configurações da Unidade',
+    'edit' => 'Editar Configurações',
+    'back' => 'Voltar',
+    'save_changes' => 'Salvar Alterações',
+    'yes' => 'Sim',
+    'no' => 'Não',
+
+    // Basic Information
     'name' => 'Nome',
     'phone' => 'Telefone',
-    'address' => 'Endereço',
+
+    // Address Information
     'street' => 'Rua',
     'number' => 'Número',
     'complement' => 'Complemento',
@@ -13,49 +20,42 @@ return [
     'city' => 'Cidade',
     'state' => 'Estado',
     'zipcode' => 'CEP',
-    'whatsapp' => 'WhatsApp',
+
+    // WhatsApp Configuration
     'whatsapp_webhook_url' => 'URL do Webhook do WhatsApp',
     'whatsapp_number' => 'Número do WhatsApp',
-    'working_hours' => 'Horário de Funcionamento',
+
+    // Working Hours
     'working_hour_start' => 'Horário de Início',
     'working_hour_end' => 'Horário de Término',
-    'working_days' => 'Dias de Funcionamento',
     'working_day_start' => 'Dia de Início',
     'working_day_end' => 'Dia de Término',
+
+    // Additional Settings
     'use_ai_chatbot' => 'Usar Chatbot com IA',
     'default_language' => 'Idioma Padrão',
     'timezone' => 'Fuso Horário',
-    'back' => 'Voltar',
-    'save' => 'Salvar',
-    'cancel' => 'Cancelar',
-    'update' => 'Atualizar',
-    'details' => 'Detalhes das Configurações da Unidade',
-    'yes' => 'Sim',
-    'no' => 'Não',
-    'actions' => 'Ações',
-    'confirm_delete' => 'Tem certeza que deseja excluir estas configurações da unidade?',
-    'created_at' => 'Criado Em',
-    'updated_at' => 'Atualizado Em',
-    'success' => [
-        'created' => 'Configurações da unidade criadas com sucesso.',
-        'updated' => 'Configurações da unidade atualizadas com sucesso.',
-        'deleted' => 'Configurações da unidade excluídas com sucesso.',
-    ],
-    'error' => [
-        'load' => 'Falha ao carregar configurações da unidade.',
-        'create' => 'Falha ao criar configurações da unidade.',
-        'show' => 'Falha ao carregar detalhes das configurações da unidade.',
-        'edit_form' => 'Falha ao carregar formulário de edição.',
-        'update' => 'Falha ao atualizar configurações da unidade.',
-        'delete' => 'Falha ao excluir configurações da unidade.',
-    ],
+
+    // Days of the week (using numbers as keys)
     'days' => [
-        1 => 'Segunda-feira',
-        2 => 'Terça-feira',
-        3 => 'Quarta-feira',
-        4 => 'Quinta-feira',
-        5 => 'Sexta-feira',
-        6 => 'Sábado',
-        7 => 'Domingo',
+        '1' => 'Domingo',
+        '2' => 'Segunda-feira',
+        '3' => 'Terça-feira',
+        '4' => 'Quarta-feira',
+        '5' => 'Quinta-feira',
+        '6' => 'Sexta-feira',
+        '7' => 'Sábado',
+    ],
+
+    // Error messages
+    'error' => [
+        'show' => 'Erro ao carregar as configurações da unidade.',
+        'edit_form' => 'Erro ao carregar o formulário de edição.',
+        'update' => 'Erro ao atualizar as configurações da unidade.',
+    ],
+
+    // Success messages
+    'success' => [
+        'updated' => 'Configurações da unidade atualizadas com sucesso.',
     ],
 ];

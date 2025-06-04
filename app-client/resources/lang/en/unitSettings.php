@@ -3,9 +3,16 @@
 return [
     'title' => 'Unit Settings',
     'edit' => 'Edit Unit Settings',
+    'back' => 'Back',
+    'save_changes' => 'Save Changes',
+    'yes' => 'Yes',
+    'no' => 'No',
+
+    // Basic Information
     'name' => 'Name',
     'phone' => 'Phone',
-    'address' => 'Address',
+
+    // Address Information
     'street' => 'Street',
     'number' => 'Number',
     'complement' => 'Complement',
@@ -13,49 +20,42 @@ return [
     'city' => 'City',
     'state' => 'State',
     'zipcode' => 'ZIP Code',
-    'whatsapp' => 'WhatsApp',
+
+    // WhatsApp Configuration
     'whatsapp_webhook_url' => 'WhatsApp Webhook URL',
     'whatsapp_number' => 'WhatsApp Number',
-    'working_hours' => 'Working Hours',
-    'working_hour_start' => 'Start Time',
-    'working_hour_end' => 'End Time',
-    'working_days' => 'Working Days',
-    'working_day_start' => 'Start Day',
-    'working_day_end' => 'End Day',
+
+    // Working Hours
+    'working_hour_start' => 'Working Hour Start',
+    'working_hour_end' => 'Working Hour End',
+    'working_day_start' => 'Working Day Start',
+    'working_day_end' => 'Working Day End',
+
+    // Additional Settings
     'use_ai_chatbot' => 'Use AI Chatbot',
     'default_language' => 'Default Language',
     'timezone' => 'Timezone',
-    'back' => 'Back',
-    'save' => 'Save',
-    'cancel' => 'Cancel',
-    'update' => 'Update',
-    'details' => 'Unit Settings Details',
-    'yes' => 'Yes',
-    'no' => 'No',
-    'actions' => 'Actions',
-    'confirm_delete' => 'Are you sure you want to delete these unit settings?',
-    'created_at' => 'Created At',
-    'updated_at' => 'Updated At',
-    'success' => [
-        'created' => 'Unit settings created successfully.',
-        'updated' => 'Unit settings updated successfully.',
-        'deleted' => 'Unit settings deleted successfully.',
-    ],
-    'error' => [
-        'load' => 'Failed to load unit settings.',
-        'create' => 'Failed to create unit settings.',
-        'show' => 'Failed to load unit settings details.',
-        'edit_form' => 'Failed to load edit form.',
-        'update' => 'Failed to update unit settings.',
-        'delete' => 'Failed to delete unit settings.',
-    ],
+
+    // Days of the week (using numbers as keys)
     'days' => [
-        1 => 'Monday',
-        2 => 'Tuesday',
-        3 => 'Wednesday',
-        4 => 'Thursday',
-        5 => 'Friday',
-        6 => 'Saturday',
-        7 => 'Sunday',
+        '1' => 'Sunday',
+        '2' => 'Monday',
+        '3' => 'Tuesday',
+        '4' => 'Wednesday',
+        '5' => 'Thursday',
+        '6' => 'Friday',
+        '7' => 'Saturday',
+    ],
+
+    // Error messages
+    'error' => [
+        'show' => 'Error loading unit settings.',
+        'edit_form' => 'Error loading edit form.',
+        'update' => 'Error updating unit settings.',
+    ],
+
+    // Success messages
+    'success' => [
+        'updated' => 'Unit settings updated successfully.',
     ],
 ];
