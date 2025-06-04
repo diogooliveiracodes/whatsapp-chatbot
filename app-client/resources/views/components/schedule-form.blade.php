@@ -55,6 +55,7 @@
         <x-secondary-button type="button" onclick="window.closeScheduleModal()" class="dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
             Cancelar
         </x-secondary-button>
+        <x-buttons.delete id="deleteScheduleBtn" class="hidden" :onclick="'confirmDeleteSchedule()'" />
         <x-primary-button type="submit">
             Salvar
         </x-primary-button>
@@ -63,6 +64,34 @@
 
 @push('scripts')
 <script>
+    window.confirmDeleteSchedule = function() {
+        if (confirm('Tem certeza que deseja excluir este agendamento?')) {
+            const scheduleId = document.getElementById('schedule_id').value;
+            if (!scheduleId) return;
+
+            fetch(`/schedules/${scheduleId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert(data.message || 'Erro ao excluir agendamento');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Erro ao excluir agendamento');
+            });
+        }
+    }
+
     document.getElementById('scheduleForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
@@ -125,7 +154,6 @@
             }
         })
         .catch(error => {
-            alert(error.message || 'Erro ao processar o agendamento');
         });
     });
 </script>
