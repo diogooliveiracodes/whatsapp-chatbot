@@ -42,4 +42,5 @@ return [
         'update' => 'Failed to update unit',
         'delete' => 'Failed to delete unit',
     ],
+    'settings' => 'Settings',
 ];

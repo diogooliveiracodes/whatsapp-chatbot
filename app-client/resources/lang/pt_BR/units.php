@@ -28,4 +28,5 @@ return [
         'update' => 'Falha ao atualizar unidade',
         'delete' => 'Falha ao excluir unidade',
     ],
+    'settings' => 'Configurações',
 ];
