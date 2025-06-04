@@ -13,6 +13,7 @@ class UnitSettings extends Model
 
     protected $table = 'unit_settings';
     protected $fillable = [
+        'id',
         'company_id',
         'unit_id',
         'name',
