@@ -37,6 +37,8 @@ class UpdateUnitSettingsRequest extends FormRequest
             'default_language' => ['nullable', 'string', 'max:5'],
             'timezone' => ['nullable', 'string', 'max:50'],
             'sunday' => ['boolean'],
+            'sunday_start' => ['nullable', 'required_if:sunday,true', 'date_format:H:i'],
+            'sunday_end' => ['nullable', 'required_if:sunday,true', 'date_format:H:i'],
             'monday_start' => ['nullable', 'required_if:monday,true', 'date_format:H:i'],
             'monday_end' => ['nullable', 'required_if:monday,true', 'date_format:H:i'],
             'monday' => ['boolean'],
