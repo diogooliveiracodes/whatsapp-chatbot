@@ -27,93 +27,63 @@
 
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                             <!-- Basic Information -->
-                            <div class="col-span-2">
-                                <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.basic_info_section') }}</h3>
+                            <x-forms.section-title :title="__('unitSettings.basic_info_section')" />
+
+                            <div>
+                                <x-unit-settings.text-input name="name" :label="__('unitSettings.name')" :value="$unitSettings->name"
+                                    :required="true" />
                             </div>
 
                             <div>
-                                <label for="name" class="label-style">{{ __('unitSettings.name') }}</label>
-                                <input type="text" id="name" name="name" value="{{ old('name', $unitSettings->name) }}"
-                                       class="input-style"
-                                       required>
-                            </div>
-
-                            <div>
-                                <label for="phone" class="label-style">{{ __('unitSettings.phone') }}</label>
-                                <input type="text" id="phone" name="phone" value="{{ old('phone', $unitSettings->phone) }}"
-                                       class="input-style">
+                                <x-unit-settings.text-input name="phone" :label="__('unitSettings.phone')" :value="$unitSettings->phone" />
                             </div>
 
                             <!-- Address Information -->
-                            <div class="col-span-2">
-                                <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.address_section') }}</h3>
+                            <x-forms.section-title :title="__('unitSettings.address_section')" />
+
+                            <div>
+                                <x-unit-settings.text-input name="street" :label="__('unitSettings.street')" :value="$unitSettings->street" />
                             </div>
 
                             <div>
-                                <label for="street" class="label-style">{{ __('unitSettings.street') }}</label>
-                                <input type="text" id="street" name="street" value="{{ old('street', $unitSettings->street) }}"
-                                       class="input-style">
+                                <x-unit-settings.text-input name="number" :label="__('unitSettings.number')" :value="$unitSettings->number" />
                             </div>
 
                             <div>
-                                <label for="number" class="label-style">{{ __('unitSettings.number') }}</label>
-                                <input type="text" id="number" name="number" value="{{ old('number', $unitSettings->number) }}"
-                                       class="input-style">
+                                <x-unit-settings.text-input name="complement" :label="__('unitSettings.complement')" :value="$unitSettings->complement" />
                             </div>
 
                             <div>
-                                <label for="complement" class="label-style">{{ __('unitSettings.complement') }}</label>
-                                <input type="text" id="complement" name="complement" value="{{ old('complement', $unitSettings->complement) }}"
-                                       class="input-style">
+                                <x-unit-settings.text-input name="neighborhood" :label="__('unitSettings.neighborhood')" :value="$unitSettings->neighborhood" />
                             </div>
 
                             <div>
-                                <label for="neighborhood" class="label-style">{{ __('unitSettings.neighborhood') }}</label>
-                                <input type="text" id="neighborhood" name="neighborhood" value="{{ old('neighborhood', $unitSettings->neighborhood) }}"
-                                       class="input-style">
+                                <x-unit-settings.text-input name="city" :label="__('unitSettings.city')" :value="$unitSettings->city" />
                             </div>
 
                             <div>
-                                <label for="city" class="label-style">{{ __('unitSettings.city') }}</label>
-                                <input type="text" id="city" name="city" value="{{ old('city', $unitSettings->city) }}"
-                                       class="input-style">
+                                <x-unit-settings.text-input name="state" :label="__('unitSettings.state')" :value="$unitSettings->state" />
                             </div>
 
                             <div>
-                                <label for="state" class="label-style">{{ __('unitSettings.state') }}</label>
-                                <input type="text" id="state" name="state" value="{{ old('state', $unitSettings->state) }}"
-                                       class="input-style">
-                            </div>
-
-                            <div>
-                                <label for="zipcode" class="label-style">{{ __('unitSettings.zipcode') }}</label>
-                                <input type="text" id="zipcode" name="zipcode" value="{{ old('zipcode', $unitSettings->zipcode) }}"
-                                       class="input-style">
+                                <x-unit-settings.text-input name="zipcode" :label="__('unitSettings.zipcode')" :value="$unitSettings->zipcode" />
                             </div>
 
                             <!-- WhatsApp Configuration -->
-                            <div class="col-span-2">
-                                <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.whatsapp_section') }}</h3>
+                            <x-forms.section-title :title="__('unitSettings.whatsapp_section')" />
+
+                            <div>
+                                <x-unit-settings.text-input name="whatsapp_webhook_url" :label="__('unitSettings.whatsapp_webhook_url')"
+                                    :value="$unitSettings->whatsapp_webhook_url" />
                             </div>
 
                             <div>
-                                <label for="whatsapp_webhook_url" class="label-style">{{ __('unitSettings.whatsapp_webhook_url') }}</label>
-                                <input type="text" id="whatsapp_webhook_url" name="whatsapp_webhook_url"
-                                       value="{{ old('whatsapp_webhook_url', $unitSettings->whatsapp_webhook_url) }}"
-                                       class="input-style">
-                            </div>
-
-                            <div>
-                                <label for="whatsapp_number" class="label-style">{{ __('unitSettings.whatsapp_number') }}</label>
-                                <input type="text" id="whatsapp_number" name="whatsapp_number"
-                                       value="{{ old('whatsapp_number', $unitSettings->whatsapp_number) }}"
-                                       class="input-style">
+                                <x-unit-settings.text-input name="whatsapp_number" :label="__('unitSettings.whatsapp_number')"
+                                    :value="$unitSettings->whatsapp_number" />
                             </div>
 
                             <!-- Working Hours -->
-                            <div class="col-span-2">
-                                <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.working_hours_section') }}</h3>
-                            </div>
+                            <x-forms.section-title :title="__('unitSettings.working_hours_section')" />
 
                             <div class="col-span-2">
                                 <div class="space-y-4">
@@ -125,41 +95,45 @@
                                             'wednesday' => __('unitSettings.wednesday'),
                                             'thursday' => __('unitSettings.thursday'),
                                             'friday' => __('unitSettings.friday'),
-                                            'saturday' => __('unitSettings.saturday')
+                                            'saturday' => __('unitSettings.saturday'),
                                         ];
                                     @endphp
 
-                                    @foreach($days as $day => $label)
-                                        <x-unit-settings.day-time-input
-                                            :day="$day"
-                                            :label="$label"
-                                            :isChecked="old($day, $unitSettings->$day)"
-                                            :startTime="old($day.'_start', $unitSettings->{$day.'_start'})"
-                                            :endTime="old($day.'_end', $unitSettings->{$day.'_end'})"
-                                        />
+                                    @foreach ($days as $day => $label)
+                                        <x-unit-settings.day-time-input :day="$day" :label="$label"
+                                            :isChecked="old($day, $unitSettings->$day)" :startTime="old($day . '_start', $unitSettings->{$day . '_start'})" :endTime="old($day . '_end', $unitSettings->{$day . '_end'})" />
                                     @endforeach
                                 </div>
                             </div>
 
                             <!-- Additional Settings -->
-                            <div class="col-span-2">
-                                <h3 class="text-lg font-semibold text-gray-300 mb-4">{{ __('unitSettings.additional_settings_section') }}</h3>
-                            </div>
+                            <x-forms.section-title :title="__('unitSettings.additional_settings_section')" />
 
                             <div>
-                                <label for="default_language" class="label-style">{{ __('unitSettings.default_language') }}</label>
+                                <label for="default_language"
+                                    class="label-style">{{ __('unitSettings.default_language') }}</label>
                                 <select id="default_language" name="default_language" class="input-style">
-                                    <option value="pt_BR" {{ old('default_language', $unitSettings->default_language) == 'pt_BR' ? 'selected' : '' }}>Português</option>
-                                    <option value="en" {{ old('default_language', $unitSettings->default_language) == 'en' ? 'selected' : '' }}>English</option>
+                                    <option value="pt_BR"
+                                        {{ old('default_language', $unitSettings->default_language) == 'pt_BR' ? 'selected' : '' }}>
+                                        Português</option>
+                                    <option value="en"
+                                        {{ old('default_language', $unitSettings->default_language) == 'en' ? 'selected' : '' }}>
+                                        English</option>
                                 </select>
                             </div>
 
                             <div>
                                 <label for="timezone" class="label-style">{{ __('unitSettings.timezone') }}</label>
                                 <select id="timezone" name="timezone" class="input-style">
-                                    <option value="America/Sao_Paulo" {{ old('timezone', $unitSettings->timezone) == 'America/Sao_Paulo' ? 'selected' : '' }}>Brasília (GMT-3)</option>
-                                    <option value="America/New_York" {{ old('timezone', $unitSettings->timezone) == 'America/New_York' ? 'selected' : '' }}>New York (GMT-4)</option>
-                                    <option value="Europe/London" {{ old('timezone', $unitSettings->timezone) == 'Europe/London' ? 'selected' : '' }}>London (GMT+1)</option>
+                                    <option value="America/Sao_Paulo"
+                                        {{ old('timezone', $unitSettings->timezone) == 'America/Sao_Paulo' ? 'selected' : '' }}>
+                                        Brasília (GMT-3)</option>
+                                    <option value="America/New_York"
+                                        {{ old('timezone', $unitSettings->timezone) == 'America/New_York' ? 'selected' : '' }}>
+                                        New York (GMT-4)</option>
+                                    <option value="Europe/London"
+                                        {{ old('timezone', $unitSettings->timezone) == 'Europe/London' ? 'selected' : '' }}>
+                                        London (GMT+1)</option>
                                 </select>
                             </div>
                         </div>
