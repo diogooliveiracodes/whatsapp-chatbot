@@ -81,4 +81,22 @@ return [
     'success' => [
         'updated' => 'Unit settings updated successfully.',
     ],
+
+    // Validation messages
+    'validation' => [
+        'sunday_start_required' => 'The start time for Sunday is required when Sunday is active.',
+        'sunday_end_required' => 'The end time for Sunday is required when Sunday is active.',
+        'monday_start_required' => 'The start time for Monday is required when Monday is active.',
+        'monday_end_required' => 'The end time for Monday is required when Monday is active.',
+        'tuesday_start_required' => 'The start time for Tuesday is required when Tuesday is active.',
+        'tuesday_end_required' => 'The end time for Tuesday is required when Tuesday is active.',
+        'wednesday_start_required' => 'The start time for Wednesday is required when Wednesday is active.',
+        'wednesday_end_required' => 'The end time for Wednesday is required when Wednesday is active.',
+        'thursday_start_required' => 'The start time for Thursday is required when Thursday is active.',
+        'thursday_end_required' => 'The end time for Thursday is required when Thursday is active.',
+        'friday_start_required' => 'The start time for Friday is required when Friday is active.',
+        'friday_end_required' => 'The end time for Friday is required when Friday is active.',
+        'saturday_start_required' => 'The start time for Saturday is required when Saturday is active.',
+        'saturday_end_required' => 'The end time for Saturday is required when Saturday is active.',
+    ],
 ];

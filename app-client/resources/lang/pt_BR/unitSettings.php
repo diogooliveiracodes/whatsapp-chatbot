@@ -81,4 +81,22 @@ return [
     'success' => [
         'updated' => 'Configurações da unidade atualizadas com sucesso.',
     ],
+
+    // Validation messages
+    'validation' => [
+        'sunday_start_required' => 'O horário de início do domingo é obrigatório quando o domingo está ativo.',
+        'sunday_end_required' => 'O horário de término do domingo é obrigatório quando o domingo está ativo.',
+        'monday_start_required' => 'O horário de início da segunda-feira é obrigatório quando a segunda-feira está ativa.',
+        'monday_end_required' => 'O horário de término da segunda-feira é obrigatório quando a segunda-feira está ativa.',
+        'tuesday_start_required' => 'O horário de início da terça-feira é obrigatório quando a terça-feira está ativa.',
+        'tuesday_end_required' => 'O horário de término da terça-feira é obrigatório quando a terça-feira está ativa.',
+        'wednesday_start_required' => 'O horário de início da quarta-feira é obrigatório quando a quarta-feira está ativa.',
+        'wednesday_end_required' => 'O horário de término da quarta-feira é obrigatório quando a quarta-feira está ativa.',
+        'thursday_start_required' => 'O horário de início da quinta-feira é obrigatório quando a quinta-feira está ativa.',
+        'thursday_end_required' => 'O horário de término da quinta-feira é obrigatório quando a quinta-feira está ativa.',
+        'friday_start_required' => 'O horário de início da sexta-feira é obrigatório quando a sexta-feira está ativa.',
+        'friday_end_required' => 'O horário de término da sexta-feira é obrigatório quando a sexta-feira está ativa.',
+        'saturday_start_required' => 'O horário de início do sábado é obrigatório quando o sábado está ativo.',
+        'saturday_end_required' => 'O horário de término do sábado é obrigatório quando o sábado está ativo.',
+    ],
 ];
