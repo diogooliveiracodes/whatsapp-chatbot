@@ -15,4 +15,14 @@ return [
     'delete' => 'Delete',
     'confirm_delete' => 'Are you sure you want to delete?',
     'select' => 'Select a customer',
+    'success' => [
+        'updated' => 'Customer updated successfully',
+        'deleted' => 'Customer deleted successfully',
+        'created' => 'Customer created successfully',
+    ],
+    'error' => [
+        'update' => 'Failed to update customer',
+        'delete' => 'Failed to delete customer',
+        'load' => 'Failed to load customer for editing',
+    ],
 ];

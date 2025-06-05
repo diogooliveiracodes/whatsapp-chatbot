@@ -49,10 +49,12 @@ class CustomerController extends Controller
     {
         try {
             $customers = $this->customerService->getCustomersByUnit();
+
             return view('customers.index', compact('customers'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, ['action' => 'index']);
-            return view('customers.index', ['customers' => [], 'error' => 'Failed to load customers']);
+
+            return view('customers.index', ['customers' => [], 'error' => __('customers.error.load')]);
         }
     }
 
@@ -62,48 +64,18 @@ class CustomerController extends Controller
      * @param StoreCustomerRequest $request
      * @return JsonResponse
      */
-    public function store(StoreCustomerRequest $request): JsonResponse
+    public function store(StoreCustomerRequest $request): RedirectResponse
     {
         try {
-            $customer = $this->customerService->createCustomer($request->validated());
+            $this->customerService->createCustomer($request->validated());
 
-            return response()->json([
-                'success' => true,
-                'customer' => $customer
-            ], 201);
+            return redirect()->route('customers.index')->with('success', __('customers.success.created'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'store',
-                'request_data' => $request->validated()
+                'request_data' => $request->validated(),
             ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to create customer'
-            ], 500);
-        }
-    }
-
-    /**
-     * Search for customers by name or phone.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function search(Request $request): JsonResponse
-    {
-        try {
-            $query = $request->get('q');
-            $customers = $this->customerService->searchCustomers($query);
-            return response()->json($customers, 200);
-        } catch (\Exception $e) {
-            $this->errorLogService->logError($e, [
-                'action' => 'search',
-                'query' => $query
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to search customers'
-            ], 500);
+            return redirect()->back()->withInput()->with('error', __('customers.error.create'));
         }
     }
 
@@ -120,7 +92,7 @@ class CustomerController extends Controller
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'show',
-                'customer_id' => $customer->id
+                'customer_id' => $customer->id,
             ]);
             return view('customers.show', ['error' => 'Failed to load customer details']);
         }
@@ -139,9 +111,9 @@ class CustomerController extends Controller
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'edit',
-                'customer_id' => $customer->id
+                'customer_id' => $customer->id,
             ]);
-            return view('customers.edit', ['error' => 'Failed to load customer for editing']);
+            return view('customers.index', ['error' => __('customers.error.load')]);
         }
     }
 
@@ -156,14 +128,16 @@ class CustomerController extends Controller
     {
         try {
             $this->customerService->updateCustomer($customer, $request->validated());
-            return redirect()->route('customers.index')->with('success', 'Customer updated successfully');
+
+            return redirect()->route('customers.index')->with('success', __('customers.success.updated'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'update',
                 'customer_id' => $customer->id,
-                'request_data' => $request->validated()
+                'request_data' => $request->validated(),
             ]);
-            return redirect()->back()->with('error', 'Failed to update customer');
+
+            return redirect()->back()->with('error', __('customers.error.update'));
         }
     }
 
@@ -177,13 +151,13 @@ class CustomerController extends Controller
     {
         try {
             $this->customerService->deleteCustomer($customer);
-            return redirect()->route('customers.index')->with('success', 'Customer deleted successfully');
+            return redirect()->route('customers.index')->with('success', __('customers.success.deleted'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'destroy',
-                'customer_id' => $customer->id
+                'customer_id' => $customer->id,
             ]);
-            return redirect()->back()->with('error', 'Failed to delete customer');
+            return redirect()->back()->with('error', __('customers.error.delete'));
         }
     }
 }
