@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Unidades',
     'edit' => 'Editar Unidade',
     'name' => 'Nome',
     'active' => 'Ativo',
