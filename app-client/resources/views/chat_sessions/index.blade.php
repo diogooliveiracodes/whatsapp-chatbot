@@ -1,7 +1,7 @@
 <x-app-layout>
-    <x-header>
+    <x-global.header>
         {{ __('Conversas') }}
-    </x-header>
+    </x-global.header>
 
     <div class="flex h-[calc(100vh-4rem)]">
         <!-- Sidebar with conversation list -->

@@ -1,22 +1,13 @@
 <x-app-layout>
-    <x-header>
+    <x-global.header>
         {{ __('customers.edit') }}
-    </x-header>
+    </x-global.header>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-gray-800 shadow-lg sm:rounded-lg">
                 <div class="p-6 text-gray-100 space-y-6">
-                    <!-- Display Validation Errors -->
-                    @if ($errors->any())
-                        <div class="bg-red-600 text-white p-4 rounded-md mb-6">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                    <x-global.session-alerts />
 
                     <form action="{{ route('customers.update', $customer->id) }}" method="POST">
                         @csrf
