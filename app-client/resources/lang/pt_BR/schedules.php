@@ -2,6 +2,7 @@
 
 return [
     'messages' => [
+        'closed' => 'Fechado',
         'outside_working_days' => 'O agendamento não pode ser realizado fora dos dias de funcionamento.',
         'outside_working_hours' => 'O agendamento deve estar dentro do horário de funcionamento.',
         'time_conflict' => 'Já existe um agendamento neste horário.',
