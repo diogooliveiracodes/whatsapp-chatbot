@@ -1,0 +1,50 @@
+<?php
+
+return [
+    'title' => 'Tipos de Serviço',
+    'create' => 'Criar Tipo de Serviço',
+    'edit' => 'Editar Tipo de Serviço',
+    'name' => 'Nome',
+    'description' => 'Descrição',
+    'active' => 'Ativo',
+    'back' => 'Voltar',
+    'save_changes' => 'Salvar Alterações',
+    'yes' => 'Sim',
+    'no' => 'Não',
+    'created_at' => 'Criado Em',
+    'actions' => 'Ações',
+    'view' => 'Visualizar',
+    'delete' => 'Excluir',
+    'confirm_delete' => 'Tem certeza que deseja excluir este tipo de serviço?',
+    'success' => [
+        'created' => 'Tipo de serviço criado com sucesso',
+        'updated' => 'Tipo de serviço atualizado com sucesso',
+        'deleted' => 'Tipo de serviço excluído com sucesso',
+    ],
+    'error' => [
+        'load' => 'Falha ao carregar tipos de serviço',
+        'create' => 'Falha ao criar tipo de serviço',
+        'update' => 'Falha ao atualizar tipo de serviço',
+        'delete' => 'Falha ao excluir tipo de serviço',
+    ],
+    'validation' => [
+        'name' => [
+            'required' => 'O nome do tipo de serviço é obrigatório.',
+            'string' => 'O nome do tipo de serviço deve ser um texto.',
+            'max' => 'O nome do tipo de serviço não pode exceder 100 caracteres.',
+            'unique' => 'Este nome de tipo de serviço já está em uso.',
+        ],
+        'description' => [
+            'string' => 'A descrição deve ser um texto.',
+            'max' => 'A descrição não pode exceder 255 caracteres.',
+        ],
+        'active' => [
+            'boolean' => 'O status ativo deve ser um valor booleano.',
+        ],
+    ],
+    'attributes' => [
+        'name' => 'nome',
+        'description' => 'descrição',
+        'active' => 'ativo',
+    ],
+];
