@@ -1,25 +1,13 @@
 <x-app-layout>
-    <x-header>
-        {{ __('schedules.calendar') }}
-    </x-header>
+    <x-global.header>
+        {{ __('pages.schedules') }}
+    </x-global.header>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    @if (session('error'))
-                        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
-                            role="alert">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-
-                    @if (session('success'))
-                        <div class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
-                            role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+                    <x-global.session-alerts />
 
                     <div class="mb-4">
                         <a href="{{ route('schedules.create') }}"
@@ -116,10 +104,22 @@
                                                         );
                                                     @endphp
                                                     <td
-                                                        class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 border-r border-gray-600
+                                                        class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 border-r border-gray-600 relative group
                                                         {{ !$isWithinOperatingHours ? 'bg-gray-100 dark:bg-gray-700 opacity-50' : '' }}">
                                                         @if ($isWithinOperatingHours && $schedule)
                                                             <x-schedules.schedule-card :schedule="$schedule" />
+                                                        @elseif ($isWithinOperatingHours)
+                                                            <a href="{{ route('schedules.create', [
+                                                                'schedule_date' => $currentDate,
+                                                                'start_time' => $currentTime
+                                                            ]) }}"
+                                                            class="absolute inset-0 flex items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-500 dark:text-gray-400">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                                                </svg>
+                                                            </div>
+                                                            </a>
                                                         @endif
                                                     </td>
                                                 @endforeach

@@ -1,28 +1,13 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-100 leading-tight">
-            {{ __('schedules.new_schedule') }}
-        </h2>
-    </x-slot>
+    <x-global.header>
+        {{ __('schedules.new_schedule') }}
+    </x-global.header>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-gray-800 border-b border-gray-700">
-
-                    @if (session('error'))
-                        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
-                            role="alert">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-
-                    @if (session('success'))
-                        <div class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
-                            role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+                    <x-global.session-alerts />
 
                     <form method="POST" action="{{ route('schedules.store') }}" class="space-y-6">
                         @csrf
@@ -45,7 +30,7 @@
                             <label for="schedule_date" class="block font-medium text-sm text-gray-300">
                                 {{ __('schedules.date') }}
                             </label>
-                            <input id="schedule_date" type="date" name="schedule_date" value="{{ old('schedule_date') }}"
+                            <input id="schedule_date" type="date" name="schedule_date" value="{{ request('schedule_date', old('schedule_date')) }}"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 [color-scheme:light] dark:[color-scheme:dark]"
                                 required />
                         </div>
@@ -54,7 +39,7 @@
                             <label for="start_time" class="block font-medium text-sm text-gray-300">
                                 {{ __('schedules.start_time') }}
                             </label>
-                            <input id="start_time" type="time" name="start_time" value="{{ old('start_time') }}"
+                            <input id="start_time" type="time" name="start_time" value="{{ request('start_time', old('start_time')) }}"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 [color-scheme:light] dark:[color-scheme:dark]"
                                 required />
                         </div>
