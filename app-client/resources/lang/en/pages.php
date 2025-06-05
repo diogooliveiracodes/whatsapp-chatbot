@@ -11,4 +11,5 @@ return [
     'unitSettings' => 'Unit Settings',
     'editUnitSettings' => 'Edit Unit Settings',
     'no_units' => 'No units available',
+    'unitServiceTypes' => 'Unit Service Types',
 ];

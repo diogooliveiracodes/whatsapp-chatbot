@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'unit' => 'Unidade',
+    'unitServiceType' => 'Tipo de Serviço',
+    'unitName' => 'Nome da Unidade',
     'title' => 'Tipos de Serviço',
     'create' => 'Criar Tipo de Serviço',
     'edit' => 'Editar Tipo de Serviço',

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'unit' => 'Unit',
+    'unitServiceType' => 'Service Type',
+    'unitName' => 'Unit Name',
     'title' => 'Service Types',
     'create' => 'Create Service Type',
     'edit' => 'Edit Service Type',

@@ -11,4 +11,5 @@ return [
     'unitSettings' => 'Configurações da Unidade',
     'editUnitSettings' => 'Editar Configurações da Unidade',
     'no_units' => 'Nenhuma unidade disponível',
+    'unitServiceTypes' => 'Tipos de Serviço',
 ];
