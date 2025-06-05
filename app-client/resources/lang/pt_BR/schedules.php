@@ -15,6 +15,7 @@ return [
         'update_error' => 'Erro ao atualizar agendamento: :message',
         'delete_error' => 'Erro ao excluir agendamento: :message',
         'cancel_error' => 'Erro ao cancelar agendamento: :message',
+        'load_error' => 'Erro ao carregar agendamentos.',
         'customer_required' => 'Cliente é obrigatório',
         'customer_not_found' => 'Cliente selecionado não existe',
         'date_required' => 'Data do agendamento é obrigatória',

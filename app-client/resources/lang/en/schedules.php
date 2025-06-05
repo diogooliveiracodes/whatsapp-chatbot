@@ -15,6 +15,7 @@ return [
         'update_error' => 'Error updating appointment: :message',
         'delete_error' => 'Error deleting appointment: :message',
         'cancel_error' => 'Error cancelling appointment: :message',
+        'load_error' => 'Error loading schedules.',
         'customer_required' => 'Customer is required',
         'customer_not_found' => 'Selected customer does not exist',
         'date_required' => 'Schedule date is required',
