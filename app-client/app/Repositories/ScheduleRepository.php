@@ -5,12 +5,13 @@ namespace App\Repositories;
 use App\Models\Schedule;
 use App\Repositories\Interfaces\ScheduleRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use App\Services\Unit\UnitService;
 
 class ScheduleRepository implements ScheduleRepositoryInterface
 {
-    public function __construct(protected Schedule $model)
-    {
-    }
+    public function __construct(protected Schedule $model, protected UnitService $unitService) {}
 
     public function findById(int $id): ?Schedule
     {
@@ -19,7 +20,8 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 
     public function findByUnitId(int $unitId): Collection
     {
-        return $this->model->with(['customer', 'user'])
+        return $this->model
+            ->with(['customer', 'user'])
             ->where('unit_id', $unitId)
             ->get();
     }
@@ -41,19 +43,21 @@ class ScheduleRepository implements ScheduleRepositoryInterface
 
     public function findConflictingSchedule(int $unitId, string $scheduleDate, string $startTime, string $endTime, ?int $currentScheduleId = null): ?Schedule
     {
-        return $this->model->where('unit_id', $unitId)
+        return $this->model
+            ->where('unit_id', $unitId)
             ->when($currentScheduleId, function ($query) use ($currentScheduleId) {
                 return $query->where('id', '!=', $currentScheduleId);
             })
             ->where('schedule_date', $scheduleDate)
             ->where(function ($query) use ($startTime, $endTime) {
-                $query->where(function ($q) use ($startTime) {
-                    $q->where('start_time', '<=', $startTime)
-                        ->where('end_time', '>', $startTime);
-                })->orWhere(function ($q) use ($endTime) {
-                    $q->where('start_time', '<', $endTime)
-                        ->where('end_time', '>=', $endTime);
-                });
-            })->first();
+                $query
+                    ->where(function ($q) use ($startTime) {
+                        $q->where('start_time', '<=', $startTime)->where('end_time', '>', $startTime);
+                    })
+                    ->orWhere(function ($q) use ($endTime) {
+                        $q->where('start_time', '<', $endTime)->where('end_time', '>=', $endTime);
+                    });
+            })
+            ->first();
     }
 }
