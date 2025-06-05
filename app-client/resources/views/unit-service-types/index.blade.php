@@ -1,23 +1,13 @@
 <x-app-layout>
-    <x-header>
+    <x-global.header>
         {{ __('unit-service-types.title') }}
-    </x-header>
+    </x-global.header>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    @if (session('error'))
-                        <x-global.alert type="error">
-                            {{ session('error') }}
-                        </x-global.alert>
-                    @endif
-
-                    @if (session('success'))
-                        <x-global.alert type="success">
-                            {{ session('success') }}
-                        </x-global.alert>
-                    @endif
+                    <x-global.session-alerts />
 
                     <x-global.create-button
                         :route="route('unitServiceTypes.create')"
