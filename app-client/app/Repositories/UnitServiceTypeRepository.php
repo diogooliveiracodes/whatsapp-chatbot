@@ -41,9 +41,6 @@ class UnitServiceTypeRepository
      */
     public function update(UnitServiceType $unitServiceType, array $data): UnitServiceType
     {
-        if(!$data['active']) {
-            $data['active'] = 0;
-        }
         $unitServiceType->update($data);
         return $unitServiceType;
     }
