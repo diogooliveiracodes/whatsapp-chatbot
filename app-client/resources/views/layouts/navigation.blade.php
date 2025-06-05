@@ -33,6 +33,9 @@
                 <x-nav-link :href="route('units.index')" :active="request()->routeIs('units.*')">
                     {{ __('pages.units') }}
                 </x-nav-link>
+                <x-nav-link :href="route('unitServiceTypes.index')" :active="request()->routeIs('unitServiceTypes.*')">
+                    {{ __('pages.unitServiceTypes') }}
+                </x-nav-link>
             @endif
         </nav>
 
