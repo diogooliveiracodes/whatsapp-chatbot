@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\UnitServiceTypeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -53,6 +54,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/{unitSettings}/edit', [UnitSettingsController::class, 'edit'])->name('unitSettings.edit');
         Route::put('/{unitSettings}', [UnitSettingsController::class, 'update'])->name('unitSettings.update');
         Route::delete('/{unitSettings}', [UnitSettingsController::class, 'destroy'])->name('unitSettings.destroy');
+    });
+
+    Route::group(['prefix' => 'unitServiceTypes'], function () {
+        Route::get('/', [UnitServiceTypeController::class, 'index'])->name('unitServiceTypes.index');
+        Route::get('/create', [UnitServiceTypeController::class, 'create'])->name('unitServiceTypes.create');
+        Route::get('/{unitServiceType}', [UnitServiceTypeController::class, 'show'])->name('unitServiceTypes.show');
+        Route::get('/{unitServiceType}/edit', [UnitServiceTypeController::class, 'edit'])->name('unitServiceTypes.edit');
+        Route::put('/{unitServiceType}', [UnitServiceTypeController::class, 'update'])->name('unitServiceTypes.update');
+        Route::delete('/{unitServiceType}', [UnitServiceTypeController::class, 'destroy'])->name('unitServiceTypes.destroy');
     });
 
 
