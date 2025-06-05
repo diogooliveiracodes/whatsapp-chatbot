@@ -16,11 +16,22 @@ use App\Exceptions\Schedule\OutsideWorkingDaysException;
 use App\Exceptions\Schedule\OutsideWorkingHoursException;
 use App\Exceptions\Schedule\ScheduleConflictException;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 use Carbon\Carbon;
 use App\Services\Schedule\ScheduleService;
 
+
 class ScheduleController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     *
+     * @param ErrorLogService $errorLogService Service for logging errors
+     * @param ScheduleService $scheduleService Service for managing schedules
+     * @param CustomerService $customerService Service for managing customers
+     * @param HttpResponseService $httpResponse Service for handling HTTP responses
+     */
     public function __construct(
         protected ErrorLogService $errorLogService,
         protected ScheduleService $scheduleService,
@@ -28,44 +39,74 @@ class ScheduleController extends Controller
         protected HttpResponseService $httpResponse
     ) {}
 
-    public function index(Request $request)
-    {
-        $unit = $request->user()->unit;
-        $schedules = $this->scheduleService->getSchedulesByUnit($unit->id);
-        $customers = $this->customerService->getCustomersByUnit($unit);
-        $unit->load('unitSettings');
-
-        $workingHours = $this->scheduleService->getWorkingHours($unit->unitSettings);
-        $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots(now(), $unit->unitSettings);
-
-        return view('schedules.index', [
-            'schedules' => ScheduleResource::collection($schedules),
-            'customers' => $customers,
-            'unit' => $unit,
-            'unitSettings' => $unit->unitSettings,
-            'workingHours' => $workingHours,
-            'availableTimeSlots' => $availableTimeSlots,
-            'scheduleService' => $this->scheduleService
-        ]);
-    }
-
-    public function create(Request $request)
-    {
-        $customers = $this->customerService->getCustomersByUnit();
-
-        return view('schedules.create', [
-            'customers' => $customers
-        ]);
-    }
-
-    public function store(StoreScheduleRequest $request)
+    /**
+     * Display a listing of schedules.
+     *
+     * @param Request $request The incoming request
+     * @return View The view containing the list of schedules
+     */
+    public function index(Request $request): View
     {
         try {
+            $unit = $request->user()->unit;
+            $schedules = $this->scheduleService->getSchedulesByUnit($unit->id);
+            $customers = $this->customerService->getCustomersByUnit($unit);
+            $unit->load('unitSettings');
+
+            $workingHours = $this->scheduleService->getWorkingHours($unit->unitSettings);
+            $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots(now(), $unit->unitSettings);
+
+            return view('schedules.index', [
+                'schedules' => ScheduleResource::collection($schedules),
+                'customers' => $customers,
+                'unit' => $unit,
+                'unitSettings' => $unit->unitSettings,
+                'workingHours' => $workingHours,
+                'availableTimeSlots' => $availableTimeSlots,
+                'scheduleService' => $this->scheduleService
+            ]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e);
+            return view('schedules.index')->with('error', __('schedules.messages.load_error'));
+        }
+    }
+
+    /**
+     * Show the form for creating a new schedule.
+     *
+     * @param Request $request The incoming request
+     * @return View The view containing the schedule creation form
+     */
+    public function create(Request $request): View
+    {
+        try {
+            $customers = $this->customerService->getCustomersByUnit();
+            return view('schedules.create', ['customers' => $customers]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e);
+            return view('schedules.create')->with('error', __('schedules.messages.load_error'));
+        }
+    }
+
+    /**
+     * Store a newly created schedule.
+     *
+     * @param StoreScheduleRequest $request The validated request containing schedule data
+     * @return RedirectResponse Redirects to the schedules index with success/error message
+     * @throws OutsideWorkingDaysException When schedule is outside working days
+     * @throws OutsideWorkingHoursException When schedule is outside working hours
+     * @throws ScheduleConflictException When there's a conflict with existing schedules
+     */
+    public function store(StoreScheduleRequest $request): RedirectResponse
+    {
+        try {
+            // dd($request->all());
             $validated = $request->validated();
             $unit = $request->user()->unit;
             $unitSettings = $unit->unitSettings;
 
             $scheduleDate = Carbon::parse($validated['schedule_date']);
+
             if ($this->scheduleService->isOutsideWorkingDays($scheduleDate, $unitSettings)) {
                 throw new OutsideWorkingDaysException();
             }
@@ -87,18 +128,26 @@ class ScheduleController extends Controller
 
             $this->scheduleService->createSchedule($scheduleData);
 
-            return redirect()->route('schedules.index')->with('success', __('schedules.messages.created'));
-        } catch (ScheduleException $e) {
-            return $this->httpResponse->error(__('schedules.messages.create_error'));
+            return redirect()->route('schedules.index')
+                ->with('success', __('schedules.messages.created'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
-            return $this->httpResponse->error(
-                __('schedules.messages.create_error')
-            );
+            return redirect()->route('schedules.create')
+                ->with('error', __('schedules.messages.create_error'));
         }
     }
 
-    public function update(UpdateScheduleRequest $request, Schedule $schedule)
+    /**
+     * Update the specified schedule.
+     *
+     * @param UpdateScheduleRequest $request The validated request containing updated schedule data
+     * @param Schedule $schedule The schedule to be updated
+     * @return \Illuminate\Http\JsonResponse JSON response indicating success or failure
+     * @throws OutsideWorkingDaysException When schedule is outside working days
+     * @throws OutsideWorkingHoursException When schedule is outside working hours
+     * @throws ScheduleConflictException When there's a conflict with existing schedules
+     */
+    public function update(UpdateScheduleRequest $request, Schedule $schedule): \Illuminate\Http\JsonResponse
     {
         try {
             $validated = $request->validated();
@@ -106,6 +155,7 @@ class ScheduleController extends Controller
             $unitSettings = $unit->unitSettings;
 
             $scheduleDate = Carbon::parse($validated['schedule_date']);
+
             if ($this->scheduleService->isOutsideWorkingDays($scheduleDate, $unitSettings)) {
                 throw new OutsideWorkingDaysException();
             }
@@ -121,38 +171,43 @@ class ScheduleController extends Controller
             $this->scheduleService->updateSchedule($schedule, $validated);
 
             return $this->httpResponse->success(__('schedules.messages.updated'));
-
-        } catch (\Exception|ScheduleException  $e) {
+        } catch (\Exception $e) {
             $this->errorLogService->logError($e);
-            return $this->httpResponse->error(
-                __('schedules.messages.update_error', ['message' => $e->getMessage()])
-            );
+            return $this->httpResponse->error(__('schedules.messages.update_error'));
         }
     }
 
-    public function destroy(Schedule $schedule)
+    /**
+     * Remove the specified schedule.
+     *
+     * @param Schedule $schedule The schedule to be deleted
+     * @return \Illuminate\Http\JsonResponse JSON response indicating success or failure
+     */
+    public function destroy(Schedule $schedule): \Illuminate\Http\JsonResponse
     {
         try {
             $this->scheduleService->deleteSchedule($schedule);
             return $this->httpResponse->success(__('schedules.messages.deleted'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
-            return $this->httpResponse->error(
-                __('schedules.messages.delete_error')
-            );
+            return $this->httpResponse->error(__('schedules.messages.delete_error'));
         }
     }
 
-    public function cancel(Schedule $schedule)
+    /**
+     * Cancel the specified schedule.
+     *
+     * @param Schedule $schedule The schedule to be cancelled
+     * @return \Illuminate\Http\JsonResponse JSON response indicating success or failure
+     */
+    public function cancel(Schedule $schedule): \Illuminate\Http\JsonResponse
     {
         try {
             $this->scheduleService->cancelSchedule($schedule);
             return $this->httpResponse->success(__('schedules.messages.cancelled'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
-            return $this->httpResponse->error(
-                __('schedules.messages.cancel_error')
-            );
+            return $this->httpResponse->error(__('schedules.messages.cancel_error'));
         }
     }
 }
