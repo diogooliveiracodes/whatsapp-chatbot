@@ -39,6 +39,7 @@ class ScheduleController extends Controller
             'schedules' => ScheduleResource::collection($schedules),
             'customers' => $customers,
             'unit' => $unit,
+            'unitSettings' => $unit->unitSettings
         ]);
     }
 
