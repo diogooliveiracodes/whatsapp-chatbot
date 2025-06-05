@@ -276,44 +276,21 @@ class ScheduleService
      *
      * @param array $validated
      * @return array{success: bool, message: string, redirect: string}
+     * @throws OutsideWorkingDaysException
+     * @throws OutsideWorkingHoursException
+     * @throws ScheduleConflictException
      */
     public function handleScheduleCreation(array $validated): array
     {
-        try {
-            $unit = Auth::user()->unit;
-            $unitSettings = $unit->unitSettings;
+        $unit = Auth::user()->unit;
+        $unitSettings = $unit->unitSettings;
 
-            $this->validateAndCreateSchedule($validated, $unit, $unitSettings, $unitSettings->appointment_duration_minutes);
+        $this->validateAndCreateSchedule($validated, $unit, $unitSettings, $unitSettings->appointment_duration_minutes);
 
-            return [
-                'success' => true,
-                'message' => __('schedules.messages.created'),
-                'redirect' => 'schedules.index'
-            ];
-        } catch (OutsideWorkingDaysException $e) {
-            return [
-                'success' => false,
-                'message' => __('schedules.messages.outside_working_days'),
-                'redirect' => 'schedules.create'
-            ];
-        } catch (OutsideWorkingHoursException $e) {
-            return [
-                'success' => false,
-                'message' => __('schedules.messages.outside_working_hours'),
-                'redirect' => 'schedules.create'
-            ];
-        } catch (ScheduleConflictException $e) {
-            return [
-                'success' => false,
-                'message' => __('schedules.messages.time_conflict'),
-                'redirect' => 'schedules.create'
-            ];
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'message' => __('schedules.messages.create_error'),
-                'redirect' => 'schedules.create'
-            ];
-        }
+        return [
+            'success' => true,
+            'message' => __('schedules.messages.created'),
+            'redirect' => 'schedules.index'
+        ];
     }
 }

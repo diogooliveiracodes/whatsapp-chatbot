@@ -36,7 +36,7 @@
                                 required>
                                 <option value="">{{ __('customers.select') }}</option>
                                 @foreach ($customers as $customer)
-                                    <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                    <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>{{ $customer->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -45,7 +45,7 @@
                             <label for="schedule_date" class="block font-medium text-sm text-gray-300">
                                 {{ __('schedules.date') }}
                             </label>
-                            <input id="schedule_date" type="date" name="schedule_date"
+                            <input id="schedule_date" type="date" name="schedule_date" value="{{ old('schedule_date') }}"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 [color-scheme:light] dark:[color-scheme:dark]"
                                 required />
                         </div>
@@ -54,7 +54,7 @@
                             <label for="start_time" class="block font-medium text-sm text-gray-300">
                                 {{ __('schedules.start_time') }}
                             </label>
-                            <input id="start_time" type="time" name="start_time"
+                            <input id="start_time" type="time" name="start_time" value="{{ old('start_time') }}"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 [color-scheme:light] dark:[color-scheme:dark]"
                                 required />
                         </div>
@@ -69,7 +69,7 @@
                                 required>
                                 <option value=""></option>
                                 @foreach ($unitServiceTypes as $serviceType)
-                                    <option value="{{ $serviceType->id }}">{{ $serviceType->name }}</option>
+                                    <option value="{{ $serviceType->id }}" {{ old('service_type') == $serviceType->id ? 'selected' : '' }}>{{ $serviceType->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -80,7 +80,7 @@
                             </label>
                             <textarea id="notes" name="notes"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-                                rows="3"></textarea>
+                                rows="3">{{ old('notes') }}</textarea>
                         </div>
 
                         <div class="mt-6 flex justify-between">

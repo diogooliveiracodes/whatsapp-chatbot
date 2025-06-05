@@ -105,11 +105,29 @@ class ScheduleController extends Controller
             $result = $this->scheduleService->handleScheduleCreation($request->validated());
 
             return redirect()
-                ->route($result['redirect'])
-                ->with($result['success'] ? 'success' : 'error', $result['message']);
+                ->route('schedules.index')
+                ->with('success', __('schedules.messages.created'));
+        } catch (OutsideWorkingDaysException $e) {
+            return redirect()
+                ->route('schedules.create')
+                ->withInput()
+                ->with('error', __('schedules.messages.outside_working_days'));
+        } catch (OutsideWorkingHoursException $e) {
+            return redirect()
+                ->route('schedules.create')
+                ->withInput()
+                ->with('error', __('schedules.messages.outside_working_hours'));
+        } catch (ScheduleConflictException $e) {
+            return redirect()
+                ->route('schedules.create')
+                ->withInput()
+                ->with('error', __('schedules.messages.time_conflict'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
-            return redirect()->route('schedules.create')->with('error', __('schedules.messages.create_error'));
+            return redirect()
+                ->route('schedules.create')
+                ->withInput()
+                ->with('error', __('schedules.messages.create_error'));
         }
     }
 
