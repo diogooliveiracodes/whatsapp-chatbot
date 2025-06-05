@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUnitServiceTypeRequest extends FormRequest
+class UpdateUnitServiceTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,8 @@ class StoreUnitServiceTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'unit_id' => ['required', 'exists:units,id'],
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string']
+            'name' => ['required', 'string', 'max:100'],
+            'description' => ['nullable', 'string', 'max:255']
         ];
     }
 
@@ -36,12 +35,10 @@ class StoreUnitServiceTypeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'unit_id.required' => 'A unidade é obrigatória',
-            'unit_id.exists' => 'A unidade selecionada é inválida',
             'name.required' => 'O nome é obrigatório',
             'name.string' => 'O nome deve ser um texto',
             'name.max' => 'O nome não pode ter mais de 255 caracteres',
-            'description.string' => 'A descrição deve ser um texto'
+            'description.string' => 'A descrição deve ser um texto',
         ];
     }
 }
