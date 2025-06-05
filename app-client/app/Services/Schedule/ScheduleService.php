@@ -8,6 +8,10 @@ use App\Services\Schedule\Interfaces\ScheduleConflictValidatorInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Exceptions\Schedule\OutsideWorkingDaysException;
+use App\Exceptions\Schedule\OutsideWorkingHoursException;
+use App\Exceptions\Schedule\ScheduleConflictException;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Service class for handling schedule-related operations
@@ -224,5 +228,92 @@ class ScheduleService
     public function getStatus($schedule): string
     {
         return $this->scheduleTimeService->getStatus($schedule);
+    }
+
+    /**
+     * Validate and create a new schedule
+     *
+     * @param array $validated
+     * @param object $unit
+     * @param object $unitSettings
+     * @param int $duration
+     * @return mixed
+     * @throws OutsideWorkingDaysException
+     * @throws OutsideWorkingHoursException
+     * @throws ScheduleConflictException
+     */
+    public function validateAndCreateSchedule(array $validated, object $unit, object $unitSettings, int $duration)
+    {
+        $scheduleDate = Carbon::parse($validated['schedule_date']);
+        $validated['end_time'] = Carbon::parse($validated['start_time'])
+            ->addMinutes($duration)
+            ->format('H:i');
+
+        if ($this->isOutsideWorkingDays($scheduleDate, $unitSettings)) {
+            throw new OutsideWorkingDaysException();
+        }
+
+        if ($this->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $unitSettings)) {
+            throw new OutsideWorkingHoursException();
+        }
+
+        if ($this->hasConflict($unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'], null)) {
+            throw new ScheduleConflictException();
+        }
+
+        $scheduleData = array_merge($validated, [
+            'unit_id' => $unit->id,
+            'user_id' => Auth::id(),
+            'status' => 'pending',
+            'is_confirmed' => true,
+        ]);
+
+        return $this->createSchedule($scheduleData);
+    }
+
+    /**
+     * Handle schedule creation with proper exception handling
+     *
+     * @param array $validated
+     * @return array{success: bool, message: string, redirect: string}
+     */
+    public function handleScheduleCreation(array $validated): array
+    {
+        try {
+            $unit = Auth::user()->unit;
+            $unitSettings = $unit->unitSettings;
+
+            $this->validateAndCreateSchedule($validated, $unit, $unitSettings, $unitSettings->appointment_duration_minutes);
+
+            return [
+                'success' => true,
+                'message' => __('schedules.messages.created'),
+                'redirect' => 'schedules.index'
+            ];
+        } catch (OutsideWorkingDaysException $e) {
+            return [
+                'success' => false,
+                'message' => __('schedules.messages.outside_working_days'),
+                'redirect' => 'schedules.create'
+            ];
+        } catch (OutsideWorkingHoursException $e) {
+            return [
+                'success' => false,
+                'message' => __('schedules.messages.outside_working_hours'),
+                'redirect' => 'schedules.create'
+            ];
+        } catch (ScheduleConflictException $e) {
+            return [
+                'success' => false,
+                'message' => __('schedules.messages.time_conflict'),
+                'redirect' => 'schedules.create'
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => __('schedules.messages.create_error'),
+                'redirect' => 'schedules.create'
+            ];
+        }
     }
 }

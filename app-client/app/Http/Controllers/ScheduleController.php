@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Schedule;
-use App\Models\Unit;
-use App\Models\Customer;
 use App\Services\ErrorLog\ErrorLogService;
 use App\Services\Customer\CustomerService;
 use App\Services\Http\HttpResponseService;
@@ -20,7 +18,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Carbon\Carbon;
 use App\Services\Schedule\ScheduleService;
-
+use App\Services\UnitServiceType\UnitServiceTypeService;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
@@ -31,13 +30,15 @@ class ScheduleController extends Controller
      * @param ScheduleService $scheduleService Service for managing schedules
      * @param CustomerService $customerService Service for managing customers
      * @param HttpResponseService $httpResponse Service for handling HTTP responses
+     * @param UnitServiceTypeService $unitServiceTypeService Service for managing unit service types
      */
     public function __construct(
         protected ErrorLogService $errorLogService,
         protected ScheduleService $scheduleService,
         protected CustomerService $customerService,
-        protected HttpResponseService $httpResponse
-    ) {}
+        protected HttpResponseService $httpResponse,
+        protected UnitServiceTypeService $unitServiceTypeService
+        ) {}
 
     /**
      * Display a listing of schedules.
@@ -63,7 +64,7 @@ class ScheduleController extends Controller
                 'unitSettings' => $unit->unitSettings,
                 'workingHours' => $workingHours,
                 'availableTimeSlots' => $availableTimeSlots,
-                'scheduleService' => $this->scheduleService
+                'scheduleService' => $this->scheduleService,
             ]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
@@ -74,14 +75,15 @@ class ScheduleController extends Controller
     /**
      * Show the form for creating a new schedule.
      *
-     * @param Request $request The incoming request
      * @return View The view containing the schedule creation form
      */
-    public function create(Request $request): View
+    public function create(): View
     {
         try {
+            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypesByUnit(Auth::user()->unit);
             $customers = $this->customerService->getCustomersByUnit();
-            return view('schedules.create', ['customers' => $customers]);
+
+            return view('schedules.create', ['customers' => $customers, 'unitServiceTypes' => $unitServiceTypes]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
             return view('schedules.create')->with('error', __('schedules.messages.load_error'));
@@ -100,40 +102,14 @@ class ScheduleController extends Controller
     public function store(StoreScheduleRequest $request): RedirectResponse
     {
         try {
-            // dd($request->all());
-            $validated = $request->validated();
-            $unit = $request->user()->unit;
-            $unitSettings = $unit->unitSettings;
+            $result = $this->scheduleService->handleScheduleCreation($request->validated());
 
-            $scheduleDate = Carbon::parse($validated['schedule_date']);
-
-            if ($this->scheduleService->isOutsideWorkingDays($scheduleDate, $unitSettings)) {
-                throw new OutsideWorkingDaysException();
-            }
-
-            if ($this->scheduleService->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $unitSettings)) {
-                throw new OutsideWorkingHoursException();
-            }
-
-            if ($this->scheduleService->hasConflict($unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'], null)) {
-                throw new ScheduleConflictException();
-            }
-
-            $scheduleData = array_merge($validated, [
-                'unit_id' => $unit->id,
-                'user_id' => $request->user()->id,
-                'status' => 'pending',
-                'is_confirmed' => false,
-            ]);
-
-            $this->scheduleService->createSchedule($scheduleData);
-
-            return redirect()->route('schedules.index')
-                ->with('success', __('schedules.messages.created'));
+            return redirect()
+                ->route($result['redirect'])
+                ->with($result['success'] ? 'success' : 'error', $result['message']);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
-            return redirect()->route('schedules.create')
-                ->with('error', __('schedules.messages.create_error'));
+            return redirect()->route('schedules.create')->with('error', __('schedules.messages.create_error'));
         }
     }
 
