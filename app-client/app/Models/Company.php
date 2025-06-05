@@ -50,4 +50,9 @@ class Company extends Model
         return $this->HasMany(UnitSettings::class);
     }
 
+    public function unitServiceTypes(): HasMany
+    {
+        return $this->hasMany(UnitServiceType::class);
+    }
+
 }

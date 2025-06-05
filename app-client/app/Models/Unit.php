@@ -67,4 +67,9 @@ class Unit extends Model
     {
         return $this->hasOne(UnitSettings::class, 'unit_id', 'id')->select(['id', 'unit_id']);
     }
+
+    public function unitServiceTypes(): HasMany
+    {
+        return $this->hasMany(UnitServiceType::class);
+    }
 }
