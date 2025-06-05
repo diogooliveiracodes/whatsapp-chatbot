@@ -22,7 +22,7 @@ class Schedule extends Model
         'end_time',
         'status',
         'notes',
-        'service_type',
+        'unit_service_type_id',
         'is_confirmed'
     ];
 
@@ -46,5 +46,10 @@ class Schedule extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function unitServiceType(): BelongsTo
+    {
+        return $this->belongsTo(UnitServiceType::class);
     }
 }
