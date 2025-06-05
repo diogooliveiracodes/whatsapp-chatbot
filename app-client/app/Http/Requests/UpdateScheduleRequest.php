@@ -26,6 +26,7 @@ class UpdateScheduleRequest extends BaseFormRequest
             'end_time' => 'required|date_format:H:i|after:start_time',
             'status' => 'required|in:pending,confirmed,cancelled,completed',
             'notes' => 'nullable|string',
+            'unit_service_type_id' => 'required|exists:unit_service_types,id',
         ];
     }
 }

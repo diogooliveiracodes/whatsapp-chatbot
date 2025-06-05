@@ -16,7 +16,7 @@ class StoreScheduleRequest extends BaseFormRequest
             'customer_id' => 'required|exists:customers,id',
             'schedule_date' => 'required|date',
             'start_time' => 'required|date_format:H:i',
-            'service_type' => 'required|string',
+            'unit_service_type_id' => 'required|exists:unit_service_types,id',
             'notes' => 'nullable|string',
         ];
     }
