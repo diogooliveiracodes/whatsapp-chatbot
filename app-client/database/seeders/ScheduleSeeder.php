@@ -6,6 +6,7 @@ use App\Models\Schedule;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\Customer;
+use App\Models\UnitServiceType;
 use Illuminate\Database\Seeder;
 
 class ScheduleSeeder extends Seeder
@@ -33,15 +34,21 @@ class ScheduleSeeder extends Seeder
             'unit_id' => $unit->id
         ]);
 
+        // Criar tipos de serviço para a unidade
+        $serviceTypes = UnitServiceType::factory()->count(5)->create([
+            'unit_id' => $unit->id
+        ]);
+
         // Criar agendamentos para os próximos 30 dias
         foreach ($users as $user) {
             // Criar 5-10 agendamentos por usuário
             Schedule::factory()
                 ->count(rand(5, 10))
                 ->create([
-                    'unit_id' => 1,
-                    'user_id' => 1,
-                    'customer_id' => fn() => $customers->random()->id
+                    'unit_id' => $unit->id,
+                    'user_id' => $user->id,
+                    'customer_id' => fn() => $customers->random()->id,
+                    'unit_service_type_id' => fn() => $serviceTypes->random()->id
                 ]);
         }
     }

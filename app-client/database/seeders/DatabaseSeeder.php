@@ -16,45 +16,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(
-            CompanySeeder::class
-        );
-
-        $this->call(
-          CompanySettingsSeeder::class
-        );
-
-        $this->call(
-            UnitSeeder::class
-        );
-
-        $this->call(
-            UnitSettingsSeeder::class
-        );
-
-        $this->call(
-            UserRoleSeeder::class
-        );
-
-        $this->call(
-            UserSeeder::class
-        );
-
-        $this->call(
-            CustomerSeeder::class
-        );
-
-        $this->call(
-            ChatSessionSeeder::class
-        );
-
-        $this->call(
-            MessageSeeder::class
-        );
-
         $this->call([
-            ScheduleSeeder::class,
+            CompanySeeder::class,
+            CompanySettingsSeeder::class,
+            UnitSeeder::class,
+            UnitSettingsSeeder::class,
+            UserRoleSeeder::class,
+            UserSeeder::class,
+            CustomerSeeder::class,
+            ChatSessionSeeder::class,
+            MessageSeeder::class,
             UnitServiceTypeSeeder::class,
+            ScheduleSeeder::class,
         ]);
     }
 }

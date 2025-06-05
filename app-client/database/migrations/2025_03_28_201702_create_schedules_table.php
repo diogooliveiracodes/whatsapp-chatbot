@@ -13,12 +13,12 @@ return new class extends Migration
             $table->foreignId('unit_id')->constrained()->onDelete('cascade');
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('unit_service_type_id')->constrained();
             $table->date('schedule_date');
             $table->time('start_time');
             $table->time('end_time');
             $table->string('status')->default('pending'); // pending, confirmed, cancelled, completed
             $table->text('notes')->nullable();
-            $table->string('service_type');
             $table->boolean('is_confirmed')->default(false);
             $table->timestamps();
             $table->softDeletes();

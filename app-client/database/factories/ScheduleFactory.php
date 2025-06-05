@@ -6,6 +6,7 @@ use App\Models\Schedule;
 use App\Models\Customer;
 use App\Models\User;
 use App\Models\Unit;
+use App\Models\UnitServiceType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
 
@@ -52,12 +53,12 @@ class ScheduleFactory extends Factory
             'unit_id' => Unit::factory(),
             'user_id' => User::factory(),
             'customer_id' => Customer::factory(),
+            'unit_service_type_id' => UnitServiceType::factory(),
             'schedule_date' => $scheduleDate->format('Y-m-d'),
             'start_time' => $startTime->format('H:i'),
             'end_time' => $endTime->format('H:i'),
-            'service_type' => $this->faker->randomElement($serviceTypes),
             'notes' => $this->faker->optional(0.7)->sentence(),
-            'status' => $this->faker->randomElement(['pending', 'confirmed', 'completed']),
+            'status' => $this->faker->randomElement(['pending', 'confirmed', 'cancelled', 'completed']),
             'is_confirmed' => $this->faker->boolean(70),
         ];
     }
