@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\UnitServiceType;
 use App\Services\UnitServiceType\UnitServiceTypeService;
 use App\Services\ErrorLog\ErrorLogService;
+use App\Http\Requests\StoreUnitServiceTypeRequest;
+use App\Http\Requests\UpdateUnitServiceTypeRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use App\Services\Unit\UnitService;
 
 class UnitServiceTypeController extends Controller
 {
@@ -16,10 +18,12 @@ class UnitServiceTypeController extends Controller
      *
      * @param UnitServiceTypeService $unitServiceTypeService Service for handling unit service type operations
      * @param ErrorLogService $errorLogService Service for handling error logging
+     * @param UnitService $unitService Service for handling unit operations
      */
     public function __construct(
         protected UnitServiceTypeService $unitServiceTypeService,
-        protected ErrorLogService $errorLogService
+        protected ErrorLogService $errorLogService,
+        protected UnitService $unitService
     ) {}
 
     /**
@@ -49,7 +53,8 @@ class UnitServiceTypeController extends Controller
      */
     public function create(): View
     {
-        return view('unit-service-types.create');
+        $units = $this->unitService->getUnits();
+        return view('unit-service-types.create', compact('units'));
     }
 
     /**
@@ -75,16 +80,37 @@ class UnitServiceTypeController extends Controller
     }
 
     /**
+     * Store a newly created unit service type in storage.
+     *
+     * @param StoreUnitServiceTypeRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(StoreUnitServiceTypeRequest $request): RedirectResponse
+    {
+        try {
+            $this->unitServiceTypeService->create($request->validated());
+            return redirect()->route('unitServiceTypes.index')
+                ->with('success', __('unit-service-types.success.created'));
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'store',
+                'request_data' => $request->all(),
+            ]);
+            return back()->with('error', __('unit-service-types.error.create'));
+        }
+    }
+
+    /**
      * Update the specified unit service type in storage.
      *
-     * @param Request $request
+     * @param UpdateUnitServiceTypeRequest $request
      * @param UnitServiceType $unitServiceType
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, UnitServiceType $unitServiceType): RedirectResponse
+    public function update(UpdateUnitServiceTypeRequest $request, UnitServiceType $unitServiceType): RedirectResponse
     {
         try {
-            $this->unitServiceTypeService->update($unitServiceType, $request->all());
+            $this->unitServiceTypeService->update($unitServiceType, $request->validated());
             return redirect()->route('unitServiceTypes.index')
                 ->with('success', __('unit-service-types.success.updated'));
         } catch (\Exception $e) {
