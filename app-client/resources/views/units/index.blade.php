@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-global.header>
-        {{ __('units.create') }}
+        {{ __('units.title') }}
     </x-global.header>
 
     <div class="py-12">

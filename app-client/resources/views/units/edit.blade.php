@@ -1,7 +1,7 @@
 <x-app-layout>
-    <x-header>
+    <x-global.header>
         {{ __('units.edit') }} - {{ $unit->name }}
-    </x-header>
+    </x-global.header>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
