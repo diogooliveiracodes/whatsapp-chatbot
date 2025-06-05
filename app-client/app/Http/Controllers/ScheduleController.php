@@ -35,11 +35,17 @@ class ScheduleController extends Controller
         $customers = $this->customerService->getCustomersByUnit($unit);
         $unit->load('unitSettings');
 
+        $workingHours = $this->scheduleService->getWorkingHours($unit->unitSettings);
+        $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots(now(), $unit->unitSettings);
+
         return view('schedules.index', [
             'schedules' => ScheduleResource::collection($schedules),
             'customers' => $customers,
             'unit' => $unit,
-            'unitSettings' => $unit->unitSettings
+            'unitSettings' => $unit->unitSettings,
+            'workingHours' => $workingHours,
+            'availableTimeSlots' => $availableTimeSlots,
+            'scheduleService' => $this->scheduleService
         ]);
     }
 
