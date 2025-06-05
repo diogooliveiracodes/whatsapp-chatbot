@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Services\UnitServiceType;
+
+use App\Models\UnitServiceType;
+use App\Repositories\UnitServiceTypeRepository;
+use Illuminate\Support\Collection;
+
+class UnitServiceTypeService
+{
+    public function __construct(protected UnitServiceTypeRepository $unitServiceTypeRepository) {}
+
+    /**
+     * Get all unit service types for the current company
+     *
+     * @return Collection
+     */
+    public function getUnitServiceTypes(): Collection
+    {
+        return $this->unitServiceTypeRepository->getUnitServiceTypes();
+    }
+
+    /**
+     * Create a new unit service type
+     *
+     * @param array $data
+     * @return UnitServiceType
+     */
+    public function create(array $data): UnitServiceType
+    {
+        return $this->unitServiceTypeRepository->create($data);
+    }
+
+    /**
+     * Update an existing unit service type
+     *
+     * @param UnitServiceType $unitServiceType
+     * @param array $data
+     * @return UnitServiceType
+     */
+    public function update(UnitServiceType $unitServiceType, array $data): UnitServiceType
+    {
+        return $this->unitServiceTypeRepository->update($unitServiceType, $data);
+    }
+
+    /**
+     * Delete a unit service type
+     *
+     * @param UnitServiceType $unitServiceType
+     * @return bool
+     */
+    public function delete(UnitServiceType $unitServiceType): bool
+    {
+        return $this->unitServiceTypeRepository->delete($unitServiceType);
+    }
+}
