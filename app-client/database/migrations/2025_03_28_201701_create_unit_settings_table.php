@@ -25,6 +25,7 @@ return new class extends Migration {
             $table->string('zipcode')->nullable();
             $table->string('whatsapp_webhook_url')->nullable();
             $table->string('whatsapp_number')->nullable();
+            $table->unsignedInteger('appointment_duration_minutes')->default(30);
             $table->time('sunday_start')->nullable();
             $table->time('sunday_end')->nullable();
             $table->boolean('sunday')->default(false);
