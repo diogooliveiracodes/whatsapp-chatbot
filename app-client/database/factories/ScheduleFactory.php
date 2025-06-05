@@ -29,8 +29,15 @@ class ScheduleFactory extends Factory
     public function definition(): array
     {
         $scheduleDate = $this->faker->dateTimeBetween('now', '+2 months');
-        $startTime = Carbon::parse($scheduleDate)->setTimeFromTimeString($this->faker->time('H:i'));
-        $endTime = (clone $startTime)->addHours($this->faker->numberBetween(1, 4));
+
+        // Generate a random hour between 8 and 17 (8 AM to 5 PM)
+        $hour = $this->faker->numberBetween(8, 17);
+        // Randomly choose between full hour (0) or half hour (30)
+        $minute = $this->faker->randomElement([0, 30]);
+
+        $startTime = Carbon::parse($scheduleDate)->setTime($hour, $minute);
+        // End time is always 30 minutes after start time
+        $endTime = (clone $startTime)->addMinutes(30);
 
         $serviceTypes = [
             'Consulta',

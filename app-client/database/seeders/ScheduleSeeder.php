@@ -39,8 +39,8 @@ class ScheduleSeeder extends Seeder
             Schedule::factory()
                 ->count(rand(5, 10))
                 ->create([
-                    'unit_id' => $unit->id,
-                    'user_id' => $user->id,
+                    'unit_id' => 1,
+                    'user_id' => 1,
                     'customer_id' => fn() => $customers->random()->id
                 ]);
         }
