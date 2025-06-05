@@ -59,22 +59,19 @@
                                 required />
                         </div>
 
-                        <div>
-                            <label for="end_time" class="block font-medium text-sm text-gray-300">
-                                {{ __('schedules.end_time') }}
-                            </label>
-                            <input id="end_time" type="time" name="end_time"
-                                class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 [color-scheme:light] dark:[color-scheme:dark]"
-                                required />
-                        </div>
 
                         <div>
                             <label for="service_type" class="block font-medium text-sm text-gray-300">
                                 {{ __('schedules.service_type') }}
                             </label>
-                            <input id="service_type" type="text" name="service_type"
+                            <select id="service_type" name="service_type"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-                                required />
+                                required>
+                                <option value=""></option>
+                                @foreach ($unitServiceTypes as $serviceType)
+                                    <option value="{{ $serviceType->id }}">{{ $serviceType->name }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div>
