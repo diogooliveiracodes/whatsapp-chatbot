@@ -54,6 +54,14 @@ class ScheduleService
      */
     public function isOutsideWorkingHours($startTime, $endTime, $unitSettings): bool
     {
+        // Convert Carbon objects to strings if needed
+        if ($startTime instanceof Carbon) {
+            $startTime = $startTime->format('H:i');
+        }
+        if ($endTime instanceof Carbon) {
+            $endTime = $endTime->format('H:i');
+        }
+
         return $this->workingHoursValidator->isOutsideWorkingHours($startTime, $endTime, $unitSettings);
     }
 
