@@ -25,7 +25,7 @@ class UnitServiceType extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function units(): belongsTo
+    public function unit(): belongsTo
     {
         return $this->belongsTo(Unit::class);
     }
