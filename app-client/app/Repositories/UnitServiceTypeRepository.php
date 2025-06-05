@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\UnitServiceType;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Unit;
 
 class UnitServiceTypeRepository
 {
@@ -54,5 +55,16 @@ class UnitServiceTypeRepository
     public function delete(UnitServiceType $unitServiceType): bool
     {
         return $unitServiceType->delete();
+    }
+
+    /**
+     * Get all unit service types for a given unit
+     *
+     * @param Unit $unit
+     * @return Collection
+     */
+    public function getUnitServiceTypesByUnit(Unit $unit): Collection
+    {
+        return $this->model->where('unit_id', $unit->id)->get();
     }
 }
