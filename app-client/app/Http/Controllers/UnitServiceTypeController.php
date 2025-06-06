@@ -124,15 +124,15 @@ class UnitServiceTypeController extends Controller
     }
 
     /**
-     * Remove the specified unit service type from storage.
+     * Deactivate the specified unit service type.
      *
      * @param UnitServiceType $unitServiceType
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(UnitServiceType $unitServiceType): RedirectResponse
+    public function deactivate(UnitServiceType $unitServiceType): RedirectResponse
     {
         try {
-            $this->unitServiceTypeService->delete($unitServiceType);
+            $this->unitServiceTypeService->deactivate($unitServiceType);
             return redirect()->route('unitServiceTypes.index')
                 ->with('success', __('unit-service-types.success.deleted'));
         } catch (\Exception $e) {

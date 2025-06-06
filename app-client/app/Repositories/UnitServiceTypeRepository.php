@@ -47,14 +47,14 @@ class UnitServiceTypeRepository
     }
 
     /**
-     * Delete a unit service type
+     * Deactivate a unit service type
      *
      * @param UnitServiceType $unitServiceType
      * @return bool
      */
-    public function delete(UnitServiceType $unitServiceType): bool
+    public function deactivate(UnitServiceType $unitServiceType): void
     {
-        return $unitServiceType->delete();
+        $unitServiceType->update(['active' => false]);
     }
 
     /**
