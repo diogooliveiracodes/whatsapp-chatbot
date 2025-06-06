@@ -63,9 +63,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/{unitServiceType}', [UnitServiceTypeController::class, 'show'])->name('unitServiceTypes.show');
         Route::get('/{unitServiceType}/edit', [UnitServiceTypeController::class, 'edit'])->name('unitServiceTypes.edit');
         Route::put('/{unitServiceType}', [UnitServiceTypeController::class, 'update'])->name('unitServiceTypes.update');
-        Route::delete('/{unitServiceType}', [UnitServiceTypeController::class, 'destroy'])->name('unitServiceTypes.destroy');
+        Route::patch('/{unitServiceType}', [UnitServiceTypeController::class, 'deactivate'])->name('unitServiceTypes.deactivate');
     });
-
 
     Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
     Route::get('/schedules/create', [ScheduleController::class, 'create'])->name('schedules.create');
