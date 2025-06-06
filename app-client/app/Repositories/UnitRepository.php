@@ -5,10 +5,14 @@ namespace App\Repositories;
 use App\Models\Unit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Collection;
+use App\Services\UnitSettings\UnitSettingsService;
 
 class UnitRepository
 {
-    public function __construct(protected Unit $model) {}
+    public function __construct(
+        protected Unit $model,
+        protected UnitSettingsService $unitSettingsService
+    ) {}
 
     /**
      * Get all units for the current company
@@ -17,7 +21,9 @@ class UnitRepository
      */
     public function getUnits(): Collection
     {
-        return $this->model->where('company_id', Auth::user()->company_id)->get();
+        return $this->model->where('company_id', Auth::user()->company_id)
+            ->where('active', true)
+            ->get();
     }
 
     /**
@@ -29,7 +35,13 @@ class UnitRepository
     public function create(array $data): Unit
     {
         $data['company_id'] = Auth::user()->company_id;
-        return $this->model->create($data);
+        $unit = $this->model->create($data);
+        $unitSettings = $this->unitSettingsService->create([
+            'unit_id' => $unit->id,
+            'company_id' => Auth::user()->company_id,
+            'name' => $unit->name,
+        ]);
+        return $unit;
     }
 
     /**
