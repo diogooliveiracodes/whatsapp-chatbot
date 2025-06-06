@@ -34,7 +34,7 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <x-actions.view :route="route('unitServiceTypes.show', $type)" />
                                                 <x-actions.edit :route="route('unitServiceTypes.edit', $type)" />
-                                                <x-actions.delete :route="route('unitServiceTypes.destroy', $type)" :confirmMessage="__('unit-service-types.confirm_delete')" />
+                                                <x-actions.deactivate :route="route('unitServiceTypes.deactivate', $type)" :confirmMessage="__('unit-service-types.confirm_deactivate')" />
                                             </td>
                                         </tr>
                                     @endforeach
