@@ -59,11 +59,13 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'unitServiceTypes'], function () {
         Route::get('/', [UnitServiceTypeController::class, 'index'])->name('unitServiceTypes.index');
         Route::get('/create', [UnitServiceTypeController::class, 'create'])->name('unitServiceTypes.create');
+        Route::get('/deactivated', [UnitServiceTypeController::class, 'deactivated'])->name('unitServiceTypes.deactivated');
         Route::post('/', [UnitServiceTypeController::class, 'store'])->name('unitServiceTypes.store');
         Route::get('/{unitServiceType}', [UnitServiceTypeController::class, 'show'])->name('unitServiceTypes.show');
         Route::get('/{unitServiceType}/edit', [UnitServiceTypeController::class, 'edit'])->name('unitServiceTypes.edit');
         Route::put('/{unitServiceType}', [UnitServiceTypeController::class, 'update'])->name('unitServiceTypes.update');
         Route::patch('/{unitServiceType}', [UnitServiceTypeController::class, 'deactivate'])->name('unitServiceTypes.deactivate');
+        Route::patch('/{unitServiceType}/activate', [UnitServiceTypeController::class, 'activate'])->name('unitServiceTypes.activate');
     });
 
     Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
