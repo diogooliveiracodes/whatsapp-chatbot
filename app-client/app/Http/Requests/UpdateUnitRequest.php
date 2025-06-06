@@ -34,7 +34,7 @@ class UpdateUnitRequest extends FormRequest
                     return $query->where('company_id', Auth::user()->company_id);
                 })->ignore($this->route('unit'))
             ],
-            'active' => 'boolean',
+            'active' => ['nullable', 'boolean'],
         ];
     }
 

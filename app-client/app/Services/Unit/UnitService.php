@@ -21,6 +21,9 @@ class UnitService
 
     public function update(Unit $unit, array $data)
     {
+        if (!isset($data['active'])) {
+            $data['active'] = false;
+        }
         return $this->unitRepository->update($unit, $data);
     }
 
