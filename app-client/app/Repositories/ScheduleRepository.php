@@ -21,7 +21,7 @@ class ScheduleRepository implements ScheduleRepositoryInterface
     public function findByUnitId(int $unitId): Collection
     {
         return $this->model
-            ->with(['customer', 'user'])
+            ->with(['customer', 'user', 'unitServiceType'])
             ->where('unit_id', $unitId)
             ->get();
     }

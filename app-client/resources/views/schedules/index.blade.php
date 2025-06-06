@@ -97,6 +97,11 @@
                                                             $currentTime,
                                                             $currentEndTime
                                                         );
+                                                        // if($schedule){
+
+                                                        //     dd($schedule);
+                                                        // }
+
                                                         $isWithinOperatingHours = $scheduleService->isWithinOperatingHours(
                                                             $time,
                                                             $dayKey,

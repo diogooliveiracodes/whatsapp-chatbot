@@ -28,6 +28,10 @@ class ScheduleResource extends JsonResource
                 'id' => $this->user->id,
                 'name' => $this->user->name,
             ],
+            'unit_service_type' => [
+                'id' => $this->unitServiceType->id,
+                'name' => $this->unitServiceType->name,
+            ],
         ];
     }
 }

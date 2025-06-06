@@ -46,15 +46,15 @@
 
 
                         <div>
-                            <label for="service_type" class="block font-medium text-sm text-gray-300">
+                            <label for="unit_service_type_id" class="block font-medium text-sm text-gray-300">
                                 {{ __('schedules.service_type') }}
                             </label>
-                            <select id="service_type" name="service_type"
+                            <select id="unit_service_type_id" name="unit_service_type_id"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                                 required>
                                 <option value=""></option>
                                 @foreach ($unitServiceTypes as $serviceType)
-                                    <option value="{{ $serviceType->id }}" {{ old('service_type') == $serviceType->id ? 'selected' : '' }}>{{ $serviceType->name }}</option>
+                                    <option value="{{ $serviceType->id }}" {{ old('unit_service_type_id') == $serviceType->id ? 'selected' : '' }}>{{ $serviceType->name }}</option>
                                 @endforeach
                             </select>
                         </div>

@@ -16,7 +16,7 @@
             </span>
         </div>
         <p class="text-xs text-gray-600 dark:text-gray-300 truncate">
-            {{ $schedule['service_type'] }}
+            {{ $schedule['unit_service_type']['name'] }}
         </p>
         <div class="mt-1 flex justify-end space-x-1">
             <form action="{{ route('schedules.destroy', $schedule['id']) }}" method="POST" class="inline">
