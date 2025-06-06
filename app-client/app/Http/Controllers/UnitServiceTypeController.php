@@ -143,4 +143,45 @@ class UnitServiceTypeController extends Controller
             return back()->with('error', __('unit-service-types.error.delete'));
         }
     }
+
+    /**
+     * Display a listing of the deactivated unit service types.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function deactivated(): View
+    {
+        try {
+            $unitServiceTypes = $this->unitServiceTypeService->getDeactivatedUnitServiceTypes();
+            return view('unit-service-types.deactivated', compact('unitServiceTypes'));
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'deactivated',
+                'request_method' => request()->method(),
+                'request_url' => request()->url(),
+            ]);
+            return view('unit-service-types.deactivated', ['unitServiceTypes' => [], 'error' => __('unit-service-types.error.load')]);
+        }
+    }
+
+    /**
+     * Activate the specified unit service type.
+     *
+     * @param UnitServiceType $unitServiceType
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function activate(UnitServiceType $unitServiceType): RedirectResponse
+    {
+        try {
+            $this->unitServiceTypeService->activate($unitServiceType);
+            return redirect()->route('unitServiceTypes.deactivated')
+                ->with('success', __('unit-service-types.success.activated'));
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'activate',
+                'unit_service_type_id' => $unitServiceType->id,
+            ]);
+            return back()->with('error', __('unit-service-types.error.activate'));
+        }
+    }
 }

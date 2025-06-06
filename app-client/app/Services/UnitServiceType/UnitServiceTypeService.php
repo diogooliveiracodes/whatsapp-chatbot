@@ -65,4 +65,25 @@ class UnitServiceTypeService
     {
         return $this->unitServiceTypeRepository->getUnitServiceTypesByUnit($unit);
     }
+
+    /**
+     * Get all deactivated unit service types for the current company
+     *
+     * @return Collection
+     */
+    public function getDeactivatedUnitServiceTypes(): Collection
+    {
+        return $this->unitServiceTypeRepository->getDeactivatedUnitServiceTypes();
+    }
+
+    /**
+     * Activate a unit service type
+     *
+     * @param UnitServiceType $unitServiceType
+     * @return void
+     */
+    public function activate(UnitServiceType $unitServiceType): void
+    {
+        $this->unitServiceTypeRepository->activate($unitServiceType);
+    }
 }
