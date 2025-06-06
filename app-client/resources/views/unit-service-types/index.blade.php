@@ -9,10 +9,16 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <x-global.session-alerts />
 
-                    <x-global.create-button
-                        :route="route('unitServiceTypes.create')"
-                        :text="__('unit-service-types.create')"
-                    />
+                    <div class="flex gap-4 mb-4">
+                        <x-global.create-button
+                            :route="route('unitServiceTypes.create')"
+                            :text="__('unit-service-types.create')"
+                        />
+                        <x-buttons.deativated-button
+                            :route="route('unitServiceTypes.deactivated')"
+                            :text="__('unit-service-types.deactivated')"
+                        />
+                    </div>
 
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         <div class="overflow-x-auto">
