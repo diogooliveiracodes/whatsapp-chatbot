@@ -41,6 +41,9 @@ class UnitServiceTypeService
      */
     public function update(UnitServiceType $unitServiceType, array $data): UnitServiceType
     {
+        if (!isset($data['active'])) {
+            $data['active'] = false;
+        }
         return $this->unitServiceTypeRepository->update($unitServiceType, $data);
     }
 
