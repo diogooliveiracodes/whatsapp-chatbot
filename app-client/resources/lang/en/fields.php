@@ -5,4 +5,5 @@ return [
     'description' => 'Description',
     'created_at' => 'Created At',
     'updated_at' => 'Updated At',
+    'active' => 'Active',
 ];
