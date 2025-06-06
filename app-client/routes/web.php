@@ -40,11 +40,13 @@ Route::middleware('auth')->group(function () {
     Route::group(['prefix' => 'units'], function () {
         Route::get('/', [UnitController::class, 'index'])->name('units.index');
         Route::get('/create', [UnitController::class, 'create'])->name('units.create');
+        Route::get('/deactivated', [UnitController::class, 'deactivated'])->name('units.deactivated');
         Route::get('/{unit}', [UnitController::class, 'show'])->name('units.show');
         Route::get('/{unit}/edit', [UnitController::class, 'edit'])->name('units.edit');
         Route::put('/{unit}', [UnitController::class, 'update'])->name('units.update');
-        Route::delete('/{unit}', [UnitController::class, 'destroy'])->name('units.destroy');
+        Route::patch('/{unit}', [UnitController::class, 'deactivate'])->name('units.deactivate');
         Route::post('/', [UnitController::class, 'store'])->name('units.store');
+        Route::patch('/{unit}/activate', [UnitController::class, 'activate'])->name('units.activate');
     });
 
     Route::group(['prefix' => 'unitSettings'], function () {
