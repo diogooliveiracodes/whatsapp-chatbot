@@ -12,7 +12,7 @@ return [
     'no' => 'No',
     'create' => 'Create Unit',
     'actions' => 'Actions',
-    'confirm_delete' => 'Are you sure you want to delete this unit?',
+    'confirm_deactivate' => 'Are you sure you want to deactivate this unit?',
     'created_at' => 'Created At',
     'updated_at' => 'Updated At',
     'validation' => [
@@ -32,7 +32,7 @@ return [
     'success' => [
         'created' => 'Unit created successfully',
         'updated' => 'Unit updated successfully',
-        'deleted' => 'Unit deleted successfully',
+        'deactivated' => 'Unit deactivated successfully',
     ],
     'error' => [
         'load' => 'Failed to load units',
@@ -41,7 +41,7 @@ return [
         'show' => 'Failed to load unit details',
         'edit_form' => 'Failed to load edit form',
         'update' => 'Failed to update unit',
-        'delete' => 'Failed to delete unit',
+        'deactivate' => 'Failed to deactivate unit',
     ],
     'settings' => 'Settings',
 ];

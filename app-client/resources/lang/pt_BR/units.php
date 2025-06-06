@@ -12,13 +12,27 @@ return [
     'no' => 'Não',
     'create' => 'Criar Unidade',
     'actions' => 'Ações',
-    'confirm_delete' => 'Tem certeza que deseja excluir esta unidade?',
+    'confirm_deactivate' => 'Tem certeza que deseja desativar esta unidade?',
     'created_at' => 'Criado Em',
     'updated_at' => 'Atualizado Em',
+    'validation' => [
+        'name' => [
+            'required' => 'O nome da unidade é obrigatório.',
+            'string' => 'O nome da unidade deve ser um texto.',
+            'max' => 'O nome da unidade não pode exceder 255 caracteres.',
+        ],
+        'active' => [
+            'boolean' => 'O status ativo deve ser um valor booleano.',
+        ],
+    ],
+    'attributes' => [
+        'name' => 'nome',
+        'active' => 'ativo',
+    ],
     'success' => [
         'created' => 'Unidade criada com sucesso',
         'updated' => 'Unidade atualizada com sucesso',
-        'deleted' => 'Unidade excluída com sucesso',
+        'deactivated' => 'Unidade desativada com sucesso',
     ],
     'error' => [
         'load' => 'Falha ao carregar unidades',
@@ -27,7 +41,7 @@ return [
         'show' => 'Falha ao carregar detalhes da unidade',
         'edit_form' => 'Falha ao carregar formulário de edição',
         'update' => 'Falha ao atualizar unidade',
-        'delete' => 'Falha ao excluir unidade',
+        'deactivate' => 'Falha ao desativar unidade',
     ],
     'settings' => 'Configurações',
 ];
