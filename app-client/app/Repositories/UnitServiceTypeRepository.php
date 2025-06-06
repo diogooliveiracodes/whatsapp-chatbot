@@ -18,7 +18,9 @@ class UnitServiceTypeRepository
      */
     public function getUnitServiceTypes(): Collection
     {
-        return $this->model->where('company_id', Auth::user()->company_id)->get();
+        return $this->model->where('company_id', Auth::user()->company_id)
+            ->where('active', true)
+            ->get();
     }
 
     /**
@@ -66,5 +68,28 @@ class UnitServiceTypeRepository
     public function getUnitServiceTypesByUnit(Unit $unit): Collection
     {
         return $this->model->where('unit_id', $unit->id)->get();
+    }
+
+    /**
+     * Get all deactivated unit service types for the current company
+     *
+     * @return Collection
+     */
+    public function getDeactivatedUnitServiceTypes(): Collection
+    {
+        return $this->model->where('company_id', Auth::user()->company_id)
+            ->where('active', false)
+            ->get();
+    }
+
+    /**
+     * Activate a unit service type
+     *
+     * @param UnitServiceType $unitServiceType
+     * @return void
+     */
+    public function activate(UnitServiceType $unitServiceType): void
+    {
+        $unitServiceType->update(['active' => true]);
     }
 }
