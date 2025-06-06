@@ -175,33 +175,21 @@ class ScheduleController extends Controller
      * Remove the specified schedule.
      *
      * @param Schedule $schedule The schedule to be deleted
-     * @return \Illuminate\Http\JsonResponse JSON response indicating success or failure
+     * @return RedirectResponse Redirects to the schedules index with success/error message
      */
-    public function destroy(Schedule $schedule): \Illuminate\Http\JsonResponse
+    public function destroy(Schedule $schedule): RedirectResponse
     {
         try {
+
             $this->scheduleService->deleteSchedule($schedule);
-            return $this->httpResponse->success(__('schedules.messages.deleted'));
+
+            return redirect()->route('schedules.index')->with('success', __('schedules.messages.deleted'));
         } catch (\Exception $e) {
+
             $this->errorLogService->logError($e);
-            return $this->httpResponse->error(__('schedules.messages.delete_error'));
+
+            return redirect()->route('schedules.index')->with('error', __('schedules.messages.delete_error'));
         }
     }
 
-    /**
-     * Cancel the specified schedule.
-     *
-     * @param Schedule $schedule The schedule to be cancelled
-     * @return \Illuminate\Http\JsonResponse JSON response indicating success or failure
-     */
-    public function cancel(Schedule $schedule): \Illuminate\Http\JsonResponse
-    {
-        try {
-            $this->scheduleService->cancelSchedule($schedule);
-            return $this->httpResponse->success(__('schedules.messages.cancelled'));
-        } catch (\Exception $e) {
-            $this->errorLogService->logError($e);
-            return $this->httpResponse->error(__('schedules.messages.cancel_error'));
-        }
-    }
 }

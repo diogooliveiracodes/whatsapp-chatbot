@@ -130,19 +130,6 @@ class ScheduleService
     }
 
     /**
-     * Cancel a schedule and delete it
-     *
-     * @param mixed $schedule
-     * @return mixed
-     */
-    public function cancelSchedule($schedule)
-    {
-        $schedule->status = 'cancelled';
-        $schedule->save();
-        return $this->scheduleRepository->delete($schedule);
-    }
-
-    /**
      * Get working hours for a unit
      *
      * @param object $unitSettings
