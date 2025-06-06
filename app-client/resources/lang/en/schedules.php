@@ -25,6 +25,7 @@ return [
         'invalid_time_format' => 'Invalid time format. Use HH:mm format',
         'end_time_after_start' => 'End time must be after start time',
         'service_type_required' => 'Service type is required',
+        'confirm_delete' => 'Are you sure you want to delete this appointment?',
     ],
     'new_schedule' => 'New Schedule',
     'date' => 'Date',

@@ -19,7 +19,7 @@
             {{ $schedule['unit_service_type']['name'] }}
         </p>
         <div class="mt-1 flex justify-end space-x-1">
-            <form action="{{ route('schedules.destroy', $schedule['id']) }}" method="POST" class="inline">
+            <form action="{{ route('schedules.destroy', $schedule['id']) }}" method="POST" class="inline delete-form">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
@@ -28,16 +28,22 @@
                     </svg>
                 </button>
             </form>
-            @if($schedule['status'] === 'pending')
-                <form action="{{ route('schedules.cancel', $schedule['id']) }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                    </button>
-                </form>
-            @endif
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteForms = document.querySelectorAll('.delete-form');
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (confirm('{{ __("schedules.messages.confirm_delete") }}')) {
+                this.submit();
+            }
+        });
+    });
+});
+</script>
+@endpush

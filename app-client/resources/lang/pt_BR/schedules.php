@@ -25,6 +25,7 @@ return [
         'invalid_time_format' => 'Formato de horário inválido. Use o formato HH:mm',
         'end_time_after_start' => 'Horário de término deve ser posterior ao horário de início',
         'service_type_required' => 'Tipo de serviço é obrigatório',
+        'confirm_delete' => 'Tem certeza que deseja excluir este agendamento?',
     ],
     'new_schedule' => 'Novo Agendamento',
     'date' => 'Data',
