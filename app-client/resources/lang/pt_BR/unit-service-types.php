@@ -7,6 +7,8 @@ return [
     'title' => 'Tipos de Serviço',
     'create' => 'Criar Tipo de Serviço',
     'edit' => 'Editar Tipo de Serviço',
+    'deactivated' => 'Tipos Desativados',
+    'deactivated_title' => 'Tipos de Serviço Desativados',
     'name' => 'Nome',
     'description' => 'Descrição',
     'active' => 'Ativo',
@@ -19,18 +21,21 @@ return [
     'view' => 'Visualizar',
     'delete' => 'Excluir',
     'deactivate' => 'Desativar',
+    'active' => 'Tipos Ativos',
     'confirm_deactivate' => 'Tem certeza que deseja desativar este tipo de serviço?',
-    'confirm_delete' => 'Tem certeza que deseja excluir este tipo de serviço?',
+    'confirm_activate' => 'Tem certeza que deseja ativar este tipo de serviço?',
     'success' => [
         'created' => 'Tipo de serviço criado com sucesso',
         'updated' => 'Tipo de serviço atualizado com sucesso',
         'deleted' => 'Tipo de serviço excluído com sucesso',
+        'activated' => 'Tipo de serviço ativado com sucesso',
     ],
     'error' => [
         'load' => 'Falha ao carregar tipos de serviço',
         'create' => 'Falha ao criar tipo de serviço',
         'update' => 'Falha ao atualizar tipo de serviço',
         'delete' => 'Falha ao excluir tipo de serviço',
+        'activate' => 'Falha ao ativar tipo de serviço',
     ],
     'validation' => [
         'name' => [

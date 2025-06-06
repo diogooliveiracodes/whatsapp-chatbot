@@ -7,6 +7,8 @@ return [
     'title' => 'Service Types',
     'create' => 'Create Service Type',
     'edit' => 'Edit Service Type',
+    'deactivated' => 'Deactivated Types',
+    'deactivated_title' => 'Deactivated Service Types',
     'name' => 'Name',
     'description' => 'Description',
     'active' => 'Active',
@@ -19,18 +21,21 @@ return [
     'view' => 'View',
     'delete' => 'Delete',
     'deactivate' => 'Deactivate',
+    'active' => 'Active Types',
     'confirm_deactivate' => 'Are you sure you want to deactivate this service type?',
-    'confirm_delete' => 'Are you sure you want to delete this service type?',
+    'confirm_activate' => 'Are you sure you want to activate this service type?',
     'success' => [
         'created' => 'Service type created successfully',
         'updated' => 'Service type updated successfully',
         'deleted' => 'Service type deleted successfully',
+        'activated' => 'Service type activated successfully',
     ],
     'error' => [
         'load' => 'Failed to load service types',
         'create' => 'Failed to create service type',
         'update' => 'Failed to update service type',
         'delete' => 'Failed to delete service type',
+        'activate' => 'Failed to activate service type',
     ],
     'validation' => [
         'name' => [
