@@ -54,7 +54,7 @@
                                             <x-actions.view :route="route('units.show', $unit->id)" />
                                             <x-actions.edit :route="route('units.edit', $unit->id)" />
                                             <x-actions.settings :route="route('unitSettings.show', $unit->id)" />
-                                            <x-actions.delete :route="route('units.destroy', $unit->id)" :confirmMessage="__('units.confirm_delete')" />
+                                            <x-actions.deactivate :route="route('units.deactivate', $unit->id)" :confirmMessage="__('units.confirm_deactivate')" />
                                         </div>
                                     </td>
                                 </tr>

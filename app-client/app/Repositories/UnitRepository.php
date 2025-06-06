@@ -61,14 +61,14 @@ class UnitRepository
     }
 
     /**
-     * Delete a unit
+     * Deactivate a unit
      *
      * @param Unit $unit
      * @return bool
      */
-    public function delete(Unit $unit): bool
+    public function deactivate(Unit $unit): void
     {
-        return $unit->delete();
+        $unit->update(['active' => false]);
     }
 
     /**

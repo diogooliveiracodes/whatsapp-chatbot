@@ -27,8 +27,8 @@ class UnitService
         return $this->unitRepository->update($unit, $data);
     }
 
-    public function delete(Unit $unit)
+    public function deactivate(Unit $unit)
     {
-        return $this->unitRepository->delete($unit);
+        return $this->unitRepository->deactivate($unit);
     }
 }

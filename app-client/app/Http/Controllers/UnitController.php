@@ -156,17 +156,17 @@ class UnitController extends Controller
     }
 
     /**
-     * Remove the specified unit from storage.
+     * Deactivate the specified unit.
      *
-     * @param Unit $unit The unit to delete
+     * @param Unit $unit The unit to deactivate
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Exception When there's an error deleting the unit
      */
-    public function destroy(Unit $unit): RedirectResponse
+    public function deactivate(Unit $unit): RedirectResponse
     {
         try {
-            $this->unitService->delete($unit);
-            return redirect()->route('units.index')->with('success', __('units.success.deleted'));
+            $this->unitService->deactivate($unit);
+            return redirect()->route('units.index')->with('success', __('units.success.deactivated'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'destroy',
@@ -174,7 +174,7 @@ class UnitController extends Controller
                 'request_method' => request()->method(),
                 'request_url' => request()->url(),
             ]);
-            return redirect()->back()->with('error', __('units.error.delete'));
+            return redirect()->back()->with('error', __('units.error.deactivated'));
         }
     }
 }
