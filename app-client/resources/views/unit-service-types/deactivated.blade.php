@@ -21,7 +21,7 @@
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <x-global.table-header :columns="[
                                     __('unit-service-types.name'),
-                                    __('units.name'),
+                                    __('unit-service-types.unit'),
                                     __('unit-service-types.actions')
                                 ]" />
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -34,7 +34,6 @@
                                                 {{ $type->unit?->name ?? '-' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <x-actions.view :route="route('unitServiceTypes.show', $type)" />
                                                 <x-actions.activate :route="route('unitServiceTypes.activate', $type)" :confirmMessage="__('unit-service-types.confirm_activate')" />
                                             </td>
                                         </tr>
