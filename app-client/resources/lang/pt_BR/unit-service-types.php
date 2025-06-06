@@ -18,6 +18,8 @@ return [
     'actions' => 'Ações',
     'view' => 'Visualizar',
     'delete' => 'Excluir',
+    'deactivate' => 'Desativar',
+    'confirm_deactivate' => 'Tem certeza que deseja desativar este tipo de serviço?',
     'confirm_delete' => 'Tem certeza que deseja excluir este tipo de serviço?',
     'success' => [
         'created' => 'Tipo de serviço criado com sucesso',

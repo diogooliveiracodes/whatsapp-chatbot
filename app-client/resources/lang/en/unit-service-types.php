@@ -18,6 +18,8 @@ return [
     'actions' => 'Actions',
     'view' => 'View',
     'delete' => 'Delete',
+    'deactivate' => 'Deactivate',
+    'confirm_deactivate' => 'Are you sure you want to deactivate this service type?',
     'confirm_delete' => 'Are you sure you want to delete this service type?',
     'success' => [
         'created' => 'Service type created successfully',
