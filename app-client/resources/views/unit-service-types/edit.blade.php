@@ -24,6 +24,12 @@
                 <x-input-error class="mt-2" :messages="$errors->get('description')" />
             </div>
 
+            <x-buttons.toggle-switch
+                name="active"
+                :label="__('fields.active')"
+                :value="old('active', $unitServiceType->active)"
+            />
+
             <div class="mt-6 flex justify-between">
                 <!-- Back Button -->
                 <x-cancel-link href="{{ route('unitServiceTypes.index') }}">
