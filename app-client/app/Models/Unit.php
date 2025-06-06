@@ -19,6 +19,7 @@ class Unit extends Model
         'description',
         'address',
         'city',
+        'active',
     ];
 
     protected $table = 'units';
