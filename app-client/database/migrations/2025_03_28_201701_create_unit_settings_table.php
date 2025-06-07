@@ -31,7 +31,7 @@ return new class extends Migration {
             $table->boolean('sunday')->default(false);
             $table->time('monday_start')->nullable();
             $table->time('monday_end')->nullable();
-            $table->boolean('monday')->default(true);
+            $table->boolean('monday')->default(false);
             $table->time('tuesday_start')->nullable();
             $table->time('tuesday_end')->nullable();
             $table->boolean('tuesday')->default(false);
@@ -43,7 +43,7 @@ return new class extends Migration {
             $table->boolean('thursday')->default(false);
             $table->time('friday_start')->nullable();
             $table->time('friday_end')->nullable();
-            $table->boolean('friday')->default(true);
+            $table->boolean('friday')->default(false);
             $table->time('saturday_start')->nullable();
             $table->time('saturday_end')->nullable();
             $table->boolean('saturday')->default(false);
