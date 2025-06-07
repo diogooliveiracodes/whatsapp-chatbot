@@ -3,7 +3,6 @@
 namespace App\Services\Interfaces;
 
 use App\Models\UnitSettings;
-use Illuminate\Database\Eloquent\Collection;
 
 interface UnitSettingsServiceInterface
 {
