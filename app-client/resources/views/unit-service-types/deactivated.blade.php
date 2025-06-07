@@ -34,7 +34,9 @@
                                                 {{ $type->unit?->name ?? '-' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <x-actions.activate :route="route('unitServiceTypes.activate', $type)" :confirmMessage="__('unit-service-types.confirm_activate')" />
+                                                <x-actions.activate :route="route('unitServiceTypes.activate', $type)" :confirmMessage="__('unit-service-types.confirm_activate')">
+                                                    {{ __('buttons.activate') }}
+                                                </x-actions.activate>
                                             </td>
                                         </tr>
                                     @endforeach
