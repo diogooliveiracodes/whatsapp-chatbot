@@ -177,4 +177,48 @@ class UnitController extends Controller
             return redirect()->back()->with('error', __('units.error.deactivated'));
         }
     }
+
+    /**
+     * Display a listing of the deactivated units.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function deactivated(): View
+    {
+        try {
+            $units = $this->unitService->getDeactivatedUnits();
+            return view('units.deactivated', compact('units'));
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'deactivated',
+                'request_method' => request()->method(),
+                'request_url' => request()->url(),
+            ]);
+            return view('units.deactivated', ['units' => [], 'error' => __('units.error.load')]);
+        }
+    }
+
+    /**
+     * Activate the specified unit.
+     *
+     * @param Unit $unit The unit to activate
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Exception When there's an error activating the unit
+     */
+
+    public function activate(Unit $unit): RedirectResponse
+    {
+        try {
+            $this->unitService->activate($unit);
+            return redirect()->route('units.index')->with('success', __('units.success.activated'));
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'activate',
+                'unit_id' => $unit->id,
+                'request_method' => request()->method(),
+                'request_url' => request()->url(),
+            ]);
+            return redirect()->back()->with('error', __('units.error.activate'));
+        }
+    }
 }

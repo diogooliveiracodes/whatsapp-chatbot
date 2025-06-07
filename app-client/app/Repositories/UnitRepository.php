@@ -94,4 +94,16 @@ class UnitRepository
             ->where('company_id', Auth::user()->company_id)
             ->first();
     }
+
+    public function getDeactivatedUnits(): Collection
+    {
+        return $this->model->where('company_id', Auth::user()->company_id)
+            ->where('active', false)
+            ->get();
+    }
+
+    public function activate(Unit $unit): void
+    {
+        $unit->update(['active' => true]);
+    }
 }

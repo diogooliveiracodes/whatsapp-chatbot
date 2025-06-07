@@ -31,4 +31,14 @@ class UnitService
     {
         return $this->unitRepository->deactivate($unit);
     }
+
+    public function getDeactivatedUnits()
+    {
+        return $this->unitRepository->getDeactivatedUnits();
+    }
+
+    public function activate(Unit $unit)
+    {
+        return $this->unitRepository->activate($unit);
+    }
 }
