@@ -4,10 +4,12 @@ namespace App\Services\Unit;
 
 use App\Repositories\UnitRepository;
 use App\Models\Unit;
+use App\Services\UnitSettings\UnitSettingsService;
+use Illuminate\Support\Facades\Auth;
 
 class UnitService
 {
-    public function __construct(protected UnitRepository $unitRepository) {}
+    public function __construct(protected UnitRepository $unitRepository, protected UnitSettingsService $unitSettingsService) {}
 
     public function getUnits()
     {
@@ -16,7 +18,15 @@ class UnitService
 
     public function create(array $data)
     {
-        return $this->unitRepository->create($data);
+        $unit = $this->unitRepository->create($data);
+        $unitSettings = [
+            'company_id' => Auth::user()->company_id,
+            'unit_id' => $unit->id,
+            'name' => $unit->name,
+            'active' => true,
+        ];
+        $this->unitSettingsService->create($unitSettings);
+        return $unit->load('UnitSettings');
     }
 
     public function update(Unit $unit, array $data)
