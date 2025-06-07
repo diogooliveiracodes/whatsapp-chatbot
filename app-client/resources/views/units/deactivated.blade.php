@@ -12,7 +12,7 @@
                     <div class="flex gap-4 mb-4">
                         <x-buttons.back-button
                             :route="route('units.index')"
-                            :text="__('units.active')"
+                            :text="__('units.active_units')"
                         />
                     </div>
 

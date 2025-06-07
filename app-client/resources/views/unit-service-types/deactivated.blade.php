@@ -12,7 +12,7 @@
                     <div class="flex gap-4 mb-4">
                         <x-buttons.back-button
                             :route="route('unitServiceTypes.index')"
-                            :text="__('unit-service-types.active')"
+                            :text="__('unit-service-types.active_title')"
                         />
                     </div>
 

@@ -13,7 +13,9 @@ return [
     'create' => 'Criar Unidade',
     'actions' => 'Ações',
     'confirm_deactivate' => 'Tem certeza que deseja desativar esta unidade?',
+    'confirm_activate' => 'Tem certeza que deseja ativar esta unidade?',
     'deactivated' => 'Unidades Desativadas',
+    'active_units' => 'Unidades Ativas',
     'created_at' => 'Criado Em',
     'updated_at' => 'Atualizado Em',
     'validation' => [
@@ -43,6 +45,7 @@ return [
         'edit_form' => 'Falha ao carregar formulário de edição',
         'update' => 'Falha ao atualizar unidade',
         'deactivate' => 'Falha ao desativar unidade',
+        'activate' => 'Falha ao ativar unidade',
     ],
     'settings' => 'Configurações',
 ];

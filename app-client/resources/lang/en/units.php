@@ -13,7 +13,9 @@ return [
     'create' => 'Create Unit',
     'actions' => 'Actions',
     'confirm_deactivate' => 'Are you sure you want to deactivate this unit?',
+    'confirm_activate' => 'Are you sure you want to activate this unit?',
     'deactivated' => 'Deactivated Units',
+    'active_units' => 'Active Units',
     'created_at' => 'Created At',
     'updated_at' => 'Updated At',
     'validation' => [
@@ -43,6 +45,7 @@ return [
         'edit_form' => 'Failed to load edit form',
         'update' => 'Failed to update unit',
         'deactivate' => 'Failed to deactivate unit',
+        'activate' => 'Failed to activate unit',
     ],
     'settings' => 'Settings',
 ];
