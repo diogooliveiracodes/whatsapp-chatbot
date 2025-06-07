@@ -21,6 +21,10 @@ use App\Services\Schedule\ScheduleService;
 use App\Services\UnitServiceType\UnitServiceTypeService;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Controller responsible for managing schedules in the application.
+ * Handles CRUD operations for schedules including validation of working hours and days.
+ */
 class ScheduleController extends Controller
 {
     /**
@@ -42,9 +46,11 @@ class ScheduleController extends Controller
 
     /**
      * Display a listing of schedules.
+     * Retrieves schedules for the current user's unit along with related data.
      *
-     * @param Request $request The incoming request
-     * @return View The view containing the list of schedules
+     * @param Request $request The incoming request containing user information
+     * @return View The view containing the list of schedules and related data
+     * @throws \Exception When there's an error loading the schedules
      */
     public function index(Request $request): View
     {
@@ -68,14 +74,17 @@ class ScheduleController extends Controller
             ]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
+
             return view('schedules.index')->with('error', __('schedules.messages.load_error'));
         }
     }
 
     /**
      * Show the form for creating a new schedule.
+     * Retrieves necessary data for the schedule creation form.
      *
-     * @return View The view containing the schedule creation form
+     * @return View The view containing the schedule creation form with required data
+     * @throws \Exception When there's an error loading the form data
      */
     public function create(): View
     {
@@ -86,18 +95,21 @@ class ScheduleController extends Controller
             return view('schedules.create', ['customers' => $customers, 'unitServiceTypes' => $unitServiceTypes]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
+
             return view('schedules.create')->with('error', __('schedules.messages.load_error'));
         }
     }
 
     /**
      * Store a newly created schedule.
+     * Validates and creates a new schedule with the provided data.
      *
      * @param StoreScheduleRequest $request The validated request containing schedule data
      * @return RedirectResponse Redirects to the schedules index with success/error message
      * @throws OutsideWorkingDaysException When schedule is outside working days
      * @throws OutsideWorkingHoursException When schedule is outside working hours
      * @throws ScheduleConflictException When there's a conflict with existing schedules
+     * @throws \Exception When there's an unexpected error during creation
      */
     public function store(StoreScheduleRequest $request): RedirectResponse
     {
@@ -108,22 +120,26 @@ class ScheduleController extends Controller
                 ->route('schedules.index')
                 ->with('success', __('schedules.messages.created'));
         } catch (OutsideWorkingDaysException $e) {
+
             return redirect()
                 ->route('schedules.create')
                 ->withInput()
                 ->with('error', __('schedules.messages.outside_working_days'));
         } catch (OutsideWorkingHoursException $e) {
+
             return redirect()
                 ->route('schedules.create')
                 ->withInput()
                 ->with('error', __('schedules.messages.outside_working_hours'));
         } catch (ScheduleConflictException $e) {
+
             return redirect()
                 ->route('schedules.create')
                 ->withInput()
                 ->with('error', __('schedules.messages.time_conflict'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
+
             return redirect()
                 ->route('schedules.create')
                 ->withInput()
@@ -133,13 +149,15 @@ class ScheduleController extends Controller
 
     /**
      * Update the specified schedule.
+     * Validates and updates an existing schedule with new data.
      *
      * @param UpdateScheduleRequest $request The validated request containing updated schedule data
-     * @param Schedule $schedule The schedule to be updated
+     * @param Schedule $schedule The schedule model instance to be updated
      * @return \Illuminate\Http\JsonResponse JSON response indicating success or failure
      * @throws OutsideWorkingDaysException When schedule is outside working days
      * @throws OutsideWorkingHoursException When schedule is outside working hours
      * @throws ScheduleConflictException When there's a conflict with existing schedules
+     * @throws \Exception When there's an unexpected error during update
      */
     public function update(UpdateScheduleRequest $request, Schedule $schedule): \Illuminate\Http\JsonResponse
     {
@@ -167,25 +185,26 @@ class ScheduleController extends Controller
             return $this->httpResponse->success(__('schedules.messages.updated'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
+
             return $this->httpResponse->error(__('schedules.messages.update_error'));
         }
     }
 
     /**
      * Remove the specified schedule.
+     * Deletes a schedule from the system.
      *
-     * @param Schedule $schedule The schedule to be deleted
+     * @param Schedule $schedule The schedule model instance to be deleted
      * @return RedirectResponse Redirects to the schedules index with success/error message
+     * @throws \Exception When there's an error during deletion
      */
     public function destroy(Schedule $schedule): RedirectResponse
     {
         try {
-
             $this->scheduleService->deleteSchedule($schedule);
 
             return redirect()->route('schedules.index')->with('success', __('schedules.messages.deleted'));
         } catch (\Exception $e) {
-
             $this->errorLogService->logError($e);
 
             return redirect()->route('schedules.index')->with('error', __('schedules.messages.delete_error'));
