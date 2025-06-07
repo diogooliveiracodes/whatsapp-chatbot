@@ -13,6 +13,7 @@ return [
     'create' => 'Create Unit',
     'actions' => 'Actions',
     'confirm_deactivate' => 'Are you sure you want to deactivate this unit?',
+    'deactivated' => 'Deactivated Units',
     'created_at' => 'Created At',
     'updated_at' => 'Updated At',
     'validation' => [
