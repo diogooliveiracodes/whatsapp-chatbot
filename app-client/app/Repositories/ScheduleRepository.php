@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\Schedule;
 use App\Repositories\Interfaces\ScheduleRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Services\Unit\UnitService;
 
@@ -18,11 +17,12 @@ class ScheduleRepository implements ScheduleRepositoryInterface
         return $this->model->find($id);
     }
 
-    public function findByUnitId(int $unitId): Collection
+    public function findByUnitIdAndDate(int $unitId, Carbon $startDate, Carbon $endDate): Collection
     {
         return $this->model
             ->with(['customer', 'user', 'unitServiceType'])
             ->where('unit_id', $unitId)
+            ->whereBetween('schedule_date', [$startDate, $endDate])
             ->get();
     }
 
