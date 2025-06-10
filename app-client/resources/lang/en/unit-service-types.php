@@ -24,6 +24,7 @@ return [
     'active' => 'Active Types',
     'confirm_deactivate' => 'Are you sure you want to deactivate this service type?',
     'confirm_activate' => 'Are you sure you want to activate this service type?',
+    'active_title' => 'Active Service Types',
     'success' => [
         'created' => 'Service type created successfully',
         'updated' => 'Service type updated successfully',

@@ -24,6 +24,7 @@ return [
     'active' => 'Tipos Ativos',
     'confirm_deactivate' => 'Tem certeza que deseja desativar este tipo de serviço?',
     'confirm_activate' => 'Tem certeza que deseja ativar este tipo de serviço?',
+    'active_title' => 'Tipos de Serviço Ativos',
     'success' => [
         'created' => 'Tipo de serviço criado com sucesso',
         'updated' => 'Tipo de serviço atualizado com sucesso',
