@@ -9,11 +9,22 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <x-global.session-alerts />
 
-                    <div class="mb-4">
-                        <a href="{{ route('schedules.create') }}"
-                            class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                            {{ __('schedules.create') }}
-                        </a>
+                    <div class="flex gap-4 mb-4 justify-between">
+                        <x-global.create-button :route="route('schedules.create')" :text="__('schedules.create')" />
+                        <div>
+                            <a href="{{ route('schedules.index', ['date' => $startOfWeek->copy()->subDays(7)->format('Y-m-d')]) }}"
+                                class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                {{ __('schedules.previous_week') }}
+                            </a>
+                            <a href="{{ route('schedules.index', ['date' => now()->format('Y-m-d')]) }}"
+                                class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                {{ __('schedules.today') }}
+                            </a>
+                            <a href="{{ route('schedules.index', ['date' => $startOfWeek->copy()->addDays(7)->format('Y-m-d')]) }}"
+                                class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                {{ __('schedules.next_week') }}
+                            </a>
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -26,19 +37,7 @@
                                                 class="w-24 px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-700">
                                                 {{ __('schedules.start_time') }}
                                             </th>
-                                            @php
-                                                $days = [
-                                                    'sunday' => __('unitSettings.sunday'),
-                                                    'monday' => __('unitSettings.monday'),
-                                                    'tuesday' => __('unitSettings.tuesday'),
-                                                    'wednesday' => __('unitSettings.wednesday'),
-                                                    'thursday' => __('unitSettings.thursday'),
-                                                    'friday' => __('unitSettings.friday'),
-                                                    'saturday' => __('unitSettings.saturday'),
-                                                ];
-                                                $currentDate = now();
-                                                $startOfWeek = $currentDate->startOfWeek();
-                                            @endphp
+
                                             @foreach ($days as $dayKey => $dayName)
                                                 @php
                                                     $isEnabled = $unitSettings->$dayKey;
@@ -95,7 +94,7 @@
                                                             $schedules,
                                                             $currentDate,
                                                             $currentTime,
-                                                            $currentEndTime
+                                                            $currentEndTime,
                                                         );
                                                         // if($schedule){
 
@@ -105,7 +104,7 @@
                                                         $isWithinOperatingHours = $scheduleService->isWithinOperatingHours(
                                                             $time,
                                                             $dayKey,
-                                                            $unitSettings
+                                                            $unitSettings,
                                                         );
                                                     @endphp
                                                     <td
@@ -116,14 +115,20 @@
                                                         @elseif ($isWithinOperatingHours)
                                                             <a href="{{ route('schedules.create', [
                                                                 'schedule_date' => $currentDate,
-                                                                'start_time' => $currentTime
+                                                                'start_time' => $currentTime,
                                                             ]) }}"
-                                                            class="absolute inset-0 flex items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600">
-                                                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-500 dark:text-gray-400">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                                                                </svg>
-                                                            </div>
+                                                                class="absolute inset-0 flex items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                                <div
+                                                                    class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                        fill="none" viewBox="0 0 24 24"
+                                                                        stroke-width="1.5" stroke="currentColor"
+                                                                        class="w-6 h-6 text-gray-500 dark:text-gray-400">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round"
+                                                                            d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                                                    </svg>
+                                                                </div>
                                                             </a>
                                                         @endif
                                                     </td>
