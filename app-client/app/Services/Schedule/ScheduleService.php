@@ -90,9 +90,24 @@ class ScheduleService
      * @param int $unitId
      * @return mixed
      */
-    public function getSchedulesByUnit(int $unitId)
+    public function getSchedulesByUnitAndDate(int $unitId, $date)
     {
-        return $this->scheduleRepository->findByUnitId($unitId);
+        [$startDate, $endDate] = $this->getStartAndEndDate($date);
+        return $this->scheduleRepository->findByUnitIdAndDate($unitId, $startDate, $endDate);
+    }
+
+    /**
+     * Get the start and end date for the week
+     *
+     * @param string $date
+     * @return array
+     */
+    public function getStartAndEndDate($date = null)
+    {
+        $startDate = Carbon::parse($date ?? now())->startOfWeek();
+        $endDate = $startDate->clone()->addDays(6);
+
+        return [$startDate, $endDate];
     }
 
     /**

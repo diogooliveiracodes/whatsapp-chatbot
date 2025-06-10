@@ -20,6 +20,7 @@ use Carbon\Carbon;
 use App\Services\Schedule\ScheduleService;
 use App\Services\UnitServiceType\UnitServiceTypeService;
 use Illuminate\Support\Facades\Auth;
+use App\Enum\DaysOfWeekEnum;
 
 /**
  * Controller responsible for managing schedules in the application.
@@ -55,13 +56,14 @@ class ScheduleController extends Controller
     public function index(Request $request): View
     {
         try {
-            $unit = $request->user()->unit;
-            $schedules = $this->scheduleService->getSchedulesByUnit($unit->id);
+            $unit = Auth::user()->unit;
+            $schedules = $this->scheduleService->getSchedulesByUnitAndDate($unit->id, $request->date);
             $customers = $this->customerService->getCustomersByUnit($unit);
             $unit->load('unitSettings');
-
             $workingHours = $this->scheduleService->getWorkingHours($unit->unitSettings);
-            $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots(now(), $unit->unitSettings);
+            $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots($date ?? now(), $unit->unitSettings);
+            $days = DaysOfWeekEnum::getDaysOfWeek();
+            $startOfWeek = $this->scheduleService->getStartAndEndDate($request->date)[0];
 
             return view('schedules.index', [
                 'schedules' => ScheduleResource::collection($schedules),
@@ -71,6 +73,8 @@ class ScheduleController extends Controller
                 'workingHours' => $workingHours,
                 'availableTimeSlots' => $availableTimeSlots,
                 'scheduleService' => $this->scheduleService,
+                'startOfWeek' => $startOfWeek,
+                'days' => $days,
             ]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
