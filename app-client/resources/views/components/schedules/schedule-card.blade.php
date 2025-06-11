@@ -9,7 +9,7 @@
                 @elseif($schedule['status'] === 'pending') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
                 @elseif($schedule['status'] === 'cancelled') bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
                 @else bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200 @endif">
-                {{ ucfirst($schedule['status']) }}
+                {{ ucfirst(__('schedules.statuses.' . $schedule['status'])) }}
             </span>
             <div class="flex space-x-2">
                 <a href="{{ route('schedules.edit', $schedule['id']) }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
