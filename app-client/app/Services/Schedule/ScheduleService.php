@@ -297,14 +297,6 @@ class ScheduleService
         ];
     }
 
-    public function handleScheduleUpdate(array $validated, Schedule $schedule)
-    {
-        $unit = Auth::user()->unit;
-
-        $this->validateAndUpdateSchedule($validated, $schedule);
-
-    }
-
     public function validateAndUpdateSchedule(array $validated, Schedule $schedule)
     {
         $scheduleDate = Carbon::parse($validated['schedule_date']);
@@ -320,7 +312,7 @@ class ScheduleService
             throw new OutsideWorkingHoursException();
         }
 
-        if($validated['schedule_date'] != $schedule->schedule_date->format('Y-m-d') || $validated['start_time'] != $schedule->start_time) {
+        if($validated['schedule_date'] != $schedule->schedule_date->format('Y-m-d') || $validated['start_time'] != Carbon::parse($schedule->start_time)->format('H:i')) {
             if ($this->hasConflict($schedule->unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'], null)) {
                 throw new ScheduleConflictException();
             }

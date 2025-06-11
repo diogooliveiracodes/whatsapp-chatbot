@@ -192,7 +192,7 @@ class ScheduleController extends Controller
     public function update(UpdateScheduleRequest $request, Schedule $schedule): RedirectResponse
     {
         try {
-            $this->scheduleService->handleScheduleUpdate($request->validated(), $schedule);
+            $this->scheduleService->validateAndUpdateSchedule($request->validated(), $schedule);
 
             return redirect()->route('schedules.index')->with('success', __('schedules.messages.updated'));
         } catch (OutsideWorkingDaysException $e) {
