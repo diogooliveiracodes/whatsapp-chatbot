@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enum\ScheduleStatusEnum;
 
 class UpdateScheduleRequest extends BaseFormRequest
 {
@@ -21,12 +22,27 @@ class UpdateScheduleRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
+            'customer_id' => 'required|exists:customers,id',
             'schedule_date' => 'required|date',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-            'status' => 'required|in:pending,confirmed,cancelled,completed',
-            'notes' => 'nullable|string',
+            'start_time' => 'required|date_format:H:i:s',
             'unit_service_type_id' => 'required|exists:unit_service_types,id',
+            'notes' => 'nullable|string',
+            'status' => 'required|in:'. implode(',', ScheduleStatusEnum::values()),
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'customer_id.required' => __('schedules.messages.customer_required'),
+            'customer_id.exists' => __('schedules.messages.customer_not_found'),
+            'schedule_date.required' => __('schedules.messages.date_required'),
+            'schedule_date.date' => __('schedules.messages.invalid_date'),
+            'start_time.required' => __('schedules.messages.start_time_required'),
+            'start_time.date_format' => __('schedules.messages.invalid_time_format'),
+            'service_type.required' => __('schedules.messages.service_type_required'),
+            'status.required' => __('schedules.messages.status_required'),
+            'status.in' => __('schedules.messages.invalid_status'),
         ];
     }
 }

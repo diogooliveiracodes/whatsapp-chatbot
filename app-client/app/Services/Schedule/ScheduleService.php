@@ -12,6 +12,7 @@ use App\Exceptions\Schedule\OutsideWorkingDaysException;
 use App\Exceptions\Schedule\OutsideWorkingHoursException;
 use App\Exceptions\Schedule\ScheduleConflictException;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Schedule;
 
 /**
  * Service class for handling schedule-related operations
@@ -294,5 +295,43 @@ class ScheduleService
             'message' => __('schedules.messages.created'),
             'redirect' => 'schedules.index'
         ];
+    }
+
+    public function handleScheduleUpdate(array $validated, Schedule $schedule)
+    {
+        $unit = Auth::user()->unit;
+
+        $this->validateAndUpdateSchedule($validated, $schedule);
+
+    }
+
+    public function validateAndUpdateSchedule(array $validated, Schedule $schedule)
+    {
+        $scheduleDate = Carbon::parse($validated['schedule_date']);
+        $validated['end_time'] = Carbon::parse($validated['start_time'])
+            ->addMinutes($schedule->unit->unitSettings->appointment_duration_minutes)
+            ->format('H:i');
+
+        if ($this->isOutsideWorkingDays($scheduleDate, $schedule->unit->unitSettings)) {
+            throw new OutsideWorkingDaysException();
+        }
+
+        if ($this->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $schedule->unit->unitSettings)) {
+            throw new OutsideWorkingHoursException();
+        }
+
+        if($validated['schedule_date'] != $schedule->schedule_date->format('Y-m-d') || $validated['start_time'] != $schedule->start_time) {
+            if ($this->hasConflict($schedule->unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'], null)) {
+                throw new ScheduleConflictException();
+            }
+        }
+
+        $scheduleData = array_merge($validated, [
+            'unit_id' => $schedule->unit->id,
+            'user_id' => Auth::id(),
+            'is_confirmed' => true,
+        ]);
+
+        return $this->scheduleRepository->update($schedule, $scheduleData);
     }
 }

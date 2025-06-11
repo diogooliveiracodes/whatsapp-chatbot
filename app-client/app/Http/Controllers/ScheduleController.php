@@ -152,6 +152,32 @@ class ScheduleController extends Controller
     }
 
     /**
+     * Show the form for editing a schedule.
+     * Retrieves necessary data for the schedule editing form.
+     *
+     * @param Schedule $schedule The schedule model instance to be edited
+     * @return View The view containing the schedule editing form with required data
+     * @throws \Exception When there's an error loading the form data
+     */
+    public function edit(Schedule $schedule): View
+    {
+        try {
+            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypesByUnit(Auth::user()->unit);
+            $customers = $this->customerService->getCustomersByUnit();
+
+            return view('schedules.edit', [
+                'schedule' => $schedule,
+                'unitServiceTypes' => $unitServiceTypes,
+                'customers' => $customers,
+            ]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e);
+
+            return view('schedules.index')->with('error', __('schedules.messages.load_error'));
+        }
+    }
+
+    /**
      * Update the specified schedule.
      * Validates and updates an existing schedule with new data.
      *
@@ -163,34 +189,22 @@ class ScheduleController extends Controller
      * @throws ScheduleConflictException When there's a conflict with existing schedules
      * @throws \Exception When there's an unexpected error during update
      */
-    public function update(UpdateScheduleRequest $request, Schedule $schedule): \Illuminate\Http\JsonResponse
+    public function update(UpdateScheduleRequest $request, Schedule $schedule): RedirectResponse
     {
         try {
-            $validated = $request->validated();
-            $unit = $request->user()->unit;
-            $unitSettings = $unit->unitSettings;
+            $this->scheduleService->handleScheduleUpdate($request->validated(), $schedule);
 
-            $scheduleDate = Carbon::parse($validated['schedule_date']);
-
-            if ($this->scheduleService->isOutsideWorkingDays($scheduleDate, $unitSettings)) {
-                throw new OutsideWorkingDaysException();
-            }
-
-            if ($this->scheduleService->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $unitSettings)) {
-                throw new OutsideWorkingHoursException();
-            }
-
-            if ($this->scheduleService->hasConflict($unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'], $schedule->id)) {
-                throw new ScheduleConflictException();
-            }
-
-            $this->scheduleService->updateSchedule($schedule, $validated);
-
-            return $this->httpResponse->success(__('schedules.messages.updated'));
+            return redirect()->route('schedules.index')->with('success', __('schedules.messages.updated'));
+        } catch (OutsideWorkingDaysException $e) {
+            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.outside_working_days'));
+        } catch (OutsideWorkingHoursException $e) {
+            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.outside_working_hours'));
+        } catch (ScheduleConflictException $e) {
+            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.time_conflict'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
-            return $this->httpResponse->error(__('schedules.messages.update_error'));
+            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.edit_error'));
         }
     }
 
@@ -214,5 +228,4 @@ class ScheduleController extends Controller
             return redirect()->route('schedules.index')->with('error', __('schedules.messages.delete_error'));
         }
     }
-
 }
