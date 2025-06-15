@@ -9,6 +9,13 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <x-global.session-alerts />
 
+                    <div class="flex gap-4 mb-4">
+                        <x-global.create-button
+                            :route="route('customers.create')"
+                            :text="__('customers.create')"
+                        />
+                    </div>
+
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
