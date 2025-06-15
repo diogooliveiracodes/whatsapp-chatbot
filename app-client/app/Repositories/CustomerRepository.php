@@ -50,7 +50,7 @@ class CustomerRepository
     public function getCustomersByUnit($unit)
     {
         return $this->model->where('unit_id', $unit->id)
-            ->select('id', 'name', 'phone')
+            ->select('id', 'name', 'phone', 'active')
             ->get();
     }
 }
