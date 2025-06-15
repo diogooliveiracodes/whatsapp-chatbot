@@ -41,4 +41,6 @@ return [
             'boolean' => 'O status ativo deve ser verdadeiro ou falso.',
         ],
     ],
+    'search' => 'Buscar',
+    'search_placeholder' => 'Buscar por nome ou telefone',
 ];

@@ -41,4 +41,6 @@ return [
             'boolean' => 'The active status must be true or false.',
         ],
     ],
+    'search' => 'Search',
+    'search_placeholder' => 'Search by name or phone',
 ];

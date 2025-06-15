@@ -35,15 +35,14 @@ class CustomerRepository
     }
 
 
-    public function searchByQuery(string $query, int $userId)
+    public function searchByQuery(string $query, $unit)
     {
-        return $this->model->where('user_id', $userId)
+        return $this->model->where('unit_id', $unit->id)
             ->where(function($q) use ($query) {
                 $q->where('name', 'like', "%{$query}%")
                   ->orWhere('phone', 'like', "%{$query}%");
             })
-            ->select('id', 'name', 'phone')
-            ->limit(10)
+            ->select('id', 'name', 'phone', 'active', 'created_at')
             ->get();
     }
 

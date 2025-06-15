@@ -48,7 +48,10 @@ class CustomerController extends Controller
     public function index(): View
     {
         try {
-            $customers = $this->customerService->getCustomersByUnit();
+            $search = request('search');
+            $customers = $search
+                ? $this->customerService->searchCustomers($search)
+                : $this->customerService->getCustomersByUnit();
 
             return view('customers.index', compact('customers'));
         } catch (\Exception $e) {

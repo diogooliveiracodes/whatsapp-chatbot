@@ -27,7 +27,8 @@ class CustomerService
 
     public function searchCustomers(string $query)
     {
-        return $this->repository->searchByQuery($query, Auth::id());
+        $unit = Auth::user()->unit;
+        return $this->repository->searchByQuery($query, $unit);
     }
 
     public function updateCustomer($customer, array $data)
