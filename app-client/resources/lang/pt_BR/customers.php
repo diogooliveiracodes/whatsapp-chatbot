@@ -27,4 +27,18 @@ return [
         'delete' => 'Falha ao excluir cliente',
         'load' => 'Falha ao carregar cliente para edição',
     ],
+    'validation' => [
+        'name' => [
+            'required' => 'O nome do cliente é obrigatório.',
+            'string' => 'O nome do cliente deve ser um texto.',
+            'max' => 'O nome do cliente não pode exceder 120 caracteres.',
+        ],
+        'phone' => [
+            'string' => 'O telefone deve ser um texto.',
+            'max' => 'O telefone não pode exceder 20 caracteres.',
+        ],
+        'active' => [
+            'boolean' => 'O status ativo deve ser verdadeiro ou falso.',
+        ],
+    ],
 ];

@@ -32,6 +32,7 @@ class CustomerService
 
     public function updateCustomer($customer, array $data)
     {
+        $data['active'] = $data['active'] ?? false;
         return $this->repository->update($customer, $data);
     }
 

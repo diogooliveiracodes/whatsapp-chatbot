@@ -27,4 +27,18 @@ return [
         'delete' => 'Failed to delete customer',
         'load' => 'Failed to load customer for editing',
     ],
+    'validation' => [
+        'name' => [
+            'required' => 'The customer name is required.',
+            'string' => 'The customer name must be a string.',
+            'max' => 'The customer name cannot exceed 120 characters.',
+        ],
+        'phone' => [
+            'string' => 'The phone must be a string.',
+            'max' => 'The phone cannot exceed 20 characters.',
+        ],
+        'active' => [
+            'boolean' => 'The active status must be true or false.',
+        ],
+    ],
 ];

@@ -18,36 +18,32 @@
                             <div>
                                 <label for="name" class="label-style">{{ __('customers.name') }}</label>
                                 <input type="text" id="name" name="name" value="{{ old('name', $customer->name) }}"
-                                       class="input-style"
+                                       class="input-style @error('name') border-red-500 @enderror"
                                        required>
+                                @error('name')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Phone Field -->
                             <div>
                                 <label for="phone" class="label-style">{{ __('customers.phone') }}</label>
                                 <input type="text" id="phone" name="phone" value="{{ old('phone', $customer->phone) }}"
-                                       class="input-style"
+                                       class="input-style @error('phone') border-red-500 @enderror"
                                        required>
+                                @error('phone')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
-                            <!-- Active Status -->
-                            <div>
-                                <label for="active" class="label-style">{{ __('customers.active') }}</label>
-                                <div class="mt-1">
-                                    <label class="inline-flex items-center mr-4">
-                                        <input type="radio" id="active_yes" name="active" value="1"
-                                               {{ old('active', $customer->active) == 1 ? 'checked' : '' }}
-                                               class="form-radio text-indigo-500">
-                                        <span class="ml-2 dark:text-gray-300">{{ __('customers.yes') }}</span>
-                                    </label>
-                                    <label class="inline-flex items-center">
-                                        <input type="radio" id="active_no" name="active" value="0"
-                                               {{ old('active', $customer->active) == 0 ? 'checked' : '' }}
-                                               class="form-radio text-indigo-500">
-                                        <span class="ml-2 dark:text-gray-300">{{ __('customers.no') }}</span>
-                                    </label>
-                                </div>
-                            </div>
+                            <x-buttons.toggle-switch
+                                name="active"
+                                :label="__('fields.active')"
+                                :value="old('active', $customer->active)"
+                            />
+                            @error('active')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Action Buttons -->

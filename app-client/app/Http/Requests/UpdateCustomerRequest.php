@@ -27,4 +27,16 @@ class UpdateCustomerRequest extends FormRequest
             'phone' => 'nullable|string|max:20',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'active.boolean' => __('customers.validation.active.boolean'),
+            'name.required' => __('customers.validation.name.required'),
+            'name.string' => __('customers.validation.name.string'),
+            'name.max' => __('customers.validation.name.max'),
+            'phone.string' => __('customers.validation.phone.string'),
+            'phone.max' => __('customers.validation.phone.max'),
+        ];
+    }
 }
