@@ -22,7 +22,6 @@ class UpdateCompanySettingsRequest extends FormRequest
      */
     public function rules(): array
     {
-//        dd($this->all());
         return [
             'company_id' => ['sometimes', 'exists:companies,id'],
             'name' => ['sometimes', 'string', 'max:255'],
