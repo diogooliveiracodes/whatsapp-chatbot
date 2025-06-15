@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'title' => 'Clientes',
+    'create' => 'Criar Cliente',
     'edit' => 'Editar Cliente',
     'name' => 'Nome',
     'phone' => 'Telefone',
