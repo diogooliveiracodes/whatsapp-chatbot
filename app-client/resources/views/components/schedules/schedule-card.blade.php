@@ -38,6 +38,11 @@
         <p class="text-xs text-gray-600 dark:text-gray-300 truncate">
             {{ $schedule['unit_service_type']['name'] }}
         </p>
+        @if($schedule['notes'])
+            <p class="text-xs text-gray-700 dark:text-gray-400 truncate">
+                {{ $schedule['notes'] }}
+            </p>
+        @endif
     </div>
 </div>
 
