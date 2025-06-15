@@ -11,7 +11,7 @@ class StoreCustomerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,22 @@ class StoreCustomerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'active' => 'nullable|boolean',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => __('validation.required', ['attribute' => __('customers.name')]),
+            'phone.required' => __('validation.required', ['attribute' => __('customers.phone')]),
+            'name.string' => __('validation.string', ['attribute' => __('customers.name')]),
+            'phone.string' => __('validation.string', ['attribute' => __('customers.phone')]),
+            'active.boolean' => __('validation.boolean', ['attribute' => __('customers.active')]),
+            'name.max' => __('validation.max.string', ['attribute' => __('customers.name'), 'max' => 255]),
+            'phone.max' => __('validation.max.string', ['attribute' => __('customers.phone'), 'max' => 255]),
         ];
     }
 }

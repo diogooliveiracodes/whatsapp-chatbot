@@ -18,7 +18,9 @@ class CustomerService
     public function createCustomer(array $data)
     {
         $data['user_id'] = Auth::id();
-        $data['active'] = true;
+        $data['unit_id'] = Auth::user()->unit_id;
+        $data['company_id'] = Auth::user()->company_id;
+        $data['active'] = $data['active'] ?? false;
 
         return $this->repository->create($data);
     }
