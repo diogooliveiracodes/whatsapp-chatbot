@@ -1,7 +1,6 @@
 <?php
 namespace App\Services\Schedule;
 
-use App\Repositories\Interfaces\ScheduleRepositoryInterface;
 use App\Services\Schedule\Interfaces\WorkingDaysValidatorInterface;
 use App\Services\Schedule\Interfaces\WorkingHoursValidatorInterface;
 use App\Services\Schedule\Interfaces\ScheduleConflictValidatorInterface;
@@ -13,6 +12,7 @@ use App\Exceptions\Schedule\OutsideWorkingHoursException;
 use App\Exceptions\Schedule\ScheduleConflictException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Schedule;
+use App\Repositories\ScheduleRepository;
 
 /**
  * Service class for handling schedule-related operations
@@ -25,14 +25,14 @@ class ScheduleService
      * @param WorkingDaysValidatorInterface $workingDaysValidator
      * @param WorkingHoursValidatorInterface $workingHoursValidator
      * @param ScheduleConflictValidatorInterface $scheduleConflictValidator
-     * @param ScheduleRepositoryInterface $scheduleRepository
+     * @param ScheduleRepository $scheduleRepository
      * @param ScheduleTimeService $scheduleTimeService
      */
     public function __construct(
         private WorkingDaysValidatorInterface $workingDaysValidator,
         private WorkingHoursValidatorInterface $workingHoursValidator,
         private ScheduleConflictValidatorInterface $scheduleConflictValidator,
-        private ScheduleRepositoryInterface $scheduleRepository,
+        private ScheduleRepository $scheduleRepository,
         private ScheduleTimeService $scheduleTimeService
     ) {
     }
@@ -325,5 +325,10 @@ class ScheduleService
         ]);
 
         return $this->scheduleRepository->update($schedule, $scheduleData);
+    }
+
+    public function getActiveSchedulesFromNow(int $unitId): bool
+    {
+        return $this->scheduleRepository->getActiveSchedulesFromNow($unitId);
     }
 }
