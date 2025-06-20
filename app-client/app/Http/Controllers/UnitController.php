@@ -9,6 +9,8 @@ use App\Services\Unit\UnitService;
 use App\Services\ErrorLog\ErrorLogService;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use App\Services\Unit\DeactivateUnitService;
+use App\Exceptions\Unit\ActiveSchedulesException;
 
 class UnitController extends Controller
 {
@@ -18,7 +20,11 @@ class UnitController extends Controller
      * @param UnitService $unitService Service for handling unit operations
      * @param ErrorLogService $errorLogService Service for handling error logging
      */
-    public function __construct(protected UnitService $unitService, protected ErrorLogService $errorLogService) {}
+    public function __construct(
+        protected UnitService $unitService,
+        protected ErrorLogService $errorLogService,
+        protected DeactivateUnitService $deactivateUnitService
+        ) {}
 
     /**
      * Display a listing of the units.
@@ -165,8 +171,12 @@ class UnitController extends Controller
     public function deactivate(Unit $unit): RedirectResponse
     {
         try {
-            $this->unitService->deactivate($unit);
+            $this->deactivateUnitService->deactivate($unit);
+
             return redirect()->route('units.index')->with('success', __('units.success.deactivated'));
+        } catch (ActiveSchedulesException $e) {
+
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'destroy',
@@ -174,6 +184,7 @@ class UnitController extends Controller
                 'request_method' => request()->method(),
                 'request_url' => request()->url(),
             ]);
+
             return redirect()->back()->with('error', __('units.error.deactivated'));
         }
     }
