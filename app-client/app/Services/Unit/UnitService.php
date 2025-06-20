@@ -2,11 +2,11 @@
 
 namespace App\Services\Unit;
 
-use App\Repositories\UnitRepository;
 use App\Models\Unit;
+use App\Repositories\UnitRepository;
 use App\Services\UnitSettings\UnitSettingsService;
-use Illuminate\Support\Facades\Auth;
 use App\Services\UnitServiceType\UnitServiceTypeService;
+use Illuminate\Support\Facades\Auth;
 
 class UnitService
 {
@@ -44,9 +44,6 @@ class UnitService
 
     public function deactivate(Unit $unit)
     {
-        foreach ($unit->UnitServiceTypes as $unitServiceType) {
-            $this->unitServiceTypeService->deactivate($unitServiceType);
-        }
         return $this->unitRepository->deactivate($unit);
     }
 
