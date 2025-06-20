@@ -46,6 +46,7 @@ return [
         'update' => 'Failed to update unit',
         'deactivate' => 'Failed to deactivate unit',
         'activate' => 'Failed to activate unit',
+        'active_schedules' => 'Cannot deactivate unit because there are active schedules.',
     ],
     'settings' => 'Settings',
 ];
