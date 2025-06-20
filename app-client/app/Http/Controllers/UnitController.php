@@ -185,7 +185,7 @@ class UnitController extends Controller
                 'request_url' => request()->url(),
             ]);
 
-            return redirect()->back()->with('error', __('units.error.deactivated'));
+            return redirect()->back()->with('error', __('units.error.deactivate'));
         }
     }
 
