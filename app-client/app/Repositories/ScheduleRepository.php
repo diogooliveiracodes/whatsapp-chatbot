@@ -3,12 +3,11 @@
 namespace App\Repositories;
 
 use App\Models\Schedule;
-use App\Repositories\Interfaces\ScheduleRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
 use App\Services\Unit\UnitService;
 
-class ScheduleRepository implements ScheduleRepositoryInterface
+class ScheduleRepository
 {
     public function __construct(protected Schedule $model, protected UnitService $unitService) {}
 
@@ -59,5 +58,14 @@ class ScheduleRepository implements ScheduleRepositoryInterface
                     });
             })
             ->first();
+    }
+
+    public function getActiveSchedulesFromNow(int $unitId): bool
+    {
+        return $this->model
+            ->where('unit_id', $unitId)
+            ->whereNot('status', 'cancelled')
+            ->where('schedule_date', '>=', now())
+            ->exists();
     }
 }
