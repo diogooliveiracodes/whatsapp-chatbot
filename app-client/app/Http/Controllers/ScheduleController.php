@@ -93,7 +93,7 @@ class ScheduleController extends Controller
     public function create(): View
     {
         try {
-            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypesByUnit(Auth::user()->unit);
+            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypesByUnit(Auth::user()->unit)->where('active', true);
             $customers = $this->customerService->getCustomersByUnit();
 
             return view('schedules.create', ['customers' => $customers, 'unitServiceTypes' => $unitServiceTypes]);
@@ -162,7 +162,7 @@ class ScheduleController extends Controller
     public function edit(Schedule $schedule): View
     {
         try {
-            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypesByUnit(Auth::user()->unit);
+            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypesByUnit(Auth::user()->unit)->where('active', true);
             $customers = $this->customerService->getCustomersByUnit();
 
             return view('schedules.edit', [
