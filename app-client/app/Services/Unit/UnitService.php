@@ -6,10 +6,15 @@ use App\Repositories\UnitRepository;
 use App\Models\Unit;
 use App\Services\UnitSettings\UnitSettingsService;
 use Illuminate\Support\Facades\Auth;
+use App\Services\UnitServiceType\UnitServiceTypeService;
 
 class UnitService
 {
-    public function __construct(protected UnitRepository $unitRepository, protected UnitSettingsService $unitSettingsService) {}
+    public function __construct(
+        protected UnitRepository $unitRepository,
+        protected UnitSettingsService $unitSettingsService,
+        protected UnitServiceTypeService $unitServiceTypeService
+    ) {}
 
     public function getUnits()
     {
@@ -39,6 +44,9 @@ class UnitService
 
     public function deactivate(Unit $unit)
     {
+        foreach ($unit->UnitServiceTypes as $unitServiceType) {
+            $this->unitServiceTypeService->deactivate($unitServiceType);
+        }
         return $this->unitRepository->deactivate($unit);
     }
 
