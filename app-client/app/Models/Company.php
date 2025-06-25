@@ -55,4 +55,23 @@ class Company extends Model
         return $this->hasMany(UnitServiceType::class);
     }
 
+    public function companySubscriptions(): HasMany
+    {
+        return $this->hasMany(CompanySubscription::class);
+    }
+
+    public function companyPlans(): HasMany
+    {
+        return $this->hasMany(CompanyPlan::class);
+    }
+
+    public function paymentMethods(): HasMany
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
 }
