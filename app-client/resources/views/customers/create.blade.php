@@ -17,16 +17,55 @@
                             <div>
                                 <label for="name" class="label-style">{{ __('customers.name') }}</label>
                                 <input type="text" id="name" name="name" value="{{ old('name') }}"
-                                       class="input-style"
+                                       class="input-style @error('name') border-red-500 @enderror"
                                        required>
+                                @error('name')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Phone Field -->
-                            <div>
+                            <div
+                                x-data="{
+                                    phone: '{{ old('phone') }}',
+                                    formatPhone() {
+                                        let cleaned = this.phone.replace(/\D/g, '').substring(0, 11);
+                                        let ddd = cleaned.substring(0, 2);
+                                        let firstPart = '';
+                                        let secondPart = '';
+
+                                        if (cleaned.length >= 7) {
+                                            if (cleaned.length === 11) {
+                                                firstPart = cleaned.substring(2, 7);
+                                                secondPart = cleaned.substring(7, 11);
+                                            } else {
+                                                firstPart = cleaned.substring(2, 6);
+                                                secondPart = cleaned.substring(6, 10);
+                                            }
+                                        } else {
+                                            firstPart = cleaned.substring(2);
+                                        }
+
+                                        return cleaned.length > 0
+                                            ? `(${ddd}) ${firstPart}${secondPart ? '-' + secondPart : ''}`
+                                            : '';
+                                    }
+                                }"
+                            >
                                 <label for="phone" class="label-style">{{ __('customers.phone') }}</label>
-                                <input type="text" id="phone" name="phone" value="{{ old('phone') }}"
-                                       class="input-style"
-                                       required>
+                                <input
+                                    type="text"
+                                    id="phone"
+                                    name="phone"
+                                    x-bind:value="formatPhone()"
+                                    x-on:input="phone = $event.target.value"
+                                    class="input-style @error('phone') border-red-500 @enderror"
+                                    placeholder="(99) 99999-9999"
+                                    required
+                                >
+                                @error('phone')
+                                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- Active Status -->
@@ -34,6 +73,9 @@
                                 name="active"
                                 :label="__('fields.active')"
                             />
+                            @error('active')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Action Buttons -->

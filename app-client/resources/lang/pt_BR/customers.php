@@ -36,6 +36,7 @@ return [
         'phone' => [
             'string' => 'O telefone deve ser um texto.',
             'max' => 'O telefone não pode exceder 20 caracteres.',
+            'format' => 'O telefone deve estar no formato (99) 99999-9999 ou (99) 9999-9999.',
         ],
         'active' => [
             'boolean' => 'O status ativo deve ser verdadeiro ou falso.',
