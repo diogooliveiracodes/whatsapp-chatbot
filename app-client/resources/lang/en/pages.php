@@ -12,4 +12,7 @@ return [
     'editUnitSettings' => 'Edit Unit Settings',
     'no_units' => 'No units available',
     'unitServiceTypes' => 'Unit Service Types',
+    'users' => 'Users',
+    'companies' => 'Companies',
+    'plans' => 'Plans',
 ];

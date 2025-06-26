@@ -12,4 +12,7 @@ return [
     'editUnitSettings' => 'Editar Configurações da Unidade',
     'no_units' => 'Nenhuma unidade disponível',
     'unitServiceTypes' => 'Tipos de Serviço',
+    'users' => 'Usuários',
+    'companies' => 'Empresas',
+    'plans' => 'Planos',
 ];
