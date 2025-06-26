@@ -87,11 +87,21 @@ class User extends Authenticatable
         return $this->hasMany(Message::class);
     }
 
+    /**
+     * Check if the user is an admin
+     *
+     * @return bool
+     */
     public function isAdmin(): bool
     {
         return $this->user_role_id === UserRoleEnum::ADMIN;
     }
 
+    /**
+     * Check if the user is an owner
+     *
+     * @return bool
+     */
     public function isOwner(): bool
     {
         return $this->user_role_id === UserRoleEnum::OWNER;
