@@ -19,7 +19,7 @@
                     {{ __('pages.users') }}
                 </h3>
             </div>
-            <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
+            <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
                 {{ __('pages.users') }}
             </x-nav-link>
 
