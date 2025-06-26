@@ -19,6 +19,9 @@
                     {{ __('pages.users') }}
                 </h3>
             </div>
+            <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
+                {{ __('pages.users') }}
+            </x-nav-link>
 
             <div class="mt-4 mb-2">
                 <h3 class="px-0 text-s font-semibold text-gray-500 uppercase tracking-wider">
