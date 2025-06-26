@@ -57,7 +57,7 @@ class ScheduleService
      * @param object $unitSettings
      * @return bool
      */
-    public function isOutsideWorkingHours($startTime, $endTime, $unitSettings): bool
+    public function isOutsideWorkingHours($scheduleDate, $startTime, $endTime, $unitSettings): bool
     {
         // Convert Carbon objects to strings if needed
         if ($startTime instanceof Carbon) {
@@ -67,7 +67,7 @@ class ScheduleService
             $endTime = $endTime->format('H:i');
         }
 
-        return $this->workingHoursValidator->isOutsideWorkingHours($startTime, $endTime, $unitSettings);
+        return $this->workingHoursValidator->isOutsideWorkingHours($scheduleDate, $startTime, $endTime, $unitSettings);
     }
 
     /**
@@ -256,7 +256,7 @@ class ScheduleService
             throw new OutsideWorkingDaysException();
         }
 
-        if ($this->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $unitSettings)) {
+        if ($this->isOutsideWorkingHours($scheduleDate, $validated['start_time'], $validated['end_time'], $unitSettings)) {
             throw new OutsideWorkingHoursException();
         }
 
@@ -308,7 +308,7 @@ class ScheduleService
             throw new OutsideWorkingDaysException();
         }
 
-        if ($this->isOutsideWorkingHours($validated['start_time'], $validated['end_time'], $schedule->unit->unitSettings)) {
+        if ($this->isOutsideWorkingHours($scheduleDate, $validated['start_time'], $validated['end_time'], $schedule->unit->unitSettings)) {
             throw new OutsideWorkingHoursException();
         }
 

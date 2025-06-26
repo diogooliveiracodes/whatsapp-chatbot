@@ -7,7 +7,7 @@ use Carbon\Carbon;
 
 class WorkingHoursValidator implements WorkingHoursValidatorInterface
 {
-    public function isOutsideWorkingHours(string $startTime, string $endTime, $unitSettings): bool
+    public function isOutsideWorkingHours(Carbon $scheduleDate, string $startTime, string $endTime, $unitSettings): bool
     {
         // Helper function to parse time string to Carbon instance
         $parseTime = function($time) {
@@ -42,7 +42,8 @@ class WorkingHoursValidator implements WorkingHoursValidatorInterface
 
         try {
             // Get the day of week (1 = Sunday, 7 = Saturday)
-            $dayOfWeek = Carbon::now()->dayOfWeek + 1;
+            $dayOfWeek = $scheduleDate->dayOfWeek + 1;
+
             $dayMap = [
                 1 => 'sunday',
                 2 => 'monday',
