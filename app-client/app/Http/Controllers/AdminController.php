@@ -3,9 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Company;
+use App\Models\UserRole;
+use App\Models\Unit;
+use App\Services\User\UserService;
+use App\Services\Company\CompanyService;
+use App\Services\Unit\UnitService;
+use App\Services\Admin\CreateUserService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\AdminStoreUserRequest;
 
 /**
  * Admin Controller
@@ -17,6 +27,13 @@ use Illuminate\Http\RedirectResponse;
  */
 class AdminController extends Controller
 {
+    public function __construct(
+        protected UserService $userService,
+        protected CompanyService $companyService,
+        protected UnitService $unitService,
+        protected CreateUserService $createUserService
+    ) {}
+
     /**
      * Display the admin dashboard index page.
      *
@@ -26,7 +43,7 @@ class AdminController extends Controller
      */
     public function index(): View
     {
-        $users = User::all();
+        $users = $this->userService->getUsers();
 
         return view('admin.index', ['users' => $users]);
     }
@@ -40,7 +57,7 @@ class AdminController extends Controller
      */
     public function users(): View
     {
-        $users = User::all();
+        $users = $this->userService->getUsers();
 
         return view('admin.users.index', ['users' => $users]);
     }
@@ -54,7 +71,35 @@ class AdminController extends Controller
      */
     public function createUser(): View
     {
-        return view('admin.users.create');
+        $companies = $this->companyService->getCompanies();
+        $companies->load('Units');
+        $units = Unit::where('active', true)->get();
+        $userRoles = UserRole::where('active', true)->get();
+
+        return view('admin.users.create', compact('companies', 'userRoles', 'units'));
+    }
+
+    /**
+     * Store a new user.
+     *
+     * Processes the form submission to create a new user and redirects to the users list.
+     *
+     * @param \App\Http\Requests\AdminStoreUserRequest $request The validated HTTP request containing user data
+     * @return \Illuminate\Http\RedirectResponse Redirects to admin users page after creation
+     */
+    public function storeUser(AdminStoreUserRequest $request): RedirectResponse
+    {
+        try {
+            $result = $this->createUserService->execute($request);
+
+            return redirect()->route('admin.users.index')
+                ->with('success', $result['message']);
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withErrors(['error' => 'Erro ao criar usuário: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     /**
@@ -67,7 +112,13 @@ class AdminController extends Controller
      */
     public function editUser(int $id): View
     {
-        return view('admin.users.edit', ['id' => $id]);
+        $user = $this->userService->findById($id);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        return view('admin.users.edit', ['user' => $user]);
     }
 
     /**
@@ -81,9 +132,16 @@ class AdminController extends Controller
      */
     public function updateUser(Request $request, int $id): RedirectResponse
     {
-        $user = User::find($id);
-        $user->update($request->all());
-        return redirect()->route('admin.users');
+        $user = $this->userService->findById($id);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        $user = $this->userService->update($user, $request->all());
+
+        return redirect()->route('admin.users')
+            ->with('success', 'Usuário atualizado com sucesso!');
     }
 
     /**
@@ -96,6 +154,29 @@ class AdminController extends Controller
      */
     public function deactivateUser(int $id): View
     {
-        return view('admin.users.deactivate', ['id' => $id]);
+        $user = $this->userService->findById($id);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        return view('admin.users.deactivate', ['user' => $user]);
+    }
+
+    /**
+     * Show user details
+     *
+     * @param int $id The ID of the user to show
+     * @return \Illuminate\View\View The user details view
+     */
+    public function showUser(int $id): View
+    {
+        $user = $this->userService->findById($id);
+
+        if (!$user) {
+            abort(404);
+        }
+
+        return view('admin.users.show', ['user' => $user]);
     }
 }
