@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UnitServiceTypeController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -78,4 +79,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 });
 
+
+require __DIR__ . '/admin.php';
 require __DIR__ . '/auth.php';
