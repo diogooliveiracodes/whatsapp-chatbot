@@ -15,6 +15,18 @@ class Company extends Model
 
     protected $table = 'companies';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
+    protected $fillable = [
+        'name',
+        'document_number',
+        'document_type',
+        'active',
+    ];
+
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
