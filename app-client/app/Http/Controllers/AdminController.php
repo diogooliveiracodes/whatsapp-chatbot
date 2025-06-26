@@ -179,4 +179,19 @@ class AdminController extends Controller
 
         return view('admin.users.show', ['user' => $user]);
     }
+
+    /**
+     * Get units by company ID
+     *
+     * @param int $companyId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUnitsByCompany(int $companyId)
+    {
+        $units = Unit::where('company_id', $companyId)
+            ->where('active', true)
+            ->get(['id', 'name']);
+
+        return response()->json($units);
+    }
 }

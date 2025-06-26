@@ -263,7 +263,6 @@
                                 <select id="unit_id"
                                         name="unit_id"
                                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
-                                    <option value="">{{ __('Selecione uma unidade') }}</option>
                                     @foreach($units as $unit)
                                         <option value="{{ $unit->id }}" {{ old('unit_id') == $unit->id ? 'selected' : '' }}>
                                             {{ $unit->name }}
@@ -328,12 +327,18 @@
                 companyNameInput.required = true;
                 companyIdSelect.required = false;
                 companyIdSelect.value = '';
+                // Clear units when creating new company
+                clearUnitOptions();
             } else {
                 newCompanyFields.classList.add('hidden');
                 existingCompanySelection.classList.remove('hidden');
                 companyNameInput.required = false;
                 companyIdSelect.required = true;
                 companyNameInput.value = '';
+                // Load units for selected company if there's a value
+                if (companyIdSelect.value) {
+                    loadUnitsByCompany(companyIdSelect.value);
+                }
             }
         }
 
@@ -365,6 +370,75 @@
 
         createNewUnitCheckbox.addEventListener('change', toggleUnitFields);
         toggleUnitFields(); // Initial state
+
+        // Company selection change handler
+        companyIdSelect.addEventListener('change', function() {
+            if (this.value && !createNewCompanyCheckbox.checked) {
+                loadUnitsByCompany(this.value);
+            } else {
+                clearUnitOptions();
+            }
+        });
+
+        // Function to load units by company
+        function loadUnitsByCompany(companyId) {
+            // Show loading state
+            unitIdSelect.disabled = true;
+            unitIdSelect.innerHTML = '<option value="">Carregando unidades...</option>';
+
+            fetch(`/admin/units/by-company/${companyId}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na requisição');
+                    }
+                    return response.json();
+                })
+                .then(units => {
+                    clearUnitOptions();
+
+                    if (units.length === 0) {
+                        const noUnitsOption = document.createElement('option');
+                        noUnitsOption.value = '';
+                        noUnitsOption.textContent = 'Nenhuma unidade encontrada para esta empresa';
+                        unitIdSelect.appendChild(noUnitsOption);
+                    } else {
+
+                        // Add unit options
+                        units.forEach(unit => {
+                            const option = document.createElement('option');
+                            option.value = unit.id;
+                            option.textContent = unit.name;
+                            unitIdSelect.appendChild(option);
+                        });
+                    }
+
+                    unitIdSelect.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar unidades:', error);
+                    clearUnitOptions();
+                    const errorOption = document.createElement('option');
+                    errorOption.value = '';
+                    errorOption.textContent = 'Erro ao carregar unidades';
+                    unitIdSelect.appendChild(errorOption);
+                    unitIdSelect.disabled = false;
+                });
+        }
+
+        // Function to clear unit options
+        function clearUnitOptions() {
+            unitIdSelect.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = '{{ __("Selecione uma unidade") }}';
+            unitIdSelect.appendChild(defaultOption);
+        }
 
         // Password strength validation
         document.getElementById('password').addEventListener('input', function() {
