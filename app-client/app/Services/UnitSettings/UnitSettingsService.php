@@ -23,6 +23,17 @@ class UnitSettingsService implements UnitSettingsServiceInterface
     }
 
     /**
+     * Create new unit settings for a specific company (without requiring authenticated user)
+     *
+     * @param array $data
+     * @return UnitSettings
+     */
+    public function createForCompany(array $data): UnitSettings
+    {
+        return $this->unitSettingsRepository->createForCompany($data);
+    }
+
+    /**
      * Update unit settings
      *
      * @param UnitSettings $unitSettings

@@ -24,6 +24,17 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
     }
 
     /**
+     * Create new unit settings for a specific company (without requiring authenticated user)
+     *
+     * @param array $data
+     * @return UnitSettings
+     */
+    public function createForCompany(array $data): UnitSettings
+    {
+        return $this->model->create($data);
+    }
+
+    /**
      * Update unit settings
      *
      * @param UnitSettings $unitSettings
