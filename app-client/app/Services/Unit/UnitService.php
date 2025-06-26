@@ -7,6 +7,7 @@ use App\Repositories\UnitRepository;
 use App\Services\UnitSettings\UnitSettingsService;
 use App\Services\UnitServiceType\UnitServiceTypeService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Collection;
 
 class UnitService
 {
@@ -16,9 +17,25 @@ class UnitService
         protected UnitServiceTypeService $unitServiceTypeService
     ) {}
 
+    public function getUnitsToAdmin()
+    {
+        return $this->unitRepository->getUnitsToAdmin();
+    }
+
     public function getUnits()
     {
         return $this->unitRepository->getUnits();
+    }
+
+    /**
+     * Get units by company ID
+     *
+     * @param int $companyId
+     * @return Collection
+     */
+    public function getUnitsByCompanyId(int $companyId)
+    {
+        return $this->unitRepository->getUnitsByCompanyId($companyId);
     }
 
     public function create(array $data)
@@ -31,6 +48,28 @@ class UnitService
             'active' => true,
         ];
         $this->unitSettingsService->create($unitSettings);
+        return $unit->load('UnitSettings');
+    }
+
+    /**
+     * Create a unit for a specific company (without requiring authenticated user)
+     *
+     * @param array $data
+     * @return Unit
+     */
+    public function createForCompany(array $data)
+    {
+        $unit = Unit::create($data);
+
+        // Create unit settings
+        $unitSettings = [
+            'company_id' => $data['company_id'],
+            'unit_id' => $unit->id,
+            'name' => $unit->name,
+            'active' => true,
+        ];
+        $this->unitSettingsService->createForCompany($unitSettings);
+
         return $unit->load('UnitSettings');
     }
 
