@@ -2,10 +2,10 @@
 
 namespace App\Services\Admin;
 
-use App\Services\User\UserService;
+use App\Http\Requests\AdminStoreUserRequest;
 use App\Services\Company\CompanyService;
 use App\Services\Unit\UnitService;
-use App\Http\Requests\AdminStoreUserRequest;
+use App\Services\User\UserService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -72,7 +72,6 @@ class CreateUserService
                 'user' => $user,
                 'message' => 'Usuário criado com sucesso!'
             ];
-
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
