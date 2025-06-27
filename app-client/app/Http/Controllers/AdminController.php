@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Http\Requests\AdminStoreUserRequest;
 use App\Models\Company;
-use App\Models\UserRole;
 use App\Models\Unit;
-use App\Services\User\UserService;
+use App\Models\User;
+use App\Models\UserRole;
+use App\Services\Admin\CreateUserService;
 use App\Services\Company\CompanyService;
 use App\Services\Unit\UnitService;
-use App\Services\Admin\CreateUserService;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
+use App\Services\User\UserService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Requests\AdminStoreUserRequest;
+use Illuminate\View\View;
 
 /**
  * Admin Controller
@@ -92,11 +92,12 @@ class AdminController extends Controller
         try {
             $result = $this->createUserService->execute($request);
 
-            return redirect()->route('admin.users.index')
+            return redirect()
+                ->route('admin.users.index')
                 ->with('success', $result['message']);
-
         } catch (\Exception $e) {
-            return redirect()->back()
+            return redirect()
+                ->back()
                 ->withErrors(['error' => 'Erro ao criar usuário: ' . $e->getMessage()])
                 ->withInput();
         }
@@ -140,7 +141,8 @@ class AdminController extends Controller
 
         $user = $this->userService->update($user, $request->all());
 
-        return redirect()->route('admin.users')
+        return redirect()
+            ->route('admin.users')
             ->with('success', 'Usuário atualizado com sucesso!');
     }
 
