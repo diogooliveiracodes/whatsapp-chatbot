@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Models\Customer;
 use App\Services\Customer\CustomerService;
 use App\Services\ErrorLog\ErrorLogService;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 /**
