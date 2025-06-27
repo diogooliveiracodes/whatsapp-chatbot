@@ -50,6 +50,7 @@ return new class extends Migration {
             $table->boolean('use_ai_chatbot')->default(false);
             $table->string('default_language', 5)->nullable();
             $table->string('timezone')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

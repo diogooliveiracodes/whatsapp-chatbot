@@ -24,7 +24,8 @@ class CompanySettings extends Model
         'working_hour_end',
         'working_day_start',
         'working_day_end',
-        'use_ai_chatbot'
+        'use_ai_chatbot',
+        'active'
     ];
 
     public function company(): BelongsTo

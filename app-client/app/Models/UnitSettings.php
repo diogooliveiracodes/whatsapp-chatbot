@@ -50,7 +50,8 @@ class UnitSettings extends Model
         'saturday_start',
         'saturday_end',
         'saturday',
-        'use_ai_chatbot'
+        'use_ai_chatbot',
+        'active'
     ];
 
     protected $casts = [
@@ -75,7 +76,8 @@ class UnitSettings extends Model
         'saturday_start' => 'string',
         'saturday_end' => 'string',
         'saturday' => 'boolean',
-        'use_ai_chatbot' => 'boolean'
+        'use_ai_chatbot' => 'boolean',
+        'active' => 'boolean'
     ];
 
     public function getWorkingHourStartAttribute($value)

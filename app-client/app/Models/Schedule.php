@@ -23,14 +23,16 @@ class Schedule extends Model
         'status',
         'notes',
         'unit_service_type_id',
-        'is_confirmed'
+        'is_confirmed',
+        'active'
     ];
 
     protected $casts = [
         'schedule_date' => 'date',
         'start_time' => 'string',
         'end_time' => 'string',
-        'is_confirmed' => 'boolean'
+        'is_confirmed' => 'boolean',
+        'active' => 'boolean'
     ];
 
     public function unit(): BelongsTo

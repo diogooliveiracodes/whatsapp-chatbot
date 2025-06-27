@@ -16,13 +16,13 @@ class ScheduleSettings extends Model
         'unit_id',
         'working_hours_start',
         'working_hours_end',
-        'slot_duration', // em minutos
+        'slot_duration_minutes',
         'break_start',
         'break_end',
         'max_appointments_per_day',
         'min_notice_hours',
         'max_advance_days',
-        'is_active'
+        'active'
     ];
 
     protected $casts = [
@@ -30,7 +30,7 @@ class ScheduleSettings extends Model
         'working_hours_end' => 'datetime',
         'break_start' => 'datetime',
         'break_end' => 'datetime',
-        'is_active' => 'boolean'
+        'active' => 'boolean'
     ];
 
     public function unit(): BelongsTo

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('company_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

@@ -13,13 +13,13 @@ return new class extends Migration
             $table->foreignId('unit_id')->constrained()->onDelete('cascade');
             $table->time('working_hours_start');
             $table->time('working_hours_end');
-            $table->integer('slot_duration')->default(30); // em minutos
+            $table->integer('slot_duration_minutes')->default(30);
             $table->time('break_start')->nullable();
             $table->time('break_end')->nullable();
             $table->integer('max_appointments_per_day')->default(20);
             $table->integer('min_notice_hours')->default(24);
             $table->integer('max_advance_days')->default(30);
-            $table->boolean('is_active')->default(true);
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

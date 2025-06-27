@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('status')->default('pending'); // pending, confirmed, cancelled, completed
             $table->text('notes')->nullable();
             $table->boolean('is_confirmed')->default(false);
+            $table->boolean('active')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });
