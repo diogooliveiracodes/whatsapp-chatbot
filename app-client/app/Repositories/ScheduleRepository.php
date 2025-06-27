@@ -3,13 +3,16 @@
 namespace App\Repositories;
 
 use App\Models\Schedule;
-use Illuminate\Database\Eloquent\Collection;
-use Carbon\Carbon;
 use App\Services\Unit\UnitService;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 class ScheduleRepository
 {
-    public function __construct(protected Schedule $model, protected UnitService $unitService) {}
+    public function __construct(
+        protected Schedule $model,
+        protected UnitService $unitService
+    ) {}
 
     public function findById(int $id): ?Schedule
     {
@@ -18,7 +21,8 @@ class ScheduleRepository
 
     public function findByUnitIdAndDate(int $unitId, Carbon $startDate, Carbon $endDate): Collection
     {
-        return $this->model
+        return $this
+            ->model
             ->with(['customer', 'user', 'unitServiceType'])
             ->where('unit_id', $unitId)
             ->whereBetween('schedule_date', [$startDate, $endDate])
@@ -42,7 +46,8 @@ class ScheduleRepository
 
     public function findConflictingSchedule(int $unitId, string $scheduleDate, string $startTime, string $endTime, ?int $currentScheduleId = null): ?Schedule
     {
-        return $this->model
+        return $this
+            ->model
             ->where('unit_id', $unitId)
             ->when($currentScheduleId, function ($query) use ($currentScheduleId) {
                 return $query->where('id', '!=', $currentScheduleId);
@@ -62,10 +67,24 @@ class ScheduleRepository
 
     public function getActiveSchedulesFromNow(int $unitId): bool
     {
-        return $this->model
+        return $this
+            ->model
             ->where('unit_id', $unitId)
             ->whereNot('status', 'cancelled')
             ->where('schedule_date', '>=', now())
             ->exists();
+    }
+
+    /**
+     * Deactivate schedules by company ID
+     *
+     * @param int $companyId
+     * @return void
+     */
+    public function deactivateByCompanyId(int $companyId): void
+    {
+        $this->model->whereHas('unit', function ($query) use ($companyId) {
+            $query->where('company_id', $companyId);
+        })->update(['status' => 'inactive']);
     }
 }

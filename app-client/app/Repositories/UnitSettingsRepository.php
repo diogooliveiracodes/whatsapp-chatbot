@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Auth;
 
 class UnitSettingsRepository implements UnitSettingsRepositoryInterface
 {
-    public function __construct(protected UnitSettings $model) {}
+    public function __construct(
+        protected UnitSettings $model
+    ) {}
 
     /**
      * Create new unit settings
@@ -89,8 +91,21 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
      */
     public function findById(int $id): ?UnitSettings
     {
-        return $this->model->where('company_id', Auth::user()->company_id)
+        return $this
+            ->model
+            ->where('company_id', Auth::user()->company_id)
             ->where('id', $id)
             ->first();
+    }
+
+    /**
+     * Deactivate unit settings by company ID
+     *
+     * @param int $companyId
+     * @return void
+     */
+    public function deactivateByCompanyId(int $companyId): void
+    {
+        $this->model->where('company_id', $companyId)->delete();
     }
 }

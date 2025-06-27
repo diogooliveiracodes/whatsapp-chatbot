@@ -13,8 +13,7 @@ class ChatSessionRepository
 
     public function __construct(
         ChatSession $model
-    )
-    {
+    ) {
         $this->model = $model;
     }
 
@@ -25,7 +24,8 @@ class ChatSessionRepository
 
     public function findByChannel(string $channel): ?ChatSession
     {
-        return $this->model
+        return $this
+            ->model
             ->join('customers', 'customers.id', '=', 'chat_sessions.customer_id')
             ->where('chat_sessions.channel', $channel)
             ->select([
@@ -50,7 +50,9 @@ class ChatSessionRepository
 
     public function findActiveChatSession(array $data): ChatSession|null
     {
-        return $this->model->where('active', true)
+        return $this
+            ->model
+            ->where('active', true)
             ->where('customer_id', $data['customer_id'])
             ->where('user_id', $data['user_id'])
             ->first();
@@ -62,7 +64,8 @@ class ChatSessionRepository
      */
     public function getChatSessionList(?string $search = null): object
     {
-        $query = $this->model
+        $query = $this
+            ->model
             ->join('customers', 'customers.id', '=', 'chat_sessions.customer_id')
             ->where('chat_sessions.active', true)
             ->where('chat_sessions.user_id', Auth::user()->id)
@@ -80,9 +83,10 @@ class ChatSessionRepository
             ]);
 
         if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('customers.name', 'like', "%{$search}%")
-                  ->orWhere('customers.phone', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q
+                    ->where('customers.name', 'like', "%{$search}%")
+                    ->orWhere('customers.phone', 'like', "%{$search}%");
             });
         }
 
@@ -91,7 +95,8 @@ class ChatSessionRepository
 
     public function getMessagesByChatSessionChannel(string $channel): Collection
     {
-        return $this->model
+        return $this
+            ->model
             ->join('messages', 'messages.chat_session_id', '=', 'chat_sessions.id')
             ->join('customers', 'customers.id', '=', 'chat_sessions.customer_id')
             ->join('users', 'users.id', '=', 'chat_sessions.user_id')
@@ -110,5 +115,16 @@ class ChatSessionRepository
                 'users.name as user_name',
             ])
             ->get();
+    }
+
+    /**
+     * Deactivate chat sessions by company ID
+     *
+     * @param int $companyId
+     * @return void
+     */
+    public function deactivateByCompanyId(int $companyId): void
+    {
+        $this->model->where('company_id', $companyId)->update(['active' => false]);
     }
 }

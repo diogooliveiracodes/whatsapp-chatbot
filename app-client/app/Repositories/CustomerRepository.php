@@ -21,7 +21,11 @@ class CustomerRepository
 
     public function findById(int $id): ?Customer
     {
-        return $this->model->find($id);
+        return $this
+            ->model
+            ->where('company_id', Auth::user()->company_id)
+            ->where('id', $id)
+            ->first();
     }
 
     public function update(Customer $customer, array $data): bool
@@ -34,13 +38,15 @@ class CustomerRepository
         return $customer->delete();
     }
 
-
     public function searchByQuery(string $query, $unit)
     {
-        return $this->model->where('unit_id', $unit->id)
-            ->where(function($q) use ($query) {
-                $q->where('name', 'like', "%{$query}%")
-                  ->orWhere('phone', 'like', "%{$query}%");
+        return $this
+            ->model
+            ->where('unit_id', $unit->id)
+            ->where(function ($q) use ($query) {
+                $q
+                    ->where('name', 'like', "%{$query}%")
+                    ->orWhere('phone', 'like', "%{$query}%");
             })
             ->select('id', 'name', 'phone', 'active', 'created_at')
             ->get();
@@ -48,8 +54,21 @@ class CustomerRepository
 
     public function getCustomersByUnit($unit)
     {
-        return $this->model->where('unit_id', $unit->id)
+        return $this
+            ->model
+            ->where('unit_id', $unit->id)
             ->select('id', 'name', 'phone', 'active')
             ->get();
+    }
+
+    /**
+     * Deactivate customers by company ID
+     *
+     * @param int $companyId
+     * @return void
+     */
+    public function deactivateByCompanyId(int $companyId): void
+    {
+        $this->model->where('company_id', $companyId)->update(['active' => false]);
     }
 }

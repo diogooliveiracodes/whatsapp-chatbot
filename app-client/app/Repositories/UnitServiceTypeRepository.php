@@ -2,14 +2,16 @@
 
 namespace App\Repositories;
 
-use App\Models\UnitServiceType;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Unit;
+use App\Models\UnitServiceType;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 
 class UnitServiceTypeRepository
 {
-    public function __construct(protected UnitServiceType $model) {}
+    public function __construct(
+        protected UnitServiceType $model
+    ) {}
 
     /**
      * Get all unit service types for the current company
@@ -18,7 +20,9 @@ class UnitServiceTypeRepository
      */
     public function getUnitServiceTypes(): Collection
     {
-        return $this->model->where('company_id', Auth::user()->company_id)
+        return $this
+            ->model
+            ->where('company_id', Auth::user()->company_id)
             ->where('active', true)
             ->get();
     }
@@ -77,7 +81,9 @@ class UnitServiceTypeRepository
      */
     public function getDeactivatedUnitServiceTypes(): Collection
     {
-        return $this->model->where('company_id', Auth::user()->company_id)
+        return $this
+            ->model
+            ->where('company_id', Auth::user()->company_id)
             ->where('active', false)
             ->get();
     }
@@ -91,5 +97,16 @@ class UnitServiceTypeRepository
     public function activate(UnitServiceType $unitServiceType): void
     {
         $unitServiceType->update(['active' => true]);
+    }
+
+    /**
+     * Deactivate unit service types by company ID
+     *
+     * @param int $companyId
+     * @return void
+     */
+    public function deactivateByCompanyId(int $companyId): void
+    {
+        $this->model->where('company_id', $companyId)->update(['active' => false]);
     }
 }

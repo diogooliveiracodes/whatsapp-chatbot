@@ -3,9 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Unit;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Collection;
 use App\Services\UnitSettings\UnitSettingsService;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class UnitRepository
 {
@@ -21,7 +21,9 @@ class UnitRepository
      */
     public function getUnits(): Collection
     {
-        return $this->model->where('company_id', Auth::user()->company_id)
+        return $this
+            ->model
+            ->where('company_id', Auth::user()->company_id)
             ->where('active', true)
             ->get();
     }
@@ -53,7 +55,7 @@ class UnitRepository
      */
     public function update(Unit $unit, array $data): Unit
     {
-        if(!$data['active']) {
+        if (!$data['active']) {
             $data['active'] = 0;
         }
         $unit->update($data);
@@ -90,14 +92,18 @@ class UnitRepository
      */
     public function findByIdAndCompany(int $id): ?Unit
     {
-        return $this->model->where('id', $id)
+        return $this
+            ->model
+            ->where('id', $id)
             ->where('company_id', Auth::user()->company_id)
             ->first();
     }
 
     public function getDeactivatedUnits(): Collection
     {
-        return $this->model->where('company_id', Auth::user()->company_id)
+        return $this
+            ->model
+            ->where('company_id', Auth::user()->company_id)
             ->where('active', false)
             ->get();
     }
@@ -105,5 +111,10 @@ class UnitRepository
     public function activate(Unit $unit): void
     {
         $unit->update(['active' => true]);
+    }
+
+    public function deactivateByCompanyId(int $companyId): void
+    {
+        $this->model->where('company_id', $companyId)->update(['active' => false]);
     }
 }
