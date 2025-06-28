@@ -29,6 +29,7 @@ class CompanyActiveMiddleware
         }
 
         if (!$user->company->active) {
+            Auth::logout();
             return redirect()->route('login')->with('error', __('middleware.company.company_inactive'));
         }
 
