@@ -8,6 +8,7 @@ Route::middleware('admin')->group(function () {
         Route::get('/', [AdminController::class, 'index'])->name('admin.index');
 
         Route::get('/units/by-company/{companyId}', [AdminController::class, 'getUnitsByCompany'])->name('admin.units.by-company');
+        Route::patch('/company/deactivate', [AdminController::class, 'deactivateCompany'])->name('admin.company.deactivate');
 
         Route::group(['prefix' => 'users'], function () {
             Route::get('/', [AdminController::class, 'users'])->name('admin.users.index');
