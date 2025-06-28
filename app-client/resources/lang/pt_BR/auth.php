@@ -17,4 +17,11 @@ return [
     'password' => 'A senha fornecida está incorreta.',
     'throttle' => 'Muitas tentativas de login. Por favor, tente novamente em :seconds segundos.',
 
+    // Login form
+    'email' => 'E-mail',
+    'password' => 'Senha',
+    'remember_me' => 'Lembrar de mim',
+    'forgot_password' => 'Esqueceu sua senha?',
+    'log_in' => 'Entrar',
+
 ];
