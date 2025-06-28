@@ -113,21 +113,21 @@ class DeactivateCompanyService
                 throw new \Exception("Company with ID {$companyId} not found");
             }
 
-            $this->userRepository->deactivateByCompanyId($companyId);
-            $this->userRoleRepository->deactivateByCompanyId($companyId);
-            $this->chatSessionRepository->deactivateByCompanyId($companyId);
-            $this->messageRepository->deactivateByCompanyId($companyId);
-            $this->companySettingsRepository->deactivateByCompanyId($companyId);
-            $this->unitRepository->deactivateByCompanyId($companyId);
-            $this->unitSettingsRepository->deactivateByCompanyId($companyId);
-            $this->unitServiceTypeRepository->deactivateByCompanyId($companyId);
-            $this->companySubscriptionRepository->deactivateByCompanyId($companyId);
-            $this->companyPlanRepository->deactivateByCompanyId($companyId);
-            $this->paymentMethodRepository->deactivateByCompanyId($companyId);
-            $this->paymentRepository->deactivateByCompanyId($companyId);
-            $this->customerRepository->deactivateByCompanyId($companyId);
-            $this->scheduleRepository->deactivateByCompanyId($companyId);
-            $this->scheduleSettingsRepository->deactivateByCompanyId($companyId);
+            // $this->userRepository->deactivateByCompanyId($companyId);
+            // $this->userRoleRepository->deactivateByCompanyId($companyId);
+            // $this->chatSessionRepository->deactivateByCompanyId($companyId);
+            // $this->messageRepository->deactivateByCompanyId($companyId);
+            // $this->companySettingsRepository->deactivateByCompanyId($companyId);
+            // $this->unitRepository->deactivateByCompanyId($companyId);
+            // $this->unitSettingsRepository->deactivateByCompanyId($companyId);
+            // $this->unitServiceTypeRepository->deactivateByCompanyId($companyId);
+            // $this->companySubscriptionRepository->deactivateByCompanyId($companyId);
+            // $this->companyPlanRepository->deactivateByCompanyId($companyId);
+            // $this->paymentMethodRepository->deactivateByCompanyId($companyId);
+            // $this->paymentRepository->deactivateByCompanyId($companyId);
+            // $this->customerRepository->deactivateByCompanyId($companyId);
+            // $this->scheduleRepository->deactivateByCompanyId($companyId);
+            // $this->scheduleSettingsRepository->deactivateByCompanyId($companyId);
             $this->companyRepository->deactivate($company);
 
             DB::commit();
