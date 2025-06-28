@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\CompanyActiveMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
@@ -19,7 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(SetLocale::class);
         $middleware->alias([
             'owner' => OwnerMiddleware::class,
-            'admin' => AdminMiddleware::class
+            'admin' => AdminMiddleware::class,
+            'company.active' => CompanyActiveMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
