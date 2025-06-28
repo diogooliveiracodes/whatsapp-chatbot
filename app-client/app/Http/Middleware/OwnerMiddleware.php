@@ -3,9 +3,10 @@
 namespace App\Http\Middleware;
 
 use App\Enum\UserRoleEnum;
-use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Closure;
 
 class OwnerMiddleware
 {
@@ -19,11 +20,11 @@ class OwnerMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (
-            auth()->check() && auth()->user()->user_role_id === UserRoleEnum::OWNER
+            Auth::check() && Auth::user()->user_role_id === UserRoleEnum::OWNER
         ) {
             return $next($request);
         }
 
-        return response()->json(['message' => 'Unauthorized'], 403);
+        return redirect()->route('login');
     }
 }
