@@ -157,7 +157,7 @@
                         </x-cancel-link>
 
                         <!-- Edit Button -->
-                        <x-confirm-link href="{{ route('unitSettings.edit', $unitSettings->unit->id) }}">
+                        <x-confirm-link href="{{ route('unitSettings.edit', $unitSettings->id) }}">
                             {{ __('unitSettings.edit') }}
                         </x-confirm-link>
                     </div>

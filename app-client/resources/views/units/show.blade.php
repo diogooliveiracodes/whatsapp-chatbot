@@ -73,7 +73,7 @@
                         </x-cancel-link>
 
                         <div class="space-x-2">
-                            <x-buttons.settings-secondary :route="route('unitSettings.show', $unit->id)" />
+                            <x-buttons.settings-secondary :route="route('unitSettings.show', $unit->unitSettings->id)" />
                             <x-confirm-link href="{{ route('units.edit', $unit->id) }}">
                                 {{ __('units.edit') }}
                             </x-confirm-link>
