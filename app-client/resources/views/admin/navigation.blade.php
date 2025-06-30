@@ -28,7 +28,9 @@
                     {{ __('pages.companies') }}
                 </h3>
             </div>
-
+            <x-nav-link :href="route('admin.companies.index')" :active="request()->routeIs('admin.companies.index')">
+                {{ __('pages.companies') }}
+            </x-nav-link>
         </nav>
 
 
