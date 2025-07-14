@@ -128,9 +128,16 @@ class AdminController extends Controller
 
         $this->deactivateCompanyService->execute($companyId);
 
-        return redirect()->route('admin.users.index')->with('success', 'Empresa desativada com sucesso!');
+        return redirect()->route('admin.companies.index')->with('success', 'Empresa desativada com sucesso!');
     }
 
+    /**
+     * Display the companies management page.
+     *
+     * Retrieves all companies and displays them in a dedicated companies management interface.
+     *
+     * @return \Illuminate\View\View The companies management view with companies data
+     */
     public function indexCompanies(): View
     {
         $companies = $this->companyService->getCompanies();
