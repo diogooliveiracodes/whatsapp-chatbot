@@ -14,7 +14,17 @@ class CompanyService
      */
     public function getCompanies(): Collection
     {
-        return Company::where('active', true)->get();
+        return Company::orderBy('active', 'desc')->orderBy('created_at', 'desc')->get();
+    }
+
+    /**
+     * Get active companies
+     *
+     * @return Collection
+     */
+    public function getActiveCompanies(): Collection
+    {
+        return Company::where('active', true)->orderBy('created_at', 'desc')->get();
     }
 
     /**

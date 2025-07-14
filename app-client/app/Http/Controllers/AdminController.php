@@ -81,7 +81,7 @@ class AdminController extends Controller
      */
     public function createUser(): View
     {
-        $companies = $this->companyService->getCompanies();
+        $companies = $this->companyService->getActiveCompanies();
         $companies->load('Units');
         $units = Unit::where('active', true)->get();
         $userRoles = UserRole::where('active', true)->get();
@@ -129,5 +129,12 @@ class AdminController extends Controller
         $this->deactivateCompanyService->execute($companyId);
 
         return redirect()->route('admin.users.index')->with('success', 'Empresa desativada com sucesso!');
+    }
+
+    public function indexCompanies(): View
+    {
+        $companies = $this->companyService->getCompanies();
+
+        return view('admin.companies.index', ['companies' => $companies]);
     }
 }
