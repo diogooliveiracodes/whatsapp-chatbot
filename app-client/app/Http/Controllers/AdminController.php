@@ -106,11 +106,11 @@ class AdminController extends Controller
 
             return redirect()
                 ->route('admin.users.index')
-                ->with('success', $result['message']);
+                ->with('success', __('admin.user_created_success'));
         } catch (\Exception $e) {
             return redirect()
                 ->back()
-                ->withErrors(['error' => 'Erro ao criar usuário: ' . $e->getMessage()])
+                ->withErrors(['error' => __('admin.user_created_error', ['message' => $e->getMessage()])])
                 ->withInput();
         }
     }
@@ -124,11 +124,15 @@ class AdminController extends Controller
      */
     public function deactivateCompany(Request $request): RedirectResponse
     {
-        $companyId = $request->input('company_id');
+        try {
+            $this->deactivateCompanyService->execute($request->input('company_id'));
 
-        $this->deactivateCompanyService->execute($companyId);
-
-        return redirect()->route('admin.companies.index')->with('success', 'Empresa desativada com sucesso!');
+            return redirect()->route('admin.companies.index')->with('success', __('admin.company_deactivated_success'));
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->withErrors(['error' => __('admin.company_deactivated_error', ['message' => $e->getMessage()])]);
+        }
     }
 
     /**
