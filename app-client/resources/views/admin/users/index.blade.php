@@ -55,10 +55,10 @@
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         {{ __('Criado em') }}
                                     </th>
-                                    <th
+                                    {{-- <th
                                         class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                         {{ __('Ações') }}
-                                    </th>
+                                    </th> --}}
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -115,7 +115,7 @@
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                             {{ $user->created_at ? $user->created_at->format('d/m/Y H:i') : 'N/A' }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        {{-- <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex justify-end space-x-2">
                                                 <a href="{{ route('admin.users.edit', $user->id) }}"
                                                     class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200">
@@ -130,7 +130,7 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                             </div>
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                 @empty
                                     <tr>
@@ -149,7 +149,7 @@
     </div>
 
     <!-- Deactivate User Modal -->
-    <div id="deactivateModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    {{-- <div id="deactivateModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
             <div class="mt-3 text-center">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900">
@@ -180,7 +180,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     @push('scripts')
         <script>
