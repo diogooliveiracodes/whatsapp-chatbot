@@ -119,6 +119,11 @@
                             </div>
                         </div>
 
+                        <div>
+                            <label class="label-style">{{ __('unitSettings.appointment_duration_minutes') }}</label>
+                            <p class="text-md dark:text-gray-300">{{ $unitSettings->appointment_duration_minutes ?? '-' }}</p>
+                        </div>
+
                         <!-- Additional Settings -->
                         <x-forms.section-title :title="__('unitSettings.additional_settings_section')" />
 

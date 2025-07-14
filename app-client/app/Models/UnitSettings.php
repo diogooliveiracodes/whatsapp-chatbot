@@ -29,6 +29,7 @@ class UnitSettings extends Model
         'whatsapp_number',
         'default_language',
         'timezone',
+        'appointment_duration_minutes',
         'sunday_start',
         'sunday_end',
         'sunday',
@@ -55,6 +56,7 @@ class UnitSettings extends Model
     ];
 
     protected $casts = [
+        'appointment_duration_minutes' => 'integer',
         'sunday_start' => 'string',
         'sunday_end' => 'string',
         'sunday' => 'boolean',

@@ -7,7 +7,7 @@ return [
     'save_changes' => 'Save Changes',
     'yes' => 'Yes',
     'no' => 'No',
-
+    'appointment_duration_minutes' => 'Appointment Duration in Minutes',
     // Basic Information
     'basic_info_section' => 'Basic Information',
     'name' => 'Name',

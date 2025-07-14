@@ -36,6 +36,7 @@ class UpdateUnitSettingsRequest extends FormRequest
             'use_ai_chatbot' => ['boolean'],
             'default_language' => ['nullable', 'string', 'max:5'],
             'timezone' => ['nullable', 'string', 'max:50'],
+            'appointment_duration_minutes' => ['nullable', 'integer', 'min:1'],
             'sunday' => ['boolean'],
             'sunday_start' => ['nullable', 'required_if:sunday,true', 'date_format:H:i'],
             'sunday_end' => ['nullable', 'required_if:sunday,true', 'date_format:H:i'],

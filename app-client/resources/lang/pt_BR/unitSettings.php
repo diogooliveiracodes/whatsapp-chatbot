@@ -7,7 +7,7 @@ return [
     'save_changes' => 'Salvar Alterações',
     'yes' => 'Sim',
     'no' => 'Não',
-
+    'appointment_duration_minutes' => 'Duração do agendamento em minutos',
     // Basic Information
     'basic_info_section' => 'Informações Básicas',
     'name' => 'Nome',

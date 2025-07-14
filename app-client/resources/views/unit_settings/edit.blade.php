@@ -86,6 +86,15 @@
                             <x-forms.section-title :title="__('unitSettings.working_hours_section')" />
 
                             <div class="col-span-2">
+                                <x-unit-settings.text-input name="appointment_duration_minutes"
+                                    :label="__('unitSettings.appointment_duration_minutes')"
+                                    :value="old(
+                                        'appointment_duration_minutes',
+                                        $unitSettings->appointment_duration_minutes ?? '',
+                                    )" :required="true" />
+                            </div>
+
+                            <div class="col-span-2">
                                 <div class="space-y-4">
                                     @php
                                         $days = [
