@@ -13,7 +13,6 @@ use App\Repositories\{
     UnitSettingsRepository,
     UnitServiceTypeRepository,
     CompanySubscriptionRepository,
-    CompanyPlanRepository,
     PaymentMethodRepository,
     PaymentRepository,
     CustomerRepository,
@@ -53,7 +52,6 @@ class DeactivateCompanyService
      * @param UnitSettingsRepository $unitSettingsRepository Repository for unit settings operations
      * @param UnitServiceTypeRepository $unitServiceTypeRepository Repository for unit service type operations
      * @param CompanySubscriptionRepository $companySubscriptionRepository Repository for company subscription operations
-     * @param CompanyPlanRepository $companyPlanRepository Repository for company plan operations
      * @param PaymentMethodRepository $paymentMethodRepository Repository for payment method operations
      * @param PaymentRepository $paymentRepository Repository for payment operations
      * @param CustomerRepository $customerRepository Repository for customer operations
@@ -72,7 +70,6 @@ class DeactivateCompanyService
         protected UnitSettingsRepository $unitSettingsRepository,
         protected UnitServiceTypeRepository $unitServiceTypeRepository,
         protected CompanySubscriptionRepository $companySubscriptionRepository,
-        protected CompanyPlanRepository $companyPlanRepository,
         protected PaymentMethodRepository $paymentMethodRepository,
         protected PaymentRepository $paymentRepository,
         protected CustomerRepository $customerRepository,
@@ -122,7 +119,6 @@ class DeactivateCompanyService
             // $this->unitSettingsRepository->deactivateByCompanyId($companyId);
             // $this->unitServiceTypeRepository->deactivateByCompanyId($companyId);
             // $this->companySubscriptionRepository->deactivateByCompanyId($companyId);
-            // $this->companyPlanRepository->deactivateByCompanyId($companyId);
             // $this->paymentMethodRepository->deactivateByCompanyId($companyId);
             // $this->paymentRepository->deactivateByCompanyId($companyId);
             // $this->customerRepository->deactivateByCompanyId($companyId);

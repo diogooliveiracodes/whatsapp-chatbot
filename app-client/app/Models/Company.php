@@ -72,11 +72,6 @@ class Company extends Model
         return $this->hasMany(CompanySubscription::class);
     }
 
-    public function companyPlans(): HasMany
-    {
-        return $this->hasMany(CompanyPlan::class);
-    }
-
     public function paymentMethods(): HasMany
     {
         return $this->hasMany(PaymentMethod::class);
