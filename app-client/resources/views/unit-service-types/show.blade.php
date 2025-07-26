@@ -23,6 +23,11 @@
             </div>
 
             <div class="mb-4">
+                <x-input-label for="price" :value="__('fields.price')" />
+                <p class="mt-1 text-gray-900 dark:text-gray-100">{{ $unitServiceType->price }}</p>
+            </div>
+
+            <div class="mb-4">
                 <x-input-label for="created_at" :value="__('fields.created_at')" />
                 <p class="mt-1 text-gray-900 dark:text-gray-100">{{ \Carbon\Carbon::parse($unitServiceType->created_at)->format('d/m/Y H:i') }}</p>
             </div>

@@ -26,6 +26,7 @@
                                 <x-global.table-header :columns="[
                                     __('unit-service-types.name'),
                                     __('units.name'),
+                                    __('fields.price'),
                                     __('unit-service-types.actions')
                                 ]" />
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -36,6 +37,10 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 {{ $type->unit?->name ?? '-' }}
+                                            </td>
+
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                R$ {{ number_format($type->price, 2, ',', '.') }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <x-actions.view :route="route('unitServiceTypes.show', $type)" />
