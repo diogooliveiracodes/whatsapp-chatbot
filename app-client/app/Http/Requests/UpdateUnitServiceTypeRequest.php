@@ -25,6 +25,7 @@ class UpdateUnitServiceTypeRequest extends FormRequest
             'name' => ['required', 'string', 'max:100'],
             'description' => ['nullable', 'string', 'max:255'],
             'active' => ['nullable', 'boolean'],
+            'price' => ['required', 'string', 'max:10'],
         ];
     }
 
@@ -40,6 +41,9 @@ class UpdateUnitServiceTypeRequest extends FormRequest
             'name.string' => 'O nome deve ser um texto',
             'name.max' => 'O nome não pode ter mais de 255 caracteres',
             'description.string' => 'A descrição deve ser um texto',
+            'price.required' => 'O preço é obrigatório',
+            'price.string' => 'O preço deve ser um texto',
+            'price.max' => 'O preço não pode ter mais de 10 caracteres',
         ];
     }
 }
