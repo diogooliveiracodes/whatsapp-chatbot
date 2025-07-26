@@ -35,6 +35,7 @@ class UnitServiceTypeController extends Controller
     {
         try {
             $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypes();
+
             return view('unit-service-types.index', compact('unitServiceTypes'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
@@ -42,6 +43,7 @@ class UnitServiceTypeController extends Controller
                 'request_method' => request()->method(),
                 'request_url' => request()->url(),
             ]);
+
             return view('unit-service-types.index', ['unitServiceTypes' => [], 'error' => __('unit-service-types.error.load')]);
         }
     }
@@ -54,6 +56,7 @@ class UnitServiceTypeController extends Controller
     public function create(): View
     {
         $units = $this->unitService->getUnits();
+
         return view('unit-service-types.create', compact('units'));
     }
 
@@ -89,6 +92,7 @@ class UnitServiceTypeController extends Controller
     {
         try {
             $this->unitServiceTypeService->create($request->validated());
+
             return redirect()->route('unitServiceTypes.index')
                 ->with('success', __('unit-service-types.success.created'));
         } catch (\Exception $e) {
@@ -96,7 +100,8 @@ class UnitServiceTypeController extends Controller
                 'action' => 'store',
                 'request_data' => $request->all(),
             ]);
-            return back()->with('error', __('unit-service-types.error.create'));
+
+            return back()->with('error', __('unit-service-types.error.create'))->withInput();
         }
     }
 
@@ -111,6 +116,7 @@ class UnitServiceTypeController extends Controller
     {
         try {
             $this->unitServiceTypeService->update($unitServiceType, $request->validated());
+
             return redirect()->route('unitServiceTypes.index')
                 ->with('success', __('unit-service-types.success.updated'));
         } catch (\Exception $e) {
@@ -119,6 +125,7 @@ class UnitServiceTypeController extends Controller
                 'unit_service_type_id' => $unitServiceType->id,
                 'request_data' => $request->all(),
             ]);
+
             return back()->with('error', __('unit-service-types.error.update'));
         }
     }
@@ -133,6 +140,7 @@ class UnitServiceTypeController extends Controller
     {
         try {
             $this->unitServiceTypeService->deactivate($unitServiceType);
+
             return redirect()->route('unitServiceTypes.index')
                 ->with('success', __('unit-service-types.success.deleted'));
         } catch (\Exception $e) {
@@ -140,6 +148,7 @@ class UnitServiceTypeController extends Controller
                 'action' => 'delete',
                 'unit_service_type_id' => $unitServiceType->id,
             ]);
+
             return back()->with('error', __('unit-service-types.error.delete'));
         }
     }
@@ -153,6 +162,7 @@ class UnitServiceTypeController extends Controller
     {
         try {
             $unitServiceTypes = $this->unitServiceTypeService->getDeactivatedUnitServiceTypes();
+
             return view('unit-service-types.deactivated', compact('unitServiceTypes'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
@@ -160,6 +170,7 @@ class UnitServiceTypeController extends Controller
                 'request_method' => request()->method(),
                 'request_url' => request()->url(),
             ]);
+
             return view('unit-service-types.deactivated', ['unitServiceTypes' => [], 'error' => __('unit-service-types.error.load')]);
         }
     }
@@ -174,6 +185,7 @@ class UnitServiceTypeController extends Controller
     {
         try {
             $this->unitServiceTypeService->activate($unitServiceType);
+
             return redirect()->route('unitServiceTypes.deactivated')
                 ->with('success', __('unit-service-types.success.activated'));
         } catch (\Exception $e) {
@@ -181,6 +193,7 @@ class UnitServiceTypeController extends Controller
                 'action' => 'activate',
                 'unit_service_type_id' => $unitServiceType->id,
             ]);
+
             return back()->with('error', __('unit-service-types.error.activate'));
         }
     }
