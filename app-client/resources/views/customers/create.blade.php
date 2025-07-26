@@ -72,6 +72,7 @@
                             <x-buttons.toggle-switch
                                 name="active"
                                 :label="__('fields.active')"
+                                :value="old('active', true)"
                             />
                             @error('active')
                                 <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
