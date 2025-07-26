@@ -4,8 +4,9 @@ namespace App\Repositories;
 
 use App\Models\Unit;
 use App\Models\UnitServiceType;
-use Illuminate\Support\Facades\Auth;
+use App\Utils\MoneyHelper;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class UnitServiceTypeRepository
 {
@@ -36,6 +37,7 @@ class UnitServiceTypeRepository
     public function create(array $data): UnitServiceType
     {
         $data['company_id'] = Auth::user()->company_id;
+        $data['price'] = MoneyHelper::parse($data['price']);
         return $this->model->create($data);
     }
 
@@ -48,6 +50,7 @@ class UnitServiceTypeRepository
      */
     public function update(UnitServiceType $unitServiceType, array $data): UnitServiceType
     {
+        $data['price'] = MoneyHelper::parse($data['price']);
         $unitServiceType->update($data);
         return $unitServiceType;
     }

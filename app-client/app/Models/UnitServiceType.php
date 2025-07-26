@@ -16,6 +16,7 @@ class UnitServiceType extends Model
         'unit_id',
         'name',
         'description',
+        'price',
         'active',
     ];
 
