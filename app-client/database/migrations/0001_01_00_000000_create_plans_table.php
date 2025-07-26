@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->decimal('price', 10, 2);
-            $table->integer('duration_days');
+            $table->integer('duration_months');
             $table->string('status')->default('active');
             $table->enum('type', PlansEnum::getValues())->default(PlansEnum::TRIAL->value);
             $table->timestamps();
