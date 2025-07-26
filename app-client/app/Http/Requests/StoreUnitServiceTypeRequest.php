@@ -24,6 +24,7 @@ class StoreUnitServiceTypeRequest extends FormRequest
         return [
             'unit_id' => ['required', 'exists:units,id'],
             'name' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'string', 'max:10'],
             'description' => ['nullable', 'string']
         ];
     }
@@ -41,6 +42,9 @@ class StoreUnitServiceTypeRequest extends FormRequest
             'name.required' => 'O nome é obrigatório',
             'name.string' => 'O nome deve ser um texto',
             'name.max' => 'O nome não pode ter mais de 255 caracteres',
+            'price.required' => 'O preço é obrigatório',
+            'price.numeric' => 'O preço deve ser um número',
+            'price.min' => 'O preço deve ser maior que 0',
             'description.string' => 'A descrição deve ser um texto'
         ];
     }
