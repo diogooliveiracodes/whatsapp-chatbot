@@ -12,11 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('signature', function (Blueprint $table) {
+        Schema::create('signatures', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
             $table->foreignId('plan_id')->constrained('plans');
-            $table->foreignId('payment_id')->constrained('payment')->nullable();
             $table->enum('status', SignatureStatusEnum::getValues());
             $table->dateTime('expires_at')->nullable();
             $table->timestamps();

@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum PlansEnum: string
+enum PlansEnum: int
 {
     case TRIAL = 1;
     case BASIC = 2;
