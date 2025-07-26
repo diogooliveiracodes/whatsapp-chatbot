@@ -80,4 +80,9 @@ class Payment extends Model
     {
         return $this->belongsToMany(Signature::class);
     }
+
+    public function schedules(): BelongsToMany
+    {
+        return $this->belongsToMany(Schedule::class);
+    }
 }
