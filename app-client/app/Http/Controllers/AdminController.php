@@ -11,7 +11,12 @@ use App\Services\ErrorLog\ErrorLogService;
 use App\Services\Company\CompanyService;
 use App\Services\Unit\UnitService;
 use App\Services\User\UserService;
+use App\Services\Plan\PlanService;
+use App\Models\Company;
 use Illuminate\Http\RedirectResponse;
+use App\Enum\DocumentTypeEnum;
+use App\Helpers\CnpjHelper;
+use App\Helpers\CpfHelper;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -41,7 +46,8 @@ class AdminController extends Controller
         protected UnitService $unitService,
         protected CreateUserService $createUserService,
         protected DeactivateCompanyService $deactivateCompanyService,
-        protected ErrorLogService $errorLogService
+        protected ErrorLogService $errorLogService,
+        protected PlanService $planService
     ) {}
 
     /**
@@ -126,13 +132,13 @@ class AdminController extends Controller
      * Processes the deactivation of a company and all its associated data.
      * Redirects to the admin dashboard with a success message.
      *
-     * @param Request $request The HTTP request containing the company ID
+     * @param int $company The company ID from the route parameter
      * @return RedirectResponse Redirects to admin dashboard after successful deactivation
      */
-    public function deactivateCompany(Request $request): RedirectResponse
+    public function deactivateCompany(int $company): RedirectResponse
     {
         try {
-            $this->deactivateCompanyService->execute($request->input('company_id'));
+            $this->deactivateCompanyService->execute($company);
 
             return redirect()->route('admin.companies.index')->with('success', __('admin.company_deactivated_success'));
         } catch (\Exception $e) {
@@ -154,5 +160,60 @@ class AdminController extends Controller
         $companies = $this->companyService->getCompanies();
 
         return view('admin.companies.index', ['companies' => $companies]);
+    }
+
+    /**
+     * Edit a company.
+     *
+     * Shows the form for editing a company in the admin panel.
+     * Loads companies, units, and user roles for the form dropdowns.
+     *
+     * @return View The company edit form view with companies, units, and user roles
+     */
+    public function editCompany(int $id): View
+    {
+        $company = $this->companyService->findById($id);
+        $plans = $this->planService->getPlans();
+
+        return view('admin.companies.edit', ['company' => $company, 'plans' => $plans]);
+    }
+
+    public function updateCompany(Request $request, Company $company): RedirectResponse
+    {
+        try {
+            if (!$this->validateDocumentNumber($request->document_number, $request->document_type)) {
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('error', __('admin.company_updated_error', ['message' => __('admin.invalid_document')]));
+            }
+
+            $this->companyService->update($company, $request->all());
+
+            return redirect()->route('admin.companies.index')->with('success', __('admin.company_updated_success'));
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'update',
+                'request_data' => $request->validated(),
+            ]);
+
+            return redirect()->back()->withInput()->with('error', __('admin.company_updated_error', ['message' => $e->getMessage()]));
+        }
+    }
+
+    /**
+     * Validate the document number.
+     *
+     * @param string $documentNumber
+     * @param int $documentType
+     * @return bool
+     */
+    public function validateDocumentNumber(string $documentNumber, int $documentType): bool
+    {
+        if ($documentType == DocumentTypeEnum::CNPJ->value) {
+            return CnpjHelper::isValid($documentNumber);
+        }
+
+        return CpfHelper::isValid($documentNumber);
     }
 }
