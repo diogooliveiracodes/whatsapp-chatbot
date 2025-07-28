@@ -98,6 +98,10 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex justify-end space-x-2">
+                                                <a href="{{ route('admin.companies.edit', $company->id) }}"
+                                                    class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
                                                 <button onclick="showDeactivateModal({{ $company->id }})"
                                                     class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200">
                                                     <i class="fas fa-trash"></i>
@@ -137,10 +141,9 @@
                     </p>
                 </div>
                 <div class="items-center px-4 py-3">
-                    <form action="{{ route('admin.company.deactivate') }}" method="POST">
+                    <form id="deactivateForm" action="" method="POST">
                         @csrf
                         @method('PATCH')
-                        <input type="hidden" name="company_id" id="companyIdToDeactivate">
                         <button id="confirmDeactivate"
                             class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 transition-colors duration-200">
                             {{ __('Confirmar') }}
@@ -176,7 +179,8 @@
 
             // Deactivate modal functions
             function showDeactivateModal(companyId) {
-                document.getElementById('companyIdToDeactivate').value = companyId;
+                const form = document.getElementById('deactivateForm');
+                form.action = `{{ url('admin/companies') }}/${companyId}/deactivate`;
                 document.getElementById('deactivateModal').classList.remove('hidden');
             }
 
