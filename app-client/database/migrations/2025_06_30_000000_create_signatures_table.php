@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
             $table->foreignId('plan_id')->constrained('plans');
-            $table->enum('status', SignatureStatusEnum::getValues());
+            $table->integer('status');
             $table->dateTime('expires_at')->nullable();
             $table->timestamps();
         });
