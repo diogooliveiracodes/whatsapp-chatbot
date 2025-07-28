@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum SignatureStatusEnum: string
+enum SignatureStatusEnum: int
 {
     case PENDING = 1;
     case PAID = 2;
