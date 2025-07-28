@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->integer('duration_months');
+            $table->integer('units_limit');
             $table->string('status')->default('active');
             $table->enum('type', PlansEnum::getValues())->default(PlansEnum::TRIAL->value);
             $table->timestamps();

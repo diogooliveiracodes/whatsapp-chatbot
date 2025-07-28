@@ -10,11 +10,12 @@ class Plan extends Model
 {
     use HasUuids;
 
-    protected $fillable = ['name', 'description', 'price', 'duration_months', 'status', 'type'];
+    protected $fillable = ['name', 'description', 'price', 'duration_months', 'units_limit', 'status', 'type'];
 
     protected $casts = [
         'price' => 'decimal:2',
         'duration_months' => 'integer',
+        'units_limit' => 'integer',
         'status' => 'string',
         'type' => 'string',
     ];
