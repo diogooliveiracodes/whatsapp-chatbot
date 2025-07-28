@@ -25,9 +25,9 @@ Route::middleware('admin')->group(function () {
             // Route::get('/create', [AdminController::class, 'createCompany'])->name('admin.companies.create');
             // Route::post('/', [AdminController::class, 'storeCompany'])->name('admin.companies.store');
             // Route::get('/{id}', [AdminController::class, 'showCompany'])->name('admin.companies.show');
-            // Route::get('/{id}/edit', [AdminController::class, 'editCompany'])->name('admin.companies.edit');
-            // Route::put('/{id}', [AdminController::class, 'updateCompany'])->name('admin.companies.update');
-            // Route::patch('/{id}/deactivate', [AdminController::class, 'deactivateCompany'])->name('admin.companies.deactivate');
+            Route::get('/{id}/edit', [AdminController::class, 'editCompany'])->name('admin.companies.edit');
+            Route::put('/{id}', [AdminController::class, 'updateCompany'])->name('admin.companies.update');
+            Route::patch('/{id}/deactivate', [AdminController::class, 'deactivateCompany'])->name('admin.companies.deactivate');
         });
     });
 });
