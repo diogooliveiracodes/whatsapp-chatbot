@@ -4,17 +4,21 @@ namespace App\Services\Admin;
 
 use App\Http\Requests\AdminStoreUserRequest;
 use App\Services\Company\CompanyService;
+use App\Services\Signature\SignatureService;
 use App\Services\Unit\UnitService;
 use App\Services\User\UserService;
+use App\Enum\PlansEnum;
 use Illuminate\Support\Facades\DB;
 use Exception;
+
 
 class CreateUserService
 {
     public function __construct(
         protected UserService $userService,
         protected CompanyService $companyService,
-        protected UnitService $unitService
+        protected UnitService $unitService,
+        protected SignatureService $signatureService
     ) {}
 
     /**
@@ -39,11 +43,19 @@ class CreateUserService
 
             // Handle company creation or selection
             if ($request->boolean('create_new_company')) {
+
+                // Create the company
                 $company = $this->companyService->create([
                     'name' => $request->company_name,
                     'document_number' => $request->company_document_number,
                     'document_type' => $request->company_document_type,
                     'active' => true,
+                ]);
+
+                // Create the plan for the user
+                $this->signatureService->activateTrial([
+                    'company_id' => $company->id,
+                    'plan_id' => PlansEnum::TRIAL->value,
                 ]);
                 $userData['company_id'] = $company->id;
             } else {

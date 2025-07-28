@@ -7,6 +7,7 @@ use App\Models\Unit;
 use App\Models\UserRole;
 use App\Services\Admin\CreateUserService;
 use App\Services\Admin\DeactivateCompanyService;
+use App\Services\ErrorLog\ErrorLogService;
 use App\Services\Company\CompanyService;
 use App\Services\Unit\UnitService;
 use App\Services\User\UserService;
@@ -39,7 +40,8 @@ class AdminController extends Controller
         protected CompanyService $companyService,
         protected UnitService $unitService,
         protected CreateUserService $createUserService,
-        protected DeactivateCompanyService $deactivateCompanyService
+        protected DeactivateCompanyService $deactivateCompanyService,
+        protected ErrorLogService $errorLogService
     ) {}
 
     /**
@@ -108,6 +110,11 @@ class AdminController extends Controller
                 ->route('admin.users.index')
                 ->with('success', __('admin.user_created_success'));
         } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'store',
+                'request_data' => $request->validated(),
+            ]);
+
             return redirect()
                 ->back()
                 ->withErrors(['error' => __('admin.user_created_error', ['message' => $e->getMessage()])])
