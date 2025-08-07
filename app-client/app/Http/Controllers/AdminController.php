@@ -93,8 +93,9 @@ class AdminController extends Controller
         $companies->load('Units');
         $units = Unit::where('active', true)->get();
         $userRoles = UserRole::where('active', true)->get();
+        $plans = $this->planService->getPlans();
 
-        return view('admin.users.create', compact('companies', 'userRoles', 'units'));
+        return view('admin.users.create', compact('companies', 'userRoles', 'units', 'plans'));
     }
 
     /**
