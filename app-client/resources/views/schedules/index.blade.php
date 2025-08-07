@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-global.header>
-        {{ __('pages.schedules') }}
+        {{ __('pages.semanal_schedules') }}
     </x-global.header>
 
     <div class="py-12">

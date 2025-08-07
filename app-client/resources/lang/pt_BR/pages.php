@@ -5,6 +5,7 @@ return [
     'customers' => 'Clientes',
     'chatSession' => 'Sessões de Chat',
     'schedules' => 'Agendamentos',
+    'semanal_schedules' => 'Agenda da Semana',
     'settings' => 'Configurações',
     'units' => 'Unidades',
     'configure_units' => 'Configurar Unidades',
