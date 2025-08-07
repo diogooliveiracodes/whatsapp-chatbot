@@ -193,6 +193,25 @@
                                             {{ __('CNPJ') }}</option>
                                     </select>
                                 </div>
+
+                                <!-- Plans -->
+                                <div>
+                                    <label for="plan_id"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        {{ __('Plano') }}
+                                    </label>
+                                    <select id="plan_id" name="plan_id"
+                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
+                                        <option value="">{{ __('Selecione um plano') }}</option>
+                                        @foreach ($plans as $plan)
+                                            <option value="{{ $plan->id }}"
+                                                {{ old('plan_id') == $plan->id ? 'selected' : '' }}>
+                                                {{ $plan->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
                             </div>
 
                             <!-- Existing Company Selection (Visible by default) -->
