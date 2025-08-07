@@ -26,6 +26,9 @@
             <x-nav-link :href="route('schedules.index')" :active="request()->routeIs('schedules.*')">
                 {{ __('pages.semanal_schedules') }}
             </x-nav-link>
+            <x-nav-link :href="route('schedule-blocks.index')" :active="request()->routeIs('schedule-blocks.*')">
+                {{ __('schedule-blocks.schedule_blocks') }}
+            </x-nav-link>
             @if (auth()->user()->isOwner() && auth()->user()->company)
                 <div class="mt-4 mb-2">
                     <h3 class="px-0 text-s font-semibold text-gray-500 uppercase tracking-wider">

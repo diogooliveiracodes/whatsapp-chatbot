@@ -10,7 +10,10 @@
                     <x-global.session-alerts />
 
                     <div class="flex gap-4 mb-4 justify-between">
-                        <x-global.create-button :route="route('schedules.create')" :text="__('schedules.create')" />
+                        <div class="flex gap-2">
+                            <x-global.create-button :route="route('schedules.create')" :text="__('schedules.create')" />
+                            <x-global.create-button :route="route('schedule-blocks.create')" text="{{ __('schedule-blocks.create') }}" />
+                        </div>
                         <div>
                             <a href="{{ route('schedules.index', ['date' => $startOfWeek->copy()->subDays(7)->format('Y-m-d')]) }}"
                                 class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
@@ -45,7 +48,7 @@
                                                     $endTime = $unitSettings->{$dayKey . '_end'};
                                                 @endphp
                                                 <th
-                                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-700 {{ !$isEnabled ? 'opacity-50' : '' }} {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() ? 'border-t-2 border-l-2 border-r-2 border-red-500' : '' }}">
+                                                    class="px-3 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider bg-gray-50 dark:bg-gray-700 {{ !$isEnabled ? 'opacity-50' : '' }} {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday()? 'border-t-2 border-l-2 border-r-2 border-red-500': '' }}">
                                                     <div class="font-semibold">{{ $dayName }}</div>
                                                     <div class="text-xs text-gray-400">
                                                         {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->format('d/m') }}
@@ -96,10 +99,13 @@
                                                             $currentTime,
                                                             $currentEndTime,
                                                         );
-                                                        // if($schedule){
 
-                                                        //     dd($schedule);
-                                                        // }
+                                                        $block = $scheduleBlockService->getBlockForTimeSlot(
+                                                            $blocks,
+                                                            $currentDate,
+                                                            $currentTime,
+                                                            $currentEndTime,
+                                                        );
 
                                                         $isWithinOperatingHours = $scheduleService->isWithinOperatingHours(
                                                             $time,
@@ -110,9 +116,11 @@
                                                     <td
                                                         class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 border-r border-gray-600 relative group
                                                         {{ !$isWithinOperatingHours ? 'bg-gray-100 dark:bg-gray-700 opacity-50' : '' }}
-                                                        {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() && $isWithinOperatingHours ? 'border-l-2 border-r-2 border-red-500' : '' }}
-                                                        {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() && $isWithinOperatingHours && $time->copy()->addMinutes($interval)->gte($endTime) ? 'border-b-2 border-red-500' : '' }}">
-                                                        @if ($isWithinOperatingHours && $schedule)
+                                                        {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() && $isWithinOperatingHours? 'border-l-2 border-r-2 border-red-500': '' }}
+                                                        {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() &&$isWithinOperatingHours &&$time->copy()->addMinutes($interval)->gte($endTime)? 'border-b-2 border-red-500': '' }}">
+                                                        @if ($isWithinOperatingHours && $block)
+                                                            <x-schedules.block-card :block="$block" />
+                                                        @elseif ($isWithinOperatingHours && $schedule)
                                                             <x-schedules.schedule-card :schedule="$schedule" />
                                                         @elseif ($isWithinOperatingHours)
                                                             <a href="{{ route('schedules.create', [
