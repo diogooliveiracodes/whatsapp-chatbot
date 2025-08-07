@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Enum\SignatureStatusEnum;
 use App\Models\Company;
+use App\Models\Signature;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\UserRole;
@@ -67,6 +69,13 @@ class DatabaseSeeder extends Seeder
             'user_role_id' => 1,
             'company_id' => 1,
             'unit_id' => 1,
+        ]);
+
+        Signature::create([
+            'company_id' => 1,
+            'plan_id' => 1,
+            'status' => SignatureStatusEnum::PAID,
+            'expires_at' => now()->addDays(300),
         ]);
     }
 }
