@@ -29,7 +29,7 @@ class AdminStoreUserRequest extends FormRequest
             'create_new_company' => 'boolean',
             'create_new_unit' => 'boolean',
             'company_name' => 'nullable|string|max:255',
-            'company_document_number' => 'nullable|string|max:20',
+            'company_document_number' => 'nullable|string|max:20|unique:companies,document_number',
             'company_document_type' => 'nullable|integer|between:1,2',
             'unit_name' => 'nullable|string|max:100',
             'company_id' => 'nullable|exists:companies,id',
