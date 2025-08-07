@@ -18,6 +18,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Carbon\Carbon;
 use App\Services\Schedule\ScheduleService;
+use App\Services\Schedule\ScheduleBlockService;
 use App\Services\UnitServiceType\UnitServiceTypeService;
 use Illuminate\Support\Facades\Auth;
 use App\Enum\DaysOfWeekEnum;
@@ -40,6 +41,7 @@ class ScheduleController extends Controller
     public function __construct(
         protected ErrorLogService $errorLogService,
         protected ScheduleService $scheduleService,
+        protected ScheduleBlockService $scheduleBlockService,
         protected CustomerService $customerService,
         protected HttpResponseService $httpResponse,
         protected UnitServiceTypeService $unitServiceTypeService
@@ -58,6 +60,7 @@ class ScheduleController extends Controller
         try {
             $unit = Auth::user()->unit;
             $schedules = $this->scheduleService->getSchedulesByUnitAndDate($unit->id, $request->date);
+            $blocks = $this->scheduleBlockService->getBlocksByUnitAndDate($unit->id, $this->scheduleService->getStartAndEndDate($request->date)[0], $this->scheduleService->getStartAndEndDate($request->date)[1]);
             $customers = $this->customerService->getCustomersByUnit($unit);
             $unit->load('unitSettings');
             $workingHours = $this->scheduleService->getWorkingHours($unit->unitSettings);
@@ -67,12 +70,14 @@ class ScheduleController extends Controller
 
             return view('schedules.index', [
                 'schedules' => ScheduleResource::collection($schedules),
+                'blocks' => $blocks,
                 'customers' => $customers,
                 'unit' => $unit,
                 'unitSettings' => $unit->unitSettings,
                 'workingHours' => $workingHours,
                 'availableTimeSlots' => $availableTimeSlots,
                 'scheduleService' => $this->scheduleService,
+                'scheduleBlockService' => $this->scheduleBlockService,
                 'startOfWeek' => $startOfWeek,
                 'days' => $days,
             ]);
