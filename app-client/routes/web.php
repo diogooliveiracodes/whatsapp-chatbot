@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\ScheduleBlockController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UnitServiceTypeController;
 use App\Http\Controllers\AdminController;
@@ -77,6 +78,15 @@ Route::middleware('auth', 'company.active', 'subscription.active')->group(functi
     Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');
     Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
     Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+
+    Route::group(['prefix' => 'schedule-blocks'], function () {
+        Route::get('/', [ScheduleBlockController::class, 'index'])->name('schedule-blocks.index');
+        Route::get('/create', [ScheduleBlockController::class, 'create'])->name('schedule-blocks.create');
+        Route::post('/', [ScheduleBlockController::class, 'store'])->name('schedule-blocks.store');
+        Route::get('/{scheduleBlock}/edit', [ScheduleBlockController::class, 'edit'])->name('schedule-blocks.edit');
+        Route::put('/{scheduleBlock}', [ScheduleBlockController::class, 'update'])->name('schedule-blocks.update');
+        Route::delete('/{scheduleBlock}', [ScheduleBlockController::class, 'destroy'])->name('schedule-blocks.destroy');
+    });
 });
 
 
