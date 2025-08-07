@@ -55,7 +55,7 @@ class CreateUserService
                 // Create the plan for the user
                 $this->signatureService->activateTrial([
                     'company_id' => $company->id,
-                    'plan_id' => PlansEnum::TRIAL->value,
+                    'plan_id' => $request->plan_id,
                 ]);
                 $userData['company_id'] = $company->id;
             } else {
