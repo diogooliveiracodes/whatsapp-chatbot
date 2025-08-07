@@ -10,9 +10,11 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use App\Exceptions\Schedule\OutsideWorkingDaysException;
 use App\Exceptions\Schedule\OutsideWorkingHoursException;
 use App\Exceptions\Schedule\ScheduleConflictException;
+use App\Exceptions\Schedule\ScheduleBlockedException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Schedule;
 use App\Repositories\ScheduleRepository;
+use App\Services\Schedule\ScheduleBlockService;
 
 /**
  * Service class for handling schedule-related operations
@@ -33,7 +35,8 @@ class ScheduleService
         private WorkingHoursValidatorInterface $workingHoursValidator,
         private ScheduleConflictValidatorInterface $scheduleConflictValidator,
         private ScheduleRepository $scheduleRepository,
-        private ScheduleTimeService $scheduleTimeService
+        private ScheduleTimeService $scheduleTimeService,
+        private ScheduleBlockService $scheduleBlockService
     ) {
     }
 
@@ -244,6 +247,7 @@ class ScheduleService
      * @throws OutsideWorkingDaysException
      * @throws OutsideWorkingHoursException
      * @throws ScheduleConflictException
+     * @throws ScheduleBlockedException
      */
     public function validateAndCreateSchedule(array $validated, object $unit, object $unitSettings, int $duration)
     {
@@ -264,6 +268,10 @@ class ScheduleService
             throw new ScheduleConflictException();
         }
 
+        if ($this->scheduleBlockService->isTimeSlotBlocked($unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'])) {
+            throw new ScheduleBlockedException();
+        }
+
         $scheduleData = array_merge($validated, [
             'unit_id' => $unit->id,
             'user_id' => Auth::id(),
@@ -282,6 +290,7 @@ class ScheduleService
      * @throws OutsideWorkingDaysException
      * @throws OutsideWorkingHoursException
      * @throws ScheduleConflictException
+     * @throws ScheduleBlockedException
      */
     public function handleScheduleCreation(array $validated): array
     {
@@ -297,6 +306,17 @@ class ScheduleService
         ];
     }
 
+    /**
+     * Validate and update an existing schedule
+     *
+     * @param array $validated
+     * @param Schedule $schedule
+     * @return mixed
+     * @throws OutsideWorkingDaysException
+     * @throws OutsideWorkingHoursException
+     * @throws ScheduleConflictException
+     * @throws ScheduleBlockedException
+     */
     public function validateAndUpdateSchedule(array $validated, Schedule $schedule)
     {
         $scheduleDate = Carbon::parse($validated['schedule_date']);
@@ -316,6 +336,10 @@ class ScheduleService
             if ($this->hasConflict($schedule->unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'], null)) {
                 throw new ScheduleConflictException();
             }
+        }
+
+        if ($this->scheduleBlockService->isTimeSlotBlocked($schedule->unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'])) {
+            throw new ScheduleBlockedException();
         }
 
         $scheduleData = array_merge($validated, [

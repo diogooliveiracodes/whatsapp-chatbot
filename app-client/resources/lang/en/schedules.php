@@ -6,6 +6,7 @@ return [
         'outside_working_days' => 'The appointment cannot be scheduled outside working days.',
         'outside_working_hours' => 'The appointment must be within business hours.',
         'time_conflict' => 'There is already an appointment at this time.',
+        'time_blocked' => 'This time slot is blocked and cannot be scheduled.',
         'created' => 'Appointment created successfully!',
         'updated' => 'Appointment updated successfully!',
         'deleted' => 'Appointment deleted successfully!',

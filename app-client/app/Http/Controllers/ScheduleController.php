@@ -13,6 +13,7 @@ use App\Exceptions\Schedule\ScheduleException;
 use App\Exceptions\Schedule\OutsideWorkingDaysException;
 use App\Exceptions\Schedule\OutsideWorkingHoursException;
 use App\Exceptions\Schedule\ScheduleConflictException;
+use App\Exceptions\Schedule\ScheduleBlockedException;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -146,6 +147,12 @@ class ScheduleController extends Controller
                 ->route('schedules.create')
                 ->withInput()
                 ->with('error', __('schedules.messages.time_conflict'));
+        } catch (ScheduleBlockedException $e) {
+
+            return redirect()
+                ->route('schedules.create')
+                ->withInput()
+                ->with('error', __('schedules.messages.time_blocked'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
@@ -206,6 +213,8 @@ class ScheduleController extends Controller
             return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.outside_working_hours'));
         } catch (ScheduleConflictException $e) {
             return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.time_conflict'));
+        } catch (ScheduleBlockedException $e) {
+            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.time_blocked'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
