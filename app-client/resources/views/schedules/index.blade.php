@@ -118,10 +118,10 @@
                                                         {{ !$isWithinOperatingHours ? 'bg-gray-100 dark:bg-gray-700 opacity-50' : '' }}
                                                         {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() && $isWithinOperatingHours? 'border-l-2 border-r-2 border-red-500': '' }}
                                                         {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() &&$isWithinOperatingHours &&$time->copy()->addMinutes($interval)->gte($endTime)? 'border-b-2 border-red-500': '' }}">
-                                                        @if ($isWithinOperatingHours && $block)
-                                                            <x-schedules.block-card :block="$block" />
-                                                        @elseif ($isWithinOperatingHours && $schedule)
+                                                        @if ($isWithinOperatingHours && $schedule)
                                                             <x-schedules.schedule-card :schedule="$schedule" />
+                                                        @elseif ($isWithinOperatingHours && $block)
+                                                            <x-schedules.block-card :block="$block" />
                                                         @elseif ($isWithinOperatingHours)
                                                             <a href="{{ route('schedules.create', [
                                                                 'schedule_date' => $currentDate,
