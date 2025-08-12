@@ -6,6 +6,7 @@ return [
     'chatSession' => 'Sessões de Chat',
     'schedules' => 'Agendamentos',
     'semanal_schedules' => 'Agenda da Semana',
+    'daily_schedules' => 'Agenda do Dia',
     'settings' => 'Configurações',
     'units' => 'Unidades',
     'configure_units' => 'Configurar Unidades',

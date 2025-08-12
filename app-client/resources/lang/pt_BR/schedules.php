@@ -31,6 +31,8 @@ return [
     'today' => 'Hoje',
     'previous_week' => 'Semana Anterior',
     'next_week' => 'Próxima Semana',
+    'previous_day' => 'Dia Anterior',
+    'next_day' => 'Próximo Dia',
     'new_schedule' => 'Novo Agendamento',
     'edit_schedule' => 'Editar Agendamento',
     'date' => 'Data',
@@ -47,4 +49,9 @@ return [
     'back' => 'Voltar',
     'create' => 'Criar Agendamento',
     'update' => 'Atualizar Agendamento',
+    'no_schedules_today' => 'Nenhum agendamento para hoje',
+    'no_schedules_selected_day' => 'Nenhum agendamento para o dia selecionado',
+    'available_slots' => 'Horários Disponíveis',
+    'booked_slots' => 'Horários Ocupados',
+    'blocked_slots' => 'Horários Bloqueados',
 ];

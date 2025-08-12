@@ -73,6 +73,7 @@ Route::middleware('auth', 'company.active', 'subscription.active')->group(functi
     });
 
     Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
+    Route::get('/schedules/daily', [ScheduleController::class, 'daily'])->name('schedules.daily');
     Route::get('/schedules/create', [ScheduleController::class, 'create'])->name('schedules.create');
     Route::get('/schedules/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
     Route::post('/schedules', [ScheduleController::class, 'store'])->name('schedules.store');

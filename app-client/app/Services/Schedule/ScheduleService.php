@@ -101,6 +101,19 @@ class ScheduleService
     }
 
     /**
+     * Get all schedules for a specific unit and day
+     *
+     * @param int $unitId
+     * @param mixed $date
+     * @return mixed
+     */
+    public function getSchedulesByUnitAndDay(int $unitId, $date)
+    {
+        $date = Carbon::parse($date);
+        return $this->scheduleRepository->findByUnitIdAndDay($unitId, $date);
+    }
+
+    /**
      * Get the start and end date for the week
      *
      * @param string $date

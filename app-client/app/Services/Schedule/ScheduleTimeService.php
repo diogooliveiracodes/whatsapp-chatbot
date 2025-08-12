@@ -156,9 +156,9 @@ class ScheduleTimeService
     public function getServiceType($schedule): string
     {
         if (is_array($schedule)) {
-            return $schedule['service_type'] ?? '';
+            return $schedule['unit_service_type']['name'] ?? '';
         }
-        return $schedule->service_type ?? '';
+        return $schedule->unitServiceType->name ?? '';
     }
 
     /**

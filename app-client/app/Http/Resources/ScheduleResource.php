@@ -18,7 +18,6 @@ class ScheduleResource extends JsonResource
             'start' => $start->format('Y-m-d\TH:i:s'),
             'end' => $end->format('Y-m-d\TH:i:s'),
             'status' => $this->status,
-            'service_type' => $this->service_type,
             'notes' => $this->notes,
             'customer' => [
                 'id' => $this->customer->id,

@@ -90,6 +90,63 @@ class ScheduleController extends Controller
     }
 
     /**
+     * Display the daily schedule view.
+     * Retrieves schedules for a specific day with mobile-first responsive design.
+     *
+     * @param Request $request The incoming request containing date parameter
+     * @return View The view containing the daily schedule
+     * @throws \Exception When there's an error loading the schedules
+     */
+    public function daily(Request $request): View
+    {
+        try {
+            $unit = Auth::user()->unit;
+            $date = $request->get('date', now()->format('Y-m-d'));
+            $schedules = $this->scheduleService->getSchedulesByUnitAndDay($unit->id, $date);
+            $blocks = $this->scheduleBlockService->getBlocksByUnitAndDate($unit->id, Carbon::parse($date), Carbon::parse($date));
+            $customers = $this->customerService->getCustomersByUnit($unit);
+            $unit->load('unitSettings');
+            $workingHours = $this->scheduleService->getWorkingHours($unit->unitSettings);
+            $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots(Carbon::parse($date), $unit->unitSettings);
+
+            // Map day names correctly
+            $dayMapping = [
+                'Sunday' => 'sunday',
+                'Monday' => 'monday',
+                'Tuesday' => 'tuesday',
+                'Wednesday' => 'wednesday',
+                'Thursday' => 'thursday',
+                'Friday' => 'friday',
+                'Saturday' => 'saturday'
+            ];
+
+            $dayOfWeek = Carbon::parse($date)->format('l');
+            $dayKey = $dayMapping[$dayOfWeek] ?? 'monday';
+            $days = DaysOfWeekEnum::getDaysOfWeek();
+            $dayName = $days[$dayKey] ?? $dayOfWeek;
+
+            return view('schedules.daily', [
+                'schedules' => ScheduleResource::collection($schedules),
+                'blocks' => $blocks,
+                'customers' => $customers,
+                'unit' => $unit,
+                'unitSettings' => $unit->unitSettings,
+                'workingHours' => $workingHours,
+                'availableTimeSlots' => $availableTimeSlots,
+                'scheduleService' => $this->scheduleService,
+                'scheduleBlockService' => $this->scheduleBlockService,
+                'date' => Carbon::parse($date),
+                'dayKey' => $dayKey,
+                'dayName' => $dayName,
+            ]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e);
+
+            return view('schedules.daily')->with('error', __('schedules.messages.load_error'));
+        }
+    }
+
+    /**
      * Show the form for creating a new schedule.
      * Retrieves necessary data for the schedule creation form.
      *

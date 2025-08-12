@@ -29,6 +29,24 @@ class ScheduleRepository
             ->get();
     }
 
+    /**
+     * Find schedules for a specific unit and date
+     *
+     * @param int $unitId
+     * @param Carbon $date
+     * @return Collection
+     */
+    public function findByUnitIdAndDay(int $unitId, Carbon $date): Collection
+    {
+        return $this
+            ->model
+            ->with(['customer', 'user', 'unitServiceType'])
+            ->where('unit_id', $unitId)
+            ->where('schedule_date', $date->format('Y-m-d'))
+            ->orderBy('start_time')
+            ->get();
+    }
+
     public function create(array $data): Schedule
     {
         return $this->model->create($data);
