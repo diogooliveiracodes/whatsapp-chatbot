@@ -18,6 +18,11 @@ class Signature extends Model
         'expires_at',
     ];
 
+    protected $casts = [
+        'expires_at' => 'datetime',
+        'status' => 'integer',
+    ];
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);

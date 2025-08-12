@@ -45,6 +45,9 @@
                 <x-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
                     {{ __('pages.customers') }}
                 </x-nav-link>
+                <x-nav-link :href="route('signature.index')" :active="request()->routeIs('signature.*')">
+                    {{ __('signature.title') }}
+                </x-nav-link>
             @endif
         </nav>
 

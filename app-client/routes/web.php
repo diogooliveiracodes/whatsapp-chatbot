@@ -9,7 +9,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleBlockController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UnitServiceTypeController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SignatureController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -86,6 +86,10 @@ Route::middleware('auth', 'company.active', 'subscription.active')->group(functi
         Route::get('/{scheduleBlock}/edit', [ScheduleBlockController::class, 'edit'])->name('schedule-blocks.edit');
         Route::put('/{scheduleBlock}', [ScheduleBlockController::class, 'update'])->name('schedule-blocks.update');
         Route::delete('/{scheduleBlock}', [ScheduleBlockController::class, 'destroy'])->name('schedule-blocks.destroy');
+    });
+
+    Route::group(['prefix' => 'signature'], function () {
+        Route::get('/', [SignatureController::class, 'index'])->name('signature.index');
     });
 });
 
