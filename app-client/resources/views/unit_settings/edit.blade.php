@@ -244,17 +244,11 @@
                         <div class="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
                             <!-- Back Button -->
                             <x-cancel-link href="{{ route('units.show', $unitSettings->unit->id) }}" class="w-full sm:w-auto">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                                </svg>
                                 {{ __('unitSettings.back') }}
                             </x-cancel-link>
 
                             <!-- Save Button -->
                             <x-primary-button type="submit" class="w-full sm:w-auto">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
                                 {{ __('unitSettings.save_changes') }}
                             </x-primary-button>
                         </div>
