@@ -13,7 +13,7 @@
                     <div class="flex flex-col sm:flex-row gap-4 mb-6 justify-between items-start sm:items-center">
 
                         <!-- Date navigation -->
-                        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:mx-auto">
                             <div class="flex items-center justify-between sm:justify-start gap-2">
                                 <a href="{{ route('schedules.daily', ['date' => $date->copy()->subDay()->format('Y-m-d')]) }}"
                                     class="inline-flex items-center px-3 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
