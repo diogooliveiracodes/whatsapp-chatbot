@@ -24,7 +24,12 @@ return [
     'active' => 'Tipos Ativos',
     'confirm_deactivate' => 'Tem certeza que deseja desativar este tipo de serviço?',
     'confirm_activate' => 'Tem certeza que deseja ativar este tipo de serviço?',
+    'confirm_delete' => 'Tem certeza que deseja excluir este tipo de serviço?',
     'active_title' => 'Tipos de Serviço Ativos',
+    'no_types_found' => 'Nenhum tipo de serviço encontrado',
+    'no_types_description' => 'Não há tipos de serviço cadastrados no momento.',
+    'no_deactivated_types_found' => 'Nenhum tipo desativado encontrado',
+    'no_deactivated_types_description' => 'Não há tipos de serviço desativados no momento.',
     'success' => [
         'created' => 'Tipo de serviço criado com sucesso',
         'updated' => 'Tipo de serviço atualizado com sucesso',

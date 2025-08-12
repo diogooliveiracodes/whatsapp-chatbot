@@ -24,7 +24,12 @@ return [
     'active' => 'Active Types',
     'confirm_deactivate' => 'Are you sure you want to deactivate this service type?',
     'confirm_activate' => 'Are you sure you want to activate this service type?',
+    'confirm_delete' => 'Are you sure you want to delete this service type?',
     'active_title' => 'Active Service Types',
+    'no_types_found' => 'No service types found',
+    'no_types_description' => 'There are no service types registered at the moment.',
+    'no_deactivated_types_found' => 'No deactivated types found',
+    'no_deactivated_types_description' => 'There are no deactivated service types at the moment.',
     'success' => [
         'created' => 'Service type created successfully',
         'updated' => 'Service type updated successfully',
