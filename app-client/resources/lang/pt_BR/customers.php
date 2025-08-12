@@ -7,6 +7,7 @@ return [
     'name' => 'Nome',
     'phone' => 'Telefone',
     'active' => 'Ativo',
+    'inactive' => 'Inativo',
     'back' => 'Voltar',
     'save_changes' => 'Salvar Alterações',
     'yes' => 'Sim',
@@ -44,4 +45,6 @@ return [
     ],
     'search' => 'Buscar',
     'search_placeholder' => 'Buscar por nome ou telefone',
+    'no_customers_found' => 'Nenhum cliente encontrado',
+    'no_customers_description' => 'Não há clientes cadastrados no momento. Clique em "Criar Cliente" para adicionar um novo cliente.',
 ];

@@ -7,6 +7,7 @@ return [
     'name' => 'Name',
     'phone' => 'Phone',
     'active' => 'Active',
+    'inactive' => 'Inactive',
     'back' => 'Back',
     'save_changes' => 'Save Changes',
     'yes' => 'Yes',
@@ -44,4 +45,6 @@ return [
     ],
     'search' => 'Search',
     'search_placeholder' => 'Search by name or phone',
+    'no_customers_found' => 'No customers found',
+    'no_customers_description' => 'There are no customers registered at the moment. Click "Create Customer" to add a new customer.',
 ];
