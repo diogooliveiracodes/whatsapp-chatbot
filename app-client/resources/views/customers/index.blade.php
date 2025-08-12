@@ -87,9 +87,9 @@
                                     <p>{{ __('customers.created_at') }}: {{ \Carbon\Carbon::parse($customer->created_at)->format('d/m/Y H:i') }}</p>
                                 </div>
 
-                                <div class="flex justify-end space-x-4">
-                                    <x-actions.view :route="route('customers.show', $customer->id)" />
-                                    <x-actions.edit :route="route('customers.edit', $customer->id)" />
+                                <div class="flex justify-end space-x-2">
+                                    <x-actions.view-mobile :route="route('customers.show', $customer->id)" />
+                                    <x-actions.edit-mobile :route="route('customers.edit', $customer->id)" />
                                     <x-actions.delete-mobile
                                         :route="route('customers.destroy', $customer->id)"
                                         :confirmMessage="__('customers.confirm_delete')"

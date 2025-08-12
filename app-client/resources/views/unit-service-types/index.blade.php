@@ -68,9 +68,9 @@
                                     </span>
                                 </div>
 
-                                <div class="flex justify-end space-x-4">
-                                    <x-actions.view :route="route('unitServiceTypes.show', $type)" />
-                                    <x-actions.edit :route="route('unitServiceTypes.edit', $type)" />
+                                <div class="flex justify-end space-x-2">
+                                    <x-actions.view-mobile :route="route('unitServiceTypes.show', $type)" />
+                                    <x-actions.edit-mobile :route="route('unitServiceTypes.edit', $type)" />
                                     <x-actions.deactivate-mobile :route="route('unitServiceTypes.deactivate', $type)" :confirmMessage="__('unit-service-types.confirm_deactivate')" />
                                 </div>
                             </div>
