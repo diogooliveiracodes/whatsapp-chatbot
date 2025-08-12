@@ -8,13 +8,15 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-4 sm:p-6 lg:p-8 text-gray-900 dark:text-gray-100">
                     @if (session('error'))
-                        <div class="mb-4 p-3 sm:p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                        <div class="mb-4 p-3 sm:p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+                            role="alert">
                             {{ session('error') }}
                         </div>
                     @endif
 
                     @if (session('success'))
-                        <div class="mb-4 p-3 sm:p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800" role="alert">
+                        <div class="mb-4 p-3 sm:p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
+                            role="alert">
                             {{ session('success') }}
                         </div>
                     @endif
@@ -25,21 +27,19 @@
 
                         <div>
                             <x-input-label for="name" :value="__('units.name')" />
-                            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full text-sm sm:text-base" :value="old('name', $unit->name)" required autofocus />
+                            <x-text-input id="name" name="name" type="text"
+                                class="mt-1 block w-full text-sm sm:text-base" :value="old('name', $unit->name)" required autofocus />
                             <x-input-error class="mt-2" :messages="$errors->get('name')" />
                         </div>
 
                         <div>
-                            <x-buttons.toggle-switch
-                                name="active"
-                                :label="__('fields.active')"
-                                :value="old('active', $unit->active)"
-                            />
+                            <x-buttons.toggle-switch name="active" :label="__('fields.active')" :value="old('active', $unit->active)" />
                         </div>
 
                         <div class="mt-6 flex flex-col sm:flex-row justify-between gap-4 sm:gap-0">
                             <!-- Back Button -->
-                            <x-cancel-link href="{{ route('units.index') }}" class="order-2 sm:order-1 text-center sm:text-left">
+                            <x-cancel-link href="{{ route('units.index') }}"
+                                class="order-2 sm:order-1 text-center sm:text-left">
                                 {{ __('units.back') }}
                             </x-cancel-link>
 

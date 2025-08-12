@@ -3,34 +3,35 @@
         {{ __('units.details') }} - {{ $unit->name }}
     </x-global.header>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+                <div class="p-4 sm:p-6 lg:p-8 text-gray-900 dark:text-gray-100">
                     @if (session('error'))
-                        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
+                        <div class="mb-4 p-3 sm:p-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800"
                             role="alert">
                             {{ session('error') }}
                         </div>
                     @endif
 
                     @if (session('success'))
-                        <div class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
+                        <div class="mb-4 p-3 sm:p-4 text-sm text-green-700 bg-green-100 rounded-lg dark:bg-green-200 dark:text-green-800"
                             role="alert">
                             {{ session('success') }}
                         </div>
                     @endif
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                         <div>
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                                 {{ __('units.details') }}</h3>
 
-                            <div class="space-y-4">
+                            <div class="space-y-3 sm:space-y-4">
                                 <div>
                                     <label
                                         class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.name') }}</label>
-                                    <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{ $unit->name }}</p>
+                                    <p class="mt-1 text-sm sm:text-base text-gray-900 dark:text-gray-100">
+                                        {{ $unit->name }}</p>
                                 </div>
 
                                 <div>
@@ -50,7 +51,7 @@
                                 <div>
                                     <label
                                         class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.created_at') }}</label>
-                                    <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                                    <p class="mt-1 text-sm sm:text-base text-gray-900 dark:text-gray-100">
                                         {{ \Carbon\Carbon::parse($unit->created_at)->format('d/m/Y H:i') }}
                                     </p>
                                 </div>
@@ -58,7 +59,7 @@
                                 <div>
                                     <label
                                         class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.updated_at') }}</label>
-                                    <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">
+                                    <p class="mt-1 text-sm sm:text-base text-gray-900 dark:text-gray-100">
                                         {{ \Carbon\Carbon::parse($unit->updated_at)->format('d/m/Y H:i') }}
                                     </p>
                                 </div>
@@ -66,15 +67,26 @@
                         </div>
                     </div>
 
-                    <div class="mt-6 flex justify-between">
-                        <!-- Back Button -->
+                    <!-- Mobile Layout -->
+                    <div class="mt-6 flex flex-col gap-4 sm:hidden">
+                        <x-buttons.settings-secondary :route="route('unitSettings.show', $unit->unitSettings->id)" class="w-full" />
+                        <x-confirm-link class="w-full text-center" href="{{ route('units.edit', $unit->id) }}">
+                            {{ __('units.edit') }}
+                        </x-confirm-link>
+                        <x-cancel-link href="{{ route('units.index') }}" class="text-center">
+                            {{ __('units.back') }}
+                        </x-cancel-link>
+                    </div>
+
+                    <!-- Desktop Layout -->
+                    <div class="mt-6 hidden sm:flex justify-between">
                         <x-cancel-link href="{{ route('units.index') }}">
                             {{ __('units.back') }}
                         </x-cancel-link>
 
-                        <div class="space-x-2">
+                        <div class="flex gap-2">
                             <x-buttons.settings-secondary :route="route('unitSettings.show', $unit->unitSettings->id)" />
-                            <x-confirm-link href="{{ route('units.edit', $unit->id) }}">
+                            <x-confirm-link href="{{ route('units.edit', $unit->id) }}" class="text-center">
                                 {{ __('units.edit') }}
                             </x-confirm-link>
                         </div>
