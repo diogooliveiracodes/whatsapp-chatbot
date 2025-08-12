@@ -73,6 +73,7 @@
                                 <div class="flex justify-end space-x-2">
                                     <x-actions.view-mobile :route="route('units.show', $unit->id)" />
                                     <x-actions.edit-mobile :route="route('units.edit', $unit->id)" />
+                                    <x-actions.settings-mobile :route="route('unitSettings.show', $unit->unitSettings->id)" />
                                     <x-actions.deactivate-mobile :route="route('units.deactivate', $unit->id)" :confirmMessage="__('units.confirm_deactivate')" />
                                 </div>
                             </div>
