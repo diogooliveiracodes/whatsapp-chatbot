@@ -11,7 +11,7 @@
 
                     <!-- Header with date navigation -->
                     <div class="flex flex-col sm:flex-row gap-4 mb-6 justify-between items-start sm:items-center">
-                        <div class="flex flex-col sm:flex-row gap-2">
+                        <div class="flex flex-row gap-2">
                             <x-global.create-button :route="route('schedules.create')" :text="__('schedules.create')" />
                             <x-global.create-button :route="route('schedule-blocks.create')" text="{{ __('schedule-blocks.create') }}" />
                         </div>
@@ -119,11 +119,11 @@
                                     <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                                         <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700">
                                             <div class="flex items-center space-x-3">
-                                                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                                                    <span class="text-blue-600 dark:text-blue-300 font-semibold text-sm">{{ $currentTime }}</span>
+                                                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex flex-col items-center justify-center">
+                                                    <span class="text-blue-600 dark:text-blue-300 font-semibold text-xs">{{ $currentTime }}</span>
+                                                    <span class="text-blue-600 dark:text-blue-300 font-semibold text-xs">{{ $currentEndTime }}</span>
                                                 </div>
                                                 <div>
-                                                    <div class="font-medium text-gray-900 dark:text-gray-100">{{ $currentTime }} - {{ $currentEndTime }}</div>
                                                     <div class="text-sm text-gray-500 dark:text-gray-400">{{ $interval }} min</div>
                                                 </div>
                                             </div>
