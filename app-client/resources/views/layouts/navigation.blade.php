@@ -1,81 +1,124 @@
 <div x-data="{ open: false, settingsOpen: false }" class="flex h-screen w-64">
     <!-- Sidebar -->
-    <div
-        class="w-64 fixed flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col h-full">
-        <!-- Logo -->
-        {{-- <div class="shrink-0 flex items-center mb-4">
-            <a href="{{ route('dashboard') }}">
-                <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-            </a>
-        </div> --}}
+    <div class="w-64 fixed flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col h-full">
+
+        <!-- Logo area -->
+        <div class="flex items-center justify-between mb-6">
+            <h1 class="text-xl font-bold text-gray-800 dark:text-gray-200">
+                {{ config('app.name', 'Laravel') }}
+            </h1>
+        </div>
+
+        <!-- User info -->
+        <div class="mb-6 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span class="text-white font-semibold text-sm">
+                        {{ substr(Auth::user()->name, 0, 1) }}
+                    </span>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</p>
+                </div>
+            </div>
+        </div>
 
         <!-- Navigation Links -->
-        <nav class="flex flex-col space-y-2">
-            {{-- <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('pages.dashboard') }}
-            </x-nav-link> --}}
-            <div class="mt-4 mb-2">
-                <h3 class="px-0 text-s font-semibold text-gray-500 uppercase tracking-wider">
+        <nav class="space-y-1">
+            <!-- Schedules Section -->
+            <div class="">
+                <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     {{ __('pages.schedules') }}
                 </h3>
             </div>
-            <hr class="border-gray-500">
-            <x-nav-link :href="route('chatSessions.index')" :active="request()->routeIs('chatSessions.*')">
-                {{ __('pages.chatSession') }}
-            </x-nav-link>
-            <x-nav-link :href="route('schedules.index')" :active="request()->routeIs('schedules.*')">
-                {{ __('pages.semanal_schedules') }}
-            </x-nav-link>
-            <x-nav-link :href="route('schedule-blocks.index')" :active="request()->routeIs('schedule-blocks.*')">
-                {{ __('schedule-blocks.schedule_blocks') }}
-            </x-nav-link>
+
+            <a href="{{ route('chatSessions.index') }}"
+                class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('chatSessions.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                <span class="ml-2">{{ __('pages.chatSession') }}</span>
+            </a>
+
+            <a href="{{ route('schedules.index') }}"
+                class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('schedules.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="ml-2">{{ __('pages.semanal_schedules') }}</span>
+            </a>
+
+            <a href="{{ route('schedule-blocks.index') }}"
+                class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('schedule-blocks.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span class="ml-2">{{ __('schedule-blocks.schedule_blocks') }}</span>
+            </a>
+
             @if (auth()->user()->isOwner() && auth()->user()->company)
-                <div class="mt-4 mb-2">
-                    <h3 class="px-0 text-s font-semibold text-gray-500 uppercase tracking-wider">
+                <!-- Settings Section -->
+                <div class=pt-4 mb-4">
+                    <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         {{ __('pages.settings') }}
                     </h3>
                 </div>
-                <hr class="border-gray-500">
-                <x-nav-link :href="route('units.index')" :active="request()->routeIs('units.*')">
-                    {{ __('pages.units') }}
-                </x-nav-link>
-                <x-nav-link :href="route('unitServiceTypes.index')" :active="request()->routeIs('unitServiceTypes.*')">
-                    {{ __('pages.unitServiceTypes') }}
-                </x-nav-link>
-                <x-nav-link :href="route('customers.index')" :active="request()->routeIs('customers.*')">
-                    {{ __('pages.customers') }}
-                </x-nav-link>
-                <x-nav-link :href="route('signature.index')" :active="request()->routeIs('signature.*')">
-                    {{ __('signature.title') }}
-                </x-nav-link>
+
+                <a href="{{ route('units.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('units.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                    <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                    </svg>
+                    <span class="ml-2">{{ __('pages.units') }}</span>
+                </a>
+
+                <a href="{{ route('unitServiceTypes.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('unitServiceTypes.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                    <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                    </svg>
+                    <span class="ml-2">{{ __('pages.unitServiceTypes') }}</span>
+                </a>
+
+                <a href="{{ route('customers.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('customers.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                    <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                    </svg>
+                    <span class="ml-2">{{ __('pages.customers') }}</span>
+                </a>
+
+                <a href="{{ route('signature.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('signature.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                    <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                    </svg>
+                    <span class="ml-2">{{ __('signature.title') }}</span>
+                </a>
             @endif
         </nav>
 
-        <!-- User Profile Dropdown -->
-        <div class="mt-auto">
-            <div x-data="{ open: false }" class="relative">
-                <button @click="open = !open"
-                    class="flex items-center w-full px-4 py-2 text-left text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none">
-                    <div>{{ Auth::user()->name }}</div>
-                    <svg class="ml-auto h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clip-rule="evenodd"></path>
+        <!-- Bottom actions -->
+        <div class="mt-auto pt-6 border-t border-gray-200 dark:border-gray-700">
+            <a href="{{ route('profile.edit') }}"
+                class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-md transition-colors">
+                <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span class="ml-2">Profile</span>
+            </a>
+
+            <form method="POST" action="{{ route('logout') }}" class="mt-2">
+                @csrf
+                <button type="submit"
+                        class="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-md transition-colors">
+                    <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                     </svg>
+                    <span class="ml-2">Log Out</span>
                 </button>
-                <div x-show="open" @click.away="open = false"
-                    class="absolute left-0 bottom-full mb-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg"
-                    style="display: none;">
-                    <a href="{{ route('profile.edit') }}"
-                        class="block px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Profile</a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit"
-                            class="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Log
-                            Out</button>
-                    </form>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
