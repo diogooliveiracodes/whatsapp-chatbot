@@ -5,9 +5,9 @@
         this.open = false;
         this.settingsOpen = false;
     }
-}" class="lg:hidden">
+}" class="block lg:hidden">
     <!-- Mobile menu button -->
-    <div class="fixed top-4 left-4 z-50">
+    <div class="lg:hidden fixed top-4 left-4 z-50">
         <button @click="open = !open"
                 class="bg-white dark:bg-gray-800 p-2 rounded-md shadow-lg border border-gray-200 dark:border-gray-700">
             <svg class="h-6 w-6 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
