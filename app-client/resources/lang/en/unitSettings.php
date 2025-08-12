@@ -7,7 +7,13 @@ return [
     'save_changes' => 'Save Changes',
     'yes' => 'Yes',
     'no' => 'No',
+    'active' => 'Active',
+    'minutes' => 'minutes',
     'appointment_duration_minutes' => 'Appointment Duration in Minutes',
+    'start_time' => 'Start Time',
+    'end_time' => 'End Time',
+    'no_working_hours_configured' => 'No working hours configured',
+
     // Basic Information
     'basic_info_section' => 'Basic Information',
     'name' => 'Name',

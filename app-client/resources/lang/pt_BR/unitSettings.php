@@ -7,7 +7,13 @@ return [
     'save_changes' => 'Salvar Alterações',
     'yes' => 'Sim',
     'no' => 'Não',
+    'active' => 'Ativo',
+    'minutes' => 'minutos',
     'appointment_duration_minutes' => 'Duração do agendamento em minutos',
+    'start_time' => 'Horário de Início',
+    'end_time' => 'Horário de Término',
+    'no_working_hours_configured' => 'Nenhum horário de funcionamento configurado',
+
     // Basic Information
     'basic_info_section' => 'Informações Básicas',
     'name' => 'Nome',
