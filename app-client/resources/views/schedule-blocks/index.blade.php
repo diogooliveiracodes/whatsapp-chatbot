@@ -3,10 +3,10 @@
         {{ __('schedule-blocks.schedule_blocks') }}
     </x-global.header>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+                <div class="p-4 sm:p-6 text-gray-900 dark:text-gray-100">
                     <x-global.session-alerts />
 
                     <div class="flex gap-4 mb-4 justify-between">
@@ -21,7 +21,8 @@
                         </p>
                     </div>
 
-                    <div class="overflow-x-auto">
+                    <!-- Tabela para desktop -->
+                    <div class="hidden md:block">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
@@ -93,10 +94,62 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Cards para mobile -->
+                    <div class="md:hidden space-y-4">
+                        @forelse ($blocks as $block)
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-sm">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div class="flex-1">
+                                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                                            {{ $block->block_date->format('d/m/Y') }}
+                                        </h3>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            {{ __('schedule-blocks.company') }}: {{ $block->company->name ?? 'N/A' }}
+                                        </p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            {{ __('schedule-blocks.created_by') }}: {{ $block->user->name }}
+                                        </p>
+                                    </div>
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        {{ $block->block_type->value === 'full_day' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }}">
+                                        {{ $block->getBlockTypeLabel() }}
+                                    </span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                        <span class="font-medium">{{ __('schedule-blocks.time') }}:</span>
+                                        @if ($block->block_type->value === 'time_slot')
+                                            {{ \Carbon\Carbon::parse($block->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($block->end_time)->format('H:i') }}
+                                        @else
+                                            {{ __('schedule-blocks.full_day_text') }}
+                                        @endif
+                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                        <span class="font-medium">{{ __('schedule-blocks.reason') }}:</span>
+                                        {{ $block->reason ?: __('schedule-blocks.no_reason') }}
+                                    </p>
+                                </div>
+
+                                <div class="flex justify-end space-x-2">
+                                    <x-actions.edit-mobile :route="route('schedule-blocks.edit', $block->id)" />
+                                    <x-actions.delete-mobile :route="route('schedule-blocks.destroy', $block->id)" :confirmMessage="__('schedule-blocks.messages.confirm_delete')" />
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-12">
+                                <div class="text-gray-500 dark:text-gray-400">
+                                    <svg class="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <p class="text-lg font-medium">{{ __('schedule-blocks.no_blocks_found') }}</p>
+                                </div>
+                            </div>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-
 </x-app-layout>
