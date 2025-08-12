@@ -9,7 +9,7 @@
                 <div class="p-4 sm:p-6 text-gray-900 dark:text-gray-100">
                     <x-global.session-alerts />
 
-                    <div class="flex gap-4 mb-6">
+                    <div class="flex justify-center sm:justify-start gap-4 mb-6">
                         <x-buttons.back-button
                             :route="route('unitServiceTypes.index')"
                             :text="__('unit-service-types.active_title')"
