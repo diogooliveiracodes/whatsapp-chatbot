@@ -13,11 +13,11 @@ enum SignatureStatusEnum: int
     public function name(): string
     {
         return match ($this) {
-            self::PENDING => 'Pending',
-            self::PAID => 'Paid',
-            self::REJECTED => 'Rejected',
-            self::EXPIRED => 'Expired',
-            self::EXPIRING_SOON => 'Expiring Soon',
+            self::PENDING => __('signature.status_pending'),
+            self::PAID => __('signature.status_paid'),
+            self::REJECTED => __('signature.status_rejected'),
+            self::EXPIRED => __('signature.status_expired'),
+            self::EXPIRING_SOON => __('signature.status_expiring_soon'),
         };
     }
 

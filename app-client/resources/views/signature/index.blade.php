@@ -37,6 +37,8 @@
                                 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
                             @elseif($signature->status === \App\Enum\SignatureStatusEnum::EXPIRED->value)
                                 bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+                            @elseif($signature->status === \App\Enum\SignatureStatusEnum::EXPIRING_SOON->value)
+                                bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
                             @else
                                 bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200 @endif">
                             {{ \App\Enum\SignatureStatusEnum::from($signature->status)->name() }}
@@ -156,7 +158,22 @@
                                                     bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
                                                 @else
                                                     bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 @endif">
-                                                {{ ucfirst($payment->status) }}
+                                                @switch($payment->status)
+                                                    @case('paid')
+                                                        {{ __('signature.payment_status_paid') }}
+                                                        @break
+                                                    @case('pending')
+                                                        {{ __('signature.payment_status_pending') }}
+                                                        @break
+                                                    @case('rejected')
+                                                        {{ __('signature.payment_status_rejected') }}
+                                                        @break
+                                                    @case('cancelled')
+                                                        {{ __('signature.payment_status_cancelled') }}
+                                                        @break
+                                                    @default
+                                                        {{ ucfirst($payment->status) }}
+                                                @endswitch
                                             </span>
                                         </td>
                                     </tr>

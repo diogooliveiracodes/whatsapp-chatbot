@@ -32,4 +32,17 @@ return [
     'months' => 'months',
     'cancel' => 'Cancel',
     'confirm_change' => 'Confirm Change',
+
+    // Signature Status
+    'status_pending' => 'Pending',
+    'status_paid' => 'Paid',
+    'status_rejected' => 'Rejected',
+    'status_expired' => 'Expired',
+    'status_expiring_soon' => 'Expiring Soon',
+
+    // Payment Status
+    'payment_status_paid' => 'Paid',
+    'payment_status_pending' => 'Pending',
+    'payment_status_rejected' => 'Rejected',
+    'payment_status_cancelled' => 'Cancelled',
 ];
