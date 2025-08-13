@@ -24,4 +24,8 @@ return [
     'forgot_password' => 'Esqueceu sua senha?',
     'log_in' => 'Entrar',
 
+    // Navigation
+    'profile' => 'Perfil',
+    'log_out' => 'Sair',
+
 ];

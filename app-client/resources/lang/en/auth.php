@@ -24,4 +24,8 @@ return [
     'forgot_password' => 'Forgot your password?',
     'log_in' => 'Log in',
 
+    // Navigation
+    'profile' => 'Profile',
+    'log_out' => 'Log Out',
+
 ];
