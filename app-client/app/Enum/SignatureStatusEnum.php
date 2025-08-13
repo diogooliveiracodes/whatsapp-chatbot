@@ -8,6 +8,7 @@ enum SignatureStatusEnum: int
     case PAID = 2;
     case REJECTED = 3;
     case EXPIRED = 4;
+    case EXPIRING_SOON = 5;
 
     public function name(): string
     {
@@ -16,6 +17,7 @@ enum SignatureStatusEnum: int
             self::PAID => 'Paid',
             self::REJECTED => 'Rejected',
             self::EXPIRED => 'Expired',
+            self::EXPIRING_SOON => 'Expiring Soon',
         };
     }
 
