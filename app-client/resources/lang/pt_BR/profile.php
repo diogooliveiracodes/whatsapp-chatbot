@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'title' => 'Perfil',
+    'profile_information' => 'Informações do Perfil',
+    'profile_information_description' => 'Atualize as informações do seu perfil e endereço de e-mail.',
+    'update_password' => 'Atualizar Senha',
+    'update_password_description' => 'Certifique-se de que sua conta está usando uma senha longa e aleatória para manter a segurança.',
+    'delete_account' => 'Excluir Conta',
+    'delete_account_description' => 'Depois que sua conta for excluída, todos os seus recursos e dados serão permanentemente excluídos. Antes de excluir sua conta, faça o download de quaisquer dados ou informações que você deseja manter.',
+    'confirm_delete_title' => 'Tem certeza de que deseja excluir sua conta?',
+    'confirm_delete_description' => 'Depois que sua conta for excluída, todos os seus recursos e dados serão permanentemente excluídos. Digite sua senha para confirmar que você gostaria de excluir permanentemente sua conta.',
+    'name' => 'Nome',
+    'email' => 'E-mail',
+    'current_password' => 'Senha Atual',
+    'new_password' => 'Nova Senha',
+    'confirm_password' => 'Confirmar Senha',
+    'password' => 'Senha',
+    'save' => 'Salvar',
+    'saved' => 'Salvo.',
+    'cancel' => 'Cancelar',
+    'email_unverified' => 'Seu endereço de e-mail não foi verificado.',
+    'resend_verification' => 'Clique aqui para reenviar o e-mail de verificação.',
+    'verification_sent' => 'Um novo link de verificação foi enviado para o seu endereço de e-mail.',
+];

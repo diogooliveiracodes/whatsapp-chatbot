@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-global.header>
-        {{ __('Perfil') }}
+        {{ __('profile.title') }}
     </x-global.header>
 
     <div class="py-12">
