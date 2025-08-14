@@ -70,5 +70,7 @@ return [
     'pix_code_copied' => 'PIX code copied!',
     'payment_confirmed' => 'Payment confirmed successfully!',
     'payment_still_pending' => 'Payment is still pending. Try again in a few moments.',
+    'payment_overdue_message' => 'The payment is overdue. Generate a new PIX code to make the payment.',
+    'payment_rejected_message' => 'The payment was rejected or cancelled. Generate a new PIX code to try again.',
     'payment_not_found' => 'Payment not found.',
 ];

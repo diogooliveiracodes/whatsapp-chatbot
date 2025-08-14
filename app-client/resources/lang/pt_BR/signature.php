@@ -70,5 +70,7 @@ return [
     'pix_code_copied' => 'Código PIX copiado!',
     'payment_confirmed' => 'Pagamento confirmado com sucesso!',
     'payment_still_pending' => 'Pagamento ainda está pendente. Tente novamente em alguns instantes.',
+    'payment_overdue_message' => 'O pagamento está vencido. Gere um novo código PIX para realizar o pagamento.',
+    'payment_rejected_message' => 'O pagamento foi rejeitado ou cancelado. Gere um novo código PIX para tentar novamente.',
     'payment_not_found' => 'Pagamento não encontrado.',
 ];
