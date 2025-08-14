@@ -81,4 +81,9 @@ class Company extends Model
     {
         return $this->hasOne(Signature::class);
     }
+
+    public function customers(): HasMany
+    {
+        return $this->HasMany(Customer::class);
+    }
 }
