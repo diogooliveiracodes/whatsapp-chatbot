@@ -63,4 +63,22 @@ class AsaasPaymentService
             throw $e;
         }
     }
+
+    /**
+     * Verificar status do pagamento
+     */
+    public function checkPaymentStatus(string $paymentId): array
+    {
+        try {
+            $response = Http::withHeaders([
+                'accept' => 'application/json',
+                'access_token' => $this->apiKey,
+            ])->get("{$this->baseUrl}/v3/payments/{$paymentId}/status");
+
+            return $response->json();
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, ['action' => 'checkPaymentStatus', 'payment_id' => $paymentId]);
+            throw $e;
+        }
+    }
 }

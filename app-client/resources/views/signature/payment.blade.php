@@ -130,7 +130,7 @@
 
                                 <!-- Status do Pagamento -->
                                 <div class="mb-6">
-                                    <div
+                                    <div id="paymentStatusContainer"
                                         class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
                                         <div class="flex">
                                             <div class="flex-shrink-0">
@@ -155,7 +155,7 @@
 
                                 <!-- Botões de Ação -->
                                 <div class="flex flex-col sm:flex-row gap-3">
-                                    <button onclick="checkPaymentStatus()"
+                                    <button id="checkStatusButton" onclick="checkPaymentStatus()"
                                         class="inline-flex items-center px-6 py-3 bg-blue-500 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -186,6 +186,8 @@
 </x-app-layout>
 
 <script>
+    let currentPaymentId = null;
+
     function generatePixCode() {
         // Mostrar loading
         document.getElementById('pixGenerateButton').classList.add('hidden');
@@ -207,13 +209,20 @@
                     'Accept': 'application/json'
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
-
                 // Esconder loading
                 document.getElementById('pixLoading').classList.add('hidden');
 
                 if (data.success && data.data && data.data.id) {
+                    // Salvar o ID do pagamento para uso posterior
+                    currentPaymentId = data.data.id;
+
                     // Fazer segunda requisição para obter o código PIX
                     return fetch(`/signature/${signatureId}/get-pix-code`, {
                         method: 'POST',
@@ -232,9 +241,13 @@
                     throw new Error('Erro ao gerar pagamento');
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(pixData => {
-
                 if (pixData.success && pixData.data && pixData.data.encodedImage) {
                     // Mostrar conteúdo do PIX
                     document.getElementById('pixContent').classList.remove('hidden');
@@ -258,13 +271,173 @@
 
         try {
             document.execCommand('copy');
+            // Mostrar feedback visual
+            showNotification('{{ __("signature.pix_code_copied") }}', 'success');
         } catch (err) {
-            console.error('Erro ao copiar código PIX:', err);
+            showNotification('Erro ao copiar código PIX', 'error');
         }
     }
 
     function checkPaymentStatus() {
-        // Implementação futura para verificar status do pagamento
-        // Por enquanto apenas exibe no console
+        if (!currentPaymentId) {
+            showNotification('{{ __("signature.payment_not_found") }}', 'error');
+            return;
+        }
+
+        // Desabilitar botão e mostrar loading
+        const checkButton = document.getElementById('checkStatusButton');
+        const originalText = checkButton.innerHTML;
+        checkButton.disabled = true;
+        checkButton.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Verificando...
+        `;
+
+        // Obter o token CSRF
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const signatureId = {{ $signature->id }};
+
+        // Fazer a requisição para verificar o status
+        fetch(`/signature/${signatureId}/check-payment-status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    payment_id: currentPaymentId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Restaurar botão
+                checkButton.disabled = false;
+                checkButton.innerHTML = originalText;
+
+                if (data.success) {
+                    updatePaymentStatus(data.status, data.internal_status);
+
+                    if (data.status === 'CONFIRMED' || data.status === 'RECEIVED' || data.internal_status === 2) { // 2 = PAID
+                        showNotification('{{ __("signature.payment_confirmed") }}', 'success');
+                        // Redirecionar após 2 segundos
+                        setTimeout(() => {
+                            window.location.href = '{{ route("signature.index") }}';
+                        }, 2000);
+                    } else {
+                        showNotification('{{ __("signature.payment_still_pending") }}', 'info');
+                    }
+                } else {
+                    showNotification(data.message || 'Erro ao verificar status', 'error');
+                }
+            })
+            .catch(error => {
+                // Restaurar botão
+                checkButton.disabled = false;
+                checkButton.innerHTML = originalText;
+
+                showNotification('Erro ao verificar status do pagamento', 'error');
+            });
+    }
+
+    function updatePaymentStatus(asaasStatus, internalStatus) {
+        const statusContainer = document.getElementById('paymentStatusContainer');
+
+        // Mapear status para cores e mensagens
+        let statusConfig = {
+            bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
+            borderColor: 'border-yellow-200 dark:border-yellow-800',
+            iconColor: 'text-yellow-400',
+            textColor: 'text-yellow-800 dark:text-yellow-200',
+            messageColor: 'text-yellow-700 dark:text-yellow-300',
+            title: '{{ __("signature.payment_pending") }}',
+            message: '{{ __("signature.payment_pending_message") }}',
+            icon: `<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />`
+        };
+
+        if (asaasStatus === 'CONFIRMED' || asaasStatus === 'RECEIVED' || internalStatus === 2) {
+            statusConfig = {
+                bgColor: 'bg-green-50 dark:bg-green-900/20',
+                borderColor: 'border-green-200 dark:border-green-800',
+                iconColor: 'text-green-400',
+                textColor: 'text-green-800 dark:text-green-200',
+                messageColor: 'text-green-700 dark:text-green-300',
+                title: '{{ __("signature.payment_status_paid") }}',
+                message: '{{ __("signature.payment_confirmed") }}',
+                icon: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />`
+            };
+        } else if (asaasStatus === 'REJECTED' || asaasStatus === 'CANCELLED' || internalStatus === 3) {
+            statusConfig = {
+                bgColor: 'bg-red-50 dark:bg-red-900/20',
+                borderColor: 'border-red-200 dark:border-red-800',
+                iconColor: 'text-red-400',
+                textColor: 'text-red-800 dark:text-red-200',
+                messageColor: 'text-red-700 dark:text-red-300',
+                title: '{{ __("signature.payment_status_rejected") }}',
+                message: 'Pagamento rejeitado ou cancelado',
+                icon: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />`
+            };
+        }
+
+        // Atualizar o container de status
+        statusContainer.className = `${statusConfig.bgColor} ${statusConfig.borderColor} rounded-lg p-4`;
+        statusContainer.innerHTML = `
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 ${statusConfig.iconColor}" viewBox="0 0 20 20" fill="currentColor">
+                        ${statusConfig.icon}
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium ${statusConfig.textColor}">
+                        ${statusConfig.title}
+                    </h3>
+                    <div class="mt-2 text-sm ${statusConfig.messageColor}">
+                        <p>${statusConfig.message}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function showNotification(message, type = 'info') {
+        // Criar elemento de notificação
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
+
+        // Definir cores baseadas no tipo
+        const colors = {
+            success: 'bg-green-500 text-white',
+            error: 'bg-red-500 text-white',
+            info: 'bg-blue-500 text-white',
+            warning: 'bg-yellow-500 text-white'
+        };
+
+        notification.className += ` ${colors[type] || colors.info}`;
+        notification.innerHTML = message;
+
+        // Adicionar ao DOM
+        document.body.appendChild(notification);
+
+        // Animar entrada
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+        }, 100);
+
+        // Remover após 3 segundos
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
     }
 </script>

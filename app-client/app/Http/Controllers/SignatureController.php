@@ -162,4 +162,31 @@ class SignatureController extends Controller
             return response()->json(['success' => false, 'error' => 'Erro ao obter código PIX: '], 500);
         }
     }
+
+    /**
+     * Check payment status
+     *
+     * @param Signature $signature
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function checkPaymentStatus(Signature $signature, Request $request)
+    {
+        try {
+            $request->validate([
+                'payment_id' => 'required|string'
+            ]);
+
+            $result = $this->signatureService->checkPaymentStatus($request->payment_id);
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, ['action' => 'checkPaymentStatus', 'signature_id' => $signature->id, 'payment_id' => $request->payment_id ?? null]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao verificar status do pagamento'
+            ], 500);
+        }
+    }
 }

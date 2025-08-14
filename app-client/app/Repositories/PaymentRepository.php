@@ -54,4 +54,43 @@ class PaymentRepository
     {
         return $this->model->create($data);
     }
+
+    /**
+     * Find payment by Asaas payment ID
+     *
+     * @param string $asaasPaymentId
+     * @return Payment|null
+     */
+    public function findByAsaasPaymentId(string $asaasPaymentId): ?Payment
+    {
+        return $this->model->where('gateway_payment_id', $asaasPaymentId)->first();
+    }
+
+    /**
+     * Update payment status
+     *
+     * @param int $paymentId
+     * @param int $status
+     * @param string|null $paidAt
+     * @return bool
+     */
+    public function updatePaymentStatus(int $paymentId, int $status, ?string $paidAt = null): bool
+    {
+        try {
+            $updateData = ['status' => $status];
+
+            if ($paidAt) {
+                $updateData['paid_at'] = $paidAt;
+            }
+
+            return $this->model->where('id', $paymentId)->update($updateData) > 0;
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'update_payment_status',
+                'payment_id' => $paymentId,
+                'status' => $status,
+            ]);
+            return false;
+        }
+    }
 }

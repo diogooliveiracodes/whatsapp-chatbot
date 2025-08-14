@@ -94,6 +94,7 @@ Route::middleware('auth', 'company.active', 'subscription.active')->group(functi
         Route::get('/{signature}/payment', [SignatureController::class, 'payment'])->name('signature.payment');
         Route::post('/{signature}/generate-pix', [SignatureController::class, 'generatePayment'])->name('signature.generate-pix');
         Route::post('/{signature}/get-pix-code', [SignatureController::class, 'getPixCode'])->name('signature.get-pix-code');
+        Route::post('/{signature}/check-payment-status', [SignatureController::class, 'checkPaymentStatus'])->name('signature.check-payment-status');
     });
 });
 
