@@ -3,5 +3,8 @@
         "laravel",
         "MYSQL",
         "whatsapp"
+    ],
+    "cSpell.ignoreWords": [
+        "asaas"
     ]
 }

@@ -181,30 +181,30 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
                                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                @if ($payment->status === 'paid') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
-                                                @elseif($payment->status === 'pending')
+                                                @if ($payment->status->value === 2) bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                                                @elseif($payment->status->value === 1)
                                                     bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
                                                 @else
                                                     bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 @endif">
-                                                @switch($payment->status)
-                                                    @case('paid')
+                                                @switch($payment->status->value)
+                                                    @case(2)
                                                         {{ __('signature.payment_status_paid') }}
                                                     @break
 
-                                                    @case('pending')
+                                                    @case(1)
                                                         {{ __('signature.payment_status_pending') }}
                                                     @break
 
-                                                    @case('rejected')
+                                                    @case(3)
                                                         {{ __('signature.payment_status_rejected') }}
                                                     @break
 
-                                                    @case('cancelled')
-                                                        {{ __('signature.payment_status_cancelled') }}
+                                                    @case(4)
+                                                        {{ __('signature.payment_status_expired') }}
                                                     @break
 
                                                     @default
-                                                        {{ ucfirst($payment->status) }}
+                                                        {{ ucfirst($payment->status->name()) }}
                                                 @endswitch
                                             </span>
                                         </td>
