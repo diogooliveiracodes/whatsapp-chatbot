@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Payment extends Model
 {
-    use HasUuids;
+    // use HasUuids;
 
     protected $fillable = [
         'company_id',
