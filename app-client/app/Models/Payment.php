@@ -18,7 +18,6 @@ class Payment extends Model
     protected $fillable = [
         'company_id',
         'schedule_id',
-        'signature_id',
         'plan_id',
         'customer_id',
         'user_id',
@@ -32,6 +31,7 @@ class Payment extends Model
         'payment_receipt_path',
         'paid_at',
         'expires_at',
+        'gateway_payment_id',
     ];
 
     protected $casts = [
