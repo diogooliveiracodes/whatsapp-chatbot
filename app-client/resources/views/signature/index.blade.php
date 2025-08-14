@@ -181,31 +181,31 @@
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
                                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                @if ($payment->status->value === 2) bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
-                                                @elseif($payment->status->value === 1)
+                                                @if ($payment->status->value === $paymentStatusEnum::PAID->value) bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                                                @elseif($payment->status->value === $paymentStatusEnum::PENDING->value)
                                                     bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
-                                                @elseif($payment->status->value === 5)
+                                                @elseif($payment->status->value === $paymentStatusEnum::OVERDUE->value)
                                                     bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200
                                                 @else
                                                     bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 @endif">
                                                 @switch($payment->status->value)
-                                                    @case(2)
+                                                    @case($paymentStatusEnum::PAID->value)
                                                         {{ __('signature.payment_status_paid') }}
                                                     @break
 
-                                                    @case(1)
+                                                    @case($paymentStatusEnum::PENDING->value)
                                                         {{ __('signature.payment_status_pending') }}
                                                     @break
 
-                                                    @case(3)
+                                                    @case($paymentStatusEnum::REJECTED->value)
                                                         {{ __('signature.payment_status_rejected') }}
                                                     @break
 
-                                                    @case(4)
+                                                    @case($paymentStatusEnum::EXPIRED->value)
                                                         {{ __('signature.payment_status_expired') }}
                                                     @break
 
-                                                    @case(5)
+                                                    @case($paymentStatusEnum::OVERDUE->value)
                                                         {{ __('signature.payment_status_overdue') }}
                                                     @break
 

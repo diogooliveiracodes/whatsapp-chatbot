@@ -186,6 +186,15 @@
 </x-app-layout>
 
 <script>
+    // Constantes do enum de status de pagamento
+    const PAYMENT_STATUS = {
+        PENDING: {{ $paymentStatusEnum::PENDING->value }},
+        PAID: {{ $paymentStatusEnum::PAID->value }},
+        REJECTED: {{ $paymentStatusEnum::REJECTED->value }},
+        EXPIRED: {{ $paymentStatusEnum::EXPIRED->value }},
+        OVERDUE: {{ $paymentStatusEnum::OVERDUE->value }}
+    };
+
     let currentPaymentId = null;
 
     function generatePixCode() {
@@ -326,7 +335,7 @@
                 if (data.success) {
                     updatePaymentStatus(data.status, data.internal_status);
 
-                    if (data.status === 'CONFIRMED' || data.status === 'RECEIVED' || data.internal_status === 2) { // 2 = PAID
+                    if (data.status === 'CONFIRMED' || data.status === 'RECEIVED' || data.internal_status === PAYMENT_STATUS.PAID) {
                         showNotification('{{ __("signature.payment_confirmed") }}', 'success');
                         // Redirecionar após 2 segundos
                         setTimeout(() => {
@@ -363,7 +372,7 @@
             icon: `<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />`
         };
 
-        if (asaasStatus === 'CONFIRMED' || asaasStatus === 'RECEIVED' || internalStatus === 2) {
+        if (asaasStatus === 'CONFIRMED' || asaasStatus === 'RECEIVED' || internalStatus === PAYMENT_STATUS.PAID) {
             statusConfig = {
                 bgColor: 'bg-green-50 dark:bg-green-900/20',
                 borderColor: 'border-green-200 dark:border-green-800',
@@ -374,7 +383,7 @@
                 message: '{{ __("signature.payment_confirmed") }}',
                 icon: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />`
             };
-        } else if (asaasStatus === 'REJECTED' || asaasStatus === 'CANCELLED' || internalStatus === 3) {
+        } else if (asaasStatus === 'REJECTED' || asaasStatus === 'CANCELLED' || internalStatus === PAYMENT_STATUS.REJECTED) {
             statusConfig = {
                 bgColor: 'bg-red-50 dark:bg-red-900/20',
                 borderColor: 'border-red-200 dark:border-red-800',
@@ -385,7 +394,7 @@
                 message: 'Pagamento rejeitado ou cancelado',
                 icon: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />`
             };
-        } else if (asaasStatus === 'OVERDUE' || internalStatus === 5) {
+        } else if (asaasStatus === 'OVERDUE' || internalStatus === PAYMENT_STATUS.OVERDUE) {
             statusConfig = {
                 bgColor: 'bg-orange-50 dark:bg-orange-900/20',
                 borderColor: 'border-orange-200 dark:border-orange-800',

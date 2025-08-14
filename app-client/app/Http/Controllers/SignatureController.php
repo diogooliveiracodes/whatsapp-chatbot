@@ -14,6 +14,7 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Enum\AsaasCustomerTypeEnum;
+use App\Enum\PaymentStatusEnum;
 use App\Services\Payment\AsaasCustomerService;
 
 /**
@@ -74,11 +75,17 @@ class SignatureController extends Controller
             }
 
             // Carregar pagamentos com paginação e ordenação (mais novo primeiro)
+            // Excluir pagamentos vencidos (EXPIRED e OVERDUE)
             $payments = $signature->payments()
+                ->whereNotIn('status', [
+                    PaymentStatusEnum::EXPIRED->value,
+                    PaymentStatusEnum::OVERDUE->value
+                ])
                 ->orderBy('created_at', 'desc')
                 ->paginate(5);
 
-            return view('signature.index', compact('signature', 'payments'));
+            return view('signature.index', compact('signature', 'payments'))
+                ->with('paymentStatusEnum', PaymentStatusEnum::class);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, ['action' => 'index']);
             return redirect()->route('dashboard')->with('error', 'Erro ao carregar detalhes da assinatura.');
@@ -104,7 +111,8 @@ class SignatureController extends Controller
                 return redirect()->route('signature.index')->with('error', 'Assinatura não encontrada.');
             }
 
-            return view('signature.payment', compact('signature'));
+            return view('signature.payment', compact('signature'))
+                ->with('paymentStatusEnum', PaymentStatusEnum::class);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, ['action' => 'payment', 'signature_id' => $signatureId]);
             return redirect()->route('signature.index')->with('error', 'Erro ao carregar página de pagamento.');
