@@ -46,6 +46,7 @@ return [
     'payment_status_rejected' => 'Rejeitado',
     'payment_status_cancelled' => 'Cancelado',
     'payment_status_expired' => 'Expirado',
+    'payment_status_overdue' => 'Vencido',
 
     // PIX Payment
     'payment_pix_title' => 'Pagamento via PIX',

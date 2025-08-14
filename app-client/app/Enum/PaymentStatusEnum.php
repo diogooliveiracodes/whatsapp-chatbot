@@ -8,6 +8,7 @@ enum PaymentStatusEnum: int
     case PAID = 2;
     case REJECTED = 3;
     case EXPIRED = 4;
+    case OVERDUE = 5;
 
     public function name(): string
     {
@@ -16,6 +17,7 @@ enum PaymentStatusEnum: int
             self::PAID => 'Paid',
             self::REJECTED => 'Rejected',
             self::EXPIRED => 'Expired',
+            self::OVERDUE => 'Overdue',
         };
     }
 

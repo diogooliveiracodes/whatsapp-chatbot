@@ -184,6 +184,8 @@
                                                 @if ($payment->status->value === 2) bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
                                                 @elseif($payment->status->value === 1)
                                                     bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                                                @elseif($payment->status->value === 5)
+                                                    bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200
                                                 @else
                                                     bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 @endif">
                                                 @switch($payment->status->value)
@@ -201,6 +203,10 @@
 
                                                     @case(4)
                                                         {{ __('signature.payment_status_expired') }}
+                                                    @break
+
+                                                    @case(5)
+                                                        {{ __('signature.payment_status_overdue') }}
                                                     @break
 
                                                     @default

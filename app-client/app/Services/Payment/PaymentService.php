@@ -80,9 +80,10 @@ class PaymentService
     {
         return match (strtolower($asaasStatus)) {
             'confirmed', 'paid', 'received' => PaymentStatusEnum::PAID->value,
-            'pending', 'overdue' => PaymentStatusEnum::PENDING->value,
+            'pending' => PaymentStatusEnum::PENDING->value,
             'rejected', 'cancelled', 'refunded' => PaymentStatusEnum::REJECTED->value,
             'expired' => PaymentStatusEnum::EXPIRED->value,
+            'overdue' => PaymentStatusEnum::OVERDUE->value,
             default => PaymentStatusEnum::PENDING->value,
         };
     }
