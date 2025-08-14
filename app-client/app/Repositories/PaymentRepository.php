@@ -43,4 +43,15 @@ class PaymentRepository
             ]);
         }
     }
+
+    /**
+     * Create a new payment.
+     *
+     * @param array $data
+     * @return Payment
+     */
+    public function createPayment(array $data): Payment
+    {
+        return $this->model->create($data);
+    }
 }
