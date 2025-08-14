@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum PaymentGatewayEnum: string
+enum PaymentGatewayEnum: int
 {
     case ASSAS = 1;
 
