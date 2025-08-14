@@ -31,6 +31,7 @@ return new class extends Migration {
             $table->string('payment_receipt_path')->nullable();
             $table->dateTime('paid_at')->nullable();
             $table->dateTime('expires_at')->nullable();
+            $table->string('gateway_payment_id')->nullable();
             $table->timestamps();
         });
     }
