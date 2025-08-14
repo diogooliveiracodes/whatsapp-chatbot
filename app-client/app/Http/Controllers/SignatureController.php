@@ -73,7 +73,12 @@ class SignatureController extends Controller
                 return redirect()->route('dashboard')->with('error', 'Nenhuma assinatura encontrada.');
             }
 
-            return view('signature.index', compact('signature'));
+            // Carregar pagamentos com paginação e ordenação (mais novo primeiro)
+            $payments = $signature->payments()
+                ->orderBy('created_at', 'desc')
+                ->paginate(5);
+
+            return view('signature.index', compact('signature', 'payments'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, ['action' => 'index']);
             return redirect()->route('dashboard')->with('error', 'Erro ao carregar detalhes da assinatura.');

@@ -143,7 +143,7 @@
             </div>
 
             <!-- Histórico de Pagamentos -->
-            @if ($signature->payments->count() > 0)
+            @if ($payments->count() > 0)
                 <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                         {{ __('signature.payment_history') }}
@@ -168,7 +168,7 @@
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                @foreach ($signature->payments as $payment)
+                                @foreach ($payments as $payment)
                                     <tr>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
@@ -218,6 +218,11 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Paginador -->
+                    <div class="mt-6">
+                        {{ $payments->links() }}
                     </div>
                 </div>
             @endif
