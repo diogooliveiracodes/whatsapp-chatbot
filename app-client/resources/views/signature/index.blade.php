@@ -84,6 +84,34 @@
                 </div>
             </div>
 
+            <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                    {{ __('signature.payment_pix_title') }}
+                </h3>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                            {{ __('signature.payment_pix_description') }}
+                        </p>
+                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                            R$ {{ number_format($signature->plan->price, 2, ',', '.') }}
+                        </p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <a href="{{ route('signature.payment', $signature->id) }}"
+                            class="inline-flex items-center px-6 py-3 bg-green-500 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1">
+                                </path>
+                            </svg>
+                            {{ __('signature.pay_with_pix') }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             <!-- WhatsApp do Suporte -->
             <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
@@ -161,16 +189,20 @@
                                                 @switch($payment->status)
                                                     @case('paid')
                                                         {{ __('signature.payment_status_paid') }}
-                                                        @break
+                                                    @break
+
                                                     @case('pending')
                                                         {{ __('signature.payment_status_pending') }}
-                                                        @break
+                                                    @break
+
                                                     @case('rejected')
                                                         {{ __('signature.payment_status_rejected') }}
-                                                        @break
+                                                    @break
+
                                                     @case('cancelled')
                                                         {{ __('signature.payment_status_cancelled') }}
-                                                        @break
+                                                    @break
+
                                                     @default
                                                         {{ ucfirst($payment->status) }}
                                                 @endswitch
