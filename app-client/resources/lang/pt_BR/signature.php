@@ -48,7 +48,7 @@ return [
 
     // PIX Payment
     'payment_pix_title' => 'Pagamento via PIX',
-    'payment_pix_description' => 'Pague sua assinatura de forma rápida e segura via PIX',
+    'payment_pix_description' => 'Adicione 30 dias a sua assinatura',
     'pay_with_pix' => 'Pagar com PIX',
     'payment_title' => 'Pagamento',
     'payment_details' => 'Detalhes do Pagamento',
@@ -58,6 +58,7 @@ return [
     'pix_instruction_1' => 'Escaneie o QR Code com seu aplicativo bancário',
     'pix_instruction_2' => 'Ou copie o código PIX e cole no seu app bancário',
     'pix_instruction_3' => 'O pagamento será confirmado automaticamente',
+    'generate_pix_code' => 'Gerar Código PIX para Pagamento',
     'generating_pix_code' => 'Gerando código PIX...',
     'pix_code' => 'Código PIX',
     'payment_pending' => 'Pagamento Pendente',

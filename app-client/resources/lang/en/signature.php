@@ -48,7 +48,7 @@ return [
 
     // PIX Payment
     'payment_pix_title' => 'PIX Payment',
-    'payment_pix_description' => 'Pay your subscription quickly and securely via PIX',
+    'payment_pix_description' => 'Add 30 days to your subscription',
     'pay_with_pix' => 'Pay with PIX',
     'payment_title' => 'Payment',
     'payment_details' => 'Payment Details',
@@ -58,6 +58,7 @@ return [
     'pix_instruction_1' => 'Scan the QR Code with your banking app',
     'pix_instruction_2' => 'Or copy the PIX code and paste it in your banking app',
     'pix_instruction_3' => 'Payment will be confirmed automatically',
+    'generate_pix_code' => 'Generate PIX Code for Payment',
     'generating_pix_code' => 'Generating PIX code...',
     'pix_code' => 'PIX Code',
     'payment_pending' => 'Payment Pending',
