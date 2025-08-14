@@ -36,6 +36,12 @@ return [
     ],
     'guzzle' => [
         'verify' => env('APP_ENV') !== 'local',
-    ]
+    ],
+
+    'asaas' => [
+        'api_key' => env('ASAAS_API_KEY'),
+        'environment' => env('ASAAS_ENVIRONMENT', 'sandbox'),
+        'webhook_url' => env('ASAAS_WEBHOOK_URL'),
+    ],
 
 ];
