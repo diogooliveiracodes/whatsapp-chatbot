@@ -73,8 +73,19 @@
                     <!-- Código PIX -->
                     <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
                         <div class="text-center">
+                            <!-- Botão para Gerar Código PIX -->
+                            <div id="pixGenerateButton" class="mb-6">
+                                <button onclick="generatePixCode()"
+                                    class="inline-flex items-center px-6 py-3 bg-green-500 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                    </svg>
+                                    {{ __('signature.generate_pix_code') }}
+                                </button>
+                            </div>
+
                             <!-- Spinner de Carregamento -->
-                            <div id="pixLoading" class="mb-4">
+                            <div id="pixLoading" class="mb-4 hidden">
                                 <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-green-500 hover:bg-green-400 transition ease-in-out duration-150 cursor-not-allowed">
                                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -168,6 +179,10 @@
     // Função para gerar o código PIX
     async function generatePixCode() {
         try {
+            // Esconder botão e mostrar spinner
+            document.getElementById('pixGenerateButton').classList.add('hidden');
+            document.getElementById('pixLoading').classList.remove('hidden');
+
             const response = await fetch('{{ route("signature.generate-pix", $signature->id) }}', {
                 method: 'POST',
                 headers: {
@@ -212,6 +227,10 @@
         } catch (error) {
             console.error('Erro:', error);
             alert('Erro ao gerar código PIX. Tente novamente.');
+
+            // Em caso de erro, mostrar o botão novamente
+            document.getElementById('pixLoading').classList.add('hidden');
+            document.getElementById('pixGenerateButton').classList.remove('hidden');
         }
     }
 
@@ -229,69 +248,17 @@
         }
     }
 
-    // Função para verificar status do pagamento
-    async function checkPaymentStatus() {
-        try {
-            const response = await fetch('{{ route("signature.check-payment", $signature->id) }}', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Erro ao verificar status do pagamento');
-            }
-
-            const data = await response.json();
-
-            if (data.status === 'paid') {
-                alert('{{ __("signature.payment_confirmed") }}');
-                window.location.href = '{{ route("signature.index") }}';
-            } else if (data.status === 'pending') {
-                alert('{{ __("signature.payment_still_pending") }}');
-            } else {
-                alert('{{ __("signature.payment_not_found") }}');
-            }
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('Erro ao verificar status do pagamento. Tente novamente.');
-        }
-    }
-
-    // Função para iniciar verificação automática de status
+    // Função para verificar status do pagamento (será implementada se necessário)
     function startPaymentStatusCheck() {
-        // Verificar a cada 30 segundos
-        paymentCheckInterval = setInterval(async () => {
-            try {
-                const response = await fetch('{{ route("signature.check-payment", $signature->id) }}', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-
-                    if (data.status === 'paid') {
-                        clearInterval(paymentCheckInterval);
-                        alert('{{ __("signature.payment_confirmed") }}');
-                        window.location.href = '{{ route("signature.index") }}';
-                    }
-                }
-            } catch (error) {
-                console.error('Erro na verificação automática:', error);
-            }
-        }, 30000); // 30 segundos
+        // Implementar verificação de status do pagamento se necessário
+        console.log('Iniciando verificação de status do pagamento...');
     }
 
-    // Gerar código PIX quando a página carregar
-    document.addEventListener('DOMContentLoaded', function() {
-        generatePixCode();
-    });
+    // Função para verificar status do pagamento manualmente
+    function checkPaymentStatus() {
+        // Implementar verificação manual de status do pagamento
+        console.log('Verificando status do pagamento...');
+    }
 
     // Limpar intervalo quando a página for fechada
     window.addEventListener('beforeunload', function() {
