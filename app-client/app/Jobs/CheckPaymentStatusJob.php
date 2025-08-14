@@ -4,7 +4,9 @@ namespace App\Jobs;
 
 use App\Services\Payment\AsaasPaymentService;
 use App\Services\Payment\PaymentService;
+use App\Services\Signature\SignatureService;
 use App\Services\ErrorLog\ErrorLogService;
+use App\Enum\PaymentStatusEnum;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -43,6 +45,7 @@ class CheckPaymentStatusJob implements ShouldQueue
     public function handle(
         AsaasPaymentService $asaasPaymentService,
         PaymentService $paymentService,
+        SignatureService $signatureService,
         ErrorLogService $errorLogService
     ): void {
         try {
@@ -61,7 +64,7 @@ class CheckPaymentStatusJob implements ShouldQueue
             }
 
             // Verificar se o pagamento ainda está pendente
-            if ($payment->status->value !== 1) { // PENDING
+            if ($payment->status->value !== PaymentStatusEnum::PENDING->value) {
                 Log::info('Pagamento já não está mais pendente', [
                     'payment_id' => $payment->id,
                     'asaas_payment_id' => $this->asaasPaymentId,
@@ -105,6 +108,11 @@ class CheckPaymentStatusJob implements ShouldQueue
                         'new_status' => $internalStatus,
                         'asaas_status' => $asaasStatus
                     ]);
+
+                    // Se o pagamento foi confirmado, atualizar a assinatura
+                    if ($internalStatus === PaymentStatusEnum::PAID->value) {
+                        $this->updateSignatureAfterPayment($payment, $signatureService);
+                    }
                 } else {
                     Log::error('Falha ao atualizar status do pagamento', [
                         'payment_id' => $payment->id,
@@ -134,6 +142,46 @@ class CheckPaymentStatusJob implements ShouldQueue
 
             // Re-throw para que o job seja marcado como falhado
             throw $e;
+        }
+    }
+
+    /**
+     * Update signature after successful payment
+     *
+     * @param \App\Models\Payment $payment
+     * @param SignatureService $signatureService
+     * @return void
+     */
+    private function updateSignatureAfterPayment($payment, SignatureService $signatureService): void
+    {
+        try {
+            // Buscar a assinatura através do relacionamento pivot
+            $signature = $payment->signatures()->first();
+
+            if (!$signature) {
+                Log::warning('Assinatura não encontrada para o pagamento', [
+                    'payment_id' => $payment->id,
+                    'asaas_payment_id' => $this->asaasPaymentId
+                ]);
+                return;
+            }
+
+            // Usar o método do SignatureService para atualizar a assinatura
+            $signatureService->updateSignatureAfterPayment($signature);
+
+            Log::info('Assinatura atualizada com sucesso após pagamento', [
+                'payment_id' => $payment->id,
+                'signature_id' => $signature->id,
+                'company_id' => $signature->company_id,
+                'new_expires_at' => $signature->expires_at
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao atualizar assinatura após pagamento', [
+                'payment_id' => $payment->id,
+                'asaas_payment_id' => $this->asaasPaymentId,
+                'error' => $e->getMessage()
+            ]);
         }
     }
 

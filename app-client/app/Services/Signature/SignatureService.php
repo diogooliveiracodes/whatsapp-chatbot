@@ -175,7 +175,7 @@ class SignatureService
      * @param Signature $signature
      * @return void
      */
-    private function updateSignatureAfterPayment(Signature $signature): void
+    public function updateSignatureAfterPayment(Signature $signature): void
     {
         try {
             $plan = $signature->plan;

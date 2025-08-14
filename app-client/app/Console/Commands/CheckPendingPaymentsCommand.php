@@ -19,7 +19,7 @@ class CheckPendingPaymentsCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Verifica pagamentos pendentes e cria jobs para validar status no Asaas';
+    protected $description = 'Verifica pagamentos pendentes, cria jobs para validar status no Asaas e atualiza assinaturas quando pagamentos são confirmados';
 
     /**
      * Execute the console command.
@@ -34,6 +34,7 @@ class CheckPendingPaymentsCommand extends Command
         $limit = (int) $this->option('limit');
 
         $this->info("Iniciando verificação de pagamentos pendentes...");
+        $this->info("Os jobs criados irão verificar o status dos pagamentos no Asaas e atualizar as assinaturas automaticamente quando os pagamentos forem confirmados.");
 
         $result = $paymentStatusCheckerService->processPendingPayments($limit);
 
@@ -45,6 +46,9 @@ class CheckPendingPaymentsCommand extends Command
                     ['Processados', 'Erros', 'Total Encontrado'],
                     [[$result['processed'], $result['errors'], $result['total_found']]]
                 );
+
+                $this->info("ℹ️  Os jobs irão processar os pagamentos em background e atualizar automaticamente as assinaturas quando os pagamentos forem confirmados.");
+                $this->info("📅 As assinaturas terão seus dias de saldo adicionados conforme a duração do plano.");
             }
         } else {
             $this->error($result['message']);
@@ -78,5 +82,8 @@ class CheckPendingPaymentsCommand extends Command
                 $stats['last_check']
             ]]
         );
+
+        $this->info("ℹ️  Execute o comando sem --stats para processar os pagamentos pendentes.");
+        $this->info("📅 As assinaturas serão atualizadas automaticamente quando os pagamentos forem confirmados.");
     }
 }
