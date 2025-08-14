@@ -92,7 +92,7 @@ Route::middleware('auth', 'company.active', 'subscription.active')->group(functi
     Route::group(['prefix' => 'signature'], function () {
         Route::get('/', [SignatureController::class, 'index'])->name('signature.index');
         Route::get('/{signature}/payment', [SignatureController::class, 'payment'])->name('signature.payment');
-        Route::post('/{signature}/generate-pix', [SignatureController::class, 'generatePix'])->name('signature.generate-pix');
+        Route::post('/{signature}/generate-pix', [SignatureController::class, 'generatePayment'])->name('signature.generate-pix');
     });
 });
 
