@@ -9,11 +9,15 @@
                 <div class="p-4 sm:p-6 text-gray-900 dark:text-gray-100">
                     <x-global.session-alerts />
 
-                    <div class="flex justify-center sm:justify-start gap-4 mb-6">
-                        <x-buttons.back-button
-                            :route="route('units.index')"
-                            :text="__('units.active_units')"
-                        />
+                    <!-- Botão Voltar -->
+                    <div class="mb-6">
+                        <a href="{{ route('units.index') }}"
+                            class="inline-flex items-center px-4 py-2 bg-gray-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-600 focus:bg-gray-600 active:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            {{ __('units.active_units') }}
+                        </a>
                     </div>
 
                     <!-- Tabela para desktop -->
