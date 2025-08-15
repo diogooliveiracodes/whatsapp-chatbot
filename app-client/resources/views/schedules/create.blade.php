@@ -14,7 +14,7 @@
 
                         <div>
                             <label for="customer_search" class="block font-medium text-sm text-gray-300">
-                                {{ __('customers.name') }}
+                                {{ __('customers.client') }}
                             </label>
                             <div class="relative">
                                 <input type="text" id="customer_search"
