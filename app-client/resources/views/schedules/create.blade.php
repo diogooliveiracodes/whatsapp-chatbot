@@ -19,10 +19,11 @@
                             <div class="relative">
                                 <input type="text" id="customer_search"
                                     class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 @error('customer_id') border-red-500 @enderror"
-                                    placeholder="{{ __('customers.search_placeholder') }}"
-                                    autocomplete="off" />
-                                <input type="hidden" id="customer_id" name="customer_id" value="{{ old('customer_id') }}" required />
-                                <div id="customer_results" class="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-md shadow-lg hidden max-h-60 overflow-y-auto">
+                                    placeholder="{{ __('customers.search_placeholder') }}" autocomplete="off" />
+                                <input type="hidden" id="customer_id" name="customer_id"
+                                    value="{{ old('customer_id') }}" required />
+                                <div id="customer_results"
+                                    class="absolute z-10 w-full mt-1 bg-gray-700 border border-gray-600 rounded-md shadow-lg hidden max-h-60 overflow-y-auto">
                                 </div>
                             </div>
                             <x-input-error :messages="$errors->get('customer_id')" class="mt-2" />
@@ -32,7 +33,8 @@
                             <label for="schedule_date" class="block font-medium text-sm text-gray-300">
                                 {{ __('schedules.date') }}
                             </label>
-                            <input id="schedule_date" type="date" name="schedule_date" value="{{ request('schedule_date', old('schedule_date')) }}"
+                            <input id="schedule_date" type="date" name="schedule_date"
+                                value="{{ request('schedule_date', old('schedule_date')) }}"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 [color-scheme:light] dark:[color-scheme:dark] @error('schedule_date') border-red-500 @enderror"
                                 required />
                             <x-input-error :messages="$errors->get('schedule_date')" class="mt-2" />
@@ -42,7 +44,8 @@
                             <label for="start_time" class="block font-medium text-sm text-gray-300">
                                 {{ __('schedules.start_time') }}
                             </label>
-                            <input id="start_time" type="time" name="start_time" value="{{ request('start_time', old('start_time')) }}"
+                            <input id="start_time" type="time" name="start_time"
+                                value="{{ request('start_time', old('start_time')) }}"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 [color-scheme:light] dark:[color-scheme:dark] @error('start_time') border-red-500 @enderror"
                                 required />
                             <x-input-error :messages="$errors->get('start_time')" class="mt-2" />
@@ -57,7 +60,9 @@
                                 required>
                                 <option value=""></option>
                                 @foreach ($unitServiceTypes as $serviceType)
-                                    <option value="{{ $serviceType->id }}" {{ old('unit_service_type_id') == $serviceType->id ? 'selected' : '' }}>{{ $serviceType->name }}</option>
+                                    <option value="{{ $serviceType->id }}"
+                                        {{ old('unit_service_type_id') == $serviceType->id ? 'selected' : '' }}>
+                                        {{ $serviceType->name }}</option>
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('unit_service_type_id')" class="mt-2" />
@@ -80,7 +85,8 @@
                             </x-cancel-link>
 
                             <!-- Create Button -->
-                            <x-primary-button type="submit">
+                            <x-primary-button type="submit" id="submit-button" disabled
+                                class="disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-600 disabled:hover:bg-gray-600">
                                 {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
@@ -95,15 +101,37 @@
             const customerSearch = document.getElementById('customer_search');
             const customerId = document.getElementById('customer_id');
             const customerResults = document.getElementById('customer_results');
+            const submitButton = document.getElementById('submit-button');
 
             // Dados dos clientes disponíveis na página
             const customers = @json($customers);
+
+
+
+            // Função para verificar se o cliente foi selecionado corretamente
+            function checkCustomerSelection() {
+                const searchValue = customerSearch.value.trim();
+                const customerIdValue = customerId.value;
+
+                // Verificar se há um ID válido e se o nome corresponde
+                if (customerIdValue) {
+                    const validCustomer = customers.find(customer => customer.id == customerIdValue);
+                    if (validCustomer && searchValue.toLowerCase() === validCustomer.name.toLowerCase()) {
+                        submitButton.disabled = false;
+                        return true;
+                    }
+                }
+
+                submitButton.disabled = true;
+                return false;
+            }
 
             // Se há um valor antigo, mostrar o nome do cliente
             if (customerId.value) {
                 const selectedCustomer = customers.find(c => c.id == customerId.value);
                 if (selectedCustomer) {
                     customerSearch.value = selectedCustomer.name;
+                    checkCustomerSelection(); // Verificar se o cliente antigo é válido
                 }
             }
 
@@ -133,13 +161,15 @@
                 customerResults.innerHTML = '';
                 customers.forEach(customer => {
                     const div = document.createElement('div');
-                    div.className = 'px-4 py-2 hover:bg-gray-600 cursor-pointer text-gray-300 border-b border-gray-600 last:border-b-0';
+                    div.className =
+                        'px-4 py-2 hover:bg-gray-600 cursor-pointer text-gray-300 border-b border-gray-600 last:border-b-0';
                     div.textContent = customer.name;
                     div.addEventListener('click', () => {
                         customerSearch.value = customer.name;
                         customerId.value = customer.id;
                         customerResults.classList.add('hidden');
                         validateCustomerName(); // Validar após seleção
+                        checkCustomerSelection(); // Verificar se o botão deve ser habilitado
                     });
                     customerResults.appendChild(div);
                 });
@@ -147,7 +177,7 @@
                 customerResults.classList.remove('hidden');
             }
 
-                        // Event listener para input
+            // Event listener para input
             customerSearch.addEventListener('input', function() {
                 const query = this.value.trim();
                 filterCustomers(query);
@@ -158,6 +188,8 @@
 
                 // Validar se o nome digitado existe na lista
                 validateCustomerName();
+                // Verificar se o botão deve ser habilitado
+                checkCustomerSelection();
             });
 
             // Event listener para focus - mostrar todos os clientes quando clicar no input
@@ -187,39 +219,23 @@
                     customerSearch.classList.remove('border-red-500');
                     customerSearch.classList.add('border-gray-600');
                 }
+
+                // Verificar se o botão deve ser habilitado
+                checkCustomerSelection();
             }
 
-                        // Validar antes do envio do formulário
+            // Validar antes do envio do formulário
             document.querySelector('form').addEventListener('submit', function(e) {
-                e.preventDefault(); // Sempre prevenir primeiro
-
-                const searchValue = customerSearch.value.trim();
-                const customerIdValue = customerId.value;
-
-                // Verificar se há um ID válido
-                if (!customerIdValue) {
-                    alert('Por favor, selecione um cliente da lista.');
+                // Se o botão está desabilitado, não permitir envio
+                if (submitButton.disabled) {
+                    e.preventDefault();
+                    alert('Por favor, selecione um cliente válido antes de salvar.');
                     customerSearch.focus();
                     return false;
                 }
 
-                // Verificar se o ID existe na lista de clientes
-                const validCustomer = customers.find(customer => customer.id == customerIdValue);
-                if (!validCustomer) {
-                    alert('Cliente selecionado não é válido. Por favor, selecione um cliente da lista.');
-                    customerSearch.focus();
-                    return false;
-                }
-
-                // Verificar se o nome digitado corresponde ao cliente selecionado
-                if (searchValue.toLowerCase() !== validCustomer.name.toLowerCase()) {
-                    alert('O nome digitado não corresponde ao cliente selecionado. Por favor, selecione um cliente válido da lista.');
-                    customerSearch.focus();
-                    return false;
-                }
-
-                // Se tudo estiver válido, permitir o envio
-                this.submit();
+                // Se chegou até aqui, o cliente foi validado corretamente
+                // Permitir o envio do formulário
             });
 
             // Esconder resultados quando clicar fora
