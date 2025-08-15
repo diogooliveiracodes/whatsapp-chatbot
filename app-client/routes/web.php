@@ -10,6 +10,7 @@ use App\Http\Controllers\ScheduleBlockController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UnitServiceTypeController;
 use App\Http\Controllers\SignatureController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -95,6 +96,10 @@ Route::middleware('auth', 'company.active', 'subscription.active')->group(functi
         Route::post('/{signature}/generate-pix', [SignatureController::class, 'generatePayment'])->name('signature.generate-pix');
         Route::post('/{signature}/get-pix-code', [SignatureController::class, 'getPixCode'])->name('signature.get-pix-code');
         Route::post('/{signature}/check-payment-status', [SignatureController::class, 'checkPaymentStatus'])->name('signature.check-payment-status');
+    });
+
+    Route::group(['prefix' => 'payments'], function () {
+        Route::get('/', [PaymentController::class, 'index'])->name('payments.index');
     });
 });
 

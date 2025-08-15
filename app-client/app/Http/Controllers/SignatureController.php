@@ -74,18 +74,7 @@ class SignatureController extends Controller
                 return redirect()->route('dashboard')->with('error', 'Nenhuma assinatura encontrada.');
             }
 
-            // Carregar pagamentos com paginação e ordenação (mais novo primeiro)
-            // Excluir pagamentos vencidos (EXPIRED e OVERDUE)
-            $payments = $signature->payments()
-                ->whereNotIn('status', [
-                    PaymentStatusEnum::EXPIRED->value,
-                    PaymentStatusEnum::OVERDUE->value
-                ])
-                ->orderBy('created_at', 'desc')
-                ->paginate(5);
-
-            return view('signature.index', compact('signature', 'payments'))
-                ->with('paymentStatusEnum', PaymentStatusEnum::class);
+            return view('signature.index', compact('signature'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, ['action' => 'index']);
             return redirect()->route('dashboard')->with('error', 'Erro ao carregar detalhes da assinatura.');

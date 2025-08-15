@@ -73,4 +73,6 @@ return [
     'payment_overdue_message' => 'O pagamento está vencido. Gere um novo código PIX para realizar o pagamento.',
     'payment_rejected_message' => 'O pagamento foi rejeitado ou cancelado. Gere um novo código PIX para tentar novamente.',
     'payment_not_found' => 'Pagamento não encontrado.',
+    'view_all_payments' => 'Ver Todos os Pagamentos',
+    'payment_history_description' => 'Visualize todo o histórico de pagamentos da sua empresa.',
 ];

@@ -73,4 +73,6 @@ return [
     'payment_overdue_message' => 'The payment is overdue. Generate a new PIX code to make the payment.',
     'payment_rejected_message' => 'The payment was rejected or cancelled. Generate a new PIX code to try again.',
     'payment_not_found' => 'Payment not found.',
+    'view_all_payments' => 'View All Payments',
+    'payment_history_description' => 'View all payment history for your company.',
 ];
