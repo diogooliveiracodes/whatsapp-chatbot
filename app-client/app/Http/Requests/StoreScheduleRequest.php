@@ -2,8 +2,12 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Log;
 
-class StoreScheduleRequest extends BaseFormRequest
+class StoreScheduleRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -30,7 +34,23 @@ class StoreScheduleRequest extends BaseFormRequest
             'schedule_date.date' => __('schedules.messages.invalid_date'),
             'start_time.required' => __('schedules.messages.start_time_required'),
             'start_time.date_format' => __('schedules.messages.invalid_time_format'),
-            'service_type.required' => __('schedules.messages.service_type_required'),
+            'unit_service_type_id.required' => __('schedules.messages.service_type_required'),
+            'unit_service_type_id.exists' => __('schedules.messages.service_type_not_found'),
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        // Log the validation errors for debugging
+        Log::info('StoreScheduleRequest validation failed', [
+            'errors' => $validator->errors()->toArray(),
+            'request_data' => $this->all(),
+        ]);
+
+        throw new HttpResponseException(
+            redirect()->back()
+                ->withInput()
+                ->withErrors($validator)
+        );
     }
 }
