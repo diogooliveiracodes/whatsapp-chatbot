@@ -301,15 +301,16 @@
                         </div>
 
                         <!-- Form Actions -->
-                        <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-                            <a href="{{ route('admin.users.index') }}"
-                                class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
+                        <div class="mt-6 flex justify-between">
+                            <!-- Back Button -->
+                            <x-cancel-link href="{{ route('admin.users.index') }}">
                                 {{ __('Cancelar') }}
-                            </a>
-                            <button type="submit"
-                                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200">
-                                <i class="fas fa-save mr-2"></i>{{ __('Criar Usuário') }}
-                            </button>
+                            </x-cancel-link>
+
+                            <!-- Create Button -->
+                            <x-primary-button type="submit">
+                                {{ __('actions.save') }}
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>

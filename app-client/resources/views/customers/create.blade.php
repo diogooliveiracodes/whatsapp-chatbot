@@ -75,7 +75,7 @@
 
                             <!-- Save Button -->
                             <x-primary-button type="submit">
-                                {{ __('customers.create') }}
+                                {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
                     </form>

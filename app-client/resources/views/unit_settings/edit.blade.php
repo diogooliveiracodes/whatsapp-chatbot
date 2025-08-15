@@ -249,7 +249,7 @@
 
                             <!-- Save Button -->
                             <x-primary-button type="submit" class="w-full sm:w-auto">
-                                {{ __('unitSettings.save_changes') }}
+                                {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
                     </div>

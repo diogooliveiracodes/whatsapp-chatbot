@@ -97,13 +97,16 @@
                             @enderror
                         </div>
 
-                        <!-- Botões -->
-                        <div class="flex justify-between">
+                        <!-- Action Buttons -->
+                        <div class="mt-6 flex justify-between">
+                            <!-- Back Button -->
                             <x-cancel-link :href="route('schedule-blocks.index')">
                                 {{ __('schedule-blocks.back') }}
                             </x-cancel-link>
+
+                            <!-- Create Button -->
                             <x-primary-button type="submit">
-                                {{ __('schedule-blocks.create') }}
+                                {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
                     </form>

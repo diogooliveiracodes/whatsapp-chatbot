@@ -31,7 +31,9 @@
                             </x-cancel-link>
 
                             <!-- Create Button -->
-                            <x-primary-button type="submit">{{ __('units.create') }}</x-primary-button>
+                            <x-primary-button type="submit">
+                                {{ __('actions.save') }}
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>

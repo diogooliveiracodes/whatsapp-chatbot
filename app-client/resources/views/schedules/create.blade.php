@@ -76,7 +76,7 @@
 
                             <!-- Create Button -->
                             <x-primary-button type="submit">
-                                {{ __('schedules.create') }}
+                                {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
                     </form>
