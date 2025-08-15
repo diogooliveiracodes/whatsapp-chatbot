@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-global.header>
-        {{ __('pages.unitServiceType') }}
+        {{ __('unit-service-types.details') }} - {{ $unitServiceType->name }}
     </x-global.header>
 
     <div class="py-6 sm:py-12">
