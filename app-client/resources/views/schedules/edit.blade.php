@@ -93,7 +93,7 @@
                                 rows="3">{{ old('notes', $schedule->notes) }}</textarea>
                         </div>
 
-                        <div class="flex justify-end space-x-3">
+                        <div class="mt-6 flex justify-between">
                             <!-- Back Button -->
                             <x-cancel-link href="{{ route('schedules.index') }}">
                                 {{ __('schedules.back') }}
@@ -101,7 +101,7 @@
 
                             <!-- Update Button -->
                             <x-primary-button type="submit">
-                                {{ __('schedules.update') }}
+                                {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
                     </form>

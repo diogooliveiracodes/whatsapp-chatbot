@@ -34,7 +34,7 @@
 
                             <!-- Update Button -->
                             <x-primary-button type="submit">
-                                {{ __('units.update') }}
+                                {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
                     </form>

@@ -87,12 +87,14 @@
 
                         <!-- Action Buttons -->
                         <div class="mt-6 flex justify-between">
+                            <!-- Back Button -->
                             <x-cancel-link :href="route('customers.index')">
                                 {{ __('customers.back') }}
                             </x-cancel-link>
 
+                            <!-- Save Button -->
                             <x-primary-button type="submit">
-                                {{ __('customers.save_changes') }}
+                                {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
                     </form>

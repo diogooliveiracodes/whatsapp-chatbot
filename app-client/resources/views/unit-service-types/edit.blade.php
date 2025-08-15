@@ -48,7 +48,9 @@
                             </x-cancel-link>
 
                             <!-- Update Button -->
-                            <x-primary-button type="submit">{{ __('actions.save') }}</x-primary-button>
+                            <x-primary-button type="submit">
+                                {{ __('actions.save') }}
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>

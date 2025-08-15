@@ -86,7 +86,7 @@
                             </x-cancel-link>
 
                             <x-primary-button type="submit">
-                                {{ __('companies.save_changes') }}
+                                {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
                     </form>
