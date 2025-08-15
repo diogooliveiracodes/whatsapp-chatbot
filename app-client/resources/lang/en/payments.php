@@ -18,4 +18,9 @@ return [
     'payment_status_expired' => 'Expired',
     'payment_status_overdue' => 'Overdue',
     'back_to_signature' => 'Back to Signature',
+
+    // Payment Methods
+    'payment_method_credit_card' => 'Credit Card',
+    'payment_method_debit_card' => 'Debit Card',
+    'payment_method_pix' => 'Pix',
 ];

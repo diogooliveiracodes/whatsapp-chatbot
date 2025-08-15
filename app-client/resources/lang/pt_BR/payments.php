@@ -18,4 +18,9 @@ return [
     'payment_status_expired' => 'Expirado',
     'payment_status_overdue' => 'Vencido',
     'back_to_signature' => 'Voltar à Assinatura',
+
+    // Métodos de Pagamento
+    'payment_method_credit_card' => 'Cartão de Crédito',
+    'payment_method_debit_card' => 'Cartão de Débito',
+    'payment_method_pix' => 'Pix',
 ];

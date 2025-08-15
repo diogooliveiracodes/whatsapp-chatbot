@@ -34,9 +34,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         {{ __('payments.plan') }}
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                        {{ __('payments.created_by') }}
-                                    </th>
+
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -84,18 +82,16 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                            {{ ucfirst($payment->payment_method->value) }}
+                                            {{ $payment->payment_method->name() }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                             {{ $payment->plan->name ?? 'N/A' }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                            {{ $payment->user->name ?? 'N/A' }}
-                                        </td>
+
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                                             {{ __('payments.no_payments_found') }}
                                         </td>
                                     </tr>
@@ -116,9 +112,7 @@
                                         <p class="text-sm text-gray-600 dark:text-gray-400">
                                             {{ __('payments.plan') }}: {{ $payment->plan->name ?? 'N/A' }}
                                         </p>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                                            {{ __('payments.created_by') }}: {{ $payment->user->name ?? 'N/A' }}
-                                        </p>
+
                                     </div>
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                         @if ($payment->status->value === $paymentStatusEnum::PAID->value) bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
@@ -162,7 +156,7 @@
                                     </p>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">
                                         <span class="font-medium">{{ __('payments.payment_method') }}:</span>
-                                        {{ ucfirst($payment->payment_method->value) }}
+                                        {{ $payment->payment_method->name() }}
                                     </p>
                                 </div>
                             </div>
