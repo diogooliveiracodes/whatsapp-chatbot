@@ -28,6 +28,8 @@ return [
         'end_time_after_start' => 'End time must be after start time',
         'service_type_required' => 'Service type is required',
         'service_type_not_found' => 'Selected service type does not exist',
+        'date_must_be_today_or_future' => 'Schedule date must be today or a future date',
+        'notes_too_long' => 'Notes cannot exceed 1000 characters',
         'confirm_delete' => 'Are you sure you want to delete this appointment?',
     ],
     'today' => 'Today',
