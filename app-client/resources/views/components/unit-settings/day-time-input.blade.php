@@ -8,7 +8,7 @@
                 <input type="checkbox" name="{{ $day }}" value="1" {{ $isChecked ? 'checked' : '' }}
                     class="form-checkbox w-5 h-5 text-indigo-500 bg-gray-700 border-gray-600 rounded focus:ring-indigo-500 focus:ring-2 day-checkbox"
                     data-day="{{ $day }}"
-                    onchange="toggleTimeInputs('{{ $day }}')">
+                    onchange="if(window.toggleTimeInputs) window.toggleTimeInputs('{{ $day }}')">
                 <div class="absolute inset-0 rounded pointer-events-none {{ $isChecked ? 'bg-indigo-500/20' : '' }} transition-colors duration-200"></div>
             </div>
             <label class="text-white font-medium cursor-pointer select-none">{{ $label }}</label>
@@ -40,7 +40,7 @@
                                    min="0"
                                    max="1440"
                                    value="{{ $startTime ? \Carbon\Carbon::parse('2000-01-01 ' . $startTime)->format('H') * 60 + \Carbon\Carbon::parse('2000-01-01 ' . $startTime)->format('i') : 540 }}"
-                                   oninput="updateRangeSlider('{{ $day }}', 'start', this.value)">
+                                   oninput="if(window.updateRangeSlider) window.updateRangeSlider('{{ $day }}', 'start', this.value)">
 
                             {{-- End Handle --}}
                             <input type="range"
@@ -51,7 +51,7 @@
                                    min="0"
                                    max="1440"
                                    value="{{ $endTime ? \Carbon\Carbon::parse('2000-01-01 ' . $endTime)->format('H') * 60 + \Carbon\Carbon::parse('2000-01-01 ' . $endTime)->format('i') : 1020 }}"
-                                   oninput="updateRangeSlider('{{ $day }}', 'end', this.value)">
+                                   oninput="if(window.updateRangeSlider) window.updateRangeSlider('{{ $day }}', 'end', this.value)">
 
                             {{-- Visual Handles --}}
                             <div class="range-slider-thumb range-slider-thumb-start absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-indigo-500 rounded-full border-2 border-white shadow-lg cursor-pointer"
@@ -178,26 +178,40 @@
 </style>
 
 <script>
-    function toggleTimeInputs(day) {
+    // Ensure functions are globally available
+    window.toggleTimeInputs = function(day) {
         const checkbox = document.querySelector(`input[data-day="${day}"]`);
         const timeInputsContainer = document.getElementById(`${day}-time-inputs`);
+
+        if (!checkbox || !timeInputsContainer) {
+            return;
+        }
+
         const parentDiv = checkbox.closest('.bg-gray-600\\/30');
-        const statusIndicator = parentDiv.querySelector('.w-3.h-3.rounded-full');
+        const statusIndicator = parentDiv?.querySelector('.w-3.h-3.rounded-full');
 
         if (checkbox.checked) {
             timeInputsContainer.style.display = 'flex';
-            statusIndicator.classList.remove('bg-gray-500');
-            statusIndicator.classList.add('bg-green-500');
-            parentDiv.classList.add('bg-gray-600/40');
+            if (statusIndicator) {
+                statusIndicator.classList.remove('bg-gray-500');
+                statusIndicator.classList.add('bg-green-500');
+            }
+            if (parentDiv) {
+                parentDiv.classList.add('bg-gray-600/40');
+            }
         } else {
             timeInputsContainer.style.display = 'none';
-            statusIndicator.classList.remove('bg-green-500');
-            statusIndicator.classList.add('bg-gray-500');
-            parentDiv.classList.remove('bg-gray-600/40');
+            if (statusIndicator) {
+                statusIndicator.classList.remove('bg-green-500');
+                statusIndicator.classList.add('bg-gray-500');
+            }
+            if (parentDiv) {
+                parentDiv.classList.remove('bg-gray-600/40');
+            }
         }
-    }
+    };
 
-        function updateRangeSlider(day, handle, value) {
+    window.updateRangeSlider = function(day, handle, value) {
         const startInput = document.querySelector(`input[data-day="${day}"][data-handle="start"]`);
         const endInput = document.querySelector(`input[data-day="${day}"][data-handle="end"]`);
         const startThumb = document.querySelector(`.range-slider-thumb-start[data-day="${day}"]`);
@@ -208,6 +222,10 @@
         const startHidden = document.querySelector(`input[data-day="${day}"][data-type="start"]`);
         const endHidden = document.querySelector(`input[data-day="${day}"][data-type="end"]`);
         const appointmentDurationInput = document.querySelector('#appointment_duration_minutes');
+
+        if (!startInput || !endInput || !startThumb || !endThumb || !progress) {
+            return;
+        }
 
         const startValue = parseInt(startInput.value);
         const endValue = parseInt(endInput.value);
@@ -245,13 +263,13 @@
         const startTime = minutesToTime(startInput.value);
         const endTime = minutesToTime(endInput.value);
 
-        startDisplay.textContent = startTime;
-        endDisplay.textContent = endTime;
+        if (startDisplay) startDisplay.textContent = startTime;
+        if (endDisplay) endDisplay.textContent = endTime;
 
         // Update hidden inputs
-        startHidden.value = startTime;
-        endHidden.value = endTime;
-    }
+        if (startHidden) startHidden.value = startTime;
+        if (endHidden) endHidden.value = endTime;
+    };
 
     function minutesToTime(minutes) {
         const hours = Math.floor(minutes / 60);
@@ -264,13 +282,17 @@
         return hours * 60 + minutes;
     }
 
-        function initializeRangeSliders() {
+    function initializeRangeSliders() {
         document.querySelectorAll('.range-slider-container').forEach(container => {
             const day = container.getAttribute('data-day');
 
             // Get the current values from the range inputs
             const startInput = container.querySelector('input[data-handle="start"]');
             const endInput = container.querySelector('input[data-handle="end"]');
+
+            if (!startInput || !endInput) {
+                return;
+            }
 
             // Initialize with current values and snap to steps
             const appointmentDurationInput = document.querySelector('#appointment_duration_minutes');
@@ -307,11 +329,11 @@
             const endThumb = container.querySelector('.range-slider-thumb-end');
             const track = container.querySelector('.range-slider-track');
 
-            addDragListeners(startThumb, day, 'start', track);
-            addDragListeners(endThumb, day, 'end', track);
-
-            // Add click functionality to track
-            addTrackClickListeners(track, day);
+            if (startThumb && endThumb && track) {
+                addDragListeners(startThumb, day, 'start', track);
+                addDragListeners(endThumb, day, 'end', track);
+                addTrackClickListeners(track, day);
+            }
         });
     }
 
@@ -323,11 +345,11 @@
         thumb.addEventListener('mousedown', (e) => {
             isDragging = true;
             thumb.style.cursor = 'grabbing';
-            tooltip.style.opacity = '1';
+            if (tooltip) tooltip.style.opacity = '1';
             e.preventDefault();
         });
 
-                document.addEventListener('mousemove', (e) => {
+        document.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
 
             const rect = track.getBoundingClientRect();
@@ -339,35 +361,37 @@
             updateRangeSlider(day, handle, minutes);
 
             // Update tooltip with snapped value
-            const snappedMinutes = input.value;
-            const time = minutesToTime(snappedMinutes);
-            tooltipTime.textContent = time;
+            if (input && tooltipTime) {
+                const snappedMinutes = input.value;
+                const time = minutesToTime(snappedMinutes);
+                tooltipTime.textContent = time;
+            }
         });
 
         document.addEventListener('mouseup', () => {
             if (isDragging) {
                 isDragging = false;
                 thumb.style.cursor = 'grab';
-                tooltip.style.opacity = '0';
+                if (tooltip) tooltip.style.opacity = '0';
             }
         });
 
         thumb.addEventListener('mouseenter', () => {
             if (!isDragging) {
                 thumb.style.cursor = 'grab';
-                tooltip.style.opacity = '1';
+                if (tooltip) tooltip.style.opacity = '1';
             }
         });
 
         thumb.addEventListener('mouseleave', () => {
             if (!isDragging) {
                 thumb.style.cursor = 'pointer';
-                tooltip.style.opacity = '0';
+                if (tooltip) tooltip.style.opacity = '0';
             }
         });
     }
 
-        function addTrackClickListeners(track, day) {
+    function addTrackClickListeners(track, day) {
         track.addEventListener('click', (e) => {
             const rect = track.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -376,6 +400,9 @@
 
             const startInput = document.querySelector(`input[data-day="${day}"][data-handle="start"]`);
             const endInput = document.querySelector(`input[data-day="${day}"][data-handle="end"]`);
+
+            if (!startInput || !endInput) return;
+
             const startValue = parseInt(startInput.value);
             const endValue = parseInt(endInput.value);
 
@@ -391,24 +418,6 @@
         });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // Initialize checkboxes
-        document.querySelectorAll('.day-checkbox').forEach(checkbox => {
-            const day = checkbox.getAttribute('data-day');
-            toggleTimeInputs(day);
-        });
-
-        // Initialize range sliders
-        initializeRangeSliders();
-
-        // Add event listener to appointment duration input
-        const appointmentDurationInput = document.querySelector('#appointment_duration_minutes');
-        if (appointmentDurationInput) {
-            appointmentDurationInput.addEventListener('change', updateAllSlidersWithNewSteps);
-            appointmentDurationInput.addEventListener('input', updateAllSlidersWithNewSteps);
-        }
-    });
-
     function updateAllSlidersWithNewSteps() {
         document.querySelectorAll('.day-checkbox:checked').forEach(checkbox => {
             const day = checkbox.getAttribute('data-day');
@@ -421,6 +430,46 @@
                 updateRangeSlider(day, 'end', endInput.value);
             }
         });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Initialize checkboxes
+            document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+                const day = checkbox.getAttribute('data-day');
+                toggleTimeInputs(day);
+            });
+
+            // Initialize range sliders
+            setTimeout(initializeRangeSliders, 100);
+
+            // Add event listener to appointment duration input
+            const appointmentDurationInput = document.querySelector('#appointment_duration_minutes');
+            if (appointmentDurationInput) {
+                appointmentDurationInput.addEventListener('change', updateAllSlidersWithNewSteps);
+                appointmentDurationInput.addEventListener('input', updateAllSlidersWithNewSteps);
+            }
+        });
+    } else {
+        // DOM is already loaded
+
+        // Initialize checkboxes
+        document.querySelectorAll('.day-checkbox').forEach(checkbox => {
+            const day = checkbox.getAttribute('data-day');
+            toggleTimeInputs(day);
+        });
+
+        // Initialize range sliders
+        setTimeout(initializeRangeSliders, 100);
+
+        // Add event listener to appointment duration input
+        const appointmentDurationInput = document.querySelector('#appointment_duration_minutes');
+        if (appointmentDurationInput) {
+            appointmentDurationInput.addEventListener('change', updateAllSlidersWithNewSteps);
+            appointmentDurationInput.addEventListener('input', updateAllSlidersWithNewSteps);
+        }
     }
 </script>
 @endonce
