@@ -61,7 +61,7 @@
                                 <input type="time"
                                        id="start_time"
                                        name="start_time"
-                                       value="{{ old('start_time', $scheduleBlock->start_time ? \Carbon\Carbon::parse($scheduleBlock->start_time)->format('H:i') : '') }}"
+                                       value="{{ old('start_time', $scheduleBlock->start_time ? \Carbon\Carbon::parse(($scheduleBlock->block_date instanceof \Carbon\Carbon ? $scheduleBlock->block_date->format('Y-m-d') : (string) $scheduleBlock->block_date) . ' ' . $scheduleBlock->start_time, 'UTC')->setTimezone(auth()->user()->unit->unitSettings->timezone ?? 'UTC')->format('H:i') : '') }}"
                                        class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                 @error('start_time')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
@@ -75,7 +75,7 @@
                                 <input type="time"
                                        id="end_time"
                                        name="end_time"
-                                       value="{{ old('end_time', $scheduleBlock->end_time ? \Carbon\Carbon::parse($scheduleBlock->end_time)->format('H:i') : '') }}"
+                                       value="{{ old('end_time', $scheduleBlock->end_time ? \Carbon\Carbon::parse(($scheduleBlock->block_date instanceof \Carbon\Carbon ? $scheduleBlock->block_date->format('Y-m-d') : (string) $scheduleBlock->block_date) . ' ' . $scheduleBlock->end_time, 'UTC')->setTimezone(auth()->user()->unit->unitSettings->timezone ?? 'UTC')->format('H:i') : '') }}"
                                        class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                                 @error('end_time')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>

@@ -63,7 +63,13 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                             @if ($block['block_type']->value === 'time_slot' || $block['block_type'] === 'time_slot')
-                                                {{ $block['start_time'] }} - {{ $block['end_time'] }}
+                                                @php
+                                                    $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                    $blockDateString = $block->block_date instanceof \Carbon\Carbon ? $block->block_date->format('Y-m-d') : (string) $block->block_date;
+                                                    $startDisplay = $block->start_time ? \Carbon\Carbon::parse($blockDateString . ' ' . $block->start_time, 'UTC')->setTimezone($userTimezone)->format('H:i') : null;
+                                                    $endDisplay = $block->end_time ? \Carbon\Carbon::parse($blockDateString . ' ' . $block->end_time, 'UTC')->setTimezone($userTimezone)->format('H:i') : null;
+                                                @endphp
+                                                {{ $startDisplay }} - {{ $endDisplay }}
                                             @else
                                                 <span class="text-gray-500 dark:text-gray-400">{{ __('schedule-blocks.full_day_text') }}</span>
                                             @endif
@@ -82,12 +88,13 @@
                                                 // Obter o fuso horário da unidade do usuário logado
                                                 $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
 
-                                                // Calcular término do bloqueio no fuso do usuário (parse robusto)
+                                                // Calcular término do bloqueio no fuso do usuário
                                                 if (($block['block_type']->value ?? $block['block_type']) === 'full_day') {
                                                     $blockDateTime = \Carbon\Carbon::parse($block['block_date'], $userTimezone)->endOfDay();
                                                 } else {
-                                                    $endTime = $block['end_time'] ?? '23:59';
-                                                    $blockDateTime = \Carbon\Carbon::parse($block['block_date'], $userTimezone)->setTimeFromTimeString($endTime);
+                                                    $blockDateString = $block->block_date instanceof \Carbon\Carbon ? $block->block_date->format('Y-m-d') : (string) $block->block_date;
+                                                    $endTime = $block->end_time ?? ($block['end_time'] ?? '23:59');
+                                                    $blockDateTime = \Carbon\Carbon::parse($blockDateString . ' ' . $endTime, 'UTC')->setTimezone($userTimezone);
                                                 }
 
                                                 // Agora no mesmo fuso
@@ -156,19 +163,18 @@
 
                                                                 @php
                                     // Verificar se o bloqueio já passou usando o fuso horário da unidade
+                                    $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
                                     $blockDateTime = null;
                                     if ($block['block_type']->value === 'full_day' || $block['block_type'] === 'full_day') {
-                                        // Para bloqueios de dia inteiro, usar o final do dia
-                                        $blockDateTime = \Carbon\Carbon::parse($block['block_date'])->endOfDay();
+                                        // Para bloqueios de dia inteiro, usar o final do dia (timezone do usuário)
+                                        $blockDateTime = \Carbon\Carbon::parse($block['block_date'], $userTimezone)->endOfDay();
                                     } else {
-                                        // Para bloqueios de horário específico, usar a data + hora de término
-                                        $blockDateTime = \Carbon\Carbon::parse($block['block_date'])->setTimeFromTimeString($block['end_time']);
+                                        // Para bloqueios de horário específico, combinar data (UTC) + hora (UTC) e converter para timezone do usuário
+                                        $blockDateString = $block->block_date instanceof \Carbon\Carbon ? $block->block_date->format('Y-m-d') : (string) $block->block_date;
+                                        $endTime = $block->end_time ?? ($block['end_time'] ?? '23:59');
+                                        $blockDateTime = \Carbon\Carbon::parse($blockDateString . ' ' . $endTime, 'UTC')->setTimezone($userTimezone);
                                     }
 
-                                    // Obter o fuso horário da unidade do usuário logado
-                                    $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
-
-                                    // Converter para o fuso horário da unidade
                                     $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
 
                                     // Um bloqueio só "passou" quando o horário de término já foi ultrapassado
