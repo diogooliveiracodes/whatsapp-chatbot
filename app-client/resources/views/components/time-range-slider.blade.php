@@ -175,19 +175,23 @@
         // Snap to appointment duration steps
         const snappedValue = Math.round(parseInt(value) / appointmentDuration) * appointmentDuration;
 
+        // Ensure values don't exceed 23:59 (1439 minutes)
+        const maxMinutes = 1439;
+        const clampedValue = Math.min(snappedValue, maxMinutes);
+
         // Ensure start doesn't exceed end and vice versa
-        if (handle === 'start' && snappedValue >= endValue) {
+        if (handle === 'start' && clampedValue >= endValue) {
             value = endValue - appointmentDuration; // Minimum gap of one appointment duration
-            startInput.value = value;
-        } else if (handle === 'end' && snappedValue <= startValue) {
+            startInput.value = Math.max(0, value);
+        } else if (handle === 'end' && clampedValue <= startValue) {
             value = startValue + appointmentDuration; // Minimum gap of one appointment duration
-            endInput.value = value;
+            endInput.value = Math.min(maxMinutes, value);
         } else {
             // Update the input with snapped value
             if (handle === 'start') {
-                startInput.value = snappedValue;
+                startInput.value = Math.max(0, clampedValue);
             } else {
-                endInput.value = snappedValue;
+                endInput.value = Math.min(maxMinutes, clampedValue);
             }
         }
 
@@ -213,6 +217,11 @@
     }
 
     function minutesToTime(minutes) {
+        // Handle 24h case - convert 24:00 to 23:59
+        if (minutes >= 1440) {
+            minutes = 1439; // 23:59
+        }
+
         const hours = Math.floor(minutes / 60);
         const mins = minutes % 60;
         return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
@@ -287,7 +296,7 @@
             const rect = track.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
-            const minutes = Math.round((percent / 100) * 1440);
+            const minutes = Math.min(1439, Math.round((percent / 100) * 1440));
 
             const input = document.querySelector(`input[data-name="${name}"][data-handle="${handle}"]`);
             updateTimeRangeSlider(name, handle, minutes);
@@ -326,7 +335,7 @@
             const rect = track.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const percent = (x / rect.width) * 100;
-            const minutes = Math.round((percent / 100) * 1440);
+            const minutes = Math.min(1439, Math.round((percent / 100) * 1440));
 
             const startInput = document.querySelector(`input[data-name="${name}"][data-handle="start"]`);
             const endInput = document.querySelector(`input[data-name="${name}"][data-handle="end"]`);
