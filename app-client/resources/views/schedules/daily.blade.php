@@ -149,7 +149,7 @@
                                                     @endphp
                                                     <div class="flex items-center space-x-2">
                                                         <span
-                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
                                                             {{ __('schedules.booked_slots') }}
                                                         </span>
                                                         @if (!$isPastSchedule)
@@ -181,7 +181,7 @@
                                                 @elseif ($block)
                                                     <div class="flex items-center space-x-2">
                                                         <span
-                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-200 dark:border-red-700">
                                                             {{ __('schedules.blocked_slots') }}
                                                         </span>
                                                     </div>
@@ -195,12 +195,12 @@
                                                         @endphp
                                                         @if ($isPastSlot)
                                                             <span
-                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-200 dark:border-purple-700">
                                                                 {{ __('schedules.time_passed') }}
                                                             </span>
                                                         @else
                                                             <span
-                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border border-green-200 dark:border-green-700">
                                                                 {{ __('schedules.available_slots') }}
                                                             </span>
                                                             <a href="{{ route('schedules.create', [
@@ -244,9 +244,9 @@
                                                             <div class="text-sm">
                                                                 <span
                                                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                                    @if ($schedule['status'] === 'confirmed') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
-                                                                    @elseif($schedule['status'] === 'pending') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
-                                                                    @else bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 @endif">
+                                                                    @if ($schedule['status'] === 'confirmed') bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border border-green-200 dark:border-green-700
+                                                                    @elseif($schedule['status'] === 'pending') bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-700
+                                                                    @else bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-200 dark:border-red-700 @endif">
                                                                     {{ __('schedules.statuses.' . $schedule['status']) }}
                                                                 </span>
                                                             </div>
