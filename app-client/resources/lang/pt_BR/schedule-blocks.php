@@ -48,6 +48,7 @@ return [
     'delete' => 'Excluir',
     'full_day_text' => 'Dia inteiro',
     'no_reason' => 'Nenhum motivo informado',
+    'past_block' => 'Bloqueio passado',
     'debug_info' => 'Informações de Debug:',
     'table_exists' => 'Tabela existe',
     'total_blocks' => 'Total de bloqueios',
