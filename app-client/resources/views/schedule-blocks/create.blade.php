@@ -108,21 +108,60 @@
                 function toggleTimeFields() {
                     if (blockTypeSelect.value === 'time_slot') {
                         timeFields.style.display = 'block';
-                        // Make hidden inputs required
+                        // Make hidden inputs required and ensure they have default values
                         const startTimeHidden = document.querySelector('input[name="start_time"]');
                         const endTimeHidden = document.querySelector('input[name="end_time"]');
-                        if (startTimeHidden) startTimeHidden.required = true;
-                        if (endTimeHidden) endTimeHidden.required = true;
+
+                        if (startTimeHidden) {
+                            startTimeHidden.required = true;
+                            // Ensure default value if empty
+                            if (!startTimeHidden.value) {
+                                startTimeHidden.value = '09:00';
+                            }
+                        }
+
+                        if (endTimeHidden) {
+                            endTimeHidden.required = true;
+                            // Ensure default value if empty
+                            if (!endTimeHidden.value) {
+                                endTimeHidden.value = '17:00';
+                            }
+                        }
+
+                        // Initialize the time range slider if it exists
+                        if (typeof initializeTimeRangeSliders === 'function') {
+                            setTimeout(() => {
+                                initializeTimeRangeSliders();
+                            }, 100);
+                        } else {
+                            // Fallback: manually update the slider display if the function doesn't exist
+                            setTimeout(() => {
+                                const startDisplay = document.querySelector('.time-range-display-start');
+                                const endDisplay = document.querySelector('.time-range-display-end');
+                                const startHidden = document.querySelector('input[name="start_time"]');
+                                const endHidden = document.querySelector('input[name="end_time"]');
+
+                                if (startDisplay && endDisplay && startHidden && endHidden) {
+                                    startDisplay.textContent = startHidden.value;
+                                    endDisplay.textContent = endHidden.value;
+                                }
+                            }, 100);
+                        }
                     } else {
                         timeFields.style.display = 'none';
-                        // Remove required from hidden inputs
+                        // Remove required from hidden inputs and clear values
                         const startTimeHidden = document.querySelector('input[name="start_time"]');
                         const endTimeHidden = document.querySelector('input[name="end_time"]');
-                        if (startTimeHidden) startTimeHidden.required = false;
-                        if (endTimeHidden) endTimeHidden.required = false;
-                        // Clear values
-                        if (startTimeHidden) startTimeHidden.value = '';
-                        if (endTimeHidden) endTimeHidden.value = '';
+
+                        if (startTimeHidden) {
+                            startTimeHidden.required = false;
+                            startTimeHidden.value = '';
+                        }
+
+                        if (endTimeHidden) {
+                            endTimeHidden.required = false;
+                            endTimeHidden.value = '';
+                        }
                     }
                 }
 
@@ -130,6 +169,22 @@
 
                 // Initialize on page load
                 toggleTimeFields();
+
+                // Additional check to ensure values are set when time_slot is selected
+                if (blockTypeSelect.value === 'time_slot') {
+                    setTimeout(() => {
+                        const startTimeHidden = document.querySelector('input[name="start_time"]');
+                        const endTimeHidden = document.querySelector('input[name="end_time"]');
+
+                        if (startTimeHidden && !startTimeHidden.value) {
+                            startTimeHidden.value = '09:00';
+                        }
+
+                        if (endTimeHidden && !endTimeHidden.value) {
+                            endTimeHidden.value = '17:00';
+                        }
+                    }, 200);
+                }
             });
         </script>
     @endpush
