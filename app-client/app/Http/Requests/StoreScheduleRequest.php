@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Log;
+use App\Rules\FutureDateRule;
+use App\Rules\FutureTimeRule;
 
 class StoreScheduleRequest extends FormRequest
 {
@@ -18,8 +20,8 @@ class StoreScheduleRequest extends FormRequest
     {
         return [
             'customer_id' => 'required|exists:customers,id',
-            'schedule_date' => 'required|date|after_or_equal:today',
-            'start_time' => 'required|date_format:H:i',
+            'schedule_date' => ['required', 'date', new FutureDateRule()],
+            'start_time' => ['required', 'date_format:H:i', new FutureTimeRule()],
             'unit_service_type_id' => 'required|exists:unit_service_types,id',
             'notes' => 'nullable|string|max:1000',
         ];
