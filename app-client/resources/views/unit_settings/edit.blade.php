@@ -221,7 +221,7 @@
                                         </svg>
                                         <label for="default_language" class="text-sm font-medium text-gray-300">{{ __('unitSettings.default_language') }}</label>
                                     </div>
-                                    <select id="default_language" name="default_language" class="input-style">
+                                    <select id="default_language" name="default_language" class="input-style" disabled>
                                         <option value="pt_BR"
                                             {{ old('default_language', $unitSettings->default_language) == 'pt_BR' ? 'selected' : '' }}>
                                             Português</option>
@@ -238,7 +238,7 @@
                                         </svg>
                                         <label for="timezone" class="text-sm font-medium text-gray-300">{{ __('unitSettings.timezone') }}</label>
                                     </div>
-                                    <select id="timezone" name="timezone" class="input-style">
+                                    <select id="timezone" name="timezone" class="input-style" disabled>
                                         <option value="America/Sao_Paulo"
                                             {{ old('timezone', $unitSettings->timezone) == 'America/Sao_Paulo' ? 'selected' : '' }}>
                                             Brasília (GMT-3)</option>
