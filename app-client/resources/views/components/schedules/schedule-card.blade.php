@@ -1,13 +1,13 @@
 @props(['schedule'])
 
 @php
-    // Verificar se o agendamento já passou usando o fuso horário da unidade
-    $scheduleEndDateTime = \Carbon\Carbon::parse($schedule['end']);
-
     // Obter o fuso horário da unidade do usuário logado
     $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
 
-    // Converter para o fuso horário da unidade
+    // Parse robusto do término no fuso da unidade (aceita 'Y-m-dTH:i:s' com/sem offset)
+    $scheduleEndDateTime = \Carbon\Carbon::parse($schedule['end'], $userTimezone);
+
+    // Agora atual no mesmo fuso
     $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
 
     // Um agendamento só "passou" quando o horário de término já foi ultrapassado

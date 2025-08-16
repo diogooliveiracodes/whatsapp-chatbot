@@ -142,8 +142,8 @@
 
                                                 @if ($schedule)
                                                     @php
-                                                        $scheduleEndDateTime = \Carbon\Carbon::parse($schedule['end']);
                                                         $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                        $scheduleEndDateTime = \Carbon\Carbon::parse($schedule['end'], $userTimezone);
                                                         $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
                                                         $isPastSchedule = $currentTimeInUserTimezone->gt($scheduleEndDateTime);
                                                     @endphp
