@@ -36,6 +36,7 @@ return [
 
     // Working Hours
     'working_hours_section' => 'Horário de Funcionamento',
+    'working_hours' => 'Horário de Funcionamento',
     'sunday_start' => 'Horário de Início (Domingo)',
     'sunday_end' => 'Horário de Término (Domingo)',
     'monday_start' => 'Horário de Início (Segunda)',

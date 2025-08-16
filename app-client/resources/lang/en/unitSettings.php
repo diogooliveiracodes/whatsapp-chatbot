@@ -36,6 +36,7 @@ return [
 
     // Working Hours
     'working_hours_section' => 'Working Hours',
+    'working_hours' => 'Working Hours',
     'sunday_start' => 'Start Time (Sunday)',
     'sunday_end' => 'End Time (Sunday)',
     'monday_start' => 'Start Time (Monday)',
