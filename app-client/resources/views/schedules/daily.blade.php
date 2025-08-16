@@ -53,6 +53,10 @@
                         $isEnabled = $unitSettings->$dayKey;
                         $startTime = $unitSettings->{$dayKey . '_start'};
                         $endTime = $unitSettings->{$dayKey . '_end'};
+                        $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                        $dateString = $date->format('Y-m-d');
+                        $startDisplay = $startTime ? \Carbon\Carbon::parse($dateString . ' ' . $startTime, 'UTC')->setTimezone($userTimezone)->format('H:i') : '--:--';
+                        $endDisplay = $endTime ? \Carbon\Carbon::parse($dateString . ' ' . $endTime, 'UTC')->setTimezone($userTimezone)->format('H:i') : '--:--';
                     @endphp
 
                     @if (!$isEnabled)
@@ -82,8 +86,7 @@
                                         Funcionamento</span>
                                 </div>
                                 <div class="text-sm sm:text-base text-green-700 dark:text-green-300 font-semibold">
-                                    {{ $startTime ? \Carbon\Carbon::parse($startTime)->format('H:i') : '--:--' }} -
-                                    {{ $endTime ? \Carbon\Carbon::parse($endTime)->format('H:i') : '--:--' }}
+                                    {{ $startDisplay }} - {{ $endDisplay }}
                                 </div>
                             </div>
                         </div>

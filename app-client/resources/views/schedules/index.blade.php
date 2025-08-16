@@ -57,10 +57,14 @@
                                                         <div class="text-xs text-red-500">
                                                             {{ __('schedules.messages.closed') }}</div>
                                                     @else
+                                                        @php
+                                                            $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                            $columnDate = $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->format('Y-m-d');
+                                                            $startDisplay = $startTime ? \Carbon\Carbon::parse($columnDate . ' ' . $startTime, 'UTC')->setTimezone($userTimezone)->format('H:i') : '--:--';
+                                                            $endDisplay = $endTime ? \Carbon\Carbon::parse($columnDate . ' ' . $endTime, 'UTC')->setTimezone($userTimezone)->format('H:i') : '--:--';
+                                                        @endphp
                                                         <div class="text-xs text-green-600">
-                                                            {{ $startTime ? \Carbon\Carbon::parse($startTime)->format('H:i') : '--:--' }}
-                                                            -
-                                                            {{ $endTime ? \Carbon\Carbon::parse($endTime)->format('H:i') : '--:--' }}
+                                                            {{ $startDisplay }} - {{ $endDisplay }}
                                                         </div>
                                                     @endif
                                                 </th>

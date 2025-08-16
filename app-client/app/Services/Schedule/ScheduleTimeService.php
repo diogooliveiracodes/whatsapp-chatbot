@@ -44,9 +44,15 @@ class ScheduleTimeService
             $dayEndTime = '18:00';
         }
 
+        // Converter de UTC para o fuso do usuário (considerando a data de hoje, pois é apenas hora do dia)
+        $userTimezone = $unitSettings->timezone ?? 'UTC';
+        $referenceDate = now()->format('Y-m-d');
+        $startLocal = Carbon::parse($referenceDate . ' ' . $dayStartTime, 'UTC')->setTimezone($userTimezone)->format('H:i');
+        $endLocal = Carbon::parse($referenceDate . ' ' . $dayEndTime, 'UTC')->setTimezone($userTimezone)->format('H:i');
+
         return [
-            'startTime' => Carbon::parse($dayStartTime),
-            'endTime' => Carbon::parse($dayEndTime)
+            'startTime' => Carbon::parse($startLocal),
+            'endTime' => Carbon::parse($endLocal)
         ];
     }
 
@@ -68,7 +74,9 @@ class ScheduleTimeService
             'saturday' => 'Sábado'
         ];
 
-        // Calculate earliest start time
+        // Calculate earliest start time (convertendo para timezone do usuário)
+        $userTimezone = $unitSettings->timezone ?? 'UTC';
+        $referenceDate = now()->format('Y-m-d');
         $earliestStartTime = collect($days)
             ->map(function ($dayName, $dayKey) use ($unitSettings) {
                 if (!$unitSettings->$dayKey) {
@@ -77,12 +85,13 @@ class ScheduleTimeService
                 return $unitSettings->{$dayKey . '_start'};
             })
             ->filter()
-            ->map(function ($time) {
-                return Carbon::parse($time);
+            ->map(function ($time) use ($userTimezone, $referenceDate) {
+                $local = Carbon::parse($referenceDate . ' ' . $time, 'UTC')->setTimezone($userTimezone)->format('H:i');
+                return Carbon::parse($local);
             })
             ->min();
 
-        // Calculate latest end time
+        // Calculate latest end time (convertendo para timezone do usuário)
         $latestEndTime = collect($days)
             ->map(function ($dayName, $dayKey) use ($unitSettings) {
                 if (!$unitSettings->$dayKey) {
@@ -91,8 +100,9 @@ class ScheduleTimeService
                 return $unitSettings->{$dayKey . '_end'};
             })
             ->filter()
-            ->map(function ($time) {
-                return Carbon::parse($time);
+            ->map(function ($time) use ($userTimezone, $referenceDate) {
+                $local = Carbon::parse($referenceDate . ' ' . $time, 'UTC')->setTimezone($userTimezone)->format('H:i');
+                return Carbon::parse($local);
             })
             ->max();
 
@@ -156,9 +166,15 @@ class ScheduleTimeService
         // Comparar apenas o horário (H:i) ignorando a data
         $timeOnly = $time->format('H:i');
 
-        // Normalizar horários configurados para o formato H:i (trata '8:00' e '08:00:00')
-        $normalizedStart = $dayStartTime ? Carbon::parse($dayStartTime)->format('H:i') : null;
-        $normalizedEnd = $dayEndTime ? Carbon::parse($dayEndTime)->format('H:i') : null;
+        // Converter horários configurados (salvos em UTC) para o fuso do usuário, usando a data do horário analisado
+        $userTimezone = $unitSettings->timezone ?? 'UTC';
+        $referenceDate = $time->format('Y-m-d');
+        $normalizedStart = $dayStartTime
+            ? Carbon::parse($referenceDate . ' ' . $dayStartTime, 'UTC')->setTimezone($userTimezone)->format('H:i')
+            : null;
+        $normalizedEnd = $dayEndTime
+            ? Carbon::parse($referenceDate . ' ' . $dayEndTime, 'UTC')->setTimezone($userTimezone)->format('H:i')
+            : null;
 
         // Verificar se está dentro do horário de funcionamento
         // Incluir o horário de início (>=) e excluir o horário de fim (<)
