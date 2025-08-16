@@ -166,7 +166,7 @@
                                                                 <form action="{{ route('schedules.destroy', $schedule['id']) }}" method="POST" class="inline delete-form">
                                                                     @csrf
                                                                     @method('DELETE')
-                                                                    <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">
+                                                                    <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300" onclick="return confirm('{{ __('schedules.messages.confirm_delete') }}')">
                                                                         <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                                             viewBox="0 0 24 24">
                                                                             <path stroke-linecap="round" stroke-linejoin="round"
