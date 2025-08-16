@@ -189,6 +189,18 @@ class ScheduleService
     }
 
     /**
+     * Get working hours for a specific day
+     *
+     * @param string $dayKey
+     * @param object $unitSettings
+     * @return array{startTime: Carbon, endTime: Carbon}
+     */
+    public function calculateWorkingHoursForDay(string $dayKey, $unitSettings): array
+    {
+        return $this->scheduleTimeService->calculateWorkingHoursForDay($dayKey, $unitSettings);
+    }
+
+    /**
      * Get available time slots for a given date
      *
      * @param Carbon $date

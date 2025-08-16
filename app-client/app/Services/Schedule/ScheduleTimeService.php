@@ -8,6 +8,49 @@ use Illuminate\Support\Collection;
 class ScheduleTimeService
 {
     /**
+     * Calculate working hours for a specific day
+     *
+     * @param string $dayKey
+     * @param object $unitSettings
+     * @return array{startTime: Carbon, endTime: Carbon}
+     */
+    public function calculateWorkingHoursForDay(string $dayKey, $unitSettings): array
+    {
+        $isDayEnabled = $unitSettings->$dayKey;
+        $dayStartTime = $unitSettings->{$dayKey . '_start'};
+        $dayEndTime = $unitSettings->{$dayKey . '_end'};
+
+        // Se o dia não está habilitado, retorna horários vazios
+        if (!$isDayEnabled) {
+            return [
+                'startTime' => null,
+                'endTime' => null
+            ];
+        }
+
+        // Se não há horários configurados, usa horários padrão
+        if (!$dayStartTime && !$dayEndTime) {
+            return [
+                'startTime' => Carbon::createFromTime(8, 0, 0),
+                'endTime' => Carbon::createFromTime(18, 0, 0)
+            ];
+        }
+
+        // Se apenas um dos horários está configurado, usa o padrão para o outro
+        if (!$dayStartTime) {
+            $dayStartTime = '08:00';
+        }
+        if (!$dayEndTime) {
+            $dayEndTime = '18:00';
+        }
+
+        return [
+            'startTime' => Carbon::parse($dayStartTime),
+            'endTime' => Carbon::parse($dayEndTime)
+        ];
+    }
+
+    /**
      * Calculate the earliest start time and latest end time based on unit settings
      *
      * @param object $unitSettings
@@ -113,9 +156,14 @@ class ScheduleTimeService
         // Comparar apenas o horário (H:i) ignorando a data
         $timeOnly = $time->format('H:i');
 
+        // Normalizar horários configurados para o formato H:i (trata '8:00' e '08:00:00')
+        $normalizedStart = $dayStartTime ? Carbon::parse($dayStartTime)->format('H:i') : null;
+        $normalizedEnd = $dayEndTime ? Carbon::parse($dayEndTime)->format('H:i') : null;
+
         // Verificar se está dentro do horário de funcionamento
-        $isAfterStart = !$dayStartTime || $timeOnly >= $dayStartTime;
-        $isBeforeEnd = !$dayEndTime || $timeOnly < $dayEndTime;
+        // Incluir o horário de início (>=) e excluir o horário de fim (<)
+        $isAfterStart = !$normalizedStart || $timeOnly >= $normalizedStart;
+        $isBeforeEnd = !$normalizedEnd || $timeOnly < $normalizedEnd;
 
         return $isAfterStart && $isBeforeEnd;
     }
