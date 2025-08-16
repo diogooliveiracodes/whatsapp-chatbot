@@ -28,6 +28,7 @@ return [
     'block_type' => 'Tipo de Bloqueio',
     'start_time' => 'Horário de Início',
     'end_time' => 'Horário de Fim',
+    'time_range' => 'Intervalo de Horário',
     'reason' => 'Motivo do Bloqueio',
     'reason_placeholder' => 'Descreva o motivo do bloqueio (opcional)',
     'select_type' => 'Selecione o tipo',

@@ -52,34 +52,18 @@
                         </div>
 
                         <!-- Campos de Horário (visíveis apenas para time_slot) -->
-                        <div id="time-fields" class="grid grid-cols-1 md:grid-cols-2 gap-6" style="display: none;">
-                            <div>
-                                <label for="start_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    {{ __('schedule-blocks.start_time') }} *
-                                </label>
-                                <input type="time"
-                                       id="start_time"
-                                       name="start_time"
-                                       value="{{ old('start_time', $preSelectedStartTime) }}"
-                                       class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                                @error('start_time')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
+                        <div id="time-fields" style="display: none;">
+                            <x-time-range-slider
+                                :startTime="old('start_time', $preSelectedStartTime)"
+                                :endTime="old('end_time')"
+                                name="schedule_block_time" />
 
-                            <div>
-                                <label for="end_time" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    {{ __('schedule-blocks.end_time') }} *
-                                </label>
-                                <input type="time"
-                                       id="end_time"
-                                       name="end_time"
-                                       value="{{ old('end_time') }}"
-                                       class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                                @error('end_time')
-                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                                @enderror
-                            </div>
+                            @error('start_time')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                            @error('end_time')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <!-- Motivo do Bloqueio -->
@@ -120,20 +104,25 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const blockTypeSelect = document.getElementById('block_type');
                 const timeFields = document.getElementById('time-fields');
-                const startTimeInput = document.getElementById('start_time');
-                const endTimeInput = document.getElementById('end_time');
 
                 function toggleTimeFields() {
                     if (blockTypeSelect.value === 'time_slot') {
-                        timeFields.style.display = 'grid';
-                        startTimeInput.required = true;
-                        endTimeInput.required = true;
+                        timeFields.style.display = 'block';
+                        // Make hidden inputs required
+                        const startTimeHidden = document.querySelector('input[name="start_time"]');
+                        const endTimeHidden = document.querySelector('input[name="end_time"]');
+                        if (startTimeHidden) startTimeHidden.required = true;
+                        if (endTimeHidden) endTimeHidden.required = true;
                     } else {
                         timeFields.style.display = 'none';
-                        startTimeInput.required = false;
-                        endTimeInput.required = false;
-                        startTimeInput.value = '';
-                        endTimeInput.value = '';
+                        // Remove required from hidden inputs
+                        const startTimeHidden = document.querySelector('input[name="start_time"]');
+                        const endTimeHidden = document.querySelector('input[name="end_time"]');
+                        if (startTimeHidden) startTimeHidden.required = false;
+                        if (endTimeHidden) endTimeHidden.required = false;
+                        // Clear values
+                        if (startTimeHidden) startTimeHidden.value = '';
+                        if (endTimeHidden) endTimeHidden.value = '';
                     }
                 }
 

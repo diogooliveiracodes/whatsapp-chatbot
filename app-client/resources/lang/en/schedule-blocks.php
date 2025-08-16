@@ -28,6 +28,7 @@ return [
     'block_type' => 'Block Type',
     'start_time' => 'Start Time',
     'end_time' => 'End Time',
+    'time_range' => 'Time Range',
     'reason' => 'Reason',
     'reason_placeholder' => 'Describe the reason for the block (optional)',
     'select_type' => 'Select type',
