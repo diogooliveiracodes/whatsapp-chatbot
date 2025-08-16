@@ -2,11 +2,10 @@
 
 @php
     // Verificar se o agendamento já passou usando o fuso horário da unidade
-    $scheduleStartDateTime = \Carbon\Carbon::parse($schedule['start']);
+    $scheduleEndDateTime = \Carbon\Carbon::parse($schedule['end']);
 
     // Obter o fuso horário da unidade do usuário logado
     $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
-    $scheduleEndDateTime = \Carbon\Carbon::parse($schedule['end'], $userTimezone);
 
     // Converter para o fuso horário da unidade
     $currentTimeInUserTimezone = now()->setTimezone($userTimezone);

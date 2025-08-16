@@ -161,19 +161,46 @@ class ScheduleBlockService
     /**
      * Get block for a specific time slot
      */
-    public function getBlockForTimeSlot(Collection $blocks, string $currentDate, string $currentTime, string $currentEndTime)
+    public function getBlockForTimeSlot($blocks, string $currentDate, string $currentTime, string $currentEndTime)
     {
-        return $blocks->first(function ($block) use ($currentDate, $currentTime, $currentEndTime) {
-            if ($block->block_date->format('Y-m-d') !== $currentDate) {
+        // Convert AnonymousResourceCollection to Collection if needed
+        $blocksCollection = $blocks instanceof \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+            ? collect($blocks->toArray(request()))
+            : $blocks;
+
+
+
+        return $blocksCollection->first(function ($block) use ($currentDate, $currentTime, $currentEndTime) {
+            // Handle both resource and model data
+            if (is_array($block)) {
+                $blockDate = $block['block_date'];
+                $blockType = $block['block_type'];
+                $startTime = $block['start_time'];
+                $endTime = $block['end_time'];
+            } else {
+                $blockDate = $block->block_date->format('Y-m-d');
+                $blockType = $block->block_type;
+                $startTime = $block->start_time;
+                $endTime = $block->end_time;
+            }
+
+
+
+            if ($blockDate !== $currentDate) {
                 return false;
             }
 
-            if ($block->block_type === ScheduleBlockTypeEnum::FULL_DAY) {
+            if ($blockType === ScheduleBlockTypeEnum::FULL_DAY || $blockType === 'full_day') {
                 return true;
             }
 
             // For time slot blocks, check if there's any overlap
-            return $block->start_time < $currentEndTime && $block->end_time > $currentTime;
+            // Note: startTime and endTime from Resource are already in user timezone
+            // Also handle null values for start_time and end_time
+            if (!$startTime || !$endTime) {
+                return false;
+            }
+            return $startTime < $currentEndTime && $endTime > $currentTime;
         });
     }
 

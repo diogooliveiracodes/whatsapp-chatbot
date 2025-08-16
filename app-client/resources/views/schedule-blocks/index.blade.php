@@ -62,47 +62,46 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                            @if ($block->block_type->value === 'time_slot')
-                                                {{ \Carbon\Carbon::parse($block->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($block->end_time)->format('H:i') }}
+                                            @if ($block['block_type']->value === 'time_slot' || $block['block_type'] === 'time_slot')
+                                                {{ $block['start_time'] }} - {{ $block['end_time'] }}
                                             @else
                                                 <span class="text-gray-500 dark:text-gray-400">{{ __('schedule-blocks.full_day_text') }}</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
-                                            {{ $block->reason ?: __('schedule-blocks.no_reason') }}
+                                            {{ $block['reason'] ?: __('schedule-blocks.no_reason') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                            {{ $block->company->name ?? 'N/A' }}
+                                            {{ $block['company']['name'] ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                            {{ $block->user->name }}
+                                            {{ $block['user']['name'] }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             @php
                                                 // Verificar se o bloqueio já passou usando o fuso horário da unidade
                                                 $blockDateTime = null;
-                                                if ($block->block_type->value === 'full_day') {
+                                                if ($block['block_type']->value === 'full_day' || $block['block_type'] === 'full_day') {
                                                     // Para bloqueios de dia inteiro, usar o final do dia
-                                                    $blockDateTime = \Carbon\Carbon::parse($block->block_date)->endOfDay();
+                                                    $blockDateTime = \Carbon\Carbon::parse($block['block_date'])->endOfDay();
                                                 } else {
                                                     // Para bloqueios de horário específico, usar a data + hora de término
-                                                    $blockDateTime = \Carbon\Carbon::parse($block->block_date)->setTimeFromTimeString($block->end_time);
+                                                    $blockDateTime = \Carbon\Carbon::parse($block['block_date'])->setTimeFromTimeString($block['end_time']);
                                                 }
 
                                                 // Obter o fuso horário da unidade do usuário logado
                                                 $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
 
                                                 // Converter para o fuso horário da unidade
-                                                $blockDateTimeInUserTimezone = $blockDateTime->setTimezone($userTimezone);
                                                 $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
 
                                                 // Um bloqueio só "passou" quando o horário de término já foi ultrapassado
-                                                $isPastBlock = $currentTimeInUserTimezone->gt($blockDateTimeInUserTimezone);
+                                                $isPastBlock = $currentTimeInUserTimezone->gt($blockDateTime);
                                             @endphp
                                             @if (!$isPastBlock)
                                                 <div class="flex items-center space-x-2">
-                                                    <x-actions.edit :route="route('schedule-blocks.edit', $block->id)" />
-                                                    <x-actions.delete :route="route('schedule-blocks.destroy', $block->id)" :confirmMessage="__('schedule-blocks.messages.confirm_delete')" />
+                                                    <x-actions.edit :route="route('schedule-blocks.edit', $block['id'])" />
+                                                    <x-actions.delete :route="route('schedule-blocks.destroy', $block['id'])" :confirmMessage="__('schedule-blocks.messages.confirm_delete')" />
                                                 </div>
                                             @else
                                                 <span class="text-gray-400 dark:text-gray-500 text-xs">{{ __('schedule-blocks.past_block') }}</span>
@@ -127,61 +126,60 @@
                                 <div class="flex justify-between items-start mb-3">
                                     <div class="flex-1">
                                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                            {{ $block->block_date->format('d/m/Y') }}
+                                            {{ \Carbon\Carbon::parse($block['block_date'])->format('d/m/Y') }}
                                         </h3>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                                            {{ __('schedule-blocks.company') }}: {{ $block->company->name ?? 'N/A' }}
+                                            {{ __('schedule-blocks.company') }}: {{ $block['company']['name'] ?? 'N/A' }}
                                         </p>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                                            {{ __('schedule-blocks.created_by') }}: {{ $block->user->name }}
+                                            {{ __('schedule-blocks.created_by') }}: {{ $block['user']['name'] }}
                                         </p>
                                     </div>
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                                        {{ $block->block_type->value === 'full_day' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }}">
-                                        {{ $block->getBlockTypeLabel() }}
+                                        {{ ($block['block_type']->value === 'full_day' || $block['block_type'] === 'full_day') ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' }}">
+                                        {{ ($block['block_type']->value === 'full_day' || $block['block_type'] === 'full_day') ? __('schedule-blocks.types.full_day') : __('schedule-blocks.types.time_slot') }}
                                     </span>
                                 </div>
 
                                 <div class="mb-3">
                                     <p class="text-sm text-gray-600 dark:text-gray-400">
                                         <span class="font-medium">{{ __('schedule-blocks.time') }}:</span>
-                                        @if ($block->block_type->value === 'time_slot')
-                                            {{ \Carbon\Carbon::parse($block->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($block->end_time)->format('H:i') }}
+                                        @if ($block['block_type']->value === 'time_slot' || $block['block_type'] === 'time_slot')
+                                            {{ $block['start_time'] }} - {{ $block['end_time'] }}
                                         @else
                                             {{ __('schedule-blocks.full_day_text') }}
                                         @endif
                                     </p>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">
                                         <span class="font-medium">{{ __('schedule-blocks.reason') }}:</span>
-                                        {{ $block->reason ?: __('schedule-blocks.no_reason') }}
+                                        {{ $block['reason'] ?: __('schedule-blocks.no_reason') }}
                                     </p>
                                 </div>
 
                                                                 @php
                                     // Verificar se o bloqueio já passou usando o fuso horário da unidade
                                     $blockDateTime = null;
-                                    if ($block->block_type->value === 'full_day') {
+                                    if ($block['block_type']->value === 'full_day' || $block['block_type'] === 'full_day') {
                                         // Para bloqueios de dia inteiro, usar o final do dia
-                                        $blockDateTime = \Carbon\Carbon::parse($block->block_date)->endOfDay();
+                                        $blockDateTime = \Carbon\Carbon::parse($block['block_date'])->endOfDay();
                                     } else {
                                         // Para bloqueios de horário específico, usar a data + hora de término
-                                        $blockDateTime = \Carbon\Carbon::parse($block->block_date)->setTimeFromTimeString($block->end_time);
+                                        $blockDateTime = \Carbon\Carbon::parse($block['block_date'])->setTimeFromTimeString($block['end_time']);
                                     }
 
                                     // Obter o fuso horário da unidade do usuário logado
                                     $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
 
                                     // Converter para o fuso horário da unidade
-                                    $blockDateTimeInUserTimezone = $blockDateTime->setTimezone($userTimezone);
                                     $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
 
                                     // Um bloqueio só "passou" quando o horário de término já foi ultrapassado
-                                    $isPastBlock = $currentTimeInUserTimezone->gt($blockDateTimeInUserTimezone);
+                                    $isPastBlock = $currentTimeInUserTimezone->gt($blockDateTime);
                                 @endphp
                                 @if (!$isPastBlock)
                                     <div class="flex justify-end space-x-2">
-                                        <x-actions.edit-mobile :route="route('schedule-blocks.edit', $block->id)" />
-                                        <x-actions.delete-mobile :route="route('schedule-blocks.destroy', $block->id)" :confirmMessage="__('schedule-blocks.messages.confirm_delete')" />
+                                        <x-actions.edit-mobile :route="route('schedule-blocks.edit', $block['id'])" />
+                                        <x-actions.delete-mobile :route="route('schedule-blocks.destroy', $block['id'])" :confirmMessage="__('schedule-blocks.messages.confirm_delete')" />
                                     </div>
                                 @else
                                     <div class="flex justify-end">

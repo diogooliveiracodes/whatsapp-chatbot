@@ -100,23 +100,43 @@ class ScheduleTimeService
         $dayStartTime = $unitSettings->{$dayKey . '_start'};
         $dayEndTime = $unitSettings->{$dayKey . '_end'};
 
-        return $isDayEnabled &&
-            (!$dayStartTime || $time->gte(Carbon::parse($dayStartTime))) &&
-            (!$dayEndTime || $time->lt(Carbon::parse($dayEndTime)));
+        // Se o dia não está habilitado, retorna false
+        if (!$isDayEnabled) {
+            return false;
+        }
+
+        // Se não há horários configurados, considera como válido
+        if (!$dayStartTime && !$dayEndTime) {
+            return true;
+        }
+
+        // Comparar apenas o horário (H:i) ignorando a data
+        $timeOnly = $time->format('H:i');
+
+        // Verificar se está dentro do horário de funcionamento
+        $isAfterStart = !$dayStartTime || $timeOnly >= $dayStartTime;
+        $isBeforeEnd = !$dayEndTime || $timeOnly < $dayEndTime;
+
+        return $isAfterStart && $isBeforeEnd;
     }
 
     /**
      * Get schedule for a specific time slot
      *
-     * @param Collection $schedules
+     * @param mixed $schedules
      * @param string $currentDate
      * @param string $currentTime
      * @param string $currentEndTime
      * @return mixed
      */
-    public function getScheduleForTimeSlot(Collection $schedules, string $currentDate, string $currentTime, string $currentEndTime)
+    public function getScheduleForTimeSlot($schedules, string $currentDate, string $currentTime, string $currentEndTime)
     {
-        return $schedules->first(function ($schedule) use ($currentDate, $currentTime, $currentEndTime) {
+        // Convert AnonymousResourceCollection to Collection if needed
+        $schedulesCollection = $schedules instanceof \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+            ? collect($schedules->toArray(request()))
+            : $schedules;
+
+        return $schedulesCollection->first(function ($schedule) use ($currentDate, $currentTime, $currentEndTime) {
             // Handle both resource and model data
             if (is_array($schedule)) {
                 $start = Carbon::parse($schedule['start']);

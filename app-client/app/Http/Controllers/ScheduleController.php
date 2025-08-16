@@ -9,6 +9,7 @@ use App\Services\Http\HttpResponseService;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Http\Requests\UpdateScheduleRequest;
 use App\Http\Resources\ScheduleResource;
+use App\Http\Resources\ScheduleBlockResource;
 use App\Exceptions\Schedule\ScheduleException;
 use App\Exceptions\Schedule\OutsideWorkingDaysException;
 use App\Exceptions\Schedule\OutsideWorkingHoursException;
@@ -72,7 +73,7 @@ class ScheduleController extends Controller
 
             return view('schedules.index', [
                 'schedules' => ScheduleResource::collection($schedules),
-                'blocks' => $blocks,
+                'blocks' => ScheduleBlockResource::collection($blocks),
                 'customers' => $customers,
                 'unit' => $unit,
                 'unitSettings' => $unit->unitSettings,
@@ -128,7 +129,7 @@ class ScheduleController extends Controller
 
             return view('schedules.daily', [
                 'schedules' => ScheduleResource::collection($schedules),
-                'blocks' => $blocks,
+                'blocks' => ScheduleBlockResource::collection($blocks),
                 'customers' => $customers,
                 'unit' => $unit,
                 'unitSettings' => $unit->unitSettings,

@@ -140,14 +140,9 @@
 
                                             @if ($schedule)
                                                 @php
-
+                                                    $scheduleEndDateTime = \Carbon\Carbon::parse($schedule['end']);
                                                     $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
-                                                    $scheduleEndDateTime = \Carbon\Carbon::parse($schedule['end'], $userTimezone);
-
-                                                    // Converter para o fuso horário da unidade
                                                     $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
-
-                                                    // Um agendamento só "passou" quando o horário de término já foi ultrapassado
                                                     $isPastSchedule = $currentTimeInUserTimezone->gt($scheduleEndDateTime);
                                                 @endphp
                                                 <div class="flex items-center space-x-2">

@@ -17,9 +17,10 @@
                             <label for="customer_id" class="block font-medium text-sm text-gray-300">
                                 {{ __('customers.client') }}
                             </label>
-                            <select id="customer_id" name="customer_id"
+                            <input type="hidden" name="customer_id" value="{{ old('customer_id', $schedule->customer_id) }}" />
+                            <select id="customer_id" name="customer_id_display"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                                required disabled>
+                                disabled>
                                 <option value="">{{ __('customers.select') }}</option>
                                 @foreach ($customers as $customer)
                                     <option value="{{ $customer->id }}"
@@ -34,7 +35,7 @@
                                 {{ __('schedules.date') }}
                             </label>
                             <input id="schedule_date" type="date" name="schedule_date"
-                                value="{{ old('schedule_date', $schedule->schedule_date->format('Y-m-d')) }}"
+                                value="{{ old('schedule_date', \Carbon\Carbon::parse($schedule->schedule_date)->format('Y-m-d')) }}"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 [color-scheme:light] dark:[color-scheme:dark]"
                                 required />
                         </div>
@@ -44,7 +45,7 @@
                                 {{ __('schedules.start_time') }}
                             </label>
                             <input id="start_time" type="time" name="start_time"
-                                value="{{ old('start_time', \Carbon\Carbon::parse($schedule->start_time)->format('H:i')) }}"
+                                value="{{ old('start_time', \Carbon\Carbon::parse($schedule->schedule_date)->setTimeFromTimeString($schedule->start_time)->setTimezone(auth()->user()->unit->unitSettings->timezone ?? 'UTC')->format('H:i')) }}"
                                 class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 [color-scheme:light] dark:[color-scheme:dark]"
                                 required />
                         </div>

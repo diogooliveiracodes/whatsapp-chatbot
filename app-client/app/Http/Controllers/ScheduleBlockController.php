@@ -8,6 +8,7 @@ use App\Services\Http\HttpResponseService;
 use App\Services\Schedule\ScheduleBlockService;
 use App\Http\Requests\StoreScheduleBlockRequest;
 use App\Http\Requests\UpdateScheduleBlockRequest;
+use App\Http\Resources\ScheduleBlockResource;
 use App\Enum\ScheduleBlockTypeEnum;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -32,7 +33,7 @@ class ScheduleBlockController extends Controller
             $blocks = $this->scheduleBlockService->getActiveBlocksByUnit($unit->id);
 
             return view('schedule-blocks.index', [
-                'blocks' => $blocks,
+                'blocks' => ScheduleBlockResource::collection($blocks),
             ]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
