@@ -14,6 +14,7 @@ use App\Exceptions\Schedule\OutsideWorkingDaysException;
 use App\Exceptions\Schedule\OutsideWorkingHoursException;
 use App\Exceptions\Schedule\ScheduleConflictException;
 use App\Exceptions\Schedule\ScheduleBlockedException;
+use App\Exceptions\Schedule\PastScheduleException;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -264,6 +265,8 @@ class ScheduleController extends Controller
             $this->scheduleService->validateAndUpdateSchedule($request->validated(), $schedule);
 
             return redirect()->route('schedules.index')->with('success', __('schedules.messages.updated'));
+        } catch (PastScheduleException $e) {
+            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.past_schedule'));
         } catch (OutsideWorkingDaysException $e) {
             return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.outside_working_days'));
         } catch (OutsideWorkingHoursException $e) {
@@ -293,6 +296,8 @@ class ScheduleController extends Controller
             $this->scheduleService->deleteSchedule($schedule);
 
             return redirect()->route('schedules.index')->with('success', __('schedules.messages.deleted'));
+        } catch (PastScheduleException $e) {
+            return redirect()->route('schedules.index')->with('error', __('schedules.messages.past_schedule'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
