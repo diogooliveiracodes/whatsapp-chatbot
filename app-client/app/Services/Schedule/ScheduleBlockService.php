@@ -40,11 +40,47 @@ class ScheduleBlockService
     }
 
     /**
+     * Convert date and time from user timezone to UTC
+     *
+     * @param array $data
+     * @return array
+     */
+    private function convertToUtc(array $data): array
+    {
+        // Get the timezone from the current user's unit settings
+        $unit = Auth::user()->unit;
+        $unitSettings = $unit->unitSettings;
+        $userTimezone = $unitSettings->timezone ?? 'America/Sao_Paulo';
+
+        // Convert block_date to UTC
+        $blockDate = Carbon::parse($data['block_date'], $userTimezone)->setTimezone('UTC');
+        $data['block_date'] = $blockDate->format('Y-m-d');
+
+        // Convert start_time and end_time to UTC if they exist
+        if (isset($data['start_time']) && $data['start_time']) {
+            $dateTimeString = $data['block_date'] . ' ' . $data['start_time'] . ':00';
+            $startDateTime = Carbon::parse($dateTimeString, $userTimezone)->setTimezone('UTC');
+            $data['start_time'] = $startDateTime->format('H:i');
+        }
+
+        if (isset($data['end_time']) && $data['end_time']) {
+            $dateTimeString = $data['block_date'] . ' ' . $data['end_time'] . ':00';
+            $endDateTime = Carbon::parse($dateTimeString, $userTimezone)->setTimezone('UTC');
+            $data['end_time'] = $endDateTime->format('H:i');
+        }
+
+        return $data;
+    }
+
+    /**
      * Create a new schedule block
      */
     public function createBlock(array $data): ScheduleBlock
     {
-        $blockData = array_merge($data, [
+        // Convert to UTC before saving
+        $utcData = $this->convertToUtc($data);
+
+        $blockData = array_merge($utcData, [
             'company_id' => Auth::user()->unit->company->id,
             'unit_id' => Auth::user()->unit->id,
             'user_id' => Auth::id(),
@@ -52,7 +88,7 @@ class ScheduleBlockService
         ]);
 
         // For full day blocks, set start_time and end_time to null
-        if ($data['block_type'] === ScheduleBlockTypeEnum::FULL_DAY->value) {
+        if ($utcData['block_type'] === ScheduleBlockTypeEnum::FULL_DAY->value) {
             $blockData['start_time'] = null;
             $blockData['end_time'] = null;
         }
@@ -65,13 +101,16 @@ class ScheduleBlockService
      */
     public function updateBlock(ScheduleBlock $scheduleBlock, array $data): bool
     {
+        // Convert to UTC before saving
+        $utcData = $this->convertToUtc($data);
+
         // For full day blocks, set start_time and end_time to null
-        if ($data['block_type'] === ScheduleBlockTypeEnum::FULL_DAY->value) {
-            $data['start_time'] = null;
-            $data['end_time'] = null;
+        if ($utcData['block_type'] === ScheduleBlockTypeEnum::FULL_DAY->value) {
+            $utcData['start_time'] = null;
+            $utcData['end_time'] = null;
         }
 
-        return $this->scheduleBlockRepository->update($scheduleBlock, $data);
+        return $this->scheduleBlockRepository->update($scheduleBlock, $utcData);
     }
 
     /**
@@ -143,11 +182,14 @@ class ScheduleBlockService
      */
     public function validateAndCreateBlock(array $validated): ScheduleBlock
     {
+        // Convert to UTC before validation
+        $utcData = $this->convertToUtc($validated);
+
         if ($this->hasConflictingBlocks(
             Auth::user()->unit->id,
-            $validated['block_date'],
-            $validated['start_time'] ?? '00:00',
-            $validated['end_time'] ?? '23:59'
+            $utcData['block_date'],
+            $utcData['start_time'] ?? '00:00',
+            $utcData['end_time'] ?? '23:59'
         )) {
             throw new \Exception('Já existe um bloqueio para este horário/dia.');
         }
@@ -160,11 +202,14 @@ class ScheduleBlockService
      */
     public function validateAndUpdateBlock(ScheduleBlock $scheduleBlock, array $validated): bool
     {
+        // Convert to UTC before validation
+        $utcData = $this->convertToUtc($validated);
+
         if ($this->hasConflictingBlocks(
             Auth::user()->unit->id,
-            $validated['block_date'],
-            $validated['start_time'] ?? '00:00',
-            $validated['end_time'] ?? '23:59',
+            $utcData['block_date'],
+            $utcData['start_time'] ?? '00:00',
+            $utcData['end_time'] ?? '23:59',
             $scheduleBlock->id
         )) {
             throw new \Exception('Já existe um bloqueio para este horário/dia.');

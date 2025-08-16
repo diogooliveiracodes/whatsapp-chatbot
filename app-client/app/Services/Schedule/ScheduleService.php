@@ -250,6 +250,30 @@ class ScheduleService
     }
 
     /**
+     * Convert date and time from user timezone to UTC
+     *
+     * @param array $validated
+     * @param object $unitSettings
+     * @return array
+     */
+    private function convertToUtc(array $validated, object $unitSettings): array
+    {
+        // Get the timezone from unit settings or use default
+        $userTimezone = $unitSettings->timezone ?? 'America/Sao_Paulo';
+
+        // Convert schedule_date to UTC
+        $scheduleDate = Carbon::parse($validated['schedule_date'], $userTimezone)->setTimezone('UTC');
+        $validated['schedule_date'] = $scheduleDate->format('Y-m-d');
+
+        // For start_time, we need to create a full datetime and then convert to UTC
+        $dateTimeString = $validated['schedule_date'] . ' ' . $validated['start_time'] . ':00';
+        $startDateTime = Carbon::parse($dateTimeString, $userTimezone)->setTimezone('UTC');
+        $validated['start_time'] = $startDateTime->format('H:i');
+
+        return $validated;
+    }
+
+    /**
      * Validate and create a new schedule
      *
      * @param array $validated
@@ -264,8 +288,11 @@ class ScheduleService
      */
     public function validateAndCreateSchedule(array $validated, object $unit, object $unitSettings, int $duration)
     {
-        $scheduleDate = Carbon::parse($validated['schedule_date']);
-        $validated['end_time'] = Carbon::parse($validated['start_time'])
+        // Convert to UTC before validation
+        $utcData = $this->convertToUtc($validated, $unitSettings);
+
+        $scheduleDate = Carbon::parse($utcData['schedule_date']);
+        $utcData['end_time'] = Carbon::parse($utcData['start_time'])
             ->addMinutes($duration)
             ->format('H:i');
 
@@ -273,19 +300,19 @@ class ScheduleService
             throw new OutsideWorkingDaysException();
         }
 
-        if ($this->isOutsideWorkingHours($scheduleDate, $validated['start_time'], $validated['end_time'], $unitSettings)) {
+        if ($this->isOutsideWorkingHours($scheduleDate, $utcData['start_time'], $utcData['end_time'], $unitSettings)) {
             throw new OutsideWorkingHoursException();
         }
 
-        if ($this->hasConflict($unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'], null)) {
+        if ($this->hasConflict($unit->id, $utcData['schedule_date'], $utcData['start_time'], $utcData['end_time'], null)) {
             throw new ScheduleConflictException();
         }
 
-        if ($this->scheduleBlockService->isTimeSlotBlocked($unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'])) {
+        if ($this->scheduleBlockService->isTimeSlotBlocked($unit->id, $utcData['schedule_date'], $utcData['start_time'], $utcData['end_time'])) {
             throw new ScheduleBlockedException();
         }
 
-        $scheduleData = array_merge($validated, [
+        $scheduleData = array_merge($utcData, [
             'unit_id' => $unit->id,
             'user_id' => Auth::id(),
             'status' => 'pending',
@@ -332,8 +359,11 @@ class ScheduleService
      */
     public function validateAndUpdateSchedule(array $validated, Schedule $schedule)
     {
-        $scheduleDate = Carbon::parse($validated['schedule_date']);
-        $validated['end_time'] = Carbon::parse($validated['start_time'])
+        // Convert to UTC before validation
+        $utcData = $this->convertToUtc($validated, $schedule->unit->unitSettings);
+
+        $scheduleDate = Carbon::parse($utcData['schedule_date']);
+        $utcData['end_time'] = Carbon::parse($utcData['start_time'])
             ->addMinutes($schedule->unit->unitSettings->appointment_duration_minutes)
             ->format('H:i');
 
@@ -341,21 +371,21 @@ class ScheduleService
             throw new OutsideWorkingDaysException();
         }
 
-        if ($this->isOutsideWorkingHours($scheduleDate, $validated['start_time'], $validated['end_time'], $schedule->unit->unitSettings)) {
+        if ($this->isOutsideWorkingHours($scheduleDate, $utcData['start_time'], $utcData['end_time'], $schedule->unit->unitSettings)) {
             throw new OutsideWorkingHoursException();
         }
 
-        if($validated['schedule_date'] != $schedule->schedule_date->format('Y-m-d') || $validated['start_time'] != Carbon::parse($schedule->start_time)->format('H:i')) {
-            if ($this->hasConflict($schedule->unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'], null)) {
+        if($utcData['schedule_date'] != $schedule->schedule_date->format('Y-m-d') || $utcData['start_time'] != Carbon::parse($schedule->start_time)->format('H:i')) {
+            if ($this->hasConflict($schedule->unit->id, $utcData['schedule_date'], $utcData['start_time'], $utcData['end_time'], null)) {
                 throw new ScheduleConflictException();
             }
         }
 
-        if ($this->scheduleBlockService->isTimeSlotBlocked($schedule->unit->id, $validated['schedule_date'], $validated['start_time'], $validated['end_time'])) {
+        if ($this->scheduleBlockService->isTimeSlotBlocked($schedule->unit->id, $utcData['schedule_date'], $utcData['start_time'], $utcData['end_time'])) {
             throw new ScheduleBlockedException();
         }
 
-        $scheduleData = array_merge($validated, [
+        $scheduleData = array_merge($utcData, [
             'unit_id' => $schedule->unit->id,
             'user_id' => Auth::id(),
             'is_confirmed' => true,
