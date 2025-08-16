@@ -87,7 +87,7 @@ class ScheduleBlockRepository
         // Filtra bloqueios ativos para hoje e datas futuras
         return $this
             ->model
-            ->with(['user', 'company'])
+            ->with(['user', 'company', 'unit'])
             ->where('unit_id', $unitId)
             ->where('active', true)
             ->where('block_date', '>=', now()->startOfDay())

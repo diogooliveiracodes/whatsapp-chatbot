@@ -44,6 +44,7 @@ return [
     'time' => 'Time',
     'reason' => 'Reason',
     'company' => 'Company',
+    'unit' => 'Unit',
     'created_by' => 'Created by',
     'actions' => 'Actions',
     'edit' => 'Edit',

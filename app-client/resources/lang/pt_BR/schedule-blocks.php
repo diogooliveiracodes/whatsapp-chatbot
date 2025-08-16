@@ -44,6 +44,7 @@ return [
     'time' => 'Horário',
     'reason' => 'Motivo',
     'company' => 'Empresa',
+    'unit' => 'Unidade',
     'created_by' => 'Criado por',
     'actions' => 'Ações',
     'edit' => 'Editar',

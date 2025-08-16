@@ -39,7 +39,7 @@
                                         {{ __('schedule-blocks.reason') }}
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                        {{ __('schedule-blocks.company') }}
+                                        {{ __('schedule-blocks.unit') }}
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         {{ __('schedule-blocks.created_by') }}
@@ -78,7 +78,7 @@
                                             {{ $block['reason'] ?: __('schedule-blocks.no_reason') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                            {{ $block['company']['name'] ?? 'N/A' }}
+                                            {{ $block['unit']['name'] ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                             {{ $block['user']['name'] }}
@@ -134,7 +134,7 @@
                                             {{ \Carbon\Carbon::parse($block['block_date'])->format('d/m/Y') }}
                                         </h3>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                                            {{ __('schedule-blocks.company') }}: {{ $block['company']['name'] ?? 'N/A' }}
+                                            {{ __('schedule-blocks.unit') }}: {{ $block['unit']['name'] ?? 'N/A' }}
                                         </p>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">
                                             {{ __('schedule-blocks.created_by') }}: {{ $block['user']['name'] }}
