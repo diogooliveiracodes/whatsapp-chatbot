@@ -38,9 +38,9 @@ class StoreScheduleBlockRequest extends FormRequest
         return [
             'block_date.required' => __('schedule-blocks.messages.date_required'),
             'block_date.date' => __('schedule-blocks.messages.invalid_date'),
-            'block_date.after_or_equal' => __('schedule-blocks.messages.date_required'),
+            'block_date.after_or_equal' => __('schedule-blocks.messages.date_after_or_equal_today'),
             'block_type.required' => __('schedule-blocks.messages.block_type_required'),
-            'block_type.in' => __('schedule-blocks.messages.block_type_required'),
+            'block_type.in' => __('schedule-blocks.messages.invalid_block_type'),
             'start_time.required' => __('schedule-blocks.messages.start_time_required'),
             'start_time.date_format' => __('schedule-blocks.messages.invalid_time_format'),
             'end_time.required' => __('schedule-blocks.messages.end_time_required'),
