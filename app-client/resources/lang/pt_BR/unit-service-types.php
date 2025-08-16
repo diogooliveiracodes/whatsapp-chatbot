@@ -7,6 +7,7 @@ return [
     'title' => 'Tipos de Serviço',
     'create' => 'Criar Tipo de Serviço',
     'edit' => 'Editar Tipo de Serviço',
+    'details' => 'Detalhes do Tipo de Serviço',
     'deactivated' => 'Tipos Desativados',
     'deactivated_title' => 'Tipos de Serviço Desativados',
     'name' => 'Nome',

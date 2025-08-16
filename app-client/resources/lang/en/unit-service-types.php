@@ -7,6 +7,7 @@ return [
     'title' => 'Service Types',
     'create' => 'Create Service Type',
     'edit' => 'Edit Service Type',
+    'details' => 'Service Type Details',
     'deactivated' => 'Deactivated Types',
     'deactivated_title' => 'Deactivated Service Types',
     'name' => 'Name',

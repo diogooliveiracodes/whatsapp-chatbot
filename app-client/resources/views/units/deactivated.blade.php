@@ -9,12 +9,10 @@
                 <div class="p-4 sm:p-6 text-gray-900 dark:text-gray-100">
                     <x-global.session-alerts />
 
-                    <div class="flex justify-center sm:justify-start gap-4 mb-6">
-                        <x-buttons.back-button
-                            :route="route('units.index')"
-                            :text="__('units.active_units')"
-                        />
-                    </div>
+                    <x-buttons.back-button
+                        :route="route('units.index')"
+                        :text="__('units.active_units')"
+                    />
 
                     <!-- Tabela para desktop -->
                     <div class="hidden md:block">

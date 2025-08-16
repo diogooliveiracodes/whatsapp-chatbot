@@ -3,10 +3,10 @@
         {{ __('schedule-blocks.create_block') }}
     </x-global.header>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 sm:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+                <div class="p-4 sm:p-6 text-gray-900 dark:text-gray-100 space-y-6">
                     <x-global.session-alerts />
 
                     <form method="POST" action="{{ route('schedule-blocks.store') }}" class="space-y-6">
@@ -97,15 +97,17 @@
                             @enderror
                         </div>
 
-                        <!-- Botões -->
-                                                <div class="flex justify-end space-x-3">
+                        <!-- Action Buttons -->
+                        <div class="mt-6 flex justify-between">
+                            <!-- Back Button -->
                             <x-cancel-link :href="route('schedule-blocks.index')">
                                 {{ __('schedule-blocks.back') }}
                             </x-cancel-link>
-                            <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                {{ __('schedule-blocks.create') }}
-                            </button>
+
+                            <!-- Create Button -->
+                            <x-primary-button type="submit">
+                                {{ __('actions.save') }}
+                            </x-primary-button>
                         </div>
                     </form>
                 </div>

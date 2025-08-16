@@ -139,20 +139,47 @@
                                             </div>
 
                                             @if ($schedule)
+                                                @php
+
+                                                    $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                    $scheduleEndDateTime = \Carbon\Carbon::parse($schedule['end'], $userTimezone);
+
+                                                    // Converter para o fuso horário da unidade
+                                                    $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
+
+                                                    // Um agendamento só "passou" quando o horário de término já foi ultrapassado
+                                                    $isPastSchedule = $currentTimeInUserTimezone->gt($scheduleEndDateTime);
+                                                @endphp
                                                 <div class="flex items-center space-x-2">
                                                     <span
                                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                                         {{ __('schedules.booked_slots') }}
                                                     </span>
-                                                    <a href="{{ route('schedules.edit', $schedule['id']) }}"
-                                                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                            viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                        </svg>
-                                                    </a>
+                                                    @if (!$isPastSchedule)
+                                                        <div class="flex space-x-2">
+                                                            <a href="{{ route('schedules.edit', $schedule['id']) }}"
+                                                                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                                    viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                                        stroke-width="2"
+                                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                </svg>
+                                                            </a>
+                                                            <form action="{{ route('schedules.destroy', $schedule['id']) }}" method="POST" class="inline delete-form">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300">
+                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                                        viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                                            stroke-width="2"
+                                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                    </svg>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             @elseif ($block)
                                                 <div class="flex items-center space-x-2">
@@ -256,3 +283,19 @@
         </div>
     </div>
 </x-app-layout>
+
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteForms = document.querySelectorAll('.delete-form');
+            deleteForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    if (confirm('{{ __('schedules.messages.confirm_delete') }}')) {
+                        this.submit();
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

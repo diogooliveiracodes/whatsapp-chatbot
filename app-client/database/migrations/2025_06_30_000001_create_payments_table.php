@@ -17,10 +17,17 @@ return new class extends Migration {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
-            $table->foreignId('schedule_id')->constrained('schedules')->nullable();
-            $table->foreignId('plan_id')->constrained('plans');
-            $table->foreignId('customer_id')->constrained('customers')->nullable();
-            $table->foreignId('user_id')->constrained('users')->nullable();
+            $table->foreignId('schedule_id')
+                ->nullable()
+                ->constrained('schedules');
+            $table->foreignId('plan_id')
+                ->constrained('plans');
+            $table->foreignId('customer_id')
+                ->nullable()
+                ->constrained('customers');
+            $table->foreignId('user_id')
+                ->nullable()
+                ->constrained('users');
             $table->enum('payment_method', PaymentMethodEnum::getValues());
             $table->enum('gateway', PaymentGatewayEnum::getValues());
             $table->enum('service', PaymentServiceEnum::getValues());
@@ -31,6 +38,7 @@ return new class extends Migration {
             $table->string('payment_receipt_path')->nullable();
             $table->dateTime('paid_at')->nullable();
             $table->dateTime('expires_at')->nullable();
+            $table->string('gateway_payment_id')->nullable();
             $table->timestamps();
         });
     }

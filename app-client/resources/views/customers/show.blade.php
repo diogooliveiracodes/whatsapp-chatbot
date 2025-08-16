@@ -3,27 +3,27 @@
         {{ __('Cliente') }}
     </x-global.header>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-gray-800 shadow-lg sm:rounded-lg">
-                <div class="p-6 text-gray-100 space-y-6">
+    <div class="py-6 sm:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-4 sm:p-6 text-gray-900 dark:text-gray-100 space-y-6">
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <!-- Name Field -->
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-300">{{ __('customers.name') }}</label>
-                            <p class="text-md dark:text-gray-300">{{ $customer->name }}</p>
+                            <label for="name" class="block text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('customers.name') }}</label>
+                            <p class="text-md text-gray-900 dark:text-gray-300">{{ $customer->name }}</p>
                         </div>
 
                         <!-- Phone Field -->
                         <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-300">{{ __('customers.phone') }}</label>
-                            <p class="text-md dark:text-gray-300">{{ $customer->phone }}</p>
+                            <label for="phone" class="block text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('customers.phone') }}</label>
+                            <p class="text-md text-gray-900 dark:text-gray-300">{{ $customer->phone }}</p>
                         </div>
 
                         <!-- Active Status -->
                         <div>
-                            <label for="active" class="block text-sm font-medium text-gray-300">{{ __('customers.active') }}</label>
-                            <p class="text-md dark:text-gray-300">{{ $customer->active == 1 ? __('customers.yes') : __('customers.no') }}</p>
+                            <label for="active" class="block text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('customers.active') }}</label>
+                            <p class="text-md text-gray-900 dark:text-gray-300">{{ $customer->active == 1 ? __('customers.yes') : __('customers.no') }}</p>
                         </div>
                     </div>
 

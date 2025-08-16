@@ -2,7 +2,7 @@
 
 namespace App\Enum;
 
-enum PaymentServiceEnum: string
+enum PaymentServiceEnum: int
 {
     case SCHEDULE = 1;
     case SIGNATURE = 2;

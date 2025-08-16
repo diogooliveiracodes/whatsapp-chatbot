@@ -48,6 +48,7 @@ return [
     'delete' => 'Delete',
     'full_day_text' => 'Full day',
     'no_reason' => 'No reason provided',
+    'past_block' => 'Past block',
     'debug_info' => 'Debug Information:',
     'table_exists' => 'Table exists',
     'total_blocks' => 'Total blocks',

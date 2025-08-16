@@ -3,10 +3,10 @@
         {{ __('customers.edit') }}
     </x-global.header>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-gray-800 shadow-lg sm:rounded-lg">
-                <div class="p-6 text-gray-100 space-y-6">
+    <div class="py-6 sm:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-4 sm:p-6 text-gray-900 dark:text-gray-100 space-y-6">
                     <x-global.session-alerts />
 
                     <form action="{{ route('customers.update', $customer->id) }}" method="POST">
@@ -87,12 +87,14 @@
 
                         <!-- Action Buttons -->
                         <div class="mt-6 flex justify-between">
+                            <!-- Back Button -->
                             <x-cancel-link :href="route('customers.index')">
                                 {{ __('customers.back') }}
                             </x-cancel-link>
 
+                            <!-- Save Button -->
                             <x-primary-button type="submit">
-                                {{ __('customers.save_changes') }}
+                                {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
                     </form>

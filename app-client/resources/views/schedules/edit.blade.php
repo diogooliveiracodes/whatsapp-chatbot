@@ -15,11 +15,11 @@
 
                         <div>
                             <label for="customer_id" class="block font-medium text-sm text-gray-300">
-                                {{ __('customers.name') }}
+                                {{ __('customers.client') }}
                             </label>
                             <select id="customer_id" name="customer_id"
-                                class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
-                                required>
+                                class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                required disabled>
                                 <option value="">{{ __('customers.select') }}</option>
                                 @foreach ($customers as $customer)
                                     <option value="{{ $customer->id }}"
@@ -93,7 +93,7 @@
                                 rows="3">{{ old('notes', $schedule->notes) }}</textarea>
                         </div>
 
-                        <div class="flex justify-end space-x-3">
+                        <div class="mt-6 flex justify-between">
                             <!-- Back Button -->
                             <x-cancel-link href="{{ route('schedules.index') }}">
                                 {{ __('schedules.back') }}
@@ -101,7 +101,7 @@
 
                             <!-- Update Button -->
                             <x-primary-button type="submit">
-                                {{ __('schedules.update') }}
+                                {{ __('actions.save') }}
                             </x-primary-button>
                         </div>
                     </form>
