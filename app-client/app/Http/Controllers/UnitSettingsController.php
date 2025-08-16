@@ -6,6 +6,7 @@ use App\Models\UnitSettings;
 use App\Http\Requests\UpdateUnitSettingsRequest;
 use App\Services\UnitSettings\UnitSettingsService;
 use App\Services\ErrorLog\ErrorLogService;
+use App\Services\Unit\UnitService;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -19,8 +20,27 @@ class UnitSettingsController extends Controller
      */
     public function __construct(
         protected UnitSettingsService $unitSettingsService,
-        protected ErrorLogService $errorLogService
+        protected ErrorLogService $errorLogService,
+        protected UnitService $unitService
     ) {}
+
+    /**
+     * Display a listing of units as cards to access each unit settings.
+     */
+    public function index(): View|RedirectResponse
+    {
+        try {
+            $units = $this->unitService->getUnits()->load('UnitSettingsId');
+            return view('unit_settings.index', compact('units'));
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'index',
+                'request_method' => request()->method(),
+                'request_url' => request()->url(),
+            ]);
+            return redirect()->back()->with('error', __('unitSettings.error.load'));
+        }
+    }
 
     /**
      * Display the specified unit settings.

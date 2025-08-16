@@ -53,6 +53,7 @@ Route::middleware('auth', 'company.active', 'subscription.active')->group(functi
     });
 
     Route::group(['prefix' => 'unitSettings'], function () {
+        Route::get('/', [UnitSettingsController::class, 'index'])->name('unitSettings.index');
         Route::post('/', [UnitSettingsController::class, 'store'])->name('unitSettings.store');
         Route::get('/create', [UnitSettingsController::class, 'create'])->name('unitSettings.create');
         Route::get('/{unitSettings}', [UnitSettingsController::class, 'show'])->name('unitSettings.show');

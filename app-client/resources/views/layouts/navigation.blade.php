@@ -87,6 +87,15 @@
                     <span class="ml-2">{{ __('pages.units') }}</span>
                 </a>
 
+                <a href="{{ route('unitSettings.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('unitSettings.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                    <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3a7.963 7.963 0 00-1.257-3.019l1.518-1.518-1.414-1.414-1.518 1.518A7.963 7.963 0 0015 3.06V1h-2v2.06a7.963 7.963 0 00-3.019 1.257L8.463 2.799 7.049 4.213l1.518 1.518A7.963 7.963 0 005.06 9H3v2h2.06c.243 1.096.69 2.114 1.257 3.019l-1.518 1.518 1.414 1.414 1.518-1.518c.905.567 1.923 1.014 3.019 1.257V21h2v-2.06a7.963 7.963 0 003.019-1.257l1.518 1.518 1.414-1.414-1.518-1.518c.567-.905 1.014-1.923 1.257-3.019H21v-2h-2.06z" />
+                    </svg>
+                    <span class="ml-2">{{ __('pages.unitSettings') }}</span>
+                </a>
+
                 <a href="{{ route('unitServiceTypes.index') }}"
                     class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('unitServiceTypes.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
                     <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
