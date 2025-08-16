@@ -149,7 +149,7 @@
                                                     @endphp
                                                     <div class="flex items-center space-x-2">
                                                         <span
-                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
                                                             {{ __('schedules.booked_slots') }}
                                                         </span>
                                                         @if (!$isPastSchedule)
@@ -187,21 +187,34 @@
                                                     </div>
                                                 @else
                                                     <div class="flex items-center space-x-2">
-                                                        <span
-                                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
-                                                            {{ __('schedules.available_slots') }}
-                                                        </span>
-                                                        <a href="{{ route('schedules.create', [
-                                                            'schedule_date' => $currentDate,
-                                                            'start_time' => $currentTime,
-                                                        ]) }}"
-                                                            class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300">
-                                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                                            </svg>
-                                                        </a>
+                                                        @php
+                                                            $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                            $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
+                                                            $slotEndDateTime = \Carbon\Carbon::parse($currentDate . ' ' . $currentEndTime, $userTimezone);
+                                                            $isPastSlot = $currentTimeInUserTimezone->gt($slotEndDateTime);
+                                                        @endphp
+                                                        @if ($isPastSlot)
+                                                            <span
+                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                                                                {{ __('schedules.time_passed') }}
+                                                            </span>
+                                                        @else
+                                                            <span
+                                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                                                {{ __('schedules.available_slots') }}
+                                                            </span>
+                                                            <a href="{{ route('schedules.create', [
+                                                                'schedule_date' => $currentDate,
+                                                                'start_time' => $currentTime,
+                                                            ]) }}"
+                                                                class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300">
+                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                                    viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                                        stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                                                </svg>
+                                                            </a>
+                                                        @endif
                                                     </div>
                                                 @endif
                                             </div>

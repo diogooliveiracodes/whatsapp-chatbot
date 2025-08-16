@@ -61,4 +61,5 @@ return [
     'available_slots' => 'Horários Disponíveis',
     'booked_slots' => 'Horários Ocupados',
     'blocked_slots' => 'Horários Bloqueados',
+    'time_passed' => 'Horário já passou',
 ];

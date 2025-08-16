@@ -52,4 +52,8 @@ return [
     'back' => 'Back',
     'create' => 'Create Schedule',
     'update' => 'Update Schedule',
+    'available_slots' => 'Available Slots',
+    'booked_slots' => 'Booked Slots',
+    'blocked_slots' => 'Blocked Slots',
+    'time_passed' => 'Time has passed',
 ];
