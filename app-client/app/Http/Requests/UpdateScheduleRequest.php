@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Enum\ScheduleStatusEnum;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
+use App\Rules\FutureDateRule;
+use App\Rules\FutureTimeRule;
 
 class UpdateScheduleRequest extends BaseFormRequest
 {
@@ -25,8 +25,8 @@ class UpdateScheduleRequest extends BaseFormRequest
     {
         return [
             'customer_id' => 'required|exists:customers,id',
-            'schedule_date' => 'required|date|after_or_equal:today',
-            'start_time' => 'required|date_format:H:i',
+            'schedule_date' => ['required', 'date', new FutureDateRule()],
+            'start_time' => ['required', 'date_format:H:i', new FutureTimeRule()],
             'unit_service_type_id' => 'required|exists:unit_service_types,id',
             'notes' => 'nullable|string',
             'status' => 'required|in:'. implode(',', ScheduleStatusEnum::values()),
@@ -40,7 +40,7 @@ class UpdateScheduleRequest extends BaseFormRequest
             'customer_id.exists' => __('schedules.messages.customer_not_found'),
             'schedule_date.required' => __('schedules.messages.date_required'),
             'schedule_date.date' => __('schedules.messages.invalid_date'),
-            'schedule_date.after_or_equal' => __('schedules.messages.date_must_be_today_or_future'),
+
             'start_time.required' => __('schedules.messages.start_time_required'),
             'start_time.date_format' => __('schedules.messages.invalid_time_format'),
             'unit_service_type_id.required' => __('schedules.messages.service_type_required'),
@@ -50,31 +50,5 @@ class UpdateScheduleRequest extends BaseFormRequest
         ];
     }
 
-    /**
-     * Configure the validator instance.
-     *
-     * @param  \Illuminate\Validation\Validator  $validator
-     * @return void
-     */
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $scheduleDate = $this->input('schedule_date');
-            $startTime = $this->input('start_time');
 
-            if ($scheduleDate && $startTime) {
-                // Get user timezone
-                $userTimezone = Auth::user()->unit->unitSettings->timezone ?? 'UTC';
-
-                // Create datetime in user timezone
-                $scheduleDateTime = Carbon::parse($scheduleDate . ' ' . $startTime, $userTimezone);
-                $nowInUserTimezone = Carbon::now($userTimezone);
-
-                // Check if schedule is in the past
-                if ($scheduleDateTime->lt($nowInUserTimezone)) {
-                    $validator->errors()->add('schedule_date', __('schedules.messages.date_must_be_today_or_future'));
-                }
-            }
-        });
-    }
 }

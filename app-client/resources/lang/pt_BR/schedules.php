@@ -31,6 +31,7 @@ return [
         'service_type_not_found' => 'Tipo de serviço selecionado não existe',
         'service_type_not_belongs_to_unit' => 'Tipo de serviço não pertence à sua unidade',
         'date_must_be_today_or_future' => 'A data do agendamento deve ser hoje ou uma data futura',
+        'time_must_be_future' => 'O horário deve ser futuro',
         'past_schedule' => 'Não é possível modificar ou excluir agendamentos que já passaram',
         'notes_too_long' => 'As observações não podem ter mais de 1000 caracteres',
         'confirm_delete' => 'Tem certeza que deseja excluir este agendamento?',
