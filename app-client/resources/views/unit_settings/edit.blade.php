@@ -180,8 +180,23 @@
                                         @endphp
 
                                         @foreach ($days as $day => $label)
+                                            @php
+                                                $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                $referenceDate = now()->format('Y-m-d');
+
+                                                $rawStart = old($day . '_start', $unitSettings->{$day . '_start'});
+                                                $rawEnd = old($day . '_end', $unitSettings->{$day . '_end'});
+
+                                                $startDisplay = $rawStart
+                                                    ? \Carbon\Carbon::parse($referenceDate . ' ' . $rawStart, 'UTC')->setTimezone($userTimezone)->format('H:i')
+                                                    : '';
+                                                $endDisplay = $rawEnd
+                                                    ? \Carbon\Carbon::parse($referenceDate . ' ' . $rawEnd, 'UTC')->setTimezone($userTimezone)->format('H:i')
+                                                    : '';
+                                            @endphp
+
                                             <x-unit-settings.day-time-input :day="$day" :label="$label"
-                                                :isChecked="old($day, $unitSettings->$day)" :startTime="old($day . '_start', $unitSettings->{$day . '_start'})" :endTime="old($day . '_end', $unitSettings->{$day . '_end'})" />
+                                                :isChecked="old($day, $unitSettings->$day)" :startTime="$startDisplay" :endTime="$endDisplay" />
                                         @endforeach
                                     </div>
                                 </div>

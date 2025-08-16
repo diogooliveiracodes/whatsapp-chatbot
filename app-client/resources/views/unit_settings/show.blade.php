@@ -205,7 +205,15 @@
                                                         <span class="text-white font-medium">{{ $label }}</span>
                                                     </div>
                                                     <div class="text-green-400 font-mono">
-                                                        {{ $unitSettings->{$day . '_start'} }} - {{ $unitSettings->{$day . '_end'} }}
+                                                        @php
+                                                            $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                            $referenceDate = now()->format('Y-m-d');
+                                                            $rawStart = $unitSettings->{$day . '_start'};
+                                                            $rawEnd = $unitSettings->{$day . '_end'};
+                                                            $startDisplay = $rawStart ? \Carbon\Carbon::parse($referenceDate . ' ' . $rawStart, 'UTC')->setTimezone($userTimezone)->format('H:i') : null;
+                                                            $endDisplay = $rawEnd ? \Carbon\Carbon::parse($referenceDate . ' ' . $rawEnd, 'UTC')->setTimezone($userTimezone)->format('H:i') : null;
+                                                        @endphp
+                                                        {{ $startDisplay }} - {{ $endDisplay }}
                                                     </div>
                                                 </div>
                                             @endif

@@ -6,6 +6,7 @@ use App\Models\UnitSettings;
 use App\Repositories\Interfaces\UnitSettingsRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class UnitSettingsRepository implements UnitSettingsRepositoryInterface
 {
@@ -22,6 +23,7 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
     public function create(array $data): UnitSettings
     {
         $data['company_id'] = Auth::user()->company_id;
+        $data = $this->convertWorkingHoursToUtc($data);
         return $this->model->create($data);
     }
 
@@ -45,6 +47,7 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
      */
     public function update(UnitSettings $unitSettings, array $data): UnitSettings
     {
+        $data = $this->convertWorkingHoursToUtc($data, $unitSettings);
         $processedData = $this->processDaysData($data);
         $unitSettings->update($processedData);
         return $unitSettings;
@@ -66,6 +69,50 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
             if (!$data[$day]) {
                 $data[$day . '_start'] = null;
                 $data[$day . '_end'] = null;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Convert submitted working hours (which are in user's/unit timezone) to UTC before persisting.
+     * Prefers the timezone provided in the payload; falls back to the authenticated user's unit settings,
+     * or a sane default when not available.
+     */
+    private function convertWorkingHoursToUtc(array $data, ?UnitSettings $currentSettings = null): array
+    {
+        $preferredTimezone = $data['timezone']
+            ?? ($currentSettings?->timezone)
+            ?? (Auth::user()->unit->unitSettings->timezone ?? 'America/Sao_Paulo');
+
+        $days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        $referenceDate = now()->format('Y-m-d');
+
+        foreach ($days as $day) {
+            $startKey = $day . '_start';
+            $endKey = $day . '_end';
+
+            if (!empty($data[$startKey])) {
+                try {
+                    $startUtc = Carbon::parse($referenceDate . ' ' . $data[$startKey] . ':00', $preferredTimezone)
+                        ->setTimezone('UTC')
+                        ->format('H:i');
+                    $data[$startKey] = $startUtc;
+                } catch (\Throwable $e) {
+                    // Keep original if parsing fails
+                }
+            }
+
+            if (!empty($data[$endKey])) {
+                try {
+                    $endUtc = Carbon::parse($referenceDate . ' ' . $data[$endKey] . ':00', $preferredTimezone)
+                        ->setTimezone('UTC')
+                        ->format('H:i');
+                    $data[$endKey] = $endUtc;
+                } catch (\Throwable $e) {
+                    // Keep original if parsing fails
+                }
             }
         }
 

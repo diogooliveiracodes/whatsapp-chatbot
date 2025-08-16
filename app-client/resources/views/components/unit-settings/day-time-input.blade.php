@@ -21,7 +21,7 @@
             <div class="flex-1">
                 <label class="block text-sm font-medium text-gray-300 mb-1">{{ __('unitSettings.start_time') }}</label>
                 <input type="time" name="{{ $day }}_start"
-                       value="{{ substr($startTime, 0, 5) }}"
+                       value="{{ $startTime ? substr($startTime, 0, 5) : '' }}"
                        class="input-style w-full"
                        {{ $isChecked ? 'required' : '' }}
                        data-time="{{ $day }}">
@@ -30,7 +30,7 @@
             <div class="flex-1">
                 <label class="block text-sm font-medium text-gray-300 mb-1">{{ __('unitSettings.end_time') }}</label>
                 <input type="time" name="{{ $day }}_end"
-                       value="{{ substr($endTime, 0, 5) }}"
+                       value="{{ $endTime ? substr($endTime, 0, 5) : '' }}"
                        class="input-style w-full"
                        {{ $isChecked ? 'required' : '' }}
                        data-time="{{ $day }}">
