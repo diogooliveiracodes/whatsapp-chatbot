@@ -39,12 +39,18 @@ class BaseFormRequest extends FormRequest
             ]
         );
 
-        // Return a generic message to the user
-        throw new HttpResponseException(
-            new JsonResponse([
-                'success' => false,
-                'message' => __('validation.generic.validation_error'),
-            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-        );
+        // Check if the request expects JSON or is an AJAX request
+        if ($this->expectsJson() || $this->ajax()) {
+            throw new HttpResponseException(
+                new JsonResponse([
+                    'success' => false,
+                    'message' => __('validation.generic.validation_error'),
+                    'errors' => $validator->errors(),
+                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            );
+        }
+
+        // For regular form submissions, let Laravel handle the redirect with validation errors
+        parent::failedValidation($validator);
     }
 }
