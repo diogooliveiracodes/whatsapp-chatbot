@@ -64,15 +64,55 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Função para inicializar os formulários de exclusão
+        function initializeDeleteForms() {
             const deleteForms = document.querySelectorAll('.delete-form');
             deleteForms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    if (confirm('{{ __('schedules.messages.confirm_delete') }}')) {
-                        this.submit();
+                // Remove event listeners existentes para evitar duplicação
+                form.removeEventListener('submit', handleDeleteSubmit);
+                form.addEventListener('submit', handleDeleteSubmit);
+            });
+        }
+
+        // Função para lidar com o submit do formulário de exclusão
+        function handleDeleteSubmit(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (confirm('{{ __('schedules.messages.confirm_delete') }}')) {
+                // Adiciona um indicador visual de carregamento
+                const button = e.target.querySelector('button[type="submit"]');
+                if (button) {
+                    button.disabled = true;
+                    button.innerHTML = '<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                }
+
+                // Submete o formulário
+                this.submit();
+            }
+        }
+
+        // Inicializa quando o DOM estiver pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeDeleteForms);
+        } else {
+            initializeDeleteForms();
+        }
+
+        // Re-inicializa após mudanças dinâmicas no DOM (se necessário)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Observa mudanças no DOM para re-inicializar se necessário
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                        initializeDeleteForms();
                     }
                 });
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
             });
         });
     </script>

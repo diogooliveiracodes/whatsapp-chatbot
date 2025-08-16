@@ -11,6 +11,7 @@ use App\Exceptions\Schedule\OutsideWorkingDaysException;
 use App\Exceptions\Schedule\OutsideWorkingHoursException;
 use App\Exceptions\Schedule\ScheduleConflictException;
 use App\Exceptions\Schedule\ScheduleBlockedException;
+use App\Exceptions\Schedule\PastScheduleException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Schedule;
 use App\Repositories\ScheduleRepository;
@@ -155,9 +156,24 @@ class ScheduleService
      *
      * @param mixed $schedule
      * @return mixed
+     * @throws PastScheduleException
      */
     public function deleteSchedule($schedule)
     {
+        // Verificar se o agendamento já passou
+        $scheduleEndDateTime = Carbon::parse($schedule->schedule_date->format('Y-m-d') . ' ' . $schedule->end_time);
+
+        // Obter o fuso horário da unidade
+        $userTimezone = $schedule->unit->unitSettings->timezone ?? 'UTC';
+
+        // Converter para o fuso horário da unidade
+        $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
+
+        // Um agendamento só "passou" quando o horário de término já foi ultrapassado
+        if ($currentTimeInUserTimezone->gt($scheduleEndDateTime)) {
+            throw new \App\Exceptions\Schedule\PastScheduleException();
+        }
+
         return $this->scheduleRepository->delete($schedule);
     }
 
