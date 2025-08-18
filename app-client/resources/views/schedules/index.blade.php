@@ -120,8 +120,8 @@
                                                         // Validação de horário passado (mesma lógica da view daily.blade.php)
                                                         $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
                                                         $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
-                                                        $slotEndDateTime = \Carbon\Carbon::parse($currentDate . ' ' . $currentEndTime, $userTimezone);
-                                                        $isPastSlot = $currentTimeInUserTimezone->gt($slotEndDateTime);
+                                                        $slotStartDateTime = \Carbon\Carbon::parse($currentDate . ' ' . $currentTime, $userTimezone);
+                                                        $isPastSlot = $currentTimeInUserTimezone->gt($slotStartDateTime);
                                                     @endphp
                                                     <td
                                                         class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 border-r border-gray-600 relative group

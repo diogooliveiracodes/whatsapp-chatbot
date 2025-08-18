@@ -193,8 +193,8 @@
                                                         @php
                                                             $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
                                                             $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
-                                                            $slotEndDateTime = \Carbon\Carbon::parse($currentDate . ' ' . $currentEndTime, $userTimezone);
-                                                            $isPastSlot = $currentTimeInUserTimezone->gt($slotEndDateTime);
+                                                            $slotStartDateTime = \Carbon\Carbon::parse($currentDate . ' ' . $currentTime, $userTimezone);
+                                                            $isPastSlot = $currentTimeInUserTimezone->gt($slotStartDateTime);
                                                         @endphp
                                                         @if ($isPastSlot)
                                                             <span
