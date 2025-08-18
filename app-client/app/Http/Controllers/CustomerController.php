@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateCustomerRequest;
 use App\Models\Customer;
 use App\Services\Customer\CustomerService;
 use App\Services\ErrorLog\ErrorLogService;
+use App\Exceptions\Customer\CustomerHasFutureSchedulesException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -164,6 +165,8 @@ class CustomerController extends Controller
         try {
             $this->customerService->deleteCustomer($customer);
             return redirect()->route('customers.index')->with('success', __('customers.success.deleted'));
+        } catch (CustomerHasFutureSchedulesException $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'destroy',

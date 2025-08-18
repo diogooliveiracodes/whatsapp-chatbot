@@ -28,6 +28,7 @@ return [
         'update' => 'Failed to update customer',
         'delete' => 'Failed to delete customer',
         'load' => 'Failed to load customer for editing',
+        'has_future_schedules' => 'Cannot delete this customer because there are future schedules. Future schedules need to be deleted first.',
     ],
     'validation' => [
         'name' => [

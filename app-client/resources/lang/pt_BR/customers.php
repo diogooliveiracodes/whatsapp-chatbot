@@ -28,6 +28,7 @@ return [
         'update' => 'Falha ao atualizar cliente',
         'delete' => 'Falha ao excluir cliente',
         'load' => 'Falha ao carregar cliente para edição',
+        'has_future_schedules' => 'Não é possível excluir este cliente pois existem agendamentos futuros. Os agendamentos futuros precisam ser excluídos primeiro.',
     ],
     'validation' => [
         'name' => [

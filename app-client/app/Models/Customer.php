@@ -42,4 +42,9 @@ class Customer extends Model
     {
         return $this->hasMany(Message::class);
     }
+
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }

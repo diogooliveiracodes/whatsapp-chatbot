@@ -3,6 +3,7 @@
 namespace App\Services\Customer;
 
 use App\Repositories\CustomerRepository;
+use App\Exceptions\Customer\CustomerHasFutureSchedulesException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Unit;
 
@@ -39,6 +40,11 @@ class CustomerService
 
     public function deleteCustomer($customer)
     {
+        // Verifica se o cliente possui agendamentos futuros
+        if ($this->repository->hasFutureSchedules($customer)) {
+            throw new CustomerHasFutureSchedulesException();
+        }
+
         return $this->repository->delete($customer);
     }
 

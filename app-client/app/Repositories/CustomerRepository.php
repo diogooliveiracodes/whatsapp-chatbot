@@ -71,4 +71,32 @@ class CustomerRepository
     {
         $this->model->where('company_id', $companyId)->update(['active' => false]);
     }
+
+    /**
+     * Verifica se o cliente possui agendamentos futuros
+     *
+     * @param Customer $customer
+     * @return bool
+     */
+    public function hasFutureSchedules(Customer $customer): bool
+    {
+        return $customer->schedules()
+            ->where('schedule_date', '>=', now()->format('Y-m-d'))
+            ->where('active', true)
+            ->exists();
+    }
+
+    /**
+     * Obtém os agendamentos futuros do cliente
+     *
+     * @param Customer $customer
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getFutureSchedules(Customer $customer)
+    {
+        return $customer->schedules()
+            ->where('schedule_date', '>=', now()->format('Y-m-d'))
+            ->where('active', true)
+            ->get();
+    }
 }
