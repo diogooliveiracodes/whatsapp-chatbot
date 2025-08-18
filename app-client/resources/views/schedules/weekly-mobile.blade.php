@@ -411,4 +411,6 @@
             });
         });
     </script>
+
+    <x-scroll-to-top />
 @endpush

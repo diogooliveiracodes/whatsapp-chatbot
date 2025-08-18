@@ -364,3 +364,5 @@
         });
     </script>
 @endpush
+
+<x-scroll-to-top />
