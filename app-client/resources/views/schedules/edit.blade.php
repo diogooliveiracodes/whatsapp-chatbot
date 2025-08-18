@@ -102,7 +102,7 @@
 
                         <div class="mt-6 flex justify-between">
                             <!-- Back Button -->
-                            <x-cancel-link href="{{ route('schedules.index') }}">
+                            <x-cancel-link href="{{ route('schedules.weekly') }}">
                                 {{ __('schedules.back') }}
                             </x-cancel-link>
 
