@@ -1,0 +1,5 @@
+---
+description: The user prefers that tests not clear their local database.
+globs:
+alwaysApply: false
+---
