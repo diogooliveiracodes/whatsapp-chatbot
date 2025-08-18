@@ -120,8 +120,8 @@
                                                     <td
                                                         class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 border-r border-gray-600 relative group
                                                         {{ !$isWithinOperatingHours ? 'bg-gray-100 dark:bg-gray-700 opacity-50' : '' }}
-                                                        {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() && $isWithinOperatingHours? 'border-l-2 border-r-2 border-red-500': '' }}
-                                                        {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() &&$isWithinOperatingHours &&$time->copy()->addMinutes($interval)->gte($endTime)? 'border-b-2 border-red-500': '' }}">
+                                                        {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday()? 'border-l-2 border-r-2 border-red-500': '' }}
+                                                        {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() && $time->copy()->addMinutes($interval)->gte($endTime)? 'border-b-2 border-red-500': '' }}">
                                                         @if ($isWithinOperatingHours && $schedule)
                                                             <x-schedules.schedule-card :schedule="$schedule" />
                                                         @elseif ($isWithinOperatingHours && $block)
