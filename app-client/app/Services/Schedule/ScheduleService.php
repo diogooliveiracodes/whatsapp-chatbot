@@ -393,7 +393,7 @@ class ScheduleService
         return [
             'success' => true,
             'message' => __('schedules.messages.created'),
-            'redirect' => 'schedules.index'
+            'redirect' => 'schedules.weekly'
         ];
     }
 

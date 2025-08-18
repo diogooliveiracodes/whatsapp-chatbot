@@ -58,7 +58,7 @@ class ScheduleController extends Controller
      * @return View The view containing the list of schedules and related data
      * @throws \Exception When there's an error loading the schedules
      */
-    public function index(Request $request): View
+    public function weekly(Request $request): View
     {
         try {
             $unit = Auth::user()->unit;
@@ -71,7 +71,7 @@ class ScheduleController extends Controller
             $days = DaysOfWeekEnum::getDaysOfWeek();
             $startOfWeek = $this->scheduleService->getStartAndEndDate($request->date)[0];
 
-            return view('schedules.index', [
+            return view('schedules.weekly', [
                 'schedules' => ScheduleResource::collection($schedules),
                 'blocks' => ScheduleBlockResource::collection($blocks),
                 'customers' => $customers,
@@ -87,7 +87,7 @@ class ScheduleController extends Controller
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
-            return view('schedules.index')->with('error', __('schedules.messages.load_error'));
+            return view('schedules.weekly')->with('error', __('schedules.messages.load_error'));
         }
     }
 
@@ -186,7 +186,7 @@ class ScheduleController extends Controller
             $result = $this->scheduleService->handleScheduleCreation($request->validated());
 
             return redirect()
-                ->route('schedules.index')
+                ->route('schedules.weekly')
                 ->with('success', __('schedules.messages.created'));
         } catch (OutsideWorkingDaysException $e) {
 
@@ -244,7 +244,7 @@ class ScheduleController extends Controller
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
-            return view('schedules.index')->with('error', __('schedules.messages.load_error'));
+            return view('schedules.weekly')->with('error', __('schedules.messages.load_error'));
         }
     }
 
@@ -265,7 +265,7 @@ class ScheduleController extends Controller
         try {
             $this->scheduleService->validateAndUpdateSchedule($request->validated(), $schedule);
 
-            return redirect()->route('schedules.index')->with('success', __('schedules.messages.updated'));
+            return redirect()->route('schedules.weekly')->with('success', __('schedules.messages.updated'));
         } catch (PastScheduleException $e) {
             return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.past_schedule'));
         } catch (OutsideWorkingDaysException $e) {
@@ -296,13 +296,13 @@ class ScheduleController extends Controller
         try {
             $this->scheduleService->deleteSchedule($schedule);
 
-            return redirect()->route('schedules.index')->with('success', __('schedules.messages.deleted'));
+            return redirect()->route('schedules.weekly')->with('success', __('schedules.messages.deleted'));
         } catch (PastScheduleException $e) {
-            return redirect()->route('schedules.index')->with('error', __('schedules.messages.past_schedule'));
+            return redirect()->route('schedules.weekly')->with('error', __('schedules.messages.past_schedule'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
-            return redirect()->route('schedules.index')->with('error', __('schedules.messages.delete_error'));
+            return redirect()->route('schedules.weekly')->with('error', __('schedules.messages.delete_error'));
         }
     }
 }

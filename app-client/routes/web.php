@@ -74,7 +74,7 @@ Route::middleware('auth', 'company.active', 'subscription.active')->group(functi
         Route::patch('/{unitServiceType}/activate', [UnitServiceTypeController::class, 'activate'])->name('unitServiceTypes.activate');
     });
 
-    Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
+    Route::get('/schedules', [ScheduleController::class, 'weekly'])->name('schedules.weekly');
     Route::get('/schedules/daily', [ScheduleController::class, 'daily'])->name('schedules.daily');
     Route::get('/schedules/create', [ScheduleController::class, 'create'])->name('schedules.create');
     Route::get('/schedules/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
