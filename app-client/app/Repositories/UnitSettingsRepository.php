@@ -7,6 +7,7 @@ use App\Repositories\Interfaces\UnitSettingsRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Helpers\TimezoneHelper;
 
 class UnitSettingsRepository implements UnitSettingsRepositoryInterface
 {
@@ -87,32 +88,17 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
             ?? (Auth::user()->unit->unitSettings->timezone ?? 'America/Sao_Paulo');
 
         $days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-        $referenceDate = now()->format('Y-m-d');
 
         foreach ($days as $day) {
             $startKey = $day . '_start';
             $endKey = $day . '_end';
 
             if (!empty($data[$startKey])) {
-                try {
-                    $startUtc = Carbon::parse($referenceDate . ' ' . $data[$startKey] . ':00', $preferredTimezone)
-                        ->setTimezone('UTC')
-                        ->format('H:i');
-                    $data[$startKey] = $startUtc;
-                } catch (\Throwable $e) {
-                    // Keep original if parsing fails
-                }
+                $data[$startKey] = TimezoneHelper::convertTimeToUtc($data[$startKey], $preferredTimezone);
             }
 
             if (!empty($data[$endKey])) {
-                try {
-                    $endUtc = Carbon::parse($referenceDate . ' ' . $data[$endKey] . ':00', $preferredTimezone)
-                        ->setTimezone('UTC')
-                        ->format('H:i');
-                    $data[$endKey] = $endUtc;
-                } catch (\Throwable $e) {
-                    // Keep original if parsing fails
-                }
+                $data[$endKey] = TimezoneHelper::convertTimeToUtc($data[$endKey], $preferredTimezone);
             }
         }
 
