@@ -62,14 +62,16 @@ class ScheduleController extends Controller
     {
         try {
             $unit = Auth::user()->unit;
-            $schedules = $this->scheduleService->getSchedulesByUnitAndDate($unit->id, $request->date);
-            $blocks = $this->scheduleBlockService->getBlocksByUnitAndDate($unit->id, $this->scheduleService->getStartAndEndDate($request->date)[0], $this->scheduleService->getStartAndEndDate($request->date)[1]);
-            $customers = $this->customerService->getCustomersByUnit($unit);
             $unit->load('unitSettings');
+
+            $schedules = $this->scheduleService->getSchedulesByUnitAndDate($unit->id, $request->date, $unit->unitSettings);
+            $startAndEndDate = $this->scheduleService->getStartAndEndDate($request->date, $unit->unitSettings);
+            $blocks = $this->scheduleBlockService->getBlocksByUnitAndDate($unit->id, $startAndEndDate[0], $startAndEndDate[1]);
+            $customers = $this->customerService->getCustomersByUnit($unit);
             $workingHours = $this->scheduleService->getWorkingHours($unit->unitSettings);
             $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots($date ?? now(), $unit->unitSettings);
             $days = DaysOfWeekEnum::getDaysOfWeek();
-            $startOfWeek = $this->scheduleService->getStartAndEndDate($request->date)[0];
+            $startOfWeek = $startAndEndDate[0];
 
             return view('schedules.weekly', [
                 'schedules' => ScheduleResource::collection($schedules),
@@ -103,11 +105,12 @@ class ScheduleController extends Controller
     {
         try {
             $unit = Auth::user()->unit;
+            $unit->load('unitSettings');
             $date = $request->get('date', now()->format('Y-m-d'));
-            $schedules = $this->scheduleService->getSchedulesByUnitAndDay($unit->id, $date);
+
+            $schedules = $this->scheduleService->getSchedulesByUnitAndDay($unit->id, $date, $unit->unitSettings);
             $blocks = $this->scheduleBlockService->getBlocksByUnitAndDate($unit->id, Carbon::parse($date), Carbon::parse($date));
             $customers = $this->customerService->getCustomersByUnit($unit);
-            $unit->load('unitSettings');
             $workingHours = $this->scheduleService->getWorkingHours($unit->unitSettings);
             $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots(Carbon::parse($date), $unit->unitSettings);
 

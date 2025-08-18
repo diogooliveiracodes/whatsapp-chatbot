@@ -4,42 +4,12 @@ namespace App\Services\Schedule\Validators;
 
 use App\Services\Schedule\Interfaces\WorkingHoursValidatorInterface;
 use Carbon\Carbon;
+use App\Helpers\TimezoneHelper;
 
 class WorkingHoursValidator implements WorkingHoursValidatorInterface
 {
     public function isOutsideWorkingHours(Carbon $scheduleDate, string $startTime, string $endTime, $unitSettings): bool
     {
-        // Helper function to parse time string to Carbon instance
-        $parseTime = function($time) {
-            // Extract only the time part (HH:mm) from the string
-            if (preg_match('/(\d{1,2}:\d{2})/', $time, $matches)) {
-                $time = $matches[1];
-            }
-
-            // Split hours and minutes and validate
-            $parts = explode(':', $time);
-            if (count($parts) !== 2) {
-                throw new \InvalidArgumentException('Invalid time format. Expected HH:mm');
-            }
-
-            list($hours, $minutes) = $parts;
-
-            // Validate hours and minutes
-            if (!is_numeric($hours) || !is_numeric($minutes)) {
-                throw new \InvalidArgumentException('Hours and minutes must be numeric');
-            }
-
-            $hours = (int)$hours;
-            $minutes = (int)$minutes;
-
-            if ($hours < 0 || $hours > 23 || $minutes < 0 || $minutes > 59) {
-                throw new \InvalidArgumentException('Invalid time values. Hours must be 0-23 and minutes must be 0-59');
-            }
-
-            // Create Carbon instance with today's date and the given time
-            return Carbon::today()->setHour($hours)->setMinute($minutes);
-        };
-
         try {
             // Get the day of week (1 = Sunday, 7 = Saturday)
             $dayOfWeek = $scheduleDate->dayOfWeek + 1;
@@ -68,14 +38,32 @@ class WorkingHoursValidator implements WorkingHoursValidatorInterface
                 throw new \InvalidArgumentException(__('schedules.messages.outside_working_hours'));
             }
 
-            // Parse all times
-            $startTime = $parseTime($startTime);
-            $endTime = $parseTime($endTime);
-            $workingHourStart = $parseTime($workingHourStart);
-            $workingHourEnd = $parseTime($workingHourEnd);
+            // Get user timezone
+            $userTimezone = $unitSettings->timezone ?? 'America/Sao_Paulo';
+
+            // Parse the schedule times (these are already in user timezone)
+            $startTimeCarbon = Carbon::parse($startTime);
+            $endTimeCarbon = Carbon::parse($endTime);
+
+            // Parse working hours (these are stored in UTC, need to convert to user timezone)
+            $referenceDate = $scheduleDate->format('Y-m-d');
+
+            // Convert working hours from UTC to user timezone using the helper
+            $workingHourStartLocal = TimezoneHelper::convertTimeFromUtc($workingHourStart, $userTimezone, $referenceDate);
+            $workingHourEndLocal = TimezoneHelper::convertTimeFromUtc($workingHourEnd, $userTimezone, $referenceDate);
+
+            // Create Carbon instances for comparison using the same date
+            $startTimeForComparison = Carbon::parse($referenceDate . ' ' . $startTimeCarbon->format('H:i'), $userTimezone);
+            $endTimeForComparison = Carbon::parse($referenceDate . ' ' . $endTimeCarbon->format('H:i'), $userTimezone);
+
+            $workingHourStartForComparison = Carbon::parse($referenceDate . ' ' . $workingHourStartLocal, $userTimezone);
+            $workingHourEndForComparison = Carbon::parse($referenceDate . ' ' . $workingHourEndLocal, $userTimezone);
 
             // Compare times using Carbon
-            return $startTime->lt($workingHourStart) || $endTime->gt($workingHourEnd);
+            // The schedule is outside working hours if:
+            // - Start time is before working hour start, OR
+            // - End time is after working hour end
+            return $startTimeForComparison->lt($workingHourStartForComparison) || $endTimeForComparison->gt($workingHourEndForComparison);
         } catch (\InvalidArgumentException $e) {
             throw new \InvalidArgumentException($e->getMessage());
         }
