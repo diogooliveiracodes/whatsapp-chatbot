@@ -54,6 +54,7 @@
 
                         <!-- Campos de Horário (visíveis apenas para time_slot) -->
                         <div id="time-fields" style="display: none;">
+                            <input type="hidden" id="appointment_duration_minutes" value="{{ auth()->user()->unit->unitSettings->appointment_duration_minutes ?? 60 }}">
                             <x-time-range-slider
                                 :startTime="old('start_time', $scheduleBlock->start_time ? \Carbon\Carbon::parse(($scheduleBlock->block_date instanceof \Carbon\Carbon ? $scheduleBlock->block_date->format('Y-m-d') : (string) $scheduleBlock->block_date) . ' ' . $scheduleBlock->start_time, 'UTC')->setTimezone(auth()->user()->unit->unitSettings->timezone ?? 'UTC')->format('H:i') : '')"
                                 :endTime="old('end_time', $scheduleBlock->end_time ? \Carbon\Carbon::parse(($scheduleBlock->block_date instanceof \Carbon\Carbon ? $scheduleBlock->block_date->format('Y-m-d') : (string) $scheduleBlock->block_date) . ' ' . $scheduleBlock->end_time, 'UTC')->setTimezone(auth()->user()->unit->unitSettings->timezone ?? 'UTC')->format('H:i') : '')"

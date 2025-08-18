@@ -53,6 +53,7 @@
 
                         <!-- Campos de Horário (visíveis apenas para time_slot) -->
                         <div id="time-fields" style="display: none;">
+                            <input type="hidden" id="appointment_duration_minutes" value="{{ auth()->user()->unit->unitSettings->appointment_duration_minutes ?? 60 }}">
                             <x-time-range-slider
                                 :startTime="old('start_time', $preSelectedStartTime)"
                                 :endTime="old('end_time')"
