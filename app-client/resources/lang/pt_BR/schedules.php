@@ -61,8 +61,8 @@ return [
     'update' => 'Atualizar Agendamento',
     'no_schedules_today' => 'Nenhum agendamento para hoje',
     'no_schedules_selected_day' => 'Nenhum agendamento para o dia selecionado',
-    'available_slots' => 'Horários Disponíveis',
-    'booked_slots' => 'Horários Ocupados',
-    'blocked_slots' => 'Horários Bloqueados',
+    'available_slots' => 'Disponível',
+    'booked_slots' => 'Ocupado',
+    'blocked_slots' => 'Bloqueado',
     'time_passed' => 'Horário já passou',
 ];
