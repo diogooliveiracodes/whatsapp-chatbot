@@ -116,6 +116,12 @@
                                                             $dayKey,
                                                             $unitSettings,
                                                         );
+
+                                                        // Validação de horário passado (mesma lógica da view daily.blade.php)
+                                                        $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                        $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
+                                                        $slotEndDateTime = \Carbon\Carbon::parse($currentDate . ' ' . $currentEndTime, $userTimezone);
+                                                        $isPastSlot = $currentTimeInUserTimezone->gt($slotEndDateTime);
                                                     @endphp
                                                     <td
                                                         class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 border-r border-gray-600 relative group
@@ -126,7 +132,7 @@
                                                             <x-schedules.schedule-card :schedule="$schedule" />
                                                         @elseif ($isWithinOperatingHours && $block)
                                                             <x-schedules.block-card :block="$block" />
-                                                        @elseif ($isWithinOperatingHours)
+                                                        @elseif ($isWithinOperatingHours && !$isPastSlot)
                                                             <a href="{{ route('schedules.create', [
                                                                 'schedule_date' => $currentDate,
                                                                 'start_time' => $currentTime,
@@ -144,6 +150,12 @@
                                                                     </svg>
                                                                 </div>
                                                             </a>
+                                                        @elseif ($isWithinOperatingHours && $isPastSlot)
+                                                            <div class="flex items-center justify-center h-full">
+                                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-200 dark:border-purple-700">
+                                                                    {{ __('schedules.time_passed') }}
+                                                                </span>
+                                                            </div>
                                                         @endif
                                                     </td>
                                                 @endforeach
