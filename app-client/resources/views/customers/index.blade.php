@@ -115,4 +115,6 @@
             </div>
         </div>
     </div>
+
+    <x-scroll-to-top />
 </x-app-layout>

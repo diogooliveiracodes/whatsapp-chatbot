@@ -164,4 +164,6 @@
             </div>
         </div>
     </x-global.content-card>
+
+    <x-scroll-to-top />
 </x-app-layout>
