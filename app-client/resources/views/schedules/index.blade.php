@@ -3,7 +3,7 @@
         {{ __('pages.semanal_schedules') }}
     </x-global.header>
 
-    <div class="py-12">
+    <div class="py-12 dark:bg-gray-800">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
@@ -120,8 +120,8 @@
                                                         // Validação de horário passado (mesma lógica da view daily.blade.php)
                                                         $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
                                                         $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
-                                                        $slotStartDateTime = \Carbon\Carbon::parse($currentDate . ' ' . $currentTime, $userTimezone);
-                                                        $isPastSlot = $currentTimeInUserTimezone->gt($slotStartDateTime);
+                                                        $slotEndDateTime = \Carbon\Carbon::parse($currentDate . ' ' . $currentEndTime, $userTimezone);
+                                                        $isPastSlot = $currentTimeInUserTimezone->gt($slotEndDateTime);
                                                     @endphp
                                                     <td
                                                         class="px-3 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 border-r border-gray-600 relative group
