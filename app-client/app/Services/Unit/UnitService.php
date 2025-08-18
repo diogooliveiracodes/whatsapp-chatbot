@@ -52,6 +52,8 @@ class UnitService
             'unit_id' => $unit->id,
             'name' => $unit->name,
             'active' => true,
+            'timezone' => 'America/Sao_Paulo',
+            'default_language' => 'pt_BR',
         ];
         $this->unitSettingsService->createForCompany($unitSettings);
 
