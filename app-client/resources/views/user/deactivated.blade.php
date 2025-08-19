@@ -86,8 +86,6 @@
                                 </div>
 
                                 <div class="flex justify-end space-x-2">
-                                    <x-actions.view-mobile :route="route('users.show', $user)" />
-                                    <x-actions.edit-mobile :route="route('users.edit', $user)" />
                                     <x-actions.activate-mobile :route="route('users.activate', $user)" :confirmMessage="__('user.confirm_activate')">
                                         {{ __('user.activate') }}
                                     </x-actions.activate-mobile>
