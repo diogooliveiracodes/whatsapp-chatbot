@@ -3,12 +3,21 @@
 namespace App\Services\User;
 
 use App\Models\User;
+use App\Enum\UserRoleEnum;
+use App\Repositories\UserRepository;
+use App\Exceptions\User\UnauthorizedUserAccessException;
+use App\Exceptions\User\SelfUpdateException;
+use App\Exceptions\User\SelfDeactivationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Collection;
 
 class UserService
 {
+    public function __construct(
+        protected UserRepository $userRepository
+    ) {}
+
     /**
      * Get all users
      *
@@ -16,7 +25,40 @@ class UserService
      */
     public function getUsers(): Collection
     {
-        return User::with(['company', 'user_role', 'unit'])->get();
+        return $this->userRepository->getAll();
+    }
+
+    /**
+     * Get all users for the current company
+     *
+     * @return Collection
+     */
+    public function getUsersByCompany(): Collection
+    {
+        return $this->userRepository->getByCompany();
+    }
+
+    /**
+     * Get all deactivated users for the current company
+     *
+     * @return Collection
+     */
+    public function getDeactivatedUsersByCompany(): Collection
+    {
+        return $this->userRepository->getDeactivatedByCompany();
+    }
+
+    /**
+     * Get available user roles for owners (owner and employee)
+     *
+     * @return array
+     */
+    public function getAvailableUserRoles(): array
+    {
+        return [
+            UserRoleEnum::OWNER => 'Proprietário',
+            UserRoleEnum::EMPLOYEE => 'Funcionário',
+        ];
     }
 
     /**
@@ -28,9 +70,10 @@ class UserService
     public function create(array $data): User
     {
         $data['password'] = Hash::make($data['password']);
+        $data['company_id'] = Auth::user()->company_id;
         $data['active'] = $data['active'] ?? true;
 
-        return User::create($data);
+        return $this->userRepository->create($data);
     }
 
     /**
@@ -39,17 +82,28 @@ class UserService
      * @param User $user
      * @param array $data
      * @return User
+     * @throws UnauthorizedUserAccessException
+     * @throws SelfUpdateException
      */
     public function update(User $user, array $data): User
     {
+        // Ensure user belongs to the same company
+        if ($user->company_id !== Auth::user()->company_id) {
+            throw new UnauthorizedUserAccessException();
+        }
+
+        // Prevent user from updating themselves
+        if ($user->id === Auth::id()) {
+            throw new SelfUpdateException();
+        }
+
         if (isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         }
 
         $data['active'] = $data['active'] ?? false;
 
-        $user->update($data);
-        return $user;
+        return $this->userRepository->update($user, $data);
     }
 
     /**
@@ -57,10 +111,22 @@ class UserService
      *
      * @param User $user
      * @return void
+     * @throws UnauthorizedUserAccessException
+     * @throws SelfDeactivationException
      */
     public function deactivate(User $user): void
     {
-        $user->update(['active' => false]);
+        // Ensure user belongs to the same company
+        if ($user->company_id !== Auth::user()->company_id) {
+            throw new UnauthorizedUserAccessException();
+        }
+
+        // Prevent user from deactivating themselves
+        if ($user->id === Auth::id()) {
+            throw new SelfDeactivationException();
+        }
+
+        $this->userRepository->deactivate($user);
     }
 
     /**
@@ -68,10 +134,16 @@ class UserService
      *
      * @param User $user
      * @return void
+     * @throws UnauthorizedUserAccessException
      */
     public function activate(User $user): void
     {
-        $user->update(['active' => true]);
+        // Ensure user belongs to the same company
+        if ($user->company_id !== Auth::user()->company_id) {
+            throw new UnauthorizedUserAccessException();
+        }
+
+        $this->userRepository->activate($user);
     }
 
     /**
@@ -82,6 +154,6 @@ class UserService
      */
     public function findById(int $id): ?User
     {
-        return User::with(['company', 'user_role', 'unit'])->find($id);
+        return $this->userRepository->findById($id);
     }
 }
