@@ -32,7 +32,7 @@
                     <!-- Week navigation -->
                     <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:mx-auto">
                         <div class="flex items-center justify-between sm:justify-start gap-2">
-                            <a href="{{ route('schedules.weekly', ['date' => $startOfWeek->copy()->subDays(7)->format('Y-m-d')]) }}"
+                            <a href="{{ route('schedules.weekly', array_merge(['date' => $startOfWeek->copy()->subDays(7)->format('Y-m-d')], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])) }}"
                                 class="inline-flex items-center px-3 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -50,7 +50,7 @@
                                 </div>
                             </div>
 
-                            <a href="{{ route('schedules.weekly', ['date' => $startOfWeek->copy()->addDays(7)->format('Y-m-d')]) }}"
+                            <a href="{{ route('schedules.weekly', array_merge(['date' => $startOfWeek->copy()->addDays(7)->format('Y-m-d')], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])) }}"
                                 class="inline-flex items-center px-3 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                                 <span class="hidden sm:inline mr-1">{{ __('schedules.next_week') }}</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,7 +60,7 @@
                             </a>
                         </div>
 
-                        <a href="{{ route('schedules.weekly', ['date' => now()->format('Y-m-d')]) }}"
+                        <a href="{{ route('schedules.weekly', array_merge(['date' => now()->format('Y-m-d')], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])) }}"
                             class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 dark:bg-indigo-500 border border-transparent rounded-md font-semibold text-xs text-white dark:text-white uppercase tracking-widest hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:bg-indigo-700 dark:focus:bg-indigo-600 active:bg-indigo-800 dark:active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                             {{ __('schedules.current_week') }}
                         </a>

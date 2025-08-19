@@ -28,19 +28,19 @@
 
                 <div class="flex gap-4 mb-4 justify-between">
                     <div class="flex gap-2">
-                        <x-global.create-button :route="route('schedules.create')" :text="__('schedules.create')" />
+                        <x-global.create-button :route="route('schedules.create', request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])" :text="__('schedules.create')" />
                         <x-global.create-button :route="route('schedule-blocks.create')" text="{{ __('schedule-blocks.create') }}" />
                     </div>
                     <div>
-                        <a href="{{ route('schedules.weekly', ['date' => $startOfWeek->copy()->subDays(7)->format('Y-m-d')]) }}"
+                        <a href="{{ route('schedules.weekly', array_merge(['date' => $startOfWeek->copy()->subDays(7)->format('Y-m-d')], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])) }}"
                             class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                             {{ __('schedules.previous_week') }}
                         </a>
-                        <a href="{{ route('schedules.weekly', ['date' => now()->format('Y-m-d')]) }}"
+                        <a href="{{ route('schedules.weekly', array_merge(['date' => now()->format('Y-m-d')], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])) }}"
                             class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                             {{ __('schedules.current_week') }}
                         </a>
-                        <a href="{{ route('schedules.weekly', ['date' => $startOfWeek->copy()->addDays(7)->format('Y-m-d')]) }}"
+                        <a href="{{ route('schedules.weekly', array_merge(['date' => $startOfWeek->copy()->addDays(7)->format('Y-m-d')], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])) }}"
                             class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                             {{ __('schedules.next_week') }}
                         </a>
