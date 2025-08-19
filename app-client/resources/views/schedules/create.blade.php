@@ -48,6 +48,11 @@
                                 </div>
                             </div>
                             <x-input-error :messages="$errors->get('customer_id')" class="mt-2" />
+                            <div id="customer_not_found_error" class="hidden mt-2">
+                                <ul class="text-sm text-red-600 dark:text-red-400 space-y-1">
+                                    <li>{{ __('schedules.messages.customer_not_found') }}</li>
+                                </ul>
+                            </div>
                         </div>
 
                         <div>
@@ -189,6 +194,8 @@
                         customerSearch.value = customer.name;
                         customerId.value = customer.id;
                         customerResults.classList.add('hidden');
+                        // Esconder mensagem de erro quando cliente é selecionado
+                        document.getElementById('customer_not_found_error').classList.add('hidden');
                         validateCustomerName(); // Validar após seleção
                         checkCustomerSelection(); // Verificar se o botão deve ser habilitado
                     });
@@ -228,6 +235,7 @@
             // Função para validar se o nome do cliente existe
             function validateCustomerName() {
                 const searchValue = customerSearch.value.trim();
+                const customerNotFoundError = document.getElementById('customer_not_found_error');
                 const exists = customers.some(customer =>
                     customer.name.toLowerCase() === searchValue.toLowerCase()
                 );
@@ -236,9 +244,11 @@
                     customerSearch.classList.add('border-red-500');
                     customerSearch.classList.remove('border-gray-600');
                     customerId.value = '';
+                    customerNotFoundError.classList.remove('hidden');
                 } else {
                     customerSearch.classList.remove('border-red-500');
                     customerSearch.classList.add('border-gray-600');
+                    customerNotFoundError.classList.add('hidden');
                 }
 
                 // Verificar se o botão deve ser habilitado
