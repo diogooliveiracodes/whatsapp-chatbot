@@ -52,8 +52,6 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <x-actions.view :route="route('users.show', $user)" />
-                                            <x-actions.edit :route="route('users.edit', $user)" />
                                             <x-actions.activate :route="route('users.activate', $user)" :confirmMessage="__('user.confirm_activate')">
                                                 {{ __('user.activate') }}
                                             </x-actions.activate>
