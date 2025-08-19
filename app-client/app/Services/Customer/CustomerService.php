@@ -48,9 +48,8 @@ class CustomerService
         return $this->repository->delete($customer);
     }
 
-    public function getCustomersByUnit()
+    public function getCustomersByCompany()
     {
-        $unit = Auth::user()->unit;
-        return $this->repository->getCustomersByUnit($unit);
+        return $this->repository->getCustomersByCompany();
     }
 }

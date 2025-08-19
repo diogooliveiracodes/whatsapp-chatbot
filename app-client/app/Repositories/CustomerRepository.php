@@ -52,13 +52,9 @@ class CustomerRepository
             ->get();
     }
 
-    public function getCustomersByUnit($unit)
+    public function getCustomersByCompany()
     {
-        return $this
-            ->model
-            ->where('unit_id', $unit->id)
-            ->select('id', 'name', 'phone', 'active')
-            ->get();
+        return $this->model->where('company_id', Auth::user()->company_id)->get();
     }
 
     /**

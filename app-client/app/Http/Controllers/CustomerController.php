@@ -51,7 +51,7 @@ class CustomerController extends Controller
             $search = request('search');
             $customers = $search
                 ? $this->customerService->searchCustomers($search)
-                : $this->customerService->getCustomersByUnit();
+                : $this->customerService->getCustomersByCompany();
 
             return view('customers.index', compact('customers'));
         } catch (\Exception $e) {
