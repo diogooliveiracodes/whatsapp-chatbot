@@ -69,4 +69,6 @@ return [
     'create_new' => 'Create New Schedule',
     'created_schedule_details' => 'Created Schedule Details',
     'updated_schedule_details' => 'Updated Schedule Details',
+    'select_unit' => 'Select Unit',
+    'unit_selection' => 'Unit Selection',
 ];

@@ -75,4 +75,6 @@ return [
     'create_new' => 'Criar Novo Agendamento',
     'created_schedule_details' => 'Detalhes do Agendamento Criado',
     'updated_schedule_details' => 'Detalhes do Agendamento Atualizado',
+    'select_unit' => 'Selecionar Unidade',
+    'unit_selection' => 'Seleção de Unidade',
 ];

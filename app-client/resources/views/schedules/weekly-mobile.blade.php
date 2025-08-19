@@ -8,6 +8,24 @@
             <div class="p-4 sm:p-6 text-gray-900 dark:text-gray-100">
                 <x-global.session-alerts />
 
+                <!-- Unit selector for owners -->
+                @if($showUnitSelector)
+                    <div class="mb-6">
+                        <label for="unit-selector" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            {{ __('schedules.unit_selection') }}
+                        </label>
+                        <select id="unit-selector"
+                                class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100"
+                                onchange="changeUnit(this.value)">
+                            @foreach($units as $unitOption)
+                                <option value="{{ $unitOption->id }}" {{ $unit->id == $unitOption->id ? 'selected' : '' }}>
+                                    {{ $unitOption->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+
                 <!-- Header with navigation -->
                 <div class="flex flex-col gap-4 mb-6">
 
@@ -410,6 +428,13 @@
                 subtree: true
             });
         });
+
+        // Função para mudar a unidade selecionada
+        function changeUnit(unitId) {
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('unit_id', unitId);
+            window.location.href = currentUrl.toString();
+        }
     </script>
 
     <x-scroll-to-top />
