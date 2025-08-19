@@ -8,5 +8,8 @@ return [
     'subscription' => [
         'no_active_subscription' => 'Your company does not have an active subscription. Please contact support.',
         'subscription_expired' => 'Your subscription has expired. Please contact support to renew.',
+    ],
+    'user' => [
+        'user_inactive' => 'Your user account is inactive, contact support',
     ]
 ];

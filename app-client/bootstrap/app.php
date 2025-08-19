@@ -5,6 +5,7 @@ use App\Http\Middleware\CompanyActiveMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\SubscriptionActiveMiddleware;
+use App\Http\Middleware\UserActiveMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -23,7 +24,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'owner' => OwnerMiddleware::class,
             'admin' => AdminMiddleware::class,
             'company.active' => CompanyActiveMiddleware::class,
-            'subscription.active' => SubscriptionActiveMiddleware::class
+            'subscription.active' => SubscriptionActiveMiddleware::class,
+            'user.active' => UserActiveMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
