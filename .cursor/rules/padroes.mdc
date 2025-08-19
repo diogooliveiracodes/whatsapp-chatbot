@@ -1,0 +1,53 @@
+# Padrões de Desenvolvimento
+
+## Observações Importantes
+
+### Traduções
+- **SEMPRE** utilize o sistema de traduções em `\app-client\resources\lang`
+- Mantenha as traduções organizadas por contexto (auth, admin, actions, etc.)
+- Use chaves descritivas e em português
+
+### Testes e Banco de Dados
+- **NÃO** crie testes
+- **NÃO** faça alterações no banco de dados
+- Mantenha a integridade dos dados existentes
+
+### Interface e Experiência do Usuário
+- Siga as **melhores práticas de UI/UX**
+- Mantenha consistência visual com o design system existente
+- Priorize a usabilidade e acessibilidade
+- Use componentes reutilizáveis quando possível
+
+### Arquitetura e Padrões
+
+#### Repository Pattern
+- Quando necessário, utilize a camada de Repository em `\app-client\app\Repositories`
+- Mantenha a separação de responsabilidades
+- Use interfaces quando apropriado
+
+#### Exceptions Personalizadas
+- Quando necessário, crie Exceptions personalizadas em `\app-client\app\Exceptions`
+- Organize as exceptions por contexto (Customer, Schedule, User, etc.)
+- Use nomes descritivos e mensagens claras
+
+#### Enums
+- **NÃO** utilize números mágicos
+- Os Enums ficam em `\app-client\app\Enum`
+- Use nomes descritivos e valores semânticos
+
+### Boas Práticas de Programação
+- Siga as **melhores práticas de programação**
+- Mantenha o código limpo e legível
+- Use nomes descritivos para variáveis, métodos e classes
+- Documente código complexo quando necessário
+- Siga os padrões PSR quando aplicável
+
+### Abordagem de Solução
+- Execute a solução com um **equilíbrio entre lógica, criatividade e viabilidade**
+- Considere a manutenibilidade do código
+- Priorize soluções simples e eficientes
+- Mantenha a consistência com o código existente
+description: Padrões de código para o projeto
+globs: 
+alwaysApply: true 
+---
