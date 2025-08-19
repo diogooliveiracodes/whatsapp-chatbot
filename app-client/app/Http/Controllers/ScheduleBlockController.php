@@ -6,6 +6,7 @@ use App\Models\ScheduleBlock;
 use App\Services\ErrorLog\ErrorLogService;
 use App\Services\Http\HttpResponseService;
 use App\Services\Schedule\ScheduleBlockService;
+use App\Services\Unit\UnitService;
 use App\Http\Requests\StoreScheduleBlockRequest;
 use App\Http\Requests\UpdateScheduleBlockRequest;
 use App\Http\Resources\ScheduleBlockResource;
@@ -20,7 +21,8 @@ class ScheduleBlockController extends Controller
     public function __construct(
         protected ErrorLogService $errorLogService,
         protected ScheduleBlockService $scheduleBlockService,
-        protected HttpResponseService $httpResponse
+        protected HttpResponseService $httpResponse,
+        protected UnitService $unitService
     ) {}
 
     /**
@@ -29,11 +31,32 @@ class ScheduleBlockController extends Controller
     public function index(): View
     {
         try {
-            $unit = Auth::user()->unit;
-            $blocks = $this->scheduleBlockService->getActiveBlocksByUnit($unit->id);
+            $user = Auth::user();
+            $units = collect();
+            $selectedUnit = null;
+            $showUnitSelector = false;
+
+            if ($user->isOwner()) {
+                $units = $this->unitService->getUnits();
+
+                if ($units->count() > 1) {
+                    $showUnitSelector = true;
+                    $selectedUnitId = request()->get('unit_id', $user->unit_id);
+                    $selectedUnit = $units->firstWhere('id', (int) $selectedUnitId) ?? $user->unit;
+                } else {
+                    $selectedUnit = $units->first();
+                }
+            } else {
+                $selectedUnit = $user->unit;
+            }
+
+            $blocks = $this->scheduleBlockService->getActiveBlocksByUnit($selectedUnit->id);
 
             return view('schedule-blocks.index', [
                 'blocks' => ScheduleBlockResource::collection($blocks),
+                'units' => $units,
+                'unit' => $selectedUnit,
+                'showUnitSelector' => $showUnitSelector,
             ]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
@@ -48,10 +71,30 @@ class ScheduleBlockController extends Controller
     {
         $blockTypes = ScheduleBlockTypeEnum::cases();
 
+        // Unidade selecionada para criação
+        $user = Auth::user();
+        $units = collect();
+        $selectedUnit = $user->unit;
+        $showUnitSelector = false;
+
+        if ($user->isOwner()) {
+            $units = $this->unitService->getUnits();
+            if ($units->count() > 1) {
+                $showUnitSelector = true;
+                $selectedUnitId = $request->get('unit_id', $user->unit_id);
+                $selectedUnit = $units->firstWhere('id', (int) $selectedUnitId) ?? $user->unit;
+            } else {
+                $selectedUnit = $units->first();
+            }
+        }
+
         return view('schedule-blocks.create', [
             'blockTypes' => $blockTypes,
             'preSelectedDate' => $request->get('block_date'),
             'preSelectedStartTime' => $request->get('start_time'),
+            'units' => $units,
+            'selectedUnit' => $selectedUnit,
+            'showUnitSelector' => $showUnitSelector,
         ]);
     }
 
@@ -83,9 +126,28 @@ class ScheduleBlockController extends Controller
     {
         $blockTypes = ScheduleBlockTypeEnum::cases();
 
+        $user = Auth::user();
+        $units = collect();
+        $selectedUnit = $scheduleBlock->unit ?? $user->unit;
+        $showUnitSelector = false;
+
+        if ($user->isOwner()) {
+            $units = $this->unitService->getUnits();
+            if ($units->count() > 1) {
+                $showUnitSelector = true;
+                $selectedUnitId = request()->get('unit_id', $selectedUnit->id);
+                $selectedUnit = $units->firstWhere('id', (int) $selectedUnitId) ?? $selectedUnit;
+            } else {
+                $selectedUnit = $units->first();
+            }
+        }
+
         return view('schedule-blocks.edit', [
             'scheduleBlock' => $scheduleBlock,
             'blockTypes' => $blockTypes,
+            'units' => $units,
+            'selectedUnit' => $selectedUnit,
+            'showUnitSelector' => $showUnitSelector,
         ]);
     }
 

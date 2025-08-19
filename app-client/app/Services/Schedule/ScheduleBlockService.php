@@ -5,6 +5,7 @@ namespace App\Services\Schedule;
 use App\Enum\ScheduleBlockTypeEnum;
 use App\Models\ScheduleBlock;
 use App\Repositories\ScheduleBlockRepository;
+use App\Services\Unit\UnitService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,8 @@ use Illuminate\Support\Facades\Auth;
 class ScheduleBlockService
 {
     public function __construct(
-        private ScheduleBlockRepository $scheduleBlockRepository
+        private ScheduleBlockRepository $scheduleBlockRepository,
+        private UnitService $unitService
     ) {}
 
     /**
@@ -47,8 +49,10 @@ class ScheduleBlockService
      */
     private function convertToUtc(array $data): array
     {
-        // Get the timezone from the current user's unit settings
-        $unit = Auth::user()->unit;
+        // Resolve unit: prefer provided unit_id (for owners), fallback to current user's unit
+        $unit = isset($data['unit_id'])
+            ? ($this->unitService->getUnits()->firstWhere('id', (int) $data['unit_id']) ?? Auth::user()->unit)
+            : Auth::user()->unit;
         $unitSettings = $unit->unitSettings;
         $userTimezone = $unitSettings->timezone ?? 'America/Sao_Paulo';
 
@@ -80,9 +84,14 @@ class ScheduleBlockService
         // Convert to UTC before saving
         $utcData = $this->convertToUtc($data);
 
+        // Resolve unit for persistence
+        $unit = isset($data['unit_id'])
+            ? ($this->unitService->getUnits()->firstWhere('id', (int) $data['unit_id']) ?? Auth::user()->unit)
+            : Auth::user()->unit;
+
         $blockData = array_merge($utcData, [
-            'company_id' => Auth::user()->unit->company->id,
-            'unit_id' => Auth::user()->unit->id,
+            'company_id' => $unit->company->id,
+            'unit_id' => $unit->id,
             'user_id' => Auth::id(),
             'active' => true,
         ]);
@@ -212,8 +221,13 @@ class ScheduleBlockService
         // Convert to UTC before validation
         $utcData = $this->convertToUtc($validated);
 
+        // Resolve unit used for validation/conflict
+        $unit = isset($validated['unit_id'])
+            ? ($this->unitService->getUnits()->firstWhere('id', (int) $validated['unit_id']) ?? Auth::user()->unit)
+            : Auth::user()->unit;
+
         if ($this->hasConflictingBlocks(
-            Auth::user()->unit->id,
+            $unit->id,
             $utcData['block_date'],
             $utcData['start_time'] ?? '00:00',
             $utcData['end_time'] ?? '23:59'
@@ -232,8 +246,13 @@ class ScheduleBlockService
         // Convert to UTC before validation
         $utcData = $this->convertToUtc($validated);
 
+        // Resolve unit used for validation/conflict (allow changing unit if provided)
+        $targetUnit = isset($validated['unit_id'])
+            ? ($this->unitService->getUnits()->firstWhere('id', (int) $validated['unit_id']) ?? $scheduleBlock->unit ?? Auth::user()->unit)
+            : ($scheduleBlock->unit ?? Auth::user()->unit);
+
         if ($this->hasConflictingBlocks(
-            Auth::user()->unit->id,
+            $targetUnit->id,
             $utcData['block_date'],
             $utcData['start_time'] ?? '00:00',
             $utcData['end_time'] ?? '23:59',

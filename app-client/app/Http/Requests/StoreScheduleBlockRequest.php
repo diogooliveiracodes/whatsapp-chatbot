@@ -18,6 +18,7 @@ class StoreScheduleBlockRequest extends FormRequest
             'block_date' => 'required|date|after_or_equal:today',
             'block_type' => 'required|in:' . implode(',', ScheduleBlockTypeEnum::values()),
             'reason' => 'nullable|string|max:500',
+            'unit_id' => 'nullable|integer|exists:units,id',
         ];
 
         // Add conditional validation for time_slot blocks
