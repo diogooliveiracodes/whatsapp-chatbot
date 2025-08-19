@@ -38,10 +38,12 @@ class UnitRepository
     {
         $data['company_id'] = Auth::user()->company_id;
         $unit = $this->model->create($data);
-        $unitSettings = $this->unitSettingsService->create([
+        $this->unitSettingsService->create([
             'unit_id' => $unit->id,
             'company_id' => Auth::user()->company_id,
             'name' => $unit->name,
+            'default_language' => 'pt_BR',
+            'timezone' => 'America/Sao_Paulo',
         ]);
         return $unit;
     }

@@ -26,13 +26,7 @@ class UnitService
     public function create(array $data)
     {
         $unit = $this->unitRepository->create($data);
-        $unitSettings = [
-            'company_id' => Auth::user()->company_id,
-            'unit_id' => $unit->id,
-            'name' => $unit->name,
-            'active' => true,
-        ];
-        $this->unitSettingsService->create($unitSettings);
+
         return $unit->load('UnitSettings');
     }
 
