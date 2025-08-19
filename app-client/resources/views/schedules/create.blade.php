@@ -9,8 +9,29 @@
                 <div class="p-6 bg-gray-800 border-b border-gray-700">
                     <x-global.session-alerts />
 
+                    <!-- Unit selector for owners -->
+                    @if($showUnitSelector)
+                        <div class="mb-6">
+                            <label for="unit-selector" class="block text-sm font-medium text-gray-300 mb-2">
+                                {{ __('schedules.unit_selection') }}
+                            </label>
+                            <select id="unit-selector"
+                                    class="block w-full max-w-xs px-3 py-2 border border-gray-600 bg-gray-700 text-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                    onchange="changeUnit(this.value)">
+                                @foreach($units as $unitOption)
+                                    <option value="{{ $unitOption->id }}" {{ $selectedUnit->id == $unitOption->id ? 'selected' : '' }}>
+                                        {{ $unitOption->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('schedules.store') }}" class="space-y-6">
                         @csrf
+
+                        <!-- Hidden field for unit_id -->
+                        <input type="hidden" name="unit_id" value="{{ $selectedUnit->id }}" />
 
                         <div>
                             <label for="customer_search" class="block font-medium text-sm text-gray-300">
@@ -80,7 +101,7 @@
 
                         <div class="mt-6 flex justify-between">
                             <!-- Back Button -->
-                            <x-cancel-link href="{{ route('schedules.weekly') }}">
+                            <x-cancel-link href="{{ route('schedules.weekly', request()->has('unit_id') ? ['unit_id' => request('unit_id')] : []) }}">
                                 {{ __('schedules.back') }}
                             </x-cancel-link>
 
@@ -276,5 +297,16 @@
                 }
             });
         });
+
+        // Função para mudar a unidade selecionada
+        function changeUnit(unitId) {
+            // Atualizar o campo hidden
+            document.querySelector('input[name="unit_id"]').value = unitId;
+
+            // Redirecionar para a mesma página com o novo unit_id
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('unit_id', unitId);
+            window.location.href = currentUrl.toString();
+        }
     </script>
 </x-app-layout>

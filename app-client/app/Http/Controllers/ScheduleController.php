@@ -23,8 +23,10 @@ use Carbon\Carbon;
 use App\Services\Schedule\ScheduleService;
 use App\Services\Schedule\ScheduleBlockService;
 use App\Services\UnitServiceType\UnitServiceTypeService;
+use App\Services\Unit\UnitService;
 use Illuminate\Support\Facades\Auth;
 use App\Enum\DaysOfWeekEnum;
+use App\Enum\UserRoleEnum;
 
 /**
  * Controller responsible for managing schedules in the application.
@@ -47,7 +49,8 @@ class ScheduleController extends Controller
         protected ScheduleBlockService $scheduleBlockService,
         protected CustomerService $customerService,
         protected HttpResponseService $httpResponse,
-        protected UnitServiceTypeService $unitServiceTypeService
+        protected UnitServiceTypeService $unitServiceTypeService,
+        protected UnitService $unitService
     ) {}
 
     /**
@@ -61,15 +64,39 @@ class ScheduleController extends Controller
     public function weekly(Request $request): View
     {
         try {
-            $unit = Auth::user()->unit;
-            $unit->load('unitSettings');
+            $user = Auth::user();
+            $units = collect();
+            $selectedUnit = null;
+            $showUnitSelector = false;
 
-            $schedules = $this->scheduleService->getSchedulesByUnitAndDate($unit->id, $request->date, $unit->unitSettings);
-            $startAndEndDate = $this->scheduleService->getStartAndEndDate($request->date, $unit->unitSettings);
-            $blocks = $this->scheduleBlockService->getBlocksByUnitAndDate($unit->id, $startAndEndDate[0], $startAndEndDate[1]);
-            $customers = $this->customerService->getCustomersByUnit($unit);
-            $workingHours = $this->scheduleService->getWorkingHours($unit->unitSettings);
-            $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots($date ?? now(), $unit->unitSettings);
+            // Se o usuário é proprietário, buscar todas as unidades ativas da empresa
+            if ($user->isOwner()) {
+                $units = $this->unitService->getUnits();
+
+                // Se há mais de uma unidade, mostrar o seletor
+                if ($units->count() > 1) {
+                    $showUnitSelector = true;
+
+                    // Obter a unidade selecionada (da query string ou padrão da unidade do usuário)
+                    $selectedUnitId = $request->get('unit_id', $user->unit_id);
+                    $selectedUnit = $units->firstWhere('id', $selectedUnitId) ?? $user->unit;
+                } else {
+                    // Se há apenas uma unidade, selecioná-la automaticamente
+                    $selectedUnit = $units->first();
+                }
+            } else {
+                // Para outros tipos de usuário, usar a unidade padrão
+                $selectedUnit = $user->unit;
+            }
+
+            $selectedUnit->load('unitSettings');
+
+            $schedules = $this->scheduleService->getSchedulesByUnitAndDate($selectedUnit->id, $request->date, $selectedUnit->unitSettings);
+            $startAndEndDate = $this->scheduleService->getStartAndEndDate($request->date, $selectedUnit->unitSettings);
+            $blocks = $this->scheduleBlockService->getBlocksByUnitAndDate($selectedUnit->id, $startAndEndDate[0], $startAndEndDate[1]);
+            $customers = $this->customerService->getCustomersByCompany($selectedUnit);
+            $workingHours = $this->scheduleService->getWorkingHours($selectedUnit->unitSettings);
+            $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots($date ?? now(), $selectedUnit->unitSettings);
             $days = DaysOfWeekEnum::getDaysOfWeek();
             $startOfWeek = $startAndEndDate[0];
 
@@ -77,14 +104,16 @@ class ScheduleController extends Controller
                 'schedules' => ScheduleResource::collection($schedules),
                 'blocks' => ScheduleBlockResource::collection($blocks),
                 'customers' => $customers,
-                'unit' => $unit,
-                'unitSettings' => $unit->unitSettings,
+                'unit' => $selectedUnit,
+                'unitSettings' => $selectedUnit->unitSettings,
                 'workingHours' => $workingHours,
                 'availableTimeSlots' => $availableTimeSlots,
                 'scheduleService' => $this->scheduleService,
                 'scheduleBlockService' => $this->scheduleBlockService,
                 'startOfWeek' => $startOfWeek,
                 'days' => $days,
+                'units' => $units,
+                'showUnitSelector' => $showUnitSelector,
             ]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
@@ -104,15 +133,39 @@ class ScheduleController extends Controller
     public function daily(Request $request): View
     {
         try {
-            $unit = Auth::user()->unit;
-            $unit->load('unitSettings');
+            $user = Auth::user();
+            $units = collect();
+            $selectedUnit = null;
+            $showUnitSelector = false;
+
+            // Se o usuário é proprietário, buscar todas as unidades ativas da empresa
+            if ($user->isOwner()) {
+                $units = $this->unitService->getUnits();
+
+                // Se há mais de uma unidade, mostrar o seletor
+                if ($units->count() > 1) {
+                    $showUnitSelector = true;
+
+                    // Obter a unidade selecionada (da query string ou padrão da unidade do usuário)
+                    $selectedUnitId = $request->get('unit_id', $user->unit_id);
+                    $selectedUnit = $units->firstWhere('id', $selectedUnitId) ?? $user->unit;
+                } else {
+                    // Se há apenas uma unidade, selecioná-la automaticamente
+                    $selectedUnit = $units->first();
+                }
+            } else {
+                // Para outros tipos de usuário, usar a unidade padrão
+                $selectedUnit = $user->unit;
+            }
+
+            $selectedUnit->load('unitSettings');
             $date = $request->get('date', now()->format('Y-m-d'));
 
-            $schedules = $this->scheduleService->getSchedulesByUnitAndDay($unit->id, $date, $unit->unitSettings);
-            $blocks = $this->scheduleBlockService->getBlocksByUnitAndDate($unit->id, Carbon::parse($date), Carbon::parse($date));
-            $customers = $this->customerService->getCustomersByUnit($unit);
-            $workingHours = $this->scheduleService->getWorkingHours($unit->unitSettings);
-            $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots(Carbon::parse($date), $unit->unitSettings);
+            $schedules = $this->scheduleService->getSchedulesByUnitAndDay($selectedUnit->id, $date, $selectedUnit->unitSettings);
+            $blocks = $this->scheduleBlockService->getBlocksByUnitAndDate($selectedUnit->id, Carbon::parse($date), Carbon::parse($date));
+            $customers = $this->customerService->getCustomersByCompany($selectedUnit);
+            $workingHours = $this->scheduleService->getWorkingHours($selectedUnit->unitSettings);
+            $availableTimeSlots = $this->scheduleService->getAvailableTimeSlots(Carbon::parse($date), $selectedUnit->unitSettings);
 
             // Map day names correctly
             $dayMapping = [
@@ -134,8 +187,8 @@ class ScheduleController extends Controller
                 'schedules' => ScheduleResource::collection($schedules),
                 'blocks' => ScheduleBlockResource::collection($blocks),
                 'customers' => $customers,
-                'unit' => $unit,
-                'unitSettings' => $unit->unitSettings,
+                'unit' => $selectedUnit,
+                'unitSettings' => $selectedUnit->unitSettings,
                 'workingHours' => $workingHours,
                 'availableTimeSlots' => $availableTimeSlots,
                 'scheduleService' => $this->scheduleService,
@@ -143,6 +196,8 @@ class ScheduleController extends Controller
                 'date' => Carbon::parse($date),
                 'dayKey' => $dayKey,
                 'dayName' => $dayName,
+                'units' => $units,
+                'showUnitSelector' => $showUnitSelector,
             ]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
@@ -161,10 +216,38 @@ class ScheduleController extends Controller
     public function create(): View
     {
         try {
-            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypesByUnit(Auth::user()->unit)->where('active', true);
-            $customers = $this->customerService->getCustomersByUnit();
+            $user = Auth::user();
+            $units = collect();
+            $selectedUnit = $user->unit;
+            $showUnitSelector = false;
 
-            return view('schedules.create', ['customers' => $customers, 'unitServiceTypes' => $unitServiceTypes]);
+            // Se o usuário é proprietário, buscar todas as unidades ativas da empresa
+            if ($user->isOwner()) {
+                $units = $this->unitService->getUnits();
+
+                // Se há mais de uma unidade, mostrar o seletor
+                if ($units->count() > 1) {
+                    $showUnitSelector = true;
+
+                    // Obter a unidade selecionada (da query string ou padrão da unidade do usuário)
+                    $selectedUnitId = request()->get('unit_id', $user->unit_id);
+                    $selectedUnit = $units->firstWhere('id', $selectedUnitId) ?? $user->unit;
+                } else {
+                    // Se há apenas uma unidade, selecioná-la automaticamente
+                    $selectedUnit = $units->first();
+                }
+            }
+
+            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypesByUnit($selectedUnit)->where('active', true);
+            $customers = $this->customerService->getCustomersByCompany();
+
+            return view('schedules.create', [
+                'customers' => $customers,
+                'unitServiceTypes' => $unitServiceTypes,
+                'units' => $units,
+                'showUnitSelector' => $showUnitSelector,
+                'selectedUnit' => $selectedUnit,
+            ]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
@@ -186,38 +269,55 @@ class ScheduleController extends Controller
     public function store(StoreScheduleRequest $request): \Illuminate\Contracts\View\View|RedirectResponse
     {
         try {
-            $result = $this->scheduleService->handleScheduleCreation($request->validated());
+            $user = Auth::user();
+            $selectedUnit = $user->unit;
+
+            // Se o usuário é proprietário, determinar a unidade selecionada
+            if ($user->isOwner()) {
+                $units = $this->unitService->getUnits();
+
+                if ($units->count() > 1) {
+                    // Obter a unidade selecionada (do formulário, query string ou padrão da unidade do usuário)
+                    $selectedUnitId = $request->get('unit_id') ?? request()->get('unit_id', $user->unit_id);
+                    $selectedUnit = $units->firstWhere('id', $selectedUnitId) ?? $user->unit;
+                } else {
+                    // Se há apenas uma unidade, selecioná-la automaticamente
+                    $selectedUnit = $units->first();
+                }
+            }
+
+            $result = $this->scheduleService->handleScheduleCreation($request->validated(), $selectedUnit);
 
             return view('schedules.created-success', ['schedule' => (new ScheduleResource($result))->toArray(request())]);
         } catch (OutsideWorkingDaysException $e) {
 
             return redirect()
-                ->route('schedules.create')
+                ->route('schedules.create', request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])
                 ->withInput()
                 ->with('error', __('schedules.messages.outside_working_days'));
         } catch (OutsideWorkingHoursException $e) {
 
             return redirect()
-                ->route('schedules.create')
+                ->route('schedules.create', request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])
                 ->withInput()
                 ->with('error', __('schedules.messages.outside_working_hours'));
         } catch (ScheduleConflictException $e) {
 
             return redirect()
-                ->route('schedules.create')
+                ->route('schedules.create', request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])
                 ->withInput()
                 ->with('error', __('schedules.messages.time_conflict'));
         } catch (ScheduleBlockedException $e) {
 
             return redirect()
-                ->route('schedules.create')
+                ->route('schedules.create', request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])
                 ->withInput()
                 ->with('error', __('schedules.messages.time_blocked'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
             return redirect()
-                ->route('schedules.create')
+                ->route('schedules.create', request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])
                 ->withInput()
                 ->with('error', __('schedules.messages.create_error'));
         }
@@ -234,13 +334,38 @@ class ScheduleController extends Controller
     public function edit(Schedule $schedule): View
     {
         try {
-            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypesByUnit(Auth::user()->unit)->where('active', true);
-            $customers = $this->customerService->getCustomersByUnit();
+            $user = Auth::user();
+            $units = collect();
+            $selectedUnit = $user->unit;
+            $showUnitSelector = false;
+
+            // Se o usuário é proprietário, buscar todas as unidades ativas da empresa
+            if ($user->isOwner()) {
+                $units = $this->unitService->getUnits();
+
+                // Se há mais de uma unidade, mostrar o seletor
+                if ($units->count() > 1) {
+                    $showUnitSelector = true;
+
+                    // Obter a unidade selecionada (da query string ou padrão da unidade do usuário)
+                    $selectedUnitId = request()->get('unit_id', $user->unit_id);
+                    $selectedUnit = $units->firstWhere('id', $selectedUnitId) ?? $user->unit;
+                } else {
+                    // Se há apenas uma unidade, selecioná-la automaticamente
+                    $selectedUnit = $units->first();
+                }
+            }
+
+            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypesByUnit($selectedUnit)->where('active', true);
+            $customers = $this->customerService->getCustomersByCompany();
 
             return view('schedules.edit', [
                 'schedule' => $schedule,
                 'unitServiceTypes' => $unitServiceTypes,
                 'customers' => $customers,
+                'units' => $units,
+                'showUnitSelector' => $showUnitSelector,
+                'selectedUnit' => $selectedUnit,
             ]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
@@ -264,23 +389,40 @@ class ScheduleController extends Controller
     public function update(UpdateScheduleRequest $request, Schedule $schedule): \Illuminate\Contracts\View\View|RedirectResponse
     {
         try {
-            $result = $this->scheduleService->validateAndUpdateSchedule($request->validated(), $schedule);
+            $user = Auth::user();
+            $selectedUnit = $schedule->unit; // Por padrão, usar a unidade do agendamento
+
+            // Se o usuário é proprietário, determinar a unidade selecionada
+            if ($user->isOwner()) {
+                $units = $this->unitService->getUnits();
+
+                if ($units->count() > 1) {
+                    // Obter a unidade selecionada (do formulário, query string ou padrão da unidade do usuário)
+                    $selectedUnitId = $request->get('unit_id') ?? request()->get('unit_id', $user->unit_id);
+                    $selectedUnit = $units->firstWhere('id', $selectedUnitId) ?? $user->unit;
+                } else {
+                    // Se há apenas uma unidade, selecioná-la automaticamente
+                    $selectedUnit = $units->first();
+                }
+            }
+
+            $result = $this->scheduleService->validateAndUpdateSchedule($request->validated(), $schedule, $selectedUnit);
 
             return view('schedules.updated-success', ['schedule' => (new ScheduleResource($result))->toArray(request())]);
         } catch (PastScheduleException $e) {
-            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.past_schedule'));
+            return redirect()->route('schedules.edit', array_merge([$schedule->id], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : []))->withInput()->with('error', __('schedules.messages.past_schedule'));
         } catch (OutsideWorkingDaysException $e) {
-            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.outside_working_days'));
+            return redirect()->route('schedules.edit', array_merge([$schedule->id], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : []))->withInput()->with('error', __('schedules.messages.outside_working_days'));
         } catch (OutsideWorkingHoursException $e) {
-            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.outside_working_hours'));
+            return redirect()->route('schedules.edit', array_merge([$schedule->id], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : []))->withInput()->with('error', __('schedules.messages.outside_working_hours'));
         } catch (ScheduleConflictException $e) {
-            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.time_conflict'));
+            return redirect()->route('schedules.edit', array_merge([$schedule->id], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : []))->withInput()->with('error', __('schedules.messages.time_conflict'));
         } catch (ScheduleBlockedException $e) {
-            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.time_blocked'));
+            return redirect()->route('schedules.edit', array_merge([$schedule->id], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : []))->withInput()->with('error', __('schedules.messages.time_blocked'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
-            return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.edit_error'));
+            return redirect()->route('schedules.edit', array_merge([$schedule->id], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : []))->withInput()->with('error', __('schedules.messages.edit_error'));
         }
     }
 
