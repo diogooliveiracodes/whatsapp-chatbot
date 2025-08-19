@@ -396,13 +396,13 @@ class ScheduleService
      *
      * @param array $validated
      * @param Schedule $schedule
-     * @return mixed
+     * @return Schedule The updated schedule
      * @throws OutsideWorkingDaysException
      * @throws OutsideWorkingHoursException
      * @throws ScheduleConflictException
      * @throws ScheduleBlockedException
      */
-    public function validateAndUpdateSchedule(array $validated, Schedule $schedule)
+    public function validateAndUpdateSchedule(array $validated, Schedule $schedule): Schedule
     {
         // Validate with original data (user timezone) before converting to UTC
         $scheduleDate = Carbon::parse($validated['schedule_date']);

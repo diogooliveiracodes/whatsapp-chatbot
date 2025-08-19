@@ -255,18 +255,18 @@ class ScheduleController extends Controller
      *
      * @param UpdateScheduleRequest $request The validated request containing updated schedule data
      * @param Schedule $schedule The schedule model instance to be updated
-     * @return \Illuminate\Http\JsonResponse JSON response indicating success or failure
+     * @return \Illuminate\Contracts\View\View|RedirectResponse Returns success view or redirects with error message
      * @throws OutsideWorkingDaysException When schedule is outside working days
      * @throws OutsideWorkingHoursException When schedule is outside working hours
      * @throws ScheduleConflictException When there's a conflict with existing schedules
      * @throws \Exception When there's an unexpected error during update
      */
-    public function update(UpdateScheduleRequest $request, Schedule $schedule): RedirectResponse
+    public function update(UpdateScheduleRequest $request, Schedule $schedule): \Illuminate\Contracts\View\View|RedirectResponse
     {
         try {
-            $this->scheduleService->validateAndUpdateSchedule($request->validated(), $schedule);
+            $result = $this->scheduleService->validateAndUpdateSchedule($request->validated(), $schedule);
 
-            return redirect()->route('schedules.weekly')->with('success', __('schedules.messages.updated'));
+            return view('schedules.updated-success', ['schedule' => (new ScheduleResource($result))->toArray(request())]);
         } catch (PastScheduleException $e) {
             return redirect()->route('schedules.edit', $schedule->id)->withInput()->with('error', __('schedules.messages.past_schedule'));
         } catch (OutsideWorkingDaysException $e) {

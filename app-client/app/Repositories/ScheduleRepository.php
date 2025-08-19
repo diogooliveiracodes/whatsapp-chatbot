@@ -52,9 +52,10 @@ class ScheduleRepository
         return $this->model->create($data);
     }
 
-    public function update(Schedule $schedule, array $data): bool
+    public function update(Schedule $schedule, array $data): Schedule
     {
-        return $schedule->update($data);
+        $schedule->update($data);
+        return $schedule->fresh();
     }
 
     public function delete(Schedule $schedule): bool

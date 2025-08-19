@@ -28,7 +28,7 @@ class UpdateScheduleRequest extends BaseFormRequest
             'schedule_date' => ['required', 'date', new FutureDateRule()],
             'start_time' => ['required', 'date_format:H:i', new FutureTimeRule()],
             'unit_service_type_id' => 'required|exists:unit_service_types,id',
-            'notes' => 'nullable|string',
+            'notes' => 'nullable|string|max:1000',
             'status' => 'required|in:'. implode(',', ScheduleStatusEnum::values()),
         ];
     }
@@ -40,15 +40,14 @@ class UpdateScheduleRequest extends BaseFormRequest
             'customer_id.exists' => __('schedules.messages.customer_not_found'),
             'schedule_date.required' => __('schedules.messages.date_required'),
             'schedule_date.date' => __('schedules.messages.invalid_date'),
-
             'start_time.required' => __('schedules.messages.start_time_required'),
             'start_time.date_format' => __('schedules.messages.invalid_time_format'),
             'unit_service_type_id.required' => __('schedules.messages.service_type_required'),
             'unit_service_type_id.exists' => __('schedules.messages.service_type_not_found'),
             'status.required' => __('schedules.messages.status_required'),
             'status.in' => __('schedules.messages.invalid_status'),
+            'notes.max' => __('schedules.messages.notes_too_long'),
         ];
     }
-
 
 }
