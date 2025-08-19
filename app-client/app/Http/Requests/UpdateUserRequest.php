@@ -27,7 +27,6 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($this->user)],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'unit_id' => ['required', 'exists:units,id', function ($attribute, $value, $fail) {
                 $unit = Unit::find($value);
                 if (!$unit || $unit->company_id !== \Illuminate\Support\Facades\Auth::user()->company_id) {
@@ -35,6 +34,7 @@ class UpdateUserRequest extends FormRequest
                 }
             }],
             'user_role_id' => ['required', Rule::in([UserRoleEnum::OWNER, UserRoleEnum::EMPLOYEE])],
+            'active' => ['boolean'],
         ];
     }
 
@@ -54,13 +54,11 @@ class UpdateUserRequest extends FormRequest
             'email.email' => __('user.validation.email.email'),
             'email.max' => __('user.validation.email.max'),
             'email.unique' => __('user.validation.email.unique'),
-            'password.string' => __('user.validation.password.string'),
-            'password.min' => __('user.validation.password.min'),
-            'password.confirmed' => __('user.validation.password.confirmed'),
             'unit_id.required' => __('user.validation.unit_id.required'),
             'unit_id.exists' => __('user.validation.unit_id.exists'),
             'user_role_id.required' => __('user.validation.user_role_id.required'),
             'user_role_id.in' => __('user.validation.user_role_id.in'),
+            'active.boolean' => __('user.validation.active.boolean'),
         ];
     }
 
@@ -74,9 +72,9 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => __('user.attributes.name'),
             'email' => __('user.attributes.email'),
-            'password' => __('user.attributes.password'),
             'unit_id' => __('user.attributes.unit_id'),
             'user_role_id' => __('user.attributes.user_role_id'),
+            'active' => __('user.attributes.active'),
         ];
     }
 }

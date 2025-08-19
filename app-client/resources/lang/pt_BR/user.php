@@ -37,6 +37,7 @@ return [
         'updated' => 'Usuário atualizado com sucesso',
         'deactivated' => 'Usuário desativado com sucesso',
         'activated' => 'Usuário ativado com sucesso',
+        'password_updated' => 'Senha atualizada com sucesso',
     ],
     'error' => [
         'load' => 'Falha ao carregar usuários',
@@ -44,6 +45,7 @@ return [
         'update' => 'Falha ao atualizar usuário',
         'deactivate' => 'Falha ao desativar usuário',
         'activate' => 'Falha ao ativar usuário',
+        'password_update' => 'Falha ao atualizar senha',
     ],
     'validation' => [
         'name' => [
@@ -72,6 +74,9 @@ return [
             'required' => 'O perfil do usuário é obrigatório.',
             'in' => 'O perfil selecionado não é válido.',
         ],
+        'active' => [
+            'boolean' => 'O status ativo deve ser verdadeiro ou falso.',
+        ],
     ],
     'attributes' => [
         'name' => 'nome',
@@ -79,10 +84,16 @@ return [
         'password' => 'senha',
         'unit_id' => 'unidade',
         'user_role_id' => 'perfil',
+        'active' => 'ativo',
     ],
     'select_unit' => 'Selecione uma unidade',
     'select_role' => 'Selecione um perfil',
     'password_optional' => 'Deixe em branco para manter a senha atual',
+    'update_password' => 'Alterar Senha',
+    'update_password_description' => 'Atualize a senha do usuário para uma nova senha segura.',
+    'new_password' => 'Nova Senha',
+    'confirm_password' => 'Confirmar Nova Senha',
+    'password_updated' => 'Senha atualizada com sucesso!',
     'exceptions' => [
         'unauthorized_access' => 'Acesso não autorizado ao usuário',
         'self_update' => 'Não é possível atualizar sua própria conta através desta interface',

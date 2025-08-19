@@ -97,10 +97,6 @@ class UserService
             throw new SelfUpdateException();
         }
 
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        }
-
         $data['active'] = $data['active'] ?? false;
 
         return $this->userRepository->update($user, $data);
@@ -155,5 +151,25 @@ class UserService
     public function findById(int $id): ?User
     {
         return $this->userRepository->findById($id);
+    }
+
+    /**
+     * Update user password
+     *
+     * @param User $user
+     * @param string $password
+     * @return User
+     * @throws UnauthorizedUserAccessException
+     */
+    public function updatePassword(User $user, string $password): User
+    {
+        // Ensure user belongs to the same company
+        if ($user->company_id !== Auth::user()->company_id) {
+            throw new UnauthorizedUserAccessException();
+        }
+
+        $data = ['password' => Hash::make($password)];
+
+        return $this->userRepository->update($user, $data);
     }
 }

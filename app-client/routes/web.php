@@ -112,6 +112,7 @@ Route::middleware('auth', 'company.active', 'subscription.active')->group(functi
         Route::get('/{user}', [UserController::class, 'show'])->name('users.show');
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::put('/{user}/password', [UserController::class, 'updatePassword'])->name('users.update-password');
         Route::patch('/{user}', [UserController::class, 'deactivate'])->name('users.deactivate');
         Route::patch('/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
     });

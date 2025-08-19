@@ -37,6 +37,7 @@ return [
         'updated' => 'User updated successfully',
         'deactivated' => 'User deactivated successfully',
         'activated' => 'User activated successfully',
+        'password_updated' => 'Password updated successfully',
     ],
     'error' => [
         'load' => 'Failed to load users',
@@ -44,6 +45,7 @@ return [
         'update' => 'Failed to update user',
         'deactivate' => 'Failed to deactivate user',
         'activate' => 'Failed to activate user',
+        'password_update' => 'Failed to update password',
     ],
     'validation' => [
         'name' => [
@@ -72,6 +74,9 @@ return [
             'required' => 'The user role is required.',
             'in' => 'The selected role is not valid.',
         ],
+        'active' => [
+            'boolean' => 'The active status must be true or false.',
+        ],
     ],
     'attributes' => [
         'name' => 'name',
@@ -79,10 +84,16 @@ return [
         'password' => 'password',
         'unit_id' => 'unit',
         'user_role_id' => 'role',
+        'active' => 'active',
     ],
     'select_unit' => 'Select a unit',
     'select_role' => 'Select a role',
     'password_optional' => 'Leave blank to keep current password',
+    'update_password' => 'Update Password',
+    'update_password_description' => 'Update the user password to a new secure password.',
+    'new_password' => 'New Password',
+    'confirm_password' => 'Confirm New Password',
+    'password_updated' => 'Password updated successfully!',
     'exceptions' => [
         'unauthorized_access' => 'Unauthorized access to user',
         'self_update' => 'Cannot update your own account through this interface',

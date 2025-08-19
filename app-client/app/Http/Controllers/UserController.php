@@ -8,6 +8,7 @@ use App\Services\ErrorLog\ErrorLogService;
 use App\Services\Unit\UnitService;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Exceptions\User\UnauthorizedUserAccessException;
 use App\Exceptions\User\SelfUpdateException;
 use App\Exceptions\User\SelfDeactivationException;
@@ -151,6 +152,31 @@ class UserController extends Controller
             ]);
 
             return back()->with('error', __('user.error.update'));
+        }
+    }
+
+    /**
+     * Update the specified user's password in storage.
+     *
+     * @param UpdateUserPasswordRequest $request
+     * @param User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updatePassword(UpdateUserPasswordRequest $request, User $user): RedirectResponse
+    {
+        try {
+            $this->userService->updatePassword($user, $request->validated()['password']);
+
+            return back()->with('success', __('user.success.password_updated'));
+        } catch (UnauthorizedUserAccessException $e) {
+            return back()->with('error', $e->getMessage());
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'updatePassword',
+                'user_id' => $user->id,
+            ]);
+
+            return back()->with('error', __('user.error.password_update'));
         }
     }
 
