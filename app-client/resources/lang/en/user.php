@@ -83,4 +83,9 @@ return [
     'select_unit' => 'Select a unit',
     'select_role' => 'Select a role',
     'password_optional' => 'Leave blank to keep current password',
+    'exceptions' => [
+        'unauthorized_access' => 'Unauthorized access to user',
+        'self_update' => 'Cannot update your own account through this interface',
+        'self_deactivation' => 'Cannot deactivate your own account',
+    ],
 ];

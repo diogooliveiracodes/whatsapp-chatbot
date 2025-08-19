@@ -83,4 +83,9 @@ return [
     'select_unit' => 'Selecione uma unidade',
     'select_role' => 'Selecione um perfil',
     'password_optional' => 'Deixe em branco para manter a senha atual',
+    'exceptions' => [
+        'unauthorized_access' => 'Acesso não autorizado ao usuário',
+        'self_update' => 'Não é possível atualizar sua própria conta através desta interface',
+        'self_deactivation' => 'Não é possível desativar sua própria conta',
+    ],
 ];
