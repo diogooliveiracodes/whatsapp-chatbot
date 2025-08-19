@@ -9,8 +9,27 @@
                 <div class="p-4 sm:p-6 text-gray-900 dark:text-gray-100">
                     <x-global.session-alerts />
 
-                    <div class="flex gap-4 mb-4 justify-between">
-                        <x-global.create-button :route="route('schedule-blocks.create')" text="{{ __('schedule-blocks.create') }}" />
+                    <div class="flex flex-col sm:flex-row gap-4 mb-4 justify-between items-start sm:items-center">
+                        <div class="flex gap-2">
+                            <x-global.create-button :route="route('schedule-blocks.create', (auth()->user()->isOwner() && isset($unit)) ? ['unit_id' => $unit->id] : [])" text="{{ __('schedule-blocks.create') }}" />
+                        </div>
+
+                        @if(isset($showUnitSelector) && $showUnitSelector)
+                            <div class="w-full sm:w-auto">
+                                <label for="unit-selector" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    {{ __('schedule-blocks.unit_selection') }}
+                                </label>
+                                <select id="unit-selector"
+                                        class="block w-full sm:min-w-[220px] px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100"
+                                        onchange="changeUnit(this.value)">
+                                    @foreach($units as $unitOption)
+                                        <option value="{{ $unitOption->id }}" {{ $unit->id == $unitOption->id ? 'selected' : '' }}>
+                                            {{ $unitOption->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Info sobre o filtro de datas -->
@@ -206,6 +225,16 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+        <script>
+            function changeUnit(unitId) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('unit_id', unitId);
+                window.location.href = url.toString();
+            }
+        </script>
+    @endpush
 
     <x-scroll-to-top />
 </x-app-layout>

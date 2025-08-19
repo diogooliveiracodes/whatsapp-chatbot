@@ -12,6 +12,24 @@
                     <form method="POST" action="{{ route('schedule-blocks.store') }}" class="space-y-6">
                         @csrf
 
+                        @if(isset($showUnitSelector) && $showUnitSelector)
+                            <div>
+                                <label for="unit_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    {{ __('schedule-blocks.unit_selection') }} *
+                                </label>
+                                <select id="unit_id" name="unit_id"
+                                        class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm" required>
+                                    @foreach($units as $unitOption)
+                                        <option value="{{ $unitOption->id }}" {{ (old('unit_id', $selectedUnit->id ?? null) == $unitOption->id) ? 'selected' : '' }}>
+                                            {{ $unitOption->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @elseif(isset($selectedUnit))
+                            <input type="hidden" name="unit_id" value="{{ $selectedUnit->id }}" />
+                        @endif
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Data do Bloqueio -->
                             <div>
@@ -53,7 +71,7 @@
 
                         <!-- Campos de Horário (visíveis apenas para time_slot) -->
                         <div id="time-fields" style="display: none;">
-                            <input type="hidden" id="appointment_duration_minutes" value="{{ auth()->user()->unit->unitSettings->appointment_duration_minutes ?? 60 }}">
+                            <input type="hidden" id="appointment_duration_minutes" value="{{ ($selectedUnit->unitSettings->appointment_duration_minutes ?? auth()->user()->unit->unitSettings->appointment_duration_minutes) ?? 60 }}">
                             <x-time-range-slider
                                 :startTime="old('start_time', $preSelectedStartTime)"
                                 :endTime="old('end_time')"

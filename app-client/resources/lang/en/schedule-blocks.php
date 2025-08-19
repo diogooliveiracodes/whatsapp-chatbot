@@ -46,6 +46,7 @@ return [
     'reason' => 'Reason',
     'company' => 'Company',
     'unit' => 'Unit',
+    'unit_selection' => 'Select unit',
     'created_by' => 'Created by',
     'actions' => 'Actions',
     'edit' => 'Edit',

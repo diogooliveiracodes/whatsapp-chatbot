@@ -46,6 +46,7 @@ return [
     'reason' => 'Motivo',
     'company' => 'Empresa',
     'unit' => 'Unidade',
+    'unit_selection' => 'Selecionar unidade',
     'created_by' => 'Criado por',
     'actions' => 'Ações',
     'edit' => 'Editar',
