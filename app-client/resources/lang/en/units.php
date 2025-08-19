@@ -39,6 +39,7 @@ return [
         'created' => 'Unit created successfully',
         'updated' => 'Unit updated successfully',
         'deactivated' => 'Unit deactivated successfully',
+        'activated' => 'Unit activated successfully',
     ],
     'error' => [
         'load' => 'Failed to load units',

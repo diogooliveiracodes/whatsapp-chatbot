@@ -39,6 +39,7 @@ return [
         'created' => 'Unidade criada com sucesso',
         'updated' => 'Unidade atualizada com sucesso',
         'deactivated' => 'Unidade desativada com sucesso',
+        'activated' => 'Unidade ativada com sucesso',
     ],
     'error' => [
         'load' => 'Falha ao carregar unidades',
