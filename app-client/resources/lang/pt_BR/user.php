@@ -99,4 +99,8 @@ return [
         'self_update' => 'Não é possível atualizar sua própria conta através desta interface',
         'self_deactivation' => 'Não é possível desativar sua própria conta',
     ],
+    'roles' => [
+        'owner' => 'Proprietário',
+        'employee' => 'Colaborador',
+    ],
 ];

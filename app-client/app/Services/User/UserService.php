@@ -56,8 +56,8 @@ class UserService
     public function getAvailableUserRoles(): array
     {
         return [
-            UserRoleEnum::OWNER => 'Proprietário',
-            UserRoleEnum::EMPLOYEE => 'Funcionário',
+            UserRoleEnum::OWNER => __('user.roles.owner'),
+            UserRoleEnum::EMPLOYEE => __('user.roles.employee'),
         ];
     }
 

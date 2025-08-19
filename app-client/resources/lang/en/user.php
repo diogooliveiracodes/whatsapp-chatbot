@@ -99,4 +99,8 @@ return [
         'self_update' => 'Cannot update your own account through this interface',
         'self_deactivation' => 'Cannot deactivate your own account',
     ],
+    'roles' => [
+        'owner' => 'Owner',
+        'employee' => 'Employee',
+    ],
 ];

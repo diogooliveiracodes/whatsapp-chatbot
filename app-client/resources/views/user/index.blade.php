@@ -56,12 +56,12 @@
                                             @if ($user->user_role_id === 2)
                                                 <span
                                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                                    Proprietário
+                                                    {{ __('user.roles.owner') }}
                                                 </span>
                                             @else
                                                 <span
                                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                                    Funcionário
+                                                    {{ __('user.roles.employee') }}
                                                 </span>
                                             @endif
                                         </td>
@@ -92,12 +92,12 @@
                                         @if ($user->user_role_id === 2)
                                             <span
                                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                                Proprietário
+                                                {{ __('user.roles.owner') }}
                                             </span>
                                         @else
                                             <span
                                                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                                Funcionário
+                                                {{ __('user.roles.employee') }}
                                             </span>
                                         @endif
                                     </div>
