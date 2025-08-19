@@ -75,6 +75,10 @@
                                             <div class="text-sm text-gray-900 dark:text-gray-100">{{ $schedule['unit_service_type']['name'] ?? 'N/A' }}</div>
                                         </div>
                                         <div>
+                                            <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Unidade</div>
+                                            <div class="text-sm text-gray-900 dark:text-gray-100">{{ $schedule['unit']['name'] ?? 'N/A' }}</div>
+                                        </div>
+                                        <div>
                                             <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</div>
                                             <div class="text-sm">
                                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium

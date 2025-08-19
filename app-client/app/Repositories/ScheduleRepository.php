@@ -23,7 +23,7 @@ class ScheduleRepository
     {
         return $this
             ->model
-            ->with(['customer', 'user', 'unitServiceType'])
+            ->with(['customer', 'user', 'unitServiceType', 'unit'])
             ->where('unit_id', $unitId)
             ->whereBetween('schedule_date', [$startDate, $endDate])
             ->get();
@@ -40,7 +40,7 @@ class ScheduleRepository
     {
         return $this
             ->model
-            ->with(['customer', 'user', 'unitServiceType'])
+            ->with(['customer', 'user', 'unitServiceType', 'unit'])
             ->where('unit_id', $unitId)
             ->where('schedule_date', $date->format('Y-m-d'))
             ->orderBy('start_time')
@@ -49,13 +49,14 @@ class ScheduleRepository
 
     public function create(array $data): Schedule
     {
-        return $this->model->create($data);
+        $schedule = $this->model->create($data);
+        return $schedule->load(['customer', 'user', 'unitServiceType', 'unit']);
     }
 
     public function update(Schedule $schedule, array $data): Schedule
     {
         $schedule->update($data);
-        return $schedule->fresh();
+        return $schedule->fresh(['customer', 'user', 'unitServiceType', 'unit']);
     }
 
     public function delete(Schedule $schedule): bool
