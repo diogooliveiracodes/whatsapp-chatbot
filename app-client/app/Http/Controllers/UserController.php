@@ -8,6 +8,9 @@ use App\Services\ErrorLog\ErrorLogService;
 use App\Services\Unit\UnitService;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Exceptions\User\UnauthorizedUserAccessException;
+use App\Exceptions\User\SelfUpdateException;
+use App\Exceptions\User\SelfDeactivationException;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -134,6 +137,12 @@ class UserController extends Controller
 
             return redirect()->route('users.index')
                 ->with('success', __('user.success.updated'));
+        } catch (UnauthorizedUserAccessException $e) {
+
+            return back()->with('error', $e->getMessage());
+        } catch (SelfUpdateException $e) {
+
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'update',
@@ -158,11 +167,13 @@ class UserController extends Controller
 
             return redirect()->route('users.index')
                 ->with('success', __('user.success.deactivated'));
+        } catch (UnauthorizedUserAccessException $e) {
+
+            return back()->with('error', $e->getMessage());
+        } catch (SelfDeactivationException $e) {
+
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
-            $this->errorLogService->logError($e, [
-                'action' => 'deactivate',
-                'user_id' => $user->id,
-            ]);
 
             return back()->with('error', __('user.error.deactivate'));
         }
@@ -180,11 +191,6 @@ class UserController extends Controller
 
             return view('user.deactivated', compact('users'));
         } catch (\Exception $e) {
-            $this->errorLogService->logError($e, [
-                'action' => 'deactivated',
-                'request_method' => request()->method(),
-                'request_url' => request()->url(),
-            ]);
 
             return view('user.deactivated', ['users' => [], 'error' => __('user.error.load')]);
         }
@@ -203,6 +209,9 @@ class UserController extends Controller
 
             return redirect()->route('users.deactivated')
                 ->with('success', __('user.success.activated'));
+        } catch (UnauthorizedUserAccessException $e) {
+
+            return back()->with('error', $e->getMessage());
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'activate',
