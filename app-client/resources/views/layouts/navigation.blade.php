@@ -117,6 +117,15 @@
                     <span class="ml-2">{{ __('pages.customers') }}</span>
                 </a>
 
+                <a href="{{ route('users.index') }}"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('users.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                    <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                    </svg>
+                    <span class="ml-2">{{ __('user.title') }}</span>
+                </a>
+
                 <a href="{{ route('signature.index') }}"
                     class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors
                         {{ auth()->user()->company->signature && auth()->user()->company->signature->status === \App\Enum\SignatureStatusEnum::EXPIRING_SOON->value ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' : '' }}
