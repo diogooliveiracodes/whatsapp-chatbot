@@ -33,6 +33,7 @@ return [
         'past_schedule' => 'Cannot modify or delete appointments that have already passed',
         'notes_too_long' => 'Notes cannot exceed 1000 characters',
         'confirm_delete' => 'Are you sure you want to delete this appointment?',
+        'created_description' => 'The appointment was created successfully and is available in the schedule.',
     ],
     'today' => 'Today',
     'current_week' => 'Current Week',
@@ -59,4 +60,8 @@ return [
     'booked_slots' => 'Booked',
     'blocked_slots' => 'Blocked',
     'time_passed' => 'Time has passed',
+    'view_daily' => 'View Daily Schedule',
+    'view_weekly' => 'View Weekly Schedule',
+    'create_another' => 'Create Another Schedule',
+    'created_schedule_details' => 'Created Schedule Details',
 ];

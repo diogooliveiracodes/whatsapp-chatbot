@@ -48,7 +48,7 @@ class ScheduleController extends Controller
         protected CustomerService $customerService,
         protected HttpResponseService $httpResponse,
         protected UnitServiceTypeService $unitServiceTypeService
-        ) {}
+    ) {}
 
     /**
      * Display a listing of schedules.
@@ -177,20 +177,18 @@ class ScheduleController extends Controller
      * Validates and creates a new schedule with the provided data.
      *
      * @param StoreScheduleRequest $request The validated request containing schedule data
-     * @return RedirectResponse Redirects to the schedules index with success/error message
+     * @return \Illuminate\Contracts\View\View|RedirectResponse Returns success view or redirects with error message
      * @throws OutsideWorkingDaysException When schedule is outside working days
      * @throws OutsideWorkingHoursException When schedule is outside working hours
      * @throws ScheduleConflictException When there's a conflict with existing schedules
      * @throws \Exception When there's an unexpected error during creation
      */
-    public function store(StoreScheduleRequest $request): RedirectResponse
+    public function store(StoreScheduleRequest $request): \Illuminate\Contracts\View\View|RedirectResponse
     {
         try {
             $result = $this->scheduleService->handleScheduleCreation($request->validated());
 
-            return redirect()
-                ->route('schedules.weekly')
-                ->with('success', __('schedules.messages.created'));
+            return view('schedules.created-success', ['schedule' => (new ScheduleResource($result))->toArray(request())]);
         } catch (OutsideWorkingDaysException $e) {
 
             return redirect()
@@ -299,13 +297,13 @@ class ScheduleController extends Controller
         try {
             $this->scheduleService->deleteSchedule($schedule);
 
-            return redirect()->route('schedules.weekly')->with('success', __('schedules.messages.deleted'));
+            return redirect()->back()->with('success', __('schedules.messages.deleted'));
         } catch (PastScheduleException $e) {
-            return redirect()->route('schedules.weekly')->with('error', __('schedules.messages.past_schedule'));
+            return redirect()->back()->with('error', __('schedules.messages.past_schedule'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
-            return redirect()->route('schedules.weekly')->with('error', __('schedules.messages.delete_error'));
+            return redirect()->back()->with('error', __('schedules.messages.delete_error'));
         }
     }
 }

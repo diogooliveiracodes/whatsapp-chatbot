@@ -377,24 +377,18 @@ class ScheduleService
      * Handle schedule creation with proper exception handling
      *
      * @param array $validated
-     * @return array{success: bool, message: string, redirect: string}
+     * @return Schedule The created schedule
      * @throws OutsideWorkingDaysException
      * @throws OutsideWorkingHoursException
      * @throws ScheduleConflictException
      * @throws ScheduleBlockedException
      */
-    public function handleScheduleCreation(array $validated): array
+    public function handleScheduleCreation(array $validated): Schedule
     {
         $unit = Auth::user()->unit;
         $unitSettings = $unit->unitSettings;
 
-        $this->validateAndCreateSchedule($validated, $unit, $unitSettings, $unitSettings->appointment_duration_minutes);
-
-        return [
-            'success' => true,
-            'message' => __('schedules.messages.created'),
-            'redirect' => 'schedules.weekly'
-        ];
+        return $this->validateAndCreateSchedule($validated, $unit, $unitSettings, $unitSettings->appointment_duration_minutes);
     }
 
     /**

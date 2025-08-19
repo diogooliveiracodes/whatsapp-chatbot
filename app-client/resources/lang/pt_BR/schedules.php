@@ -35,6 +35,7 @@ return [
         'past_schedule' => 'Não é possível modificar ou excluir agendamentos que já passaram',
         'notes_too_long' => 'As observações não podem ter mais de 1000 caracteres',
         'confirm_delete' => 'Tem certeza que deseja excluir este agendamento?',
+        'created_description' => 'O agendamento foi criado com sucesso e está disponível na agenda.',
     ],
     'today' => 'Hoje',
     'current_week' => 'Semana Atual',
@@ -65,4 +66,8 @@ return [
     'booked_slots' => 'Ocupado',
     'blocked_slots' => 'Bloqueado',
     'time_passed' => 'Horário já passou',
+    'view_daily' => 'Ver Agenda Diária',
+    'view_weekly' => 'Ver Agenda Semanal',
+    'create_another' => 'Criar Outro Agendamento',
+    'created_schedule_details' => 'Detalhes do Agendamento Criado',
 ];
