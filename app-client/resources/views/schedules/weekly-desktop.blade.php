@@ -28,7 +28,7 @@
 
                 <div class="flex gap-4 mb-4 justify-between">
                     <div class="flex gap-2">
-                        <x-global.create-button :route="route('schedules.create', request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])" :text="__('schedules.create')" />
+                        <x-global.create-button :route="route('schedules.create', auth()->user()->isOwner() ? ['unit_id' => $unit->id] : [])" :text="__('schedules.create')" />
                         <x-global.create-button :route="route('schedule-blocks.create')" text="{{ __('schedule-blocks.create') }}" />
                     </div>
                     <div>
@@ -150,10 +150,10 @@
                                                     @elseif ($isWithinOperatingHours && $block)
                                                         <x-schedules.block-card :block="$block" />
                                                     @elseif ($isWithinOperatingHours && !$isPastSlot)
-                                                        <a href="{{ route('schedules.create', [
+                                                        <a href="{{ route('schedules.create', array_merge([
                                                             'schedule_date' => $currentDate,
                                                             'start_time' => $currentTime,
-                                                        ]) }}"
+                                                        ], auth()->user()->isOwner() ? ['unit_id' => $unit->id] : [])) }}"
                                                             class="absolute inset-0 flex items-center justify-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600">
                                                             <div
                                                                 class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">

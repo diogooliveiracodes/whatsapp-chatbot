@@ -27,7 +27,7 @@
             </span>
             @if (!$isPastSchedule)
                 <div class="flex space-x-2">
-                    <a href="{{ route('schedules.edit', $schedule['id']) }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                    <a href="{{ route('schedules.edit', array_merge([$schedule['id']], auth()->user()->isOwner() && isset($schedule['unit']['id']) ? ['unit_id' => $schedule['unit']['id']] : [])) }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />

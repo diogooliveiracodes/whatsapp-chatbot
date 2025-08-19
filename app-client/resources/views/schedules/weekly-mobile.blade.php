@@ -216,7 +216,7 @@
                                                                 </span>
                                                                                                                                  @if (!$isPastSchedule)
                                                                      <div class="flex space-x-2">
-                                                                         <a href="{{ route('schedules.edit', $schedule['id']) }}"
+                                                                         <a href="{{ route('schedules.edit', array_merge([$schedule['id']], auth()->user()->isOwner() && isset($schedule['unit']['id']) ? ['unit_id' => $schedule['unit']['id']] : [])) }}"
                                                                              class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                                                              <svg class="w-5 h-5" fill="none"
                                                                                  stroke="currentColor"
@@ -263,10 +263,10 @@
                                                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border border-green-200 dark:border-green-700">
                                                                         {{ __('schedules.available_slots') }}
                                                                     </span>
-                                                                    <a href="{{ route('schedules.create', [
+                                                                    <a href="{{ route('schedules.create', array_merge([
                                                                         'schedule_date' => $currentDate,
                                                                         'start_time' => $currentTime,
-                                                                    ]) }}"
+                                                                    ], auth()->user()->isOwner() ? ['unit_id' => $unit->id] : [])) }}"
                                                                         class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300">
                                                                         <svg class="w-5 h-5" fill="none"
                                                                             stroke="currentColor" viewBox="0 0 24 24">
