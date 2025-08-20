@@ -152,6 +152,14 @@
                                          <div class="grid grid-cols-7 gap-2" id="calendar" role="group" aria-label="Seleção de data">
                                              <!-- Days will be rendered here -->
                                          </div>
+
+                                         <!-- Loading Spinner -->
+                                         <div id="week-loading-spinner" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                             <div class="bg-gray-800 rounded-lg p-6 flex flex-col items-center">
+                                                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+                                                 <p class="text-white text-sm">Carregando semana...</p>
+                                             </div>
+                                         </div>
                                      </div>
                                      <input type="hidden" name="schedule_date" id="schedule_date"
                                          value="{{ old('schedule_date') }}">
@@ -233,6 +241,8 @@
      const unitId = @json($unit->id);
      const companyId = @json($company);
      let currentWeekStart = weekStart;
+     let autoNavigationAttempts = 0;
+     const maxAutoNavigationAttempts = 12; // Limit to 12 weeks (3 months) to prevent infinite loops
 
          function renderCalendar(weekStartStr) {
          const calendar = document.getElementById('calendar');
@@ -274,12 +284,34 @@
          // Update week display
          updateWeekDisplay(weekStartStr);
 
-         // Auto-select first available day
+         // Auto-select first available day or navigate to next week if none available
          const firstAvailableDay = weekDays.find(day => day.available);
          if (firstAvailableDay) {
              const firstDayCard = calendar.querySelector(`[data-date="${firstAvailableDay.date}"]`);
              if (firstDayCard) {
                  onSelectDate(firstAvailableDay.date, firstDayCard);
+             }
+         } else {
+             // No available days in current week, automatically navigate to next week
+             if (autoNavigationAttempts < maxAutoNavigationAttempts) {
+                 autoNavigationAttempts++;
+                 setTimeout(() => {
+                     navigateWeek('next');
+                 }, 500); // Small delay to show the current week briefly
+             } else {
+                 // Show message that no available weeks found
+                 const calendar = document.getElementById('calendar');
+                 calendar.innerHTML = `
+                     <div class="col-span-7 text-center py-8">
+                         <div class="text-gray-400 text-sm">
+                             <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                             </svg>
+                             <p class="font-medium">Nenhuma semana disponível encontrada</p>
+                             <p class="text-xs mt-1">Tente navegar manualmente para outras semanas</p>
+                         </div>
+                     </div>
+                 `;
              }
          }
      }
@@ -416,12 +448,14 @@
 
 
 
-                   // Week navigation functions
+                        // Week navigation functions
      function loadWeek(weekStartStr) {
          const prevBtn = document.getElementById('prev-week');
          const nextBtn = document.getElementById('next-week');
+         const spinner = document.getElementById('week-loading-spinner');
 
-         // Disable navigation buttons during loading
+         // Show spinner and disable navigation buttons during loading
+         spinner.classList.remove('hidden');
          prevBtn.disabled = true;
          nextBtn.disabled = true;
 
@@ -432,14 +466,14 @@
                      weekDays = data.days;
                      currentWeekStart = weekStartStr;
                      renderCalendar(weekStartStr);
-
-                     // Re-enable navigation buttons
-                     prevBtn.disabled = false;
-                     nextBtn.disabled = false;
                  }
              })
              .catch(() => {
-                 // Re-enable navigation buttons on error
+                 // Handle error silently
+             })
+             .finally(() => {
+                 // Hide spinner and re-enable navigation buttons
+                 spinner.classList.add('hidden');
                  prevBtn.disabled = false;
                  nextBtn.disabled = false;
              });
@@ -457,7 +491,7 @@
          weekDisplay.textContent = `${startFormatted} - ${endFormatted}`;
      }
 
-     function navigateWeek(direction) {
+          function navigateWeek(direction) {
          const currentDate = new Date(currentWeekStart);
          const newDate = new Date(currentDate);
 
@@ -468,6 +502,12 @@
          }
 
          const newWeekStart = newDate.toISOString().split('T')[0];
+
+         // Reset auto navigation attempts when user manually navigates
+         if (direction === 'prev') {
+             autoNavigationAttempts = 0;
+         }
+
          loadWeek(newWeekStart);
      }
 
