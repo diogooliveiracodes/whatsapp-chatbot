@@ -15,6 +15,24 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
             $table->boolean('active')->default(true);
+
+            // Payment gateway fields
+            $table->integer('payment_gateway')->nullable();
+            $table->string('gateway_api_key')->nullable();
+
+            // PIX fields
+            $table->string('pix_key')->nullable();
+            $table->integer('pix_key_type')->nullable();
+
+            // Bank account fields
+            $table->string('bank_code', 10)->nullable();
+            $table->string('bank_agency', 20)->nullable();
+            $table->string('bank_account', 20)->nullable();
+            $table->string('bank_account_digit', 5)->nullable();
+            $table->integer('bank_account_type')->nullable();
+            $table->string('account_holder_name', 255)->nullable();
+            $table->string('account_holder_document', 20)->nullable();
+
             $table->timestamps();
         });
     }
