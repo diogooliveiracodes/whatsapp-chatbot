@@ -211,6 +211,9 @@
 
                                                 $rawStart = old($day . '_start', $unitSettings->{$day . '_start'});
                                                 $rawEnd = old($day . '_end', $unitSettings->{$day . '_end'});
+                                                $rawBreakStart = old($day . '_break_start', $unitSettings->{$day . '_break_start'});
+                                                $rawBreakEnd = old($day . '_break_end', $unitSettings->{$day . '_break_end'});
+                                                $hasBreak = old($day . '_has_break', $unitSettings->{$day . '_has_break'});
 
                                                 $startDisplay = $rawStart
                                                     ? \Carbon\Carbon::parse($referenceDate . ' ' . $rawStart, 'UTC')
@@ -222,10 +225,26 @@
                                                         ->setTimezone($userTimezone)
                                                         ->format('H:i')
                                                     : '';
+                                                $breakStartDisplay = $rawBreakStart
+                                                    ? \Carbon\Carbon::parse($referenceDate . ' ' . $rawBreakStart, 'UTC')
+                                                        ->setTimezone($userTimezone)
+                                                        ->format('H:i')
+                                                    : '';
+                                                $breakEndDisplay = $rawBreakEnd
+                                                    ? \Carbon\Carbon::parse($referenceDate . ' ' . $rawBreakEnd, 'UTC')
+                                                        ->setTimezone($userTimezone)
+                                                        ->format('H:i')
+                                                    : '';
                                             @endphp
 
                                             <x-unit-settings.day-time-input :day="$day" :label="$label"
-                                                :isChecked="old($day, $unitSettings->$day)" :startTime="$startDisplay" :endTime="$endDisplay" />
+                                                :isChecked="old($day, $unitSettings->$day)"
+                                                :startTime="$startDisplay"
+                                                :endTime="$endDisplay"
+                                                :hasBreak="$hasBreak"
+                                                :breakStartTime="$breakStartDisplay"
+                                                :breakEndTime="$breakEndDisplay"
+                                            />
                                         @endforeach
                                     </div>
                                 </div>

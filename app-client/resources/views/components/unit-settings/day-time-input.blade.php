@@ -1,4 +1,4 @@
-@props(['day', 'label', 'isChecked', 'startTime', 'endTime'])
+@props(['day', 'label', 'isChecked', 'startTime', 'endTime', 'hasBreak' => false, 'breakStartTime' => null, 'breakEndTime' => null])
 
 <div class="bg-gray-600/30 rounded-lg p-4 mb-4 transition-all duration-200 hover:bg-gray-600/40">
     <div class="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
@@ -25,10 +25,10 @@
 
                     {{-- Range Slider --}}
                     <div class="relative">
-                        <div class="range-slider-container" data-day="{{ $day }}">
+                        <div class="range-slider-container" data-day="{{ $day }}" data-context="work">
                             <div class="range-slider-track bg-gray-600 h-2 rounded-full relative">
                                 <div class="range-slider-progress bg-indigo-500 h-2 rounded-full absolute top-0 left-0"
-                                     data-day="{{ $day }}"></div>
+                                     data-day="{{ $day }}" data-context="work"></div>
                             </div>
 
                             {{-- Start Handle --}}
@@ -36,38 +36,42 @@
                                    name="{{ $day }}_start_range"
                                    class="range-slider-handle range-slider-handle-start absolute top-0 w-full h-2 opacity-0 cursor-pointer"
                                    data-day="{{ $day }}"
+                                   data-context="work"
                                    data-handle="start"
                                    min="0"
                                    max="1440"
                                    value="{{ $startTime ? \Carbon\Carbon::parse('2000-01-01 ' . $startTime)->format('H') * 60 + \Carbon\Carbon::parse('2000-01-01 ' . $startTime)->format('i') : 540 }}"
-                                   oninput="if(window.updateRangeSlider) window.updateRangeSlider('{{ $day }}', 'start', this.value)">
+                                   oninput="if(window.updateRangeSlider) window.updateRangeSlider('{{ $day }}', 'work', 'start', this.value)">
 
                             {{-- End Handle --}}
                             <input type="range"
                                    name="{{ $day }}_end_range"
                                    class="range-slider-handle range-slider-handle-end absolute top-0 w-full h-2 opacity-0 cursor-pointer"
                                    data-day="{{ $day }}"
+                                   data-context="work"
                                    data-handle="end"
                                    min="0"
                                    max="1440"
                                    value="{{ $endTime ? \Carbon\Carbon::parse('2000-01-01 ' . $endTime)->format('H') * 60 + \Carbon\Carbon::parse('2000-01-01 ' . $endTime)->format('i') : 1020 }}"
-                                   oninput="if(window.updateRangeSlider) window.updateRangeSlider('{{ $day }}', 'end', this.value)">
+                                   oninput="if(window.updateRangeSlider) window.updateRangeSlider('{{ $day }}', 'work', 'end', this.value)">
 
                             {{-- Visual Handles --}}
                             <div class="range-slider-thumb range-slider-thumb-start absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-indigo-500 rounded-full border-2 border-white shadow-lg cursor-pointer"
                                  data-day="{{ $day }}"
+                                 data-context="work"
                                  data-handle="start">
                                 <div class="range-tooltip range-tooltip-start absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 transition-opacity duration-200 pointer-events-none">
-                                    <span class="range-tooltip-time-start" data-day="{{ $day }}">09:00</span>
+                                    <span class="range-tooltip-time-start" data-day="{{ $day }}" data-context="work">09:00</span>
                                     <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
                                 </div>
                             </div>
 
                             <div class="range-slider-thumb range-slider-thumb-end absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-indigo-500 rounded-full border-2 border-white shadow-lg cursor-pointer"
                                  data-day="{{ $day }}"
+                                 data-context="work"
                                  data-handle="end">
                                 <div class="range-tooltip range-tooltip-end absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 transition-opacity duration-200 pointer-events-none">
-                                    <span class="range-tooltip-time-end" data-day="{{ $day }}">17:00</span>
+                                    <span class="range-tooltip-time-end" data-day="{{ $day }}" data-context="work">17:00</span>
                                     <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
                                 </div>
                             </div>
@@ -75,15 +79,95 @@
 
                         {{-- Time Display --}}
                         <div class="flex justify-between mt-2 text-sm text-gray-400">
-                            <span class="range-time-display-start" data-day="{{ $day }}">09:00</span>
-                            <span class="range-time-display-end" data-day="{{ $day }}">17:00</span>
+                            <span class="range-time-display-start" data-day="{{ $day }}" data-context="work">09:00</span>
+                            <span class="range-time-display-end" data-day="{{ $day }}" data-context="work">17:00</span>
                         </div>
                     </div>
                 </div>
 
                 {{-- Hidden Inputs for Form Submission --}}
-                <input type="hidden" name="{{ $day }}_start" value="{{ $startTime ? substr($startTime, 0, 5) : '09:00' }}" data-day="{{ $day }}" data-type="start">
-                <input type="hidden" name="{{ $day }}_end" value="{{ $endTime ? substr($endTime, 0, 5) : '17:00' }}" data-day="{{ $day }}" data-type="end">
+                <input type="hidden" name="{{ $day }}_start" value="{{ $startTime ? substr($startTime, 0, 5) : '09:00' }}" data-day="{{ $day }}" data-context="work" data-type="start">
+                <input type="hidden" name="{{ $day }}_end" value="{{ $endTime ? substr($endTime, 0, 5) : '17:00' }}" data-day="{{ $day }}" data-context="work" data-type="end">
+            </div>
+
+            {{-- Break Checkbox --}}
+            <div class="flex items-center space-x-3">
+                <input type="checkbox" name="{{ $day }}_has_break" value="1" {{ $hasBreak ? 'checked' : '' }}
+                    class="form-checkbox w-5 h-5 text-indigo-500 bg-gray-700 border-gray-600 rounded focus:ring-indigo-500 focus:ring-2 break-checkbox"
+                    data-day="{{ $day }}"
+                    onchange="if(window.toggleBreakInputs) window.toggleBreakInputs('{{ $day }}')">
+                <label class="text-gray-300">{{ __('unitSettings.has_break') }}</label>
+            </div>
+
+            {{-- Break Range Slider Container --}}
+            <div id="{{ $day }}-break-inputs" class="break-time-inputs bg-gray-700/50 rounded-lg p-4"
+                 style="display: {{ $hasBreak ? 'block' : 'none' }};">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">{{ __('unitSettings.break_time') }}</label>
+                    <div class="relative">
+                        <div class="range-slider-container" data-day="{{ $day }}" data-context="break">
+                            <div class="range-slider-track bg-gray-600 h-2 rounded-full relative">
+                                <div class="range-slider-progress bg-indigo-500 h-2 rounded-full absolute top-0 left-0"
+                                     data-day="{{ $day }}" data-context="break"></div>
+                            </div>
+
+                            {{-- Start Handle (Break) --}}
+                            <input type="range"
+                                   name="{{ $day }}_break_start_range"
+                                   class="range-slider-handle range-slider-handle-start absolute top-0 w-full h-2 opacity-0 cursor-pointer"
+                                   data-day="{{ $day }}"
+                                   data-context="break"
+                                   data-handle="start"
+                                   min="0"
+                                   max="1440"
+                                   value="{{ $breakStartTime ? \Carbon\Carbon::parse('2000-01-01 ' . $breakStartTime)->format('H') * 60 + \Carbon\Carbon::parse('2000-01-01 ' . $breakStartTime)->format('i') : 720 }}"
+                                   oninput="if(window.updateRangeSlider) window.updateRangeSlider('{{ $day }}', 'break', 'start', this.value)">
+
+                            {{-- End Handle (Break) --}}
+                            <input type="range"
+                                   name="{{ $day }}_break_end_range"
+                                   class="range-slider-handle range-slider-handle-end absolute top-0 w-full h-2 opacity-0 cursor-pointer"
+                                   data-day="{{ $day }}"
+                                   data-context="break"
+                                   data-handle="end"
+                                   min="0"
+                                   max="1440"
+                                   value="{{ $breakEndTime ? \Carbon\Carbon::parse('2000-01-01 ' . $breakEndTime)->format('H') * 60 + \Carbon\Carbon::parse('2000-01-01 ' . $breakEndTime)->format('i') : 780 }}"
+                                   oninput="if(window.updateRangeSlider) window.updateRangeSlider('{{ $day }}', 'break', 'end', this.value)">
+
+                            {{-- Visual Handles (Break) --}}
+                            <div class="range-slider-thumb range-slider-thumb-start absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-indigo-500 rounded-full border-2 border-white shadow-lg cursor-pointer"
+                                 data-day="{{ $day }}"
+                                 data-context="break"
+                                 data-handle="start">
+                                <div class="range-tooltip range-tooltip-start absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 transition-opacity duration-200 pointer-events-none">
+                                    <span class="range-tooltip-time-start" data-day="{{ $day }}" data-context="break">12:00</span>
+                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                </div>
+                            </div>
+
+                            <div class="range-slider-thumb range-slider-thumb-end absolute top-1/2 transform -translate-y-1/2 w-4 h-4 bg-indigo-500 rounded-full border-2 border-white shadow-lg cursor-pointer"
+                                 data-day="{{ $day }}"
+                                 data-context="break"
+                                 data-handle="end">
+                                <div class="range-tooltip range-tooltip-end absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 transition-opacity duration-200 pointer-events-none">
+                                    <span class="range-tooltip-time-end" data-day="{{ $day }}" data-context="break">13:00</span>
+                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Time Display (Break) --}}
+                        <div class="flex justify-between mt-2 text-sm text-gray-400">
+                            <span class="range-time-display-start" data-day="{{ $day }}" data-context="break">12:00</span>
+                            <span class="range-time-display-end" data-day="{{ $day }}" data-context="break">13:00</span>
+                        </div>
+                    </div>
+
+                    {{-- Hidden Inputs (Break) --}}
+                    <input type="hidden" name="{{ $day }}_break_start" value="{{ $breakStartTime ? substr($breakStartTime, 0, 5) : '12:00' }}" data-day="{{ $day }}" data-context="break" data-type="start">
+                    <input type="hidden" name="{{ $day }}_break_end" value="{{ $breakEndTime ? substr($breakEndTime, 0, 5) : '13:00' }}" data-day="{{ $day }}" data-context="break" data-type="end">
+                </div>
             </div>
         </div>
     </div>
@@ -192,6 +276,12 @@
 
         if (checkbox.checked) {
             timeInputsContainer.style.display = 'flex';
+            // Ensure break container follows the day visibility
+            const breakContainer = document.getElementById(`${day}-break-inputs`);
+            const breakCheckbox = document.querySelector(`input.break-checkbox[data-day="${day}"]`);
+            if (breakContainer && breakCheckbox) {
+                breakContainer.style.display = breakCheckbox.checked ? 'block' : 'none';
+            }
             if (statusIndicator) {
                 statusIndicator.classList.remove('bg-gray-500');
                 statusIndicator.classList.add('bg-green-500');
@@ -201,6 +291,8 @@
             }
         } else {
             timeInputsContainer.style.display = 'none';
+            const breakContainer = document.getElementById(`${day}-break-inputs`);
+            if (breakContainer) breakContainer.style.display = 'none';
             if (statusIndicator) {
                 statusIndicator.classList.remove('bg-green-500');
                 statusIndicator.classList.add('bg-gray-500');
@@ -211,16 +303,23 @@
         }
     };
 
-    window.updateRangeSlider = function(day, handle, value) {
-        const startInput = document.querySelector(`input[data-day="${day}"][data-handle="start"]`);
-        const endInput = document.querySelector(`input[data-day="${day}"][data-handle="end"]`);
-        const startThumb = document.querySelector(`.range-slider-thumb-start[data-day="${day}"]`);
-        const endThumb = document.querySelector(`.range-slider-thumb-end[data-day="${day}"]`);
-        const progress = document.querySelector(`.range-slider-progress[data-day="${day}"]`);
-        const startDisplay = document.querySelector(`.range-time-display-start[data-day="${day}"]`);
-        const endDisplay = document.querySelector(`.range-time-display-end[data-day="${day}"]`);
-        const startHidden = document.querySelector(`input[data-day="${day}"][data-type="start"]`);
-        const endHidden = document.querySelector(`input[data-day="${day}"][data-type="end"]`);
+    window.toggleBreakInputs = function(day) {
+        const breakCheckbox = document.querySelector(`input.break-checkbox[data-day="${day}"]`);
+        const breakContainer = document.getElementById(`${day}-break-inputs`);
+        if (breakCheckbox && breakContainer) {
+            breakContainer.style.display = breakCheckbox.checked ? 'block' : 'none';
+        }
+    };
+    window.updateRangeSlider = function(day, context, handle, value) {
+        const startInput = document.querySelector(`input[data-day="${day}"][data-context="${context}"][data-handle="start"]`);
+        const endInput = document.querySelector(`input[data-day="${day}"][data-context="${context}"][data-handle="end"]`);
+        const startThumb = document.querySelector(`.range-slider-thumb-start[data-day="${day}"][data-context="${context}"]`);
+        const endThumb = document.querySelector(`.range-slider-thumb-end[data-day="${day}"][data-context="${context}"]`);
+        const progress = document.querySelector(`.range-slider-progress[data-day="${day}"][data-context="${context}"]`);
+        const startDisplay = document.querySelector(`.range-time-display-start[data-day="${day}"][data-context="${context}"]`);
+        const endDisplay = document.querySelector(`.range-time-display-end[data-day="${day}"][data-context="${context}"]`);
+        const startHidden = document.querySelector(`input[data-day="${day}"][data-context="${context}"][data-type="start"]`);
+        const endHidden = document.querySelector(`input[data-day="${day}"][data-context="${context}"][data-type="end"]`);
         const appointmentDurationInput = document.querySelector('#appointment_duration_minutes');
 
         if (!startInput || !endInput || !startThumb || !endThumb || !progress) {
@@ -294,10 +393,11 @@
     function initializeRangeSliders() {
         document.querySelectorAll('.range-slider-container').forEach(container => {
             const day = container.getAttribute('data-day');
+            const context = container.getAttribute('data-context') || 'work';
 
             // Get the current values from the range inputs
-            const startInput = container.querySelector('input[data-handle="start"]');
-            const endInput = container.querySelector('input[data-handle="end"]');
+            const startInput = container.querySelector(`input[data-handle="start"][data-context="${context}"]`);
+            const endInput = container.querySelector(`input[data-handle="end"][data-context="${context}"]`);
 
             if (!startInput || !endInput) {
                 return;
@@ -317,14 +417,14 @@
             const snappedEndValue = Math.round(endValue / appointmentDuration) * appointmentDuration;
             endInput.value = snappedEndValue;
 
-            updateRangeSlider(day, 'start', snappedStartValue);
-            updateRangeSlider(day, 'end', snappedEndValue);
+            updateRangeSlider(day, context, 'start', snappedStartValue);
+            updateRangeSlider(day, context, 'end', snappedEndValue);
 
             // Update time displays immediately
-            const startDisplay = container.querySelector('.range-time-display-start');
-            const endDisplay = container.querySelector('.range-time-display-end');
-            const startHidden = container.querySelector('input[data-type="start"]');
-            const endHidden = container.querySelector('input[data-type="end"]');
+            const startDisplay = container.parentElement.querySelector(`.range-time-display-start[data-day="${day}"][data-context="${context}"]`);
+            const endDisplay = container.parentElement.querySelector(`.range-time-display-end[data-day="${day}"][data-context="${context}"]`);
+            const startHidden = container.parentElement.querySelector(`input[data-day="${day}"][data-context="${context}"][data-type="start"]`);
+            const endHidden = container.parentElement.querySelector(`input[data-day="${day}"][data-context="${context}"][data-type="end"]`);
 
             if (startDisplay && endDisplay && startHidden && endHidden) {
                 startDisplay.textContent = minutesToTime(snappedStartValue);
@@ -334,19 +434,19 @@
             }
 
             // Add drag functionality to thumbs
-            const startThumb = container.querySelector('.range-slider-thumb-start');
-            const endThumb = container.querySelector('.range-slider-thumb-end');
+            const startThumb = container.querySelector('.range-slider-thumb-start[data-context="' + context + '"]');
+            const endThumb = container.querySelector('.range-slider-thumb-end[data-context="' + context + '"]');
             const track = container.querySelector('.range-slider-track');
 
             if (startThumb && endThumb && track) {
-                addDragListeners(startThumb, day, 'start', track);
-                addDragListeners(endThumb, day, 'end', track);
-                addTrackClickListeners(track, day);
+                addDragListeners(startThumb, day, context, 'start', track);
+                addDragListeners(endThumb, day, context, 'end', track);
+                addTrackClickListeners(track, day, context);
             }
         });
     }
 
-    function addDragListeners(thumb, day, handle, track) {
+    function addDragListeners(thumb, day, context, handle, track) {
         let isDragging = false;
         const tooltip = thumb.querySelector(`.range-tooltip-${handle}`);
         const tooltipTime = thumb.querySelector(`.range-tooltip-time-${handle}`);
@@ -366,8 +466,8 @@
             const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
             const minutes = Math.min(1439, Math.round((percent / 100) * 1440));
 
-            const input = document.querySelector(`input[data-day="${day}"][data-handle="${handle}"]`);
-            updateRangeSlider(day, handle, minutes);
+            const input = document.querySelector(`input[data-day="${day}"][data-context="${context}"][data-handle="${handle}"]`);
+            updateRangeSlider(day, context, handle, minutes);
 
             // Update tooltip with snapped value
             if (input && tooltipTime) {
@@ -400,15 +500,15 @@
         });
     }
 
-    function addTrackClickListeners(track, day) {
+    function addTrackClickListeners(track, day, context) {
         track.addEventListener('click', (e) => {
             const rect = track.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const percent = (x / rect.width) * 100;
             const minutes = Math.min(1439, Math.round((percent / 100) * 1440));
 
-            const startInput = document.querySelector(`input[data-day="${day}"][data-handle="start"]`);
-            const endInput = document.querySelector(`input[data-day="${day}"][data-handle="end"]`);
+            const startInput = document.querySelector(`input[data-day="${day}"][data-context="${context}"][data-handle="start"]`);
+            const endInput = document.querySelector(`input[data-day="${day}"][data-context="${context}"][data-handle="end"]`);
 
             if (!startInput || !endInput) return;
 
@@ -420,9 +520,9 @@
             const endDistance = Math.abs(minutes - endValue);
 
             if (startDistance < endDistance) {
-                updateRangeSlider(day, 'start', minutes);
+                updateRangeSlider(day, context, 'start', minutes);
             } else {
-                updateRangeSlider(day, 'end', minutes);
+                updateRangeSlider(day, context, 'end', minutes);
             }
         });
     }
@@ -449,6 +549,7 @@
             document.querySelectorAll('.day-checkbox').forEach(checkbox => {
                 const day = checkbox.getAttribute('data-day');
                 toggleTimeInputs(day);
+                toggleBreakInputs(day);
             });
 
             // Initialize range sliders
@@ -468,6 +569,7 @@
         document.querySelectorAll('.day-checkbox').forEach(checkbox => {
             const day = checkbox.getAttribute('data-day');
             toggleTimeInputs(day);
+            toggleBreakInputs(day);
         });
 
         // Initialize range sliders

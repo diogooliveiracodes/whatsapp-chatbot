@@ -254,6 +254,9 @@
                                                             $referenceDate = now()->format('Y-m-d');
                                                             $rawStart = $unitSettings->{$day . '_start'};
                                                             $rawEnd = $unitSettings->{$day . '_end'};
+                                                            $rawBreakStart = $unitSettings->{$day . '_break_start'};
+                                                            $rawBreakEnd = $unitSettings->{$day . '_break_end'};
+                                                            $hasBreak = $unitSettings->{$day . '_has_break'};
                                                             $startDisplay = $rawStart
                                                                 ? \Carbon\Carbon::parse(
                                                                     $referenceDate . ' ' . $rawStart,
@@ -270,8 +273,29 @@
                                                                     ->setTimezone($userTimezone)
                                                                     ->format('H:i')
                                                                 : null;
+                                                            $breakStartDisplay = $rawBreakStart
+                                                                ? \Carbon\Carbon::parse(
+                                                                    $referenceDate . ' ' . $rawBreakStart,
+                                                                    'UTC',
+                                                                )
+                                                                    ->setTimezone($userTimezone)
+                                                                    ->format('H:i')
+                                                                : null;
+                                                            $breakEndDisplay = $rawBreakEnd
+                                                                ? \Carbon\Carbon::parse(
+                                                                    $referenceDate . ' ' . $rawBreakEnd,
+                                                                    'UTC',
+                                                                )
+                                                                    ->setTimezone($userTimezone)
+                                                                    ->format('H:i')
+                                                                : null;
                                                         @endphp
                                                         {{ $startDisplay }} - {{ $endDisplay }}
+                                                        @if ($hasBreak && $breakStartDisplay && $breakEndDisplay)
+                                                            <span class="text-gray-300">|</span>
+                                                            <span class="text-yellow-400">{{ __('unitSettings.break_time') }}:</span>
+                                                            {{ $breakStartDisplay }} - {{ $breakEndDisplay }}
+                                                        @endif
                                                     </div>
                                                 </div>
                                             @endif

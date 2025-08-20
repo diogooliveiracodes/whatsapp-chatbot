@@ -67,9 +67,23 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
         foreach ($days as $day) {
             $data[$day] = isset($data[$day]);
 
+            // Handle break checkbox and times
+            $hasBreakKey = $day . '_has_break';
+            $breakStartKey = $day . '_break_start';
+            $breakEndKey = $day . '_break_end';
+
+            $data[$hasBreakKey] = isset($data[$hasBreakKey]);
+
             if (!$data[$day]) {
                 $data[$day . '_start'] = null;
                 $data[$day . '_end'] = null;
+                $data[$hasBreakKey] = false;
+                $data[$breakStartKey] = null;
+                $data[$breakEndKey] = null;
+            } else if (!$data[$hasBreakKey]) {
+                // If day is enabled but has no break, clear break times
+                $data[$breakStartKey] = null;
+                $data[$breakEndKey] = null;
             }
         }
 
@@ -92,6 +106,8 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
         foreach ($days as $day) {
             $startKey = $day . '_start';
             $endKey = $day . '_end';
+            $breakStartKey = $day . '_break_start';
+            $breakEndKey = $day . '_break_end';
 
             if (!empty($data[$startKey])) {
                 $data[$startKey] = TimezoneHelper::convertTimeToUtc($data[$startKey], $preferredTimezone);
@@ -99,6 +115,14 @@ class UnitSettingsRepository implements UnitSettingsRepositoryInterface
 
             if (!empty($data[$endKey])) {
                 $data[$endKey] = TimezoneHelper::convertTimeToUtc($data[$endKey], $preferredTimezone);
+            }
+
+            if (!empty($data[$breakStartKey])) {
+                $data[$breakStartKey] = TimezoneHelper::convertTimeToUtc($data[$breakStartKey], $preferredTimezone);
+            }
+
+            if (!empty($data[$breakEndKey])) {
+                $data[$breakEndKey] = TimezoneHelper::convertTimeToUtc($data[$breakEndKey], $preferredTimezone);
             }
         }
 
