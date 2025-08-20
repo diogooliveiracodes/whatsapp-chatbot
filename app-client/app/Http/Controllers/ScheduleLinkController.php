@@ -149,7 +149,6 @@ class ScheduleLinkController extends Controller
             'unit_service_type_id' => ['required', 'integer', 'exists:unit_service_types,id'],
             'schedule_date' => ['required', 'date_format:Y-m-d'],
             'start_time' => ['required', 'date_format:H:i'],
-            'notes' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $unitSettings = $unit->unitSettings;
@@ -209,7 +208,7 @@ class ScheduleLinkController extends Controller
                 'start_time' => $utcStart,
                 'end_time' => $utcEnd,
                 'status' => 'pending',
-                'notes' => $validated['notes'] ?? null,
+                'notes' => null,
                 'is_confirmed' => true,
                 'active' => true,
             ]);

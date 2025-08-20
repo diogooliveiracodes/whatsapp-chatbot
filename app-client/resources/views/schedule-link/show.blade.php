@@ -68,14 +68,14 @@
                                 </div>
                             </div>
 
-                            <!-- Step 2: Service Selection -->
-                            <div class="space-y-4">
-                                <div class="flex items-center space-x-3 mb-4">
-                                    <div
-                                        class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                                        2</div>
-                                    <h2 class="text-xl font-semibold text-white">Tipo de Serviço</h2>
-                                </div>
+                                                         <!-- Step 2: Service Selection -->
+                             <div class="space-y-4" id="step-service">
+                                 <div class="flex items-center space-x-3 mb-4">
+                                     <div
+                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                                         2</div>
+                                     <h2 class="text-xl font-semibold text-white">Tipo de Serviço</h2>
+                                 </div>
 
                                 <div class="space-y-4">
                                     <label class="block text-gray-300 text-sm font-medium">
@@ -115,11 +115,11 @@
                             </div>
 
                             <!-- Step 3: Date and Time Selection -->
-                            <div class="space-y-6">
+                            <div class="space-y-6" id="step-date-time">
                                 <div class="flex items-center space-x-3 mb-4">
                                     <div
                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                                        3</div>
+                                        4</div>
                                     <h2 class="text-xl font-semibold text-white">Data e Horário</h2>
                                 </div>
 
@@ -175,7 +175,7 @@
                                 </div>
 
                                 <!-- Time Selection -->
-                                <div class="space-y-4">
+                                <div class="space-y-4" id="step-time">
                                     <label class="block text-gray-300 text-sm font-medium">
                                         {{ __('schedule_link.choose_time') }} <span class="text-red-400">*</span>
                                     </label>
@@ -190,24 +190,7 @@
                                 </div>
                             </div>
 
-                            <!-- Step 4: Additional Information -->
-                            <div class="space-y-4">
-                                <div class="flex items-center space-x-3 mb-4">
-                                    <div
-                                        class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                                        4</div>
-                                    <h2 class="text-xl font-semibold text-white">Informações Adicionais</h2>
-                                </div>
 
-                                <div class="space-y-2">
-                                    <label for="notes" class="block text-gray-300 text-sm font-medium">
-                                        {{ __('schedules.notes') }}
-                                    </label>
-                                    <textarea id="notes" name="notes" rows="3" placeholder="Alguma observação ou informação adicional..."
-                                        class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none">{{ old('notes') }}</textarea>
-                                    <x-input-error :messages="$errors->get('notes')" class="mt-1" />
-                                </div>
-                            </div>
 
                             <!-- Error Messages -->
                             @if ($errors->has('general'))
@@ -349,6 +332,14 @@
         btn.classList.add('ring-2', 'ring-green-500', 'scale-105');
         document.getElementById('schedule_date').value = dateStr;
 
+        // Scroll to time selection after a short delay
+        setTimeout(() => {
+            document.getElementById('step-time').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 500);
+
         // Show loading state
         const timesEl = document.getElementById('times');
         timesEl.innerHTML =
@@ -399,6 +390,14 @@
                             'to-blue-700', 'hover:from-blue-700', 'hover:to-blue-800');
                         document.getElementById('start_time').value = time;
                         updateSubmitEnabled();
+
+                        // Scroll to submit button after a short delay
+                        setTimeout(() => {
+                            document.getElementById('submit-button').scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }, 300);
                     });
 
                     b.addEventListener('keydown', (e) => {
@@ -561,6 +560,14 @@
                     radioCircle.classList.add('border-blue-500');
                     radioDot.classList.remove('opacity-0');
                     radioDot.classList.add('opacity-100');
+
+                    // Scroll to next step (Date and Time)
+                    setTimeout(() => {
+                        document.getElementById('step-date-time').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }, 300);
                 }
 
                 // Update submit button state
