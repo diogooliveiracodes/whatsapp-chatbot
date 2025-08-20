@@ -53,7 +53,7 @@ class ScheduleLinkController extends Controller
     /**
      * Show scheduling page for a specific unit.
      */
-    public function show($company, Unit $unit, Request $request): View
+    public function show($company, Unit $unit, Request $request): View|RedirectResponse
     {
         // Ensure the unit belongs to the specified company
         if ($unit->company_id != $company) {
@@ -66,6 +66,25 @@ class ScheduleLinkController extends Controller
 
         $weekStart = $request->get('week_start', now()->startOfWeek(Carbon::SUNDAY)->format('Y-m-d'));
         $weekDays = $this->getWeekDays($unit, $weekStart);
+
+        // Check if current week has any available days
+        $hasAvailableDays = collect($weekDays)->contains('available', true);
+
+        // If no available days and this is the initial load (no week_start parameter), try next week
+        if (!$hasAvailableDays && !$request->has('week_start')) {
+            $nextWeekStart = Carbon::parse($weekStart)->addWeek()->format('Y-m-d');
+            $nextWeekDays = $this->getWeekDays($unit, $nextWeekStart);
+            $nextWeekHasAvailableDays = collect($nextWeekDays)->contains('available', true);
+
+            if ($nextWeekHasAvailableDays) {
+                // Redirect to next week if it has available days
+                return redirect()->route('schedule-link.show', [
+                    'company' => $company,
+                    'unit' => $unit->id,
+                    'week_start' => $nextWeekStart
+                ]);
+            }
+        }
 
         return view('schedule-link.show', [
             'unit' => $unit,
@@ -245,17 +264,17 @@ class ScheduleLinkController extends Controller
 
         $start = Carbon::parse($weekStart)->startOfWeek(Carbon::SUNDAY);
         $end = $start->copy()->endOfWeek(Carbon::SATURDAY);
-        
+
         $todayLocal = now($unitSettings->timezone ?? 'UTC')->startOfDay();
 
         $weekDays = [];
         $cursor = $start->copy();
-        
+
         while ($cursor->lte($end)) {
             $dateStr = $cursor->format('Y-m-d');
             $isFutureOrToday = $cursor->greaterThanOrEqualTo($todayLocal);
             $isWorkingDay = !$this->workingDaysValidator->isOutsideWorkingDays($cursor, $unitSettings);
-            
+
             if ($isFutureOrToday && $isWorkingDay) {
                 // Check if there are available slots for this day
                 $hasAnySlot = $this->getAvailableTimesForDate($unit, $dateStr)->isNotEmpty();
@@ -278,7 +297,7 @@ class ScheduleLinkController extends Controller
                     'is_today' => $cursor->isSameDay($todayLocal)
                 ];
             }
-            
+
             $cursor->addDay();
         }
 

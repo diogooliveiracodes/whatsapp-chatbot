@@ -241,8 +241,6 @@
      const unitId = @json($unit->id);
      const companyId = @json($company);
      let currentWeekStart = weekStart;
-     let autoNavigationAttempts = 0;
-     const maxAutoNavigationAttempts = 12; // Limit to 12 weeks (3 months) to prevent infinite loops
 
          function renderCalendar(weekStartStr) {
          const calendar = document.getElementById('calendar');
@@ -284,35 +282,34 @@
          // Update week display
          updateWeekDisplay(weekStartStr);
 
-         // Auto-select first available day or navigate to next week if none available
+         // Auto-select first available day
+         console.log('Looking for available days in weekDays:', weekDays); // Debug log
          const firstAvailableDay = weekDays.find(day => day.available);
+         console.log('First available day found:', firstAvailableDay); // Debug log
          if (firstAvailableDay) {
              const firstDayCard = calendar.querySelector(`[data-date="${firstAvailableDay.date}"]`);
+             console.log('First day card found:', firstDayCard); // Debug log
              if (firstDayCard) {
                  onSelectDate(firstAvailableDay.date, firstDayCard);
              }
          } else {
-             // No available days in current week, automatically navigate to next week
-             if (autoNavigationAttempts < maxAutoNavigationAttempts) {
-                 autoNavigationAttempts++;
-                 setTimeout(() => {
-                     navigateWeek('next');
-                 }, 500); // Small delay to show the current week briefly
-             } else {
-                 // Show message that no available weeks found
-                 const calendar = document.getElementById('calendar');
-                 calendar.innerHTML = `
-                     <div class="col-span-7 text-center py-8">
-                         <div class="text-gray-400 text-sm">
-                             <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                             </svg>
-                             <p class="font-medium">Nenhuma semana disponível encontrada</p>
-                             <p class="text-xs mt-1">Tente navegar manualmente para outras semanas</p>
-                         </div>
+             // Clear times if no available days
+             const timesEl = document.getElementById('times');
+             timesEl.innerHTML = `
+                 <div class="col-span-full text-center py-8">
+                     <div class="text-gray-400 text-sm">
+                         <svg class="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                         </svg>
+                         Nenhum horário disponível para esta semana
                      </div>
-                 `;
-             }
+                 </div>
+             `;
+
+             // Clear selected date and time
+             document.getElementById('schedule_date').value = '';
+             document.getElementById('start_time').value = '';
+             updateSubmitEnabled();
          }
      }
 
@@ -321,8 +318,10 @@
         return days[dayOfWeek];
     }
 
-    function onSelectDate(dateStr, btn) {
-                 // Remove selection from all day cards
+         function onSelectDate(dateStr, btn) {
+         console.log('onSelectDate called with:', dateStr); // Debug log
+
+         // Remove selection from all day cards
          document.querySelectorAll('#calendar button').forEach(b => {
              b.classList.remove('ring-2', 'ring-green-500', 'scale-105');
              if (b.classList.contains('from-yellow-400')) {
@@ -338,20 +337,21 @@
 
          // Add selection to clicked card
          btn.classList.add('ring-2', 'ring-green-500', 'scale-105');
-        document.getElementById('schedule_date').value = dateStr;
+         document.getElementById('schedule_date').value = dateStr;
 
-        // Show loading state
-        const timesEl = document.getElementById('times');
-        timesEl.innerHTML =
-            '<div class="col-span-full flex justify-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div></div>';
+         // Show loading state
+         const timesEl = document.getElementById('times');
+         timesEl.innerHTML =
+             '<div class="col-span-full flex justify-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div></div>';
 
-        fetchTimes(dateStr);
-    }
+         fetchTimes(dateStr);
+     }
 
-    function fetchTimes(dateStr) {
-        const timesEl = document.getElementById('times');
+         function fetchTimes(dateStr) {
+         console.log('fetchTimes called with:', dateStr); // Debug log
+         const timesEl = document.getElementById('times');
 
-        fetch(`${window.location.origin}/${companyId}/schedule-link/${unitId}/available-times?date=${dateStr}`)
+         fetch(`${window.location.origin}/${companyId}/schedule-link/${unitId}/available-times?date=${dateStr}`)
             .then(r => r.json())
             .then(data => {
                 timesEl.innerHTML = '';
@@ -451,7 +451,8 @@
 
 
                         // Week navigation functions
-     function loadWeek(weekStartStr) {
+          function loadWeek(weekStartStr) {
+         console.log('loadWeek called with:', weekStartStr); // Debug log
          const prevBtn = document.getElementById('prev-week');
          const nextBtn = document.getElementById('next-week');
          const spinner = document.getElementById('week-loading-spinner');
@@ -464,6 +465,7 @@
          fetch(`${window.location.origin}/${companyId}/schedule-link/${unitId}/week-days?week_start=${weekStartStr}`)
              .then(r => r.json())
              .then(data => {
+                 console.log('Week data received:', data); // Debug log
                  if (data.days && data.days.length > 0) {
                      weekDays = data.days;
                      currentWeekStart = weekStartStr;
@@ -493,7 +495,7 @@
          weekDisplay.textContent = `${startFormatted} - ${endFormatted}`;
      }
 
-          function navigateWeek(direction) {
+               function navigateWeek(direction) {
          const currentDate = new Date(currentWeekStart);
          const newDate = new Date(currentDate);
 
@@ -504,12 +506,6 @@
          }
 
          const newWeekStart = newDate.toISOString().split('T')[0];
-
-         // Reset auto navigation attempts when user manually navigates
-         if (direction === 'prev') {
-             autoNavigationAttempts = 0;
-         }
-
          loadWeek(newWeekStart);
      }
 
