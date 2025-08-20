@@ -62,7 +62,7 @@ class ScheduleLinkController extends Controller
 
         $unit->load(['unitSettings', 'unitServiceTypes' => function ($q) {
             $q->where('active', true);
-        }]);
+        }, 'company']);
 
         $weekStart = $request->get('week_start', now()->startOfWeek(Carbon::SUNDAY)->format('Y-m-d'));
         $weekDays = $this->getWeekDays($unit, $weekStart);
@@ -93,6 +93,7 @@ class ScheduleLinkController extends Controller
             'weekStart' => $weekStart,
             'weekDays' => $weekDays,
             'company' => $company,
+            'companyName' => $unit->company->name ?? 'Agendamento',
         ]);
     }
 
