@@ -259,7 +259,7 @@
              if (dayData.is_today) {
                  card.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-500', 'border-yellow-400', 'text-black', 'shadow-yellow-500/25');
              } else if (dayData.available) {
-                 card.classList.add('bg-gradient-to-br', 'from-green-600', 'to-green-700', 'border-green-500', 'text-white', 'hover:from-green-500', 'hover:to-green-600', 'hover:border-green-400');
+                 card.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-200', 'dark:border-green-800', 'text-green-800', 'dark:text-green-200', 'hover:bg-green-100', 'dark:hover:bg-green-900/30');
                  card.addEventListener('click', () => onSelectDate(dayData.date, card));
                  card.addEventListener('keydown', (e) => {
                      if (e.key === 'Enter' || e.key === ' ') {
