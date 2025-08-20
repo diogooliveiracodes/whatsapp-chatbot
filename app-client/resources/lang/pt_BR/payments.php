@@ -23,4 +23,5 @@ return [
     'payment_method_credit_card' => 'Cartão de Crédito',
     'payment_method_debit_card' => 'Cartão de Débito',
     'payment_method_pix' => 'Pix',
+    'payment_method_cash' => 'Dinheiro',
 ];

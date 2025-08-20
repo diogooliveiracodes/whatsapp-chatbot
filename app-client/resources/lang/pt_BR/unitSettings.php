@@ -82,6 +82,16 @@ return [
     'default_language' => 'Idioma Padrão',
     'timezone' => 'Fuso Horário',
 
+    // Payment Methods Section
+    'payment_methods_section' => 'Métodos de Pagamento',
+    'payment_methods_description' => 'Configure quais métodos de pagamento estarão disponíveis para agendamentos nesta unidade',
+    'pix_enabled' => 'Pix Habilitado',
+    'credit_card_enabled' => 'Cartão de Crédito Habilitado',
+    'debit_card_enabled' => 'Cartão de Débito Habilitado',
+    'cash_enabled' => 'Dinheiro Habilitado',
+    'at_least_one_payment_method' => 'Pelo menos um método de pagamento deve estar habilitado',
+    'no_payment_methods_configured' => 'Nenhum método de pagamento configurado',
+
     // Days of the week (using numbers as keys)
     'days' => [
         '1' => 'Domingo',

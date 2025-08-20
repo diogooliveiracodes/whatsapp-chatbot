@@ -82,6 +82,16 @@ return [
     'default_language' => 'Default Language',
     'timezone' => 'Timezone',
 
+    // Payment Methods Section
+    'payment_methods_section' => 'Payment Methods',
+    'payment_methods_description' => 'Configure which payment methods will be available for appointments in this unit',
+    'pix_enabled' => 'Pix Enabled',
+    'credit_card_enabled' => 'Credit Card Enabled',
+    'debit_card_enabled' => 'Debit Card Enabled',
+    'cash_enabled' => 'Cash Enabled',
+    'at_least_one_payment_method' => 'At least one payment method must be enabled',
+    'no_payment_methods_configured' => 'No payment methods configured',
+
     // Days of the week (using numbers as keys)
     'days' => [
         '1' => 'Sunday',
