@@ -78,8 +78,43 @@
                                         :required="true" />
                                 </div>
 
-                                <div class="bg-gray-700/50 rounded-lg p-4">
-                                    <x-unit-settings.text-input name="phone" :label="__('unitSettings.phone')" :value="$unitSettings->phone" />
+                                <div class="bg-gray-700/50 rounded-lg p-4"
+                                    x-data="{
+                                        phone: '{{ old('phone', $unitSettings->phone) }}',
+                                        formatPhone() {
+                                            let cleaned = this.phone.replace(/\D/g, '').substring(0, 11);
+                                            let ddd = cleaned.substring(0, 2);
+                                            let firstPart = '';
+                                            let secondPart = '';
+
+                                            if (cleaned.length >= 7) {
+                                                if (cleaned.length === 11) {
+                                                    firstPart = cleaned.substring(2, 7);
+                                                    secondPart = cleaned.substring(7, 11);
+                                                } else {
+                                                    firstPart = cleaned.substring(2, 6);
+                                                    secondPart = cleaned.substring(6, 10);
+                                                }
+                                            } else {
+                                                firstPart = cleaned.substring(2);
+                                            }
+
+                                            return cleaned.length > 0
+                                                ? `(${ddd}) ${firstPart}${secondPart ? '-' + secondPart : ''}`
+                                                : '';
+                                        }
+                                    }"
+                                >
+                                    <label for="phone" class="label-style">{{ __('unitSettings.phone') }}</label>
+                                    <input
+                                        type="text"
+                                        id="phone"
+                                        name="phone"
+                                        x-bind:value="formatPhone()"
+                                        x-on:input="phone = $event.target.value"
+                                        class="input-style"
+                                        placeholder="(99) 99999-9999"
+                                    >
                                 </div>
                             </div>
                         </div>
@@ -149,9 +184,43 @@
                                         :value="$unitSettings->whatsapp_webhook_url" />
                                 </div>
 
-                                <div class="bg-gray-700/50 rounded-lg p-4">
-                                    <x-unit-settings.text-input name="whatsapp_number" :label="__('unitSettings.whatsapp_number')"
-                                        :value="$unitSettings->whatsapp_number" />
+                                <div class="bg-gray-700/50 rounded-lg p-4"
+                                    x-data="{
+                                        whatsappNumber: '{{ old('whatsapp_number', $unitSettings->whatsapp_number) }}',
+                                        formatWhatsAppNumber() {
+                                            let cleaned = this.whatsappNumber.replace(/\D/g, '').substring(0, 11);
+                                            let ddd = cleaned.substring(0, 2);
+                                            let firstPart = '';
+                                            let secondPart = '';
+
+                                            if (cleaned.length >= 7) {
+                                                if (cleaned.length === 11) {
+                                                    firstPart = cleaned.substring(2, 7);
+                                                    secondPart = cleaned.substring(7, 11);
+                                                } else {
+                                                    firstPart = cleaned.substring(2, 6);
+                                                    secondPart = cleaned.substring(6, 10);
+                                                }
+                                            } else {
+                                                firstPart = cleaned.substring(2);
+                                            }
+
+                                            return cleaned.length > 0
+                                                ? `(${ddd}) ${firstPart}${secondPart ? '-' + secondPart : ''}`
+                                                : '';
+                                        }
+                                    }"
+                                >
+                                    <label for="whatsapp_number" class="label-style">{{ __('unitSettings.whatsapp_number') }}</label>
+                                    <input
+                                        type="text"
+                                        id="whatsapp_number"
+                                        name="whatsapp_number"
+                                        x-bind:value="formatWhatsAppNumber()"
+                                        x-on:input="whatsappNumber = $event.target.value"
+                                        class="input-style"
+                                        placeholder="(99) 99999-9999"
+                                    >
                                 </div>
                             </div>
                         </div>
