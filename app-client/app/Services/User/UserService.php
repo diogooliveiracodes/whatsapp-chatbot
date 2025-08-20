@@ -70,7 +70,7 @@ class UserService
     public function create(array $data): User
     {
         $data['password'] = Hash::make($data['password']);
-        $data['company_id'] = Auth::user()->company_id;
+        $data['company_id'] = $data['company_id'] ?? Auth::user()->company_id;
         $data['active'] = $data['active'] ?? true;
 
         return $this->userRepository->create($data);
