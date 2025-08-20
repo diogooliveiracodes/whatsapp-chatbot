@@ -46,7 +46,7 @@
                                     <h2 class="text-xl font-semibold text-white">Informações Pessoais</h2>
                                 </div>
 
-                                                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                                     <div class="space-y-2">
                                         <label for="name" class="block text-gray-300 text-sm font-medium">
                                             {{ __('schedule_link.name') }} <span class="text-red-400">*</span>
@@ -68,53 +68,51 @@
                                 </div>
                             </div>
 
-                                                         <!-- Step 2: Service Selection -->
-                             <div class="space-y-4">
-                                 <div class="flex items-center space-x-3 mb-4">
-                                     <div
-                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                                         2</div>
-                                     <h2 class="text-xl font-semibold text-white">Tipo de Serviço</h2>
-                                 </div>
+                            <!-- Step 2: Service Selection -->
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <div
+                                        class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                                        2</div>
+                                    <h2 class="text-xl font-semibold text-white">Tipo de Serviço</h2>
+                                </div>
 
-                                 <div class="space-y-4">
-                                     <label class="block text-gray-300 text-sm font-medium">
-                                         {{ __('schedules.service_type') }} <span class="text-red-400">*</span>
-                                     </label>
-                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" role="radiogroup" aria-label="Seleção de tipo de serviço">
-                                         @foreach($serviceTypes as $type)
-                                             <div class="relative">
-                                                 <input
-                                                     type="radio"
-                                                     id="service_{{ $type->id }}"
-                                                     name="unit_service_type_id"
-                                                     value="{{ $type->id }}"
-                                                     @checked(old('unit_service_type_id') == $type->id)
-                                                     class="sr-only"
-                                                     required
-                                                 >
-                                                 <label
-                                                     for="service_{{ $type->id }}"
-                                                     class="block w-full h-24 p-4 rounded-xl border-2 border-gray-600 bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-800"
-                                                 >
-                                                     <div class="flex items-center space-x-3">
-                                                         <div class="w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center transition-all duration-200">
-                                                             <div class="w-2.5 h-2.5 rounded-full bg-blue-500 opacity-0 transition-all duration-200"></div>
-                                                         </div>
-                                                         <div class="flex-1">
-                                                             <div class="text-white font-medium">{{ $type->name }}</div>
-                                                             @if($type->description)
-                                                                 <div class="text-gray-400 text-sm mt-1">{{ $type->description }}</div>
-                                                             @endif
-                                                         </div>
-                                                     </div>
-                                                 </label>
-                                             </div>
-                                         @endforeach
-                                     </div>
-                                     <x-input-error :messages="$errors->get('unit_service_type_id')" class="mt-1" />
-                                 </div>
-                             </div>
+                                <div class="space-y-4">
+                                    <label class="block text-gray-300 text-sm font-medium">
+                                        {{ __('schedules.service_type') }} <span class="text-red-400">*</span>
+                                    </label>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" role="radiogroup"
+                                        aria-label="Seleção de tipo de serviço">
+                                        @foreach ($serviceTypes as $type)
+                                            <div class="relative">
+                                                <input type="radio" id="service_{{ $type->id }}"
+                                                    name="unit_service_type_id" value="{{ $type->id }}"
+                                                    @checked(old('unit_service_type_id') == $type->id) class="sr-only" required>
+                                                <label for="service_{{ $type->id }}"
+                                                    class="block w-full h-24 p-4 rounded-xl border-2 border-gray-600 bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-800">
+                                                    <div class="flex items-center space-x-3">
+                                                        <div
+                                                            class="w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center transition-all duration-200">
+                                                            <div
+                                                                class="w-2.5 h-2.5 rounded-full bg-blue-500 opacity-0 transition-all duration-200">
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-1">
+                                                            <div class="text-white font-medium">{{ $type->name }}
+                                                            </div>
+                                                            @if ($type->description)
+                                                                <div class="text-gray-400 text-sm mt-1">
+                                                                    {{ $type->description }}</div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <x-input-error :messages="$errors->get('unit_service_type_id')" class="mt-1" />
+                                </div>
+                            </div>
 
                             <!-- Step 3: Date and Time Selection -->
                             <div class="space-y-6">
@@ -125,54 +123,65 @@
                                     <h2 class="text-xl font-semibold text-white">Data e Horário</h2>
                                 </div>
 
-                                                                 <!-- Date Selection -->
-                                 <div class="space-y-4">
-                                     <label class="block text-gray-300 text-sm font-medium">
-                                         {{ __('schedule_link.choose_day') }} <span class="text-red-400">*</span>
-                                     </label>
-                                     <div class="relative">
-                                         <!-- Week Navigation -->
-                                         <div class="flex items-center justify-between mb-4">
-                                             <button type="button" id="prev-week" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition-colors duration-200">
-                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                                                 </svg>
-                                             </button>
-                                             <div class="text-center">
-                                                 <div id="week-display" class="text-white font-medium"></div>
-                                             </div>
-                                             <button type="button" id="next-week" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition-colors duration-200">
-                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                                 </svg>
-                                             </button>
-                                         </div>
+                                <!-- Date Selection -->
+                                <div class="space-y-4">
+                                    <label class="block text-gray-300 text-sm font-medium">
+                                        {{ __('schedule_link.choose_day') }} <span class="text-red-400">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <!-- Week Navigation -->
+                                        <div class="flex items-center justify-between mb-4">
+                                            <button type="button" id="prev-week"
+                                                class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition-colors duration-200">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                                </svg>
+                                            </button>
+                                            <div class="text-center">
+                                                <div id="week-display" class="text-white font-medium"></div>
+                                            </div>
+                                            <button type="button" id="next-week"
+                                                class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition-colors duration-200">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
 
-                                         <!-- Calendar Grid -->
-                                         <div class="grid grid-cols-7 gap-2" id="calendar" role="group" aria-label="Seleção de data">
-                                             <!-- Days will be rendered here -->
-                                         </div>
+                                        <!-- Calendar Grid -->
+                                        <div class="grid grid-cols-7 gap-2" id="calendar" role="group"
+                                            aria-label="Seleção de data">
+                                            <!-- Days will be rendered here -->
+                                        </div>
 
-                                         <!-- Loading Spinner -->
-                                         <div id="week-loading-spinner" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                                             <div class="bg-gray-800 rounded-lg p-6 flex flex-col items-center">
-                                                 <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-                                                 <p class="text-white text-sm">Carregando semana...</p>
-                                             </div>
-                                         </div>
-                                     </div>
-                                     <input type="hidden" name="schedule_date" id="schedule_date"
-                                         value="{{ old('schedule_date') }}">
-                                     <x-input-error :messages="$errors->get('schedule_date')" class="mt-1" />
-                                 </div>
+                                        <!-- Loading Spinner -->
+                                        <div id="week-loading-spinner"
+                                            class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                            <div class="bg-gray-800 rounded-lg p-6 flex flex-col items-center">
+                                                <div
+                                                    class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4">
+                                                </div>
+                                                <p class="text-white text-sm">Carregando semana...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="schedule_date" id="schedule_date"
+                                        value="{{ old('schedule_date') }}">
+                                    <x-input-error :messages="$errors->get('schedule_date')" class="mt-1" />
+                                </div>
 
                                 <!-- Time Selection -->
                                 <div class="space-y-4">
                                     <label class="block text-gray-300 text-sm font-medium">
                                         {{ __('schedule_link.choose_time') }} <span class="text-red-400">*</span>
                                     </label>
-                                                                         <div id="times" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3"
-                                         role="group" aria-label="Seleção de horário">
+                                    <div id="times"
+                                        class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3"
+                                        role="group" aria-label="Seleção de horário">
                                         <!-- Times will be rendered here -->
                                     </div>
                                     <input type="hidden" name="start_time" id="start_time"
@@ -214,10 +223,10 @@
                                 </div>
                             @endif
 
-                                                         <!-- Submit Button -->
-                             <div class="flex justify-center pt-4 sm:pt-6">
-                                 <button type="submit" id="submit-button" disabled
-                                     class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 disabled:transform-none focus:ring-4 focus:ring-blue-500/50 focus:outline-none">
+                            <!-- Submit Button -->
+                            <div class="flex justify-center pt-4 sm:pt-6">
+                                <button type="submit" id="submit-button" disabled
+                                    class="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-semibold rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 disabled:transform-none focus:ring-4 focus:ring-blue-500/50 focus:outline-none">
                                     <span class="flex items-center justify-center">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -236,66 +245,68 @@
     </div>
 </body>
 <script>
-         const weekStart = @json($weekStart);
-     let weekDays = @json($weekDays);
-     const unitId = @json($unit->id);
-     const companyId = @json($company);
-     let currentWeekStart = weekStart;
+    const weekStart = @json($weekStart);
+    let weekDays = @json($weekDays);
+    const unitId = @json($unit->id);
+    const companyId = @json($company);
+    let currentWeekStart = weekStart;
 
-         function renderCalendar(weekStartStr) {
-         const calendar = document.getElementById('calendar');
-         calendar.innerHTML = '';
+    function renderCalendar(weekStartStr) {
+        const calendar = document.getElementById('calendar');
+        calendar.innerHTML = '';
 
-         // Render all 7 days of the week
-         weekDays.forEach((dayData) => {
-             const card = document.createElement('button');
-             card.type = 'button';
-             card.className = 'flex flex-col items-center justify-center h-20 sm:h-24 rounded-xl border-2 transition-all duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800';
-             card.setAttribute('aria-label', `Selecionar data ${dayData.day} de ${dayData.month}`);
-             card.setAttribute('data-date', dayData.date);
+        // Render all 7 days of the week
+        weekDays.forEach((dayData) => {
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className =
+                'flex flex-col items-center justify-center h-20 sm:h-24 rounded-xl border-2 transition-all duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800';
+            card.setAttribute('aria-label', `Selecionar data ${dayData.day} de ${dayData.month}`);
+            card.setAttribute('data-date', dayData.date);
 
-             if (dayData.is_today) {
-                 card.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-500', 'border-yellow-400', 'text-black', 'shadow-yellow-500/25');
-             } else if (dayData.available) {
-                 card.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-200', 'dark:border-green-800', 'text-green-800', 'dark:text-green-200', 'hover:bg-green-100', 'dark:hover:bg-green-900/30');
-                 card.addEventListener('click', () => onSelectDate(dayData.date, card));
-                 card.addEventListener('keydown', (e) => {
-                     if (e.key === 'Enter' || e.key === ' ') {
-                         e.preventDefault();
-                         onSelectDate(dayData.date, card);
-                     }
-                 });
-             } else {
-                 card.classList.add('bg-gradient-to-br', 'from-gray-800', 'to-gray-900', 'border-gray-700', 'text-gray-500', 'cursor-not-allowed');
-                 card.disabled = true;
-             }
+            if (dayData.is_today) {
+                card.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-500', 'border-yellow-400',
+                    'text-black', 'shadow-yellow-500/25');
+            } else if (dayData.available) {
+                card.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-200',
+                    'dark:border-green-800', 'text-green-800', 'dark:text-green-200', 'hover:bg-green-100',
+                    'dark:hover:bg-green-900/30');
+                card.addEventListener('click', () => onSelectDate(dayData.date, card));
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onSelectDate(dayData.date, card);
+                    }
+                });
+            } else {
+                card.classList.add('bg-gradient-to-br', 'from-gray-800', 'to-gray-900', 'border-gray-700',
+                    'text-gray-500', 'cursor-not-allowed');
+                card.disabled = true;
+            }
 
-             card.innerHTML = `
+            card.innerHTML = `
                  <div class="text-xs font-semibold opacity-80">${getDayName(dayData.day_of_week)}</div>
                  <div class="text-lg sm:text-xl font-bold leading-tight">${dayData.day}</div>
                  <div class="text-xs opacity-80">${dayData.month}</div>
              `;
 
-             calendar.appendChild(card);
-         });
+            calendar.appendChild(card);
+        });
 
-         // Update week display
-         updateWeekDisplay(weekStartStr);
+        // Update week display
+        updateWeekDisplay(weekStartStr);
 
-         // Auto-select first available day
-         console.log('Looking for available days in weekDays:', weekDays); // Debug log
-         const firstAvailableDay = weekDays.find(day => day.available);
-         console.log('First available day found:', firstAvailableDay); // Debug log
-         if (firstAvailableDay) {
-             const firstDayCard = calendar.querySelector(`[data-date="${firstAvailableDay.date}"]`);
-             console.log('First day card found:', firstDayCard); // Debug log
-             if (firstDayCard) {
-                 onSelectDate(firstAvailableDay.date, firstDayCard);
-             }
-         } else {
-             // Clear times if no available days
-             const timesEl = document.getElementById('times');
-             timesEl.innerHTML = `
+        // Auto-select first available day
+        const firstAvailableDay = weekDays.find(day => day.available);
+        if (firstAvailableDay) {
+            const firstDayCard = calendar.querySelector(`[data-date="${firstAvailableDay.date}"]`);
+            if (firstDayCard) {
+                onSelectDate(firstAvailableDay.date, firstDayCard);
+            }
+        } else {
+            // Clear times if no available days
+            const timesEl = document.getElementById('times');
+            timesEl.innerHTML = `
                  <div class="col-span-full text-center py-8">
                      <div class="text-gray-400 text-sm">
                          <svg class="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -306,52 +317,50 @@
                  </div>
              `;
 
-             // Clear selected date and time
-             document.getElementById('schedule_date').value = '';
-             document.getElementById('start_time').value = '';
-             updateSubmitEnabled();
-         }
-     }
+            // Clear selected date and time
+            document.getElementById('schedule_date').value = '';
+            document.getElementById('start_time').value = '';
+            updateSubmitEnabled();
+        }
+    }
 
     function getDayName(dayOfWeek) {
         const days = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
         return days[dayOfWeek];
     }
 
-         function onSelectDate(dateStr, btn) {
-         console.log('onSelectDate called with:', dateStr); // Debug log
+    function onSelectDate(dateStr, btn) {
+        // Remove selection from all day cards
+        document.querySelectorAll('#calendar button').forEach(b => {
+            b.classList.remove('ring-2', 'ring-green-500', 'scale-105');
+            if (b.classList.contains('from-yellow-400')) {
+                b.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-500', 'border-yellow-400',
+                    'text-black', 'shadow-yellow-500/25');
+            } else if (b.classList.contains('bg-green-50')) {
+                b.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-200',
+                    'dark:border-green-800', 'text-green-800', 'dark:text-green-200');
+            } else {
+                b.classList.add('bg-gradient-to-br', 'from-gray-700', 'to-gray-800', 'border-gray-600',
+                    'text-white');
+            }
+        });
 
-         // Remove selection from all day cards
-         document.querySelectorAll('#calendar button').forEach(b => {
-             b.classList.remove('ring-2', 'ring-green-500', 'scale-105');
-             if (b.classList.contains('from-yellow-400')) {
-                 b.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-500', 'border-yellow-400',
-                     'text-black', 'shadow-yellow-500/25');
-             } else if (b.classList.contains('bg-green-50')) {
-                 b.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-200', 'dark:border-green-800', 'text-green-800', 'dark:text-green-200');
-             } else {
-                 b.classList.add('bg-gradient-to-br', 'from-gray-700', 'to-gray-800', 'border-gray-600',
-                     'text-white');
-             }
-         });
+        // Add selection to clicked card
+        btn.classList.add('ring-2', 'ring-green-500', 'scale-105');
+        document.getElementById('schedule_date').value = dateStr;
 
-         // Add selection to clicked card
-         btn.classList.add('ring-2', 'ring-green-500', 'scale-105');
-         document.getElementById('schedule_date').value = dateStr;
+        // Show loading state
+        const timesEl = document.getElementById('times');
+        timesEl.innerHTML =
+            '<div class="col-span-full flex justify-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div></div>';
 
-         // Show loading state
-         const timesEl = document.getElementById('times');
-         timesEl.innerHTML =
-             '<div class="col-span-full flex justify-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div></div>';
+        fetchTimes(dateStr);
+    }
 
-         fetchTimes(dateStr);
-     }
+    function fetchTimes(dateStr) {
+        const timesEl = document.getElementById('times');
 
-         function fetchTimes(dateStr) {
-         console.log('fetchTimes called with:', dateStr); // Debug log
-         const timesEl = document.getElementById('times');
-
-         fetch(`${window.location.origin}/${companyId}/schedule-link/${unitId}/available-times?date=${dateStr}`)
+        fetch(`${window.location.origin}/${companyId}/schedule-link/${unitId}/available-times?date=${dateStr}`)
             .then(r => r.json())
             .then(data => {
                 timesEl.innerHTML = '';
@@ -373,8 +382,8 @@
                 (data.times || []).forEach(time => {
                     const b = document.createElement('button');
                     b.type = 'button';
-                                         b.className =
-                         'px-3 sm:px-4 py-3 sm:py-4 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 border border-gray-600 hover:border-gray-500';
+                    b.className =
+                        'px-3 sm:px-4 py-3 sm:py-4 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 border border-gray-600 hover:border-gray-500';
                     b.textContent = time;
                     b.setAttribute('aria-label', `Selecionar horário ${time}`);
 
@@ -418,13 +427,13 @@
             });
     }
 
-         function updateSubmitEnabled() {
-         const name = document.querySelector('input[name="name"]').value.trim();
-         const phone = document.querySelector('input[name="phone"]').value.trim();
-         const service = document.querySelector('input[name="unit_service_type_id"]:checked')?.value || '';
-         const date = document.getElementById('schedule_date').value;
-         const time = document.getElementById('start_time').value;
-         const can = name && phone && service && date && time;
+    function updateSubmitEnabled() {
+        const name = document.querySelector('input[name="name"]').value.trim();
+        const phone = document.querySelector('input[name="phone"]').value.trim();
+        const service = document.querySelector('input[name="unit_service_type_id"]:checked')?.value || '';
+        const date = document.getElementById('schedule_date').value;
+        const time = document.getElementById('start_time').value;
+        const can = name && phone && service && date && time;
 
         const submitBtn = document.getElementById('submit-button');
         submitBtn.disabled = !can;
@@ -450,114 +459,121 @@
 
 
 
-                        // Week navigation functions
-          function loadWeek(weekStartStr) {
-         console.log('loadWeek called with:', weekStartStr); // Debug log
-         const prevBtn = document.getElementById('prev-week');
-         const nextBtn = document.getElementById('next-week');
-         const spinner = document.getElementById('week-loading-spinner');
+    // Week navigation functions
+    function loadWeek(weekStartStr) {
+        const prevBtn = document.getElementById('prev-week');
+        const nextBtn = document.getElementById('next-week');
+        const spinner = document.getElementById('week-loading-spinner');
 
-         // Show spinner and disable navigation buttons during loading
-         spinner.classList.remove('hidden');
-         prevBtn.disabled = true;
-         nextBtn.disabled = true;
+        // Show spinner and disable navigation buttons during loading
+        spinner.classList.remove('hidden');
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
 
-         fetch(`${window.location.origin}/${companyId}/schedule-link/${unitId}/week-days?week_start=${weekStartStr}`)
-             .then(r => r.json())
-             .then(data => {
-                 console.log('Week data received:', data); // Debug log
-                 if (data.days && data.days.length > 0) {
-                     weekDays = data.days;
-                     currentWeekStart = weekStartStr;
-                     renderCalendar(weekStartStr);
-                 }
-             })
-             .catch(() => {
-                 // Handle error silently
-             })
-             .finally(() => {
-                 // Hide spinner and re-enable navigation buttons
-                 spinner.classList.add('hidden');
-                 prevBtn.disabled = false;
-                 nextBtn.disabled = false;
-             });
-     }
+        fetch(`${window.location.origin}/${companyId}/schedule-link/${unitId}/week-days?week_start=${weekStartStr}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.days && data.days.length > 0) {
+                    weekDays = data.days;
+                    currentWeekStart = weekStartStr;
+                    renderCalendar(weekStartStr);
+                }
+            })
+            .catch(() => {
+                // Handle error silently
+            })
+            .finally(() => {
+                // Hide spinner and re-enable navigation buttons
+                spinner.classList.add('hidden');
+                prevBtn.disabled = false;
+                nextBtn.disabled = false;
+            });
+    }
 
-     function updateWeekDisplay(weekStartStr) {
-         const weekDisplay = document.getElementById('week-display');
-         const startDate = new Date(weekStartStr);
-         const endDate = new Date(startDate);
-         endDate.setDate(startDate.getDate() + 6);
+    function updateWeekDisplay(weekStartStr) {
+        const weekDisplay = document.getElementById('week-display');
+        const startDate = new Date(weekStartStr);
+        const endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 6);
 
-         const startFormatted = startDate.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
-         const endFormatted = endDate.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
+        const startFormatted = startDate.toLocaleDateString('pt-BR', {
+            day: 'numeric',
+            month: 'short'
+        });
+        const endFormatted = endDate.toLocaleDateString('pt-BR', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        });
 
-         weekDisplay.textContent = `${startFormatted} - ${endFormatted}`;
-     }
+        weekDisplay.textContent = `${startFormatted} - ${endFormatted}`;
+    }
 
-               function navigateWeek(direction) {
-         const currentDate = new Date(currentWeekStart);
-         const newDate = new Date(currentDate);
+    function navigateWeek(direction) {
+        const currentDate = new Date(currentWeekStart);
+        const newDate = new Date(currentDate);
 
-         if (direction === 'next') {
-             newDate.setDate(currentDate.getDate() + 7);
-         } else {
-             newDate.setDate(currentDate.getDate() - 7);
-         }
+        if (direction === 'next') {
+            newDate.setDate(currentDate.getDate() + 7);
+        } else {
+            newDate.setDate(currentDate.getDate() - 7);
+        }
 
-         const newWeekStart = newDate.toISOString().split('T')[0];
-         loadWeek(newWeekStart);
-     }
+        const newWeekStart = newDate.toISOString().split('T')[0];
+        loadWeek(newWeekStart);
+    }
 
-              // Initialize
-         document.addEventListener('DOMContentLoaded', () => {
-             document.addEventListener('input', updateSubmitEnabled);
-             renderCalendar(weekStart);
-             updateSubmitEnabled();
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('input', updateSubmitEnabled);
+        renderCalendar(weekStart);
+        updateSubmitEnabled();
 
-             // Add week navigation functionality
-             document.getElementById('prev-week').addEventListener('click', () => navigateWeek('prev'));
-             document.getElementById('next-week').addEventListener('click', () => navigateWeek('next'));
+        // Add week navigation functionality
+        document.getElementById('prev-week').addEventListener('click', () => navigateWeek('prev'));
+        document.getElementById('next-week').addEventListener('click', () => navigateWeek('next'));
 
-         // Add radio button functionality for service types
-         document.querySelectorAll('input[name="unit_service_type_id"]').forEach(radio => {
-             radio.addEventListener('change', function() {
-                 // Remove selected state from all labels
-                 document.querySelectorAll('label[for^="service_"]').forEach(label => {
-                     label.classList.remove('border-blue-500', 'from-blue-600', 'to-blue-700');
-                     label.classList.add('border-gray-600', 'from-gray-700', 'to-gray-800');
-                     const radioCircle = label.querySelector('.w-5.h-5');
-                     const radioDot = label.querySelector('.w-2\\.5.h-2\\.5');
-                     radioCircle.classList.remove('border-blue-500');
-                     radioCircle.classList.add('border-gray-400');
-                     radioDot.classList.remove('opacity-100');
-                     radioDot.classList.add('opacity-0');
-                 });
+        // Add radio button functionality for service types
+        document.querySelectorAll('input[name="unit_service_type_id"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Remove selected state from all labels
+                document.querySelectorAll('label[for^="service_"]').forEach(label => {
+                    label.classList.remove('border-blue-500', 'from-blue-600',
+                        'to-blue-700');
+                    label.classList.add('border-gray-600', 'from-gray-700',
+                        'to-gray-800');
+                    const radioCircle = label.querySelector('.w-5.h-5');
+                    const radioDot = label.querySelector('.w-2\\.5.h-2\\.5');
+                    radioCircle.classList.remove('border-blue-500');
+                    radioCircle.classList.add('border-gray-400');
+                    radioDot.classList.remove('opacity-100');
+                    radioDot.classList.add('opacity-0');
+                });
 
-                 // Add selected state to current label
-                 if (this.checked) {
-                     const label = document.querySelector(`label[for="${this.id}"]`);
-                     label.classList.remove('border-gray-600', 'from-gray-700', 'to-gray-800');
-                     label.classList.add('border-blue-500', 'from-blue-600', 'to-blue-700');
-                     const radioCircle = label.querySelector('.w-5.h-5');
-                     const radioDot = label.querySelector('.w-2\\.5.h-2\\.5');
-                     radioCircle.classList.remove('border-gray-400');
-                     radioCircle.classList.add('border-blue-500');
-                     radioDot.classList.remove('opacity-0');
-                     radioDot.classList.add('opacity-100');
-                 }
+                // Add selected state to current label
+                if (this.checked) {
+                    const label = document.querySelector(`label[for="${this.id}"]`);
+                    label.classList.remove('border-gray-600', 'from-gray-700', 'to-gray-800');
+                    label.classList.add('border-blue-500', 'from-blue-600', 'to-blue-700');
+                    const radioCircle = label.querySelector('.w-5.h-5');
+                    const radioDot = label.querySelector('.w-2\\.5.h-2\\.5');
+                    radioCircle.classList.remove('border-gray-400');
+                    radioCircle.classList.add('border-blue-500');
+                    radioDot.classList.remove('opacity-0');
+                    radioDot.classList.add('opacity-100');
+                }
 
-                 // Update submit button state
-                 updateSubmitEnabled();
-             });
-         });
+                // Update submit button state
+                updateSubmitEnabled();
+            });
+        });
 
-         // Trigger change event for pre-selected radio button
-         const preSelectedRadio = document.querySelector('input[name="unit_service_type_id"]:checked');
-         if (preSelectedRadio) {
-             preSelectedRadio.dispatchEvent(new Event('change'));
-         }
-     });
+        // Trigger change event for pre-selected radio button
+        const preSelectedRadio = document.querySelector('input[name="unit_service_type_id"]:checked');
+        if (preSelectedRadio) {
+            preSelectedRadio.dispatchEvent(new Event('change'));
+        }
+    });
 </script>
 
 </html>
