@@ -71,6 +71,10 @@ return new class extends Migration {
             $table->boolean('use_ai_chatbot')->default(false);
             $table->string('default_language', 5)->nullable();
             $table->string('timezone')->nullable();
+            $table->boolean('pix_enabled')->default(false);
+            $table->boolean('credit_card_enabled')->default(false);
+            $table->boolean('debit_card_enabled')->default(false);
+            $table->boolean('cash_enabled')->default(false);
             $table->boolean('active')->default(true);
             $table->timestamps();
         });
