@@ -64,31 +64,31 @@ class ScheduleLinkController extends Controller
             $q->where('active', true);
         }]);
 
-        $month = $request->get('month', now()->format('Y-m'));
-        $availableDays = $this->getAvailableDaysForMonth($unit, $month);
+        $weekStart = $request->get('week_start', now()->startOfWeek(Carbon::SUNDAY)->format('Y-m-d'));
+        $weekDays = $this->getWeekDays($unit, $weekStart);
 
         return view('schedule-link.show', [
             'unit' => $unit,
             'unitSettings' => $unit->unitSettings,
             'serviceTypes' => $unit->unitServiceTypes,
-            'month' => $month,
-            'availableDays' => $availableDays,
+            'weekStart' => $weekStart,
+            'weekDays' => $weekDays,
             'company' => $company,
         ]);
     }
 
     /**
-     * JSON: Available days for a given month (YYYY-MM).
+     * JSON: Week days for a given week start (YYYY-MM-DD).
      */
-    public function availableDays($company, Unit $unit, Request $request): JsonResponse
+    public function weekDays($company, Unit $unit, Request $request): JsonResponse
     {
         // Ensure the unit belongs to the specified company
         if ($unit->company_id != $company) {
             abort(404);
         }
 
-        $month = $request->get('month', now()->format('Y-m'));
-        $days = $this->getAvailableDaysForMonth($unit, $month);
+        $weekStart = $request->get('week_start', now()->startOfWeek(Carbon::SUNDAY)->format('Y-m-d'));
+        $days = $this->getWeekDays($unit, $weekStart);
         return response()->json(['days' => $days]);
     }
 
@@ -237,33 +237,52 @@ class ScheduleLinkController extends Controller
     /**
      * Helpers
      */
-    private function getAvailableDaysForMonth(Unit $unit, string $month): array
+    private function getWeekDays(Unit $unit, string $weekStart): array
     {
         $unit->loadMissing('unitSettings');
         $unitSettings = $unit->unitSettings;
         $duration = (int) ($unitSettings->appointment_duration_minutes ?? 30);
 
-        $start = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
-        $end = $start->copy()->endOfMonth();
-
+        $start = Carbon::parse($weekStart)->startOfWeek(Carbon::SUNDAY);
+        $end = $start->copy()->endOfWeek(Carbon::SATURDAY);
+        
         $todayLocal = now($unitSettings->timezone ?? 'UTC')->startOfDay();
 
-        $availableDays = [];
+        $weekDays = [];
         $cursor = $start->copy();
+        
         while ($cursor->lte($end)) {
+            $dateStr = $cursor->format('Y-m-d');
             $isFutureOrToday = $cursor->greaterThanOrEqualTo($todayLocal);
-
-            if ($isFutureOrToday && !$this->workingDaysValidator->isOutsideWorkingDays($cursor, $unitSettings)) {
-                $hasAnySlot = $this->getAvailableTimesForDate($unit, $cursor->format('Y-m-d'))->isNotEmpty();
-                if ($hasAnySlot) {
-                    $availableDays[] = $cursor->format('Y-m-d');
-                }
+            $isWorkingDay = !$this->workingDaysValidator->isOutsideWorkingDays($cursor, $unitSettings);
+            
+            if ($isFutureOrToday && $isWorkingDay) {
+                // Check if there are available slots for this day
+                $hasAnySlot = $this->getAvailableTimesForDate($unit, $dateStr)->isNotEmpty();
+                $weekDays[] = [
+                    'date' => $dateStr,
+                    'available' => $hasAnySlot,
+                    'day_of_week' => $cursor->dayOfWeek,
+                    'day' => $cursor->day,
+                    'month' => $cursor->format('M'),
+                    'is_today' => $cursor->isSameDay($todayLocal)
+                ];
+            } else {
+                // Past days or non-working days are marked as unavailable
+                $weekDays[] = [
+                    'date' => $dateStr,
+                    'available' => false,
+                    'day_of_week' => $cursor->dayOfWeek,
+                    'day' => $cursor->day,
+                    'month' => $cursor->format('M'),
+                    'is_today' => $cursor->isSameDay($todayLocal)
+                ];
             }
-
+            
             $cursor->addDay();
         }
 
-        return $availableDays;
+        return $weekDays;
     }
 
     private function getAvailableTimesForDate(Unit $unit, string $date): \Illuminate\Support\Collection

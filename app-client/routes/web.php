@@ -23,7 +23,7 @@ Route::get('/', function () {
 Route::prefix('{company}/schedule-link')->group(function () {
     Route::get('/', [ScheduleLinkController::class, 'index'])->name('schedule-link.index');
     Route::get('/{unit}', [ScheduleLinkController::class, 'show'])->name('schedule-link.show');
-    Route::get('/{unit}/available-days', [ScheduleLinkController::class, 'availableDays'])->name('schedule-link.available-days');
+    Route::get('/{unit}/week-days', [ScheduleLinkController::class, 'weekDays'])->name('schedule-link.week-days');
     Route::get('/{unit}/available-times', [ScheduleLinkController::class, 'availableTimes'])->name('schedule-link.available-times');
     Route::post('/{unit}', [ScheduleLinkController::class, 'store'])->name('schedule-link.store');
     Route::get('/{unit}/success', [ScheduleLinkController::class, 'success'])->name('schedule-link.success');

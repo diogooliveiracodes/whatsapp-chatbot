@@ -125,29 +125,38 @@
                                     <h2 class="text-xl font-semibold text-white">Data e Horário</h2>
                                 </div>
 
-                                <!-- Date Selection -->
-                                <div class="space-y-4">
-                                    <label class="block text-gray-300 text-sm font-medium">
-                                        {{ __('schedule_link.choose_day') }} <span class="text-red-400">*</span>
-                                    </label>
-                                                                         <div class="relative">
-                                         <div class="flex gap-2 sm:gap-3 overflow-x-auto p-2 sm:p-4 scrollbar-hide" id="calendar"
-                                             role="group" aria-label="Seleção de data">
-                                            <!-- Days will be rendered here -->
-                                        </div>
-                                        <div class="flex items-center justify-center mt-3 text-gray-400 text-sm">
-                                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                                            </svg>
-                                            <span>Deslize para ver mais datas</span>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" name="schedule_date" id="schedule_date"
-                                        value="{{ old('schedule_date') }}">
-                                    <x-input-error :messages="$errors->get('schedule_date')" class="mt-1" />
-                                </div>
+                                                                 <!-- Date Selection -->
+                                 <div class="space-y-4">
+                                     <label class="block text-gray-300 text-sm font-medium">
+                                         {{ __('schedule_link.choose_day') }} <span class="text-red-400">*</span>
+                                     </label>
+                                     <div class="relative">
+                                         <!-- Week Navigation -->
+                                         <div class="flex items-center justify-between mb-4">
+                                             <button type="button" id="prev-week" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition-colors duration-200">
+                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                                 </svg>
+                                             </button>
+                                             <div class="text-center">
+                                                 <div id="week-display" class="text-white font-medium"></div>
+                                             </div>
+                                             <button type="button" id="next-week" class="p-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white transition-colors duration-200">
+                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                 </svg>
+                                             </button>
+                                         </div>
+
+                                         <!-- Calendar Grid -->
+                                         <div class="grid grid-cols-7 gap-2" id="calendar" role="group" aria-label="Seleção de data">
+                                             <!-- Days will be rendered here -->
+                                         </div>
+                                     </div>
+                                     <input type="hidden" name="schedule_date" id="schedule_date"
+                                         value="{{ old('schedule_date') }}">
+                                     <x-input-error :messages="$errors->get('schedule_date')" class="mt-1" />
+                                 </div>
 
                                 <!-- Time Selection -->
                                 <div class="space-y-4">
@@ -219,67 +228,61 @@
     </div>
 </body>
 <script>
-    const month = @json($month);
-    const availableDays = @json($availableDays);
-    const unitId = @json($unit->id);
-    const companyId = @json($company);
+         const weekStart = @json($weekStart);
+     let weekDays = @json($weekDays);
+     const unitId = @json($unit->id);
+     const companyId = @json($company);
+     let currentWeekStart = weekStart;
 
-    function renderCalendar(monthStr) {
-        const [year, month] = monthStr.split('-').map(Number);
-        const calendar = document.getElementById('calendar');
-        calendar.innerHTML = '';
+         function renderCalendar(weekStartStr) {
+         const calendar = document.getElementById('calendar');
+         calendar.innerHTML = '';
 
-        // Only render available days
-        availableDays.forEach((dateStr, index) => {
-            const date = new Date(dateStr);
-            const dayOfWeek = date.getDay();
-            const day = date.getDate();
-            const monthName = date.toLocaleDateString('pt-BR', {
-                month: 'short'
-            }).toUpperCase();
+         // Render all 7 days of the week
+         weekDays.forEach((dayData) => {
+             const card = document.createElement('button');
+             card.type = 'button';
+             card.className = 'flex flex-col items-center justify-center h-20 sm:h-24 rounded-xl border-2 transition-all duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800';
+             card.setAttribute('aria-label', `Selecionar data ${dayData.day} de ${dayData.month}`);
+             card.setAttribute('data-date', dayData.date);
 
-            const isToday = dateStr === new Date().toISOString().split('T')[0];
+             if (dayData.is_today) {
+                 card.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-500', 'border-yellow-400', 'text-black', 'shadow-yellow-500/25');
+             } else if (dayData.available) {
+                 card.classList.add('bg-gradient-to-br', 'from-green-600', 'to-green-700', 'border-green-500', 'text-white', 'hover:from-green-500', 'hover:to-green-600', 'hover:border-green-400');
+                 card.addEventListener('click', () => onSelectDate(dayData.date, card));
+                 card.addEventListener('keydown', (e) => {
+                     if (e.key === 'Enter' || e.key === ' ') {
+                         e.preventDefault();
+                         onSelectDate(dayData.date, card);
+                     }
+                 });
+             } else {
+                 card.classList.add('bg-gradient-to-br', 'from-gray-800', 'to-gray-900', 'border-gray-700', 'text-gray-500', 'cursor-not-allowed');
+                 card.disabled = true;
+             }
 
-            const card = document.createElement('button');
-            card.type = 'button';
-                         card.className =
-                 'flex flex-col items-center justify-center min-w-[80px] sm:min-w-[90px] h-20 sm:h-24 rounded-xl border-2 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800';
-            card.setAttribute('aria-label', `Selecionar data ${day} de ${monthName}`);
-            card.setAttribute('data-date', dateStr);
+             card.innerHTML = `
+                 <div class="text-xs font-semibold opacity-80">${getDayName(dayData.day_of_week)}</div>
+                 <div class="text-lg sm:text-xl font-bold leading-tight">${dayData.day}</div>
+                 <div class="text-xs opacity-80">${dayData.month}</div>
+             `;
 
-            if (isToday) {
-                card.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-500', 'border-yellow-400',
-                    'text-black', 'shadow-yellow-500/25');
-            } else {
-                card.classList.add('bg-gradient-to-br', 'from-gray-700', 'to-gray-800', 'border-gray-600',
-                    'text-white', 'hover:from-gray-600', 'hover:to-gray-700', 'hover:border-gray-500');
-            }
+             calendar.appendChild(card);
+         });
 
-                         card.innerHTML = `
-                     <div class="text-xs font-semibold opacity-80">${getDayName(dayOfWeek)}</div>
-                     <div class="text-lg sm:text-xl font-bold leading-tight">${isToday ? 'HOJE' : day}</div>
-                     <div class="text-xs opacity-80">${monthName}</div>
-                 `;
+         // Update week display
+         updateWeekDisplay(weekStartStr);
 
-            card.addEventListener('click', () => onSelectDate(dateStr, card));
-            card.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    onSelectDate(dateStr, card);
-                }
-            });
-
-            calendar.appendChild(card);
-        });
-
-        // Auto-select first available day
-        if (availableDays.length > 0) {
-            const firstDayCard = calendar.querySelector('button');
-            if (firstDayCard) {
-                onSelectDate(availableDays[0], firstDayCard);
-            }
-        }
-    }
+         // Auto-select first available day
+         const firstAvailableDay = weekDays.find(day => day.available);
+         if (firstAvailableDay) {
+             const firstDayCard = calendar.querySelector(`[data-date="${firstAvailableDay.date}"]`);
+             if (firstDayCard) {
+                 onSelectDate(firstAvailableDay.date, firstDayCard);
+             }
+         }
+     }
 
     function getDayName(dayOfWeek) {
         const days = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
@@ -411,47 +414,74 @@
         }
     }
 
-    // Add smooth scrolling for calendar
-    function addSmoothScrolling() {
-        const calendar = document.getElementById('calendar');
-        let isDown = false;
-        let startX;
-        let scrollLeft;
 
-        calendar.addEventListener('mousedown', (e) => {
-            isDown = true;
-            calendar.style.cursor = 'grabbing';
-            startX = e.pageX - calendar.offsetLeft;
-            scrollLeft = calendar.scrollLeft;
-        });
 
-        calendar.addEventListener('mouseleave', () => {
-            isDown = false;
-            calendar.style.cursor = 'grab';
-        });
+                   // Week navigation functions
+     function loadWeek(weekStartStr) {
+         const prevBtn = document.getElementById('prev-week');
+         const nextBtn = document.getElementById('next-week');
 
-        calendar.addEventListener('mouseup', () => {
-            isDown = false;
-            calendar.style.cursor = 'grab';
-        });
+         // Disable navigation buttons during loading
+         prevBtn.disabled = true;
+         nextBtn.disabled = true;
 
-        calendar.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - calendar.offsetLeft;
-            const walk = (x - startX) * 2;
-            calendar.scrollLeft = scrollLeft - walk;
-        });
-    }
+         fetch(`${window.location.origin}/${companyId}/schedule-link/${unitId}/week-days?week_start=${weekStartStr}`)
+             .then(r => r.json())
+             .then(data => {
+                 if (data.days && data.days.length > 0) {
+                     weekDays = data.days;
+                     currentWeekStart = weekStartStr;
+                     renderCalendar(weekStartStr);
 
-         // Initialize
-     document.addEventListener('DOMContentLoaded', () => {
-         document.addEventListener('input', updateSubmitEnabled);
-         renderCalendar(month);
-         addSmoothScrolling();
-         updateSubmitEnabled();
+                     // Re-enable navigation buttons
+                     prevBtn.disabled = false;
+                     nextBtn.disabled = false;
+                 }
+             })
+             .catch(() => {
+                 // Re-enable navigation buttons on error
+                 prevBtn.disabled = false;
+                 nextBtn.disabled = false;
+             });
+     }
 
-                  // Add radio button functionality for service types
+     function updateWeekDisplay(weekStartStr) {
+         const weekDisplay = document.getElementById('week-display');
+         const startDate = new Date(weekStartStr);
+         const endDate = new Date(startDate);
+         endDate.setDate(startDate.getDate() + 6);
+
+         const startFormatted = startDate.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' });
+         const endFormatted = endDate.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
+
+         weekDisplay.textContent = `${startFormatted} - ${endFormatted}`;
+     }
+
+     function navigateWeek(direction) {
+         const currentDate = new Date(currentWeekStart);
+         const newDate = new Date(currentDate);
+
+         if (direction === 'next') {
+             newDate.setDate(currentDate.getDate() + 7);
+         } else {
+             newDate.setDate(currentDate.getDate() - 7);
+         }
+
+         const newWeekStart = newDate.toISOString().split('T')[0];
+         loadWeek(newWeekStart);
+     }
+
+              // Initialize
+         document.addEventListener('DOMContentLoaded', () => {
+             document.addEventListener('input', updateSubmitEnabled);
+             renderCalendar(weekStart);
+             updateSubmitEnabled();
+
+             // Add week navigation functionality
+             document.getElementById('prev-week').addEventListener('click', () => navigateWeek('prev'));
+             document.getElementById('next-week').addEventListener('click', () => navigateWeek('next'));
+
+         // Add radio button functionality for service types
          document.querySelectorAll('input[name="unit_service_type_id"]').forEach(radio => {
              radio.addEventListener('change', function() {
                  // Remove selected state from all labels
