@@ -42,6 +42,7 @@ return [
         'updated_description' => 'O agendamento foi atualizado com sucesso e está disponível na agenda.',
     ],
     'today' => 'Hoje',
+    'break' => 'Intervalo',
     'current_week' => 'Semana Atual',
     'previous_week' => 'Semana Anterior',
     'next_week' => 'Próxima Semana',

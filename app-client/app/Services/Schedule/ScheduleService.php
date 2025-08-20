@@ -214,6 +214,19 @@ class ScheduleService
     }
 
     /**
+     * Get break period for a specific day
+     *
+     * @param string $dayKey
+     * @param Carbon $referenceDate
+     * @param object $unitSettings
+     * @return array{startTime: Carbon|null, endTime: Carbon|null}
+     */
+    public function getBreakForDay(string $dayKey, Carbon $referenceDate, $unitSettings): array
+    {
+        return $this->scheduleTimeService->calculateBreakForDay($dayKey, $unitSettings, $referenceDate);
+    }
+
+    /**
      * Check if a time slot is within operating hours for a specific day
      *
      * @param Carbon $time

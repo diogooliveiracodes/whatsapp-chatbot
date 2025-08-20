@@ -145,6 +145,15 @@
 
                                 @if ($startTime && $endTime)
                                     <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                                        @php
+                                            $break = $scheduleService->getBreakForDay($dayKey, \Carbon\Carbon::parse($currentDate), $unitSettings);
+                                        @endphp
+                                        @if ($break['startTime'] && $break['endTime'])
+                                            <div class="flex items-center justify-between p-2 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded mb-2">
+                                                <span class="text-xs font-medium text-yellow-800 dark:text-yellow-200">{{ __('schedules.break') }}</span>
+                                                <span class="text-xs font-mono text-yellow-700 dark:text-yellow-300">{{ $break['startTime']->format('H:i') }} - {{ $break['endTime']->format('H:i') }}</span>
+                                            </div>
+                                        @endif
                                         @for ($time = $startTime->copy(); $time->lt($endTime); $time->addMinutes($interval))
                                             @php
                                                 $currentTime = $time->format('H:i');
@@ -179,7 +188,22 @@
                                                 $isPastSlot = $currentTimeInUserTimezone->gt($slotEndDateTime);
                                             @endphp
 
-                                            @if ($isWithinOperatingHours)
+                                            @php
+                                                $isBreakSlot = $break['startTime'] && $break['endTime'] && $time->gte($break['startTime']) && $time->lt($break['endTime']);
+                                            @endphp
+
+                                            @if ($isBreakSlot)
+                                                <div class="border border-yellow-200 dark:border-yellow-700 rounded-lg overflow-hidden mt-2">
+                                                    <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/30">
+                                                        <div class="flex items-center space-x-3">
+                                                            <div class="h-16 flex flex-col items-left justify-center">
+                                                                <span class="text-yellow-800 dark:text-yellow-200 font-bold leading-tight">{{ $currentTime }} - {{ $currentEndTime }}</span>
+                                                                <span class="text-yellow-700 dark:text-yellow-300 text-xs">{{ __('schedules.break') }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @elseif ($isWithinOperatingHours)
                                                 <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden mt-2">
                                                     <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700">
                                                         <div class="flex items-center space-x-3">

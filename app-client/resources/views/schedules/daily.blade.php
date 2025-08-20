@@ -101,7 +101,15 @@
                                 $startTime = $dayWorkingHours['startTime'];
                                 $endTime = $dayWorkingHours['endTime'];
                                 $currentDate = $date->format('Y-m-d');
+                                $break = $scheduleService->getBreakForDay($dayKey, $date, $unitSettings);
                             @endphp
+
+                            @if ($break['startTime'] && $break['endTime'])
+                                <div class="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded">
+                                    <span class="text-xs sm:text-sm font-medium text-yellow-800 dark:text-yellow-200">{{ __('schedules.break') }}</span>
+                                    <span class="text-xs sm:text-sm font-mono text-yellow-700 dark:text-yellow-300">{{ $break['startTime']->format('H:i') }} - {{ $break['endTime']->format('H:i') }}</span>
+                                </div>
+                            @endif
 
                             @if ($startTime && $endTime)
                                 @for ($time = $startTime->copy(); $time->lt($endTime); $time->addMinutes($interval))
@@ -129,7 +137,17 @@
                                         );
                                     @endphp
 
-                                    @if ($isWithinOperatingHours)
+                                    @php
+                                        $isBreakSlot = $break['startTime'] && $break['endTime'] && $time->gte($break['startTime']) && $time->lt($break['endTime']);
+                                    @endphp
+                                    @if ($isBreakSlot)
+                                        <div class="border border-yellow-200 dark:border-yellow-700 rounded-lg overflow-hidden">
+                                            <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/30">
+                                                <span class="text-yellow-800 dark:text-yellow-200 font-medium">{{ __('schedules.break') }}</span>
+                                                <span class="text-yellow-700 dark:text-yellow-300 font-mono">{{ $time->format('H:i') }} - {{ $time->copy()->addMinutes($interval)->format('H:i') }}</span>
+                                            </div>
+                                        </div>
+                                    @elseif ($isWithinOperatingHours)
                                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                                             <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700">
                                                 <div class="flex items-center space-x-3">

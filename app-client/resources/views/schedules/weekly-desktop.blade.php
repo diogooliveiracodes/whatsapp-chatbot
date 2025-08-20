@@ -96,6 +96,15 @@
                                         $endTime = $workingHours['endTime'];
                                     @endphp
 
+                                    @php
+                                        // Precompute break per day for the week
+                                        $breaksByDay = [];
+                                        foreach (array_keys($days) as $dKey) {
+                                            $dIndex = array_search($dKey, array_keys($days));
+                                            $dDate = $startOfWeek->copy()->addDays($dIndex);
+                                            $breaksByDay[$dKey] = $scheduleService->getBreakForDay($dKey, $dDate, $unitSettings);
+                                        }
+                                    @endphp
                                     @for ($time = $startTime->copy(); $time->lt($endTime); $time->addMinutes($interval))
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                             <td
@@ -145,7 +154,17 @@
                                                     {{ !$isWithinOperatingHours ? 'bg-gray-100 dark:bg-gray-700 opacity-50' : '' }}
                                                     {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday()? 'border-l-2 border-r-2 border-red-500': '' }}
                                                     {{ $startOfWeek->copy()->addDays(array_search($dayKey, array_keys($days)))->isToday() && $time->copy()->addMinutes($interval)->gte($endTime)? 'border-b-2 border-red-500': '' }}">
-                                                    @if ($isWithinOperatingHours && $schedule)
+                                                    @php
+                                                        $break = $breaksByDay[$dayKey] ?? ['startTime' => null, 'endTime' => null];
+                                                        $isBreakSlot = $break['startTime'] && $break['endTime'] && $time->gte($break['startTime']) && $time->lt($break['endTime']);
+                                                    @endphp
+                                                    @if ($isBreakSlot)
+                                                        <div class="flex items-center justify-center h-full">
+                                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 border border-yellow-200 dark:border-yellow-700">
+                                                                {{ __('schedules.break') }}
+                                                            </span>
+                                                        </div>
+                                                    @elseif ($isWithinOperatingHours && $schedule)
                                                         <x-schedules.schedule-card :schedule="$schedule" />
                                                     @elseif ($isWithinOperatingHours && $block)
                                                         <x-schedules.block-card :block="$block" />

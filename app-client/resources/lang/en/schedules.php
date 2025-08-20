@@ -40,6 +40,7 @@ return [
         'updated_description' => 'The appointment was updated successfully and is available in the schedule.',
     ],
     'today' => 'Today',
+    'break' => 'Break',
     'current_week' => 'Current Week',
     'previous_week' => 'Previous Week',
     'next_week' => 'Next Week',

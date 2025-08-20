@@ -57,6 +57,43 @@ class ScheduleTimeService
     }
 
     /**
+     * Calculate break period for a specific day in user timezone
+     *
+     * @param string $dayKey
+     * @param object $unitSettings
+     * @param Carbon $referenceDate Date to anchor time conversion
+     * @return array{startTime: Carbon|null, endTime: Carbon|null}
+     */
+    public function calculateBreakForDay(string $dayKey, $unitSettings, Carbon $referenceDate): array
+    {
+        $hasBreak = (bool) ($unitSettings->{$dayKey . '_has_break'} ?? false);
+        $breakStartUtc = $unitSettings->{$dayKey . '_break_start'} ?? null;
+        $breakEndUtc = $unitSettings->{$dayKey . '_break_end'} ?? null;
+
+        if (!$hasBreak || !$breakStartUtc || !$breakEndUtc) {
+            return [
+                'startTime' => null,
+                'endTime' => null,
+            ];
+        }
+
+        $userTimezone = $unitSettings->timezone ?? 'UTC';
+        $dateString = $referenceDate->format('Y-m-d');
+
+        $startLocal = Carbon::parse($dateString . ' ' . $breakStartUtc, 'UTC')
+            ->setTimezone($userTimezone)
+            ->format('H:i');
+        $endLocal = Carbon::parse($dateString . ' ' . $breakEndUtc, 'UTC')
+            ->setTimezone($userTimezone)
+            ->format('H:i');
+
+        return [
+            'startTime' => Carbon::parse($startLocal),
+            'endTime' => Carbon::parse($endLocal),
+        ];
+    }
+
+    /**
      * Calculate the earliest start time and latest end time based on unit settings
      *
      * @param object $unitSettings
