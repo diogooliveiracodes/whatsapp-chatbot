@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Schedule;
+use App\Models\User;
 use App\Services\ErrorLog\ErrorLogService;
 use App\Services\Customer\CustomerService;
 use App\Services\Http\HttpResponseService;
@@ -65,6 +66,7 @@ class ScheduleController extends Controller
     public function weekly(Request $request): View
     {
         try {
+            /** @var User $user */
             $user = Auth::user();
             $units = collect();
             $selectedUnit = null;
@@ -134,6 +136,7 @@ class ScheduleController extends Controller
     public function daily(Request $request): View
     {
         try {
+            /** @var User $user */
             $user = Auth::user();
             $units = collect();
             $selectedUnit = null;
@@ -217,6 +220,7 @@ class ScheduleController extends Controller
     public function create(): View
     {
         try {
+            /** @var User $user */
             $user = Auth::user();
             $units = collect();
             $selectedUnit = $user->unit;
@@ -270,6 +274,7 @@ class ScheduleController extends Controller
     public function store(StoreScheduleRequest $request): \Illuminate\Contracts\View\View|RedirectResponse
     {
         try {
+            /** @var User $user */
             $user = Auth::user();
             $selectedUnit = $user->unit;
 
@@ -341,6 +346,7 @@ class ScheduleController extends Controller
     public function edit(Schedule $schedule): View
     {
         try {
+            /** @var User $user */
             $user = Auth::user();
             $units = collect();
             $selectedUnit = $user->unit;
@@ -396,6 +402,7 @@ class ScheduleController extends Controller
     public function update(UpdateScheduleRequest $request, Schedule $schedule): \Illuminate\Contracts\View\View|RedirectResponse
     {
         try {
+            /** @var User $user */
             $user = Auth::user();
             $selectedUnit = $schedule->unit; // Por padrão, usar a unidade do agendamento
 
