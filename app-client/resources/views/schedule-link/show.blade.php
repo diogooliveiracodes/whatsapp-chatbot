@@ -262,16 +262,24 @@
                     }
                 });
             } else {
-                card.classList.add('bg-gradient-to-br', 'from-gray-800', 'to-gray-900', 'border-gray-700',
-                    'text-gray-500', 'cursor-not-allowed');
+                card.classList.add('bg-gradient-to-br', 'from-gray-800', 'to-gray-900', 'border-transparent',
+                    'text-gray-400', 'cursor-not-allowed');
                 card.disabled = true;
             }
 
-            card.innerHTML = `
-                 <div class="text-xs font-semibold opacity-80">${getDayName(dayData.day_of_week)}</div>
-                 <div class="text-lg sm:text-xl font-bold leading-tight">${dayData.day}</div>
-                 <div class="text-xs opacity-80">${dayData.month}</div>
-             `;
+            if (dayData.available) {
+                card.innerHTML = `
+                    <div class="text-xs font-semibold opacity-80">${getDayName(dayData.day_of_week)}</div>
+                    <div class="text-lg sm:text-xl font-bold leading-tight">${dayData.day}</div>
+                    <div class="text-xs opacity-80">${dayData.month}</div>
+                `;
+            } else {
+                card.innerHTML = `
+                    <div class="text-xs font-semibold opacity-60 line-through">${getDayName(dayData.day_of_week)}</div>
+                    <div class="text-lg sm:text-xl font-bold leading-tight line-through">${dayData.day}</div>
+                    <div class="text-xs opacity-60 line-through">${dayData.month}</div>
+                `;
+            }
 
             calendar.appendChild(card);
         });
@@ -323,8 +331,8 @@
                 b.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-200',
                     'dark:border-green-800', 'text-green-800', 'dark:text-green-200');
             } else {
-                b.classList.add('bg-gradient-to-br', 'from-gray-700', 'to-gray-800', 'border-gray-600',
-                    'text-white');
+                b.classList.add('bg-gradient-to-br', 'from-gray-800', 'to-gray-900', 'border-transparent',
+                    'text-gray-400');
             }
         });
 
