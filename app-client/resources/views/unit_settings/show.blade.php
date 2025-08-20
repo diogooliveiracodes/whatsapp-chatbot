@@ -278,10 +278,10 @@
                                                     @endphp
 
                                                     <!-- Dia da semana -->
-                                                    <div class="flex items-center space-x-3 mb-3">
+                                                    <div class="flex items-center space-x-3 mb-2">
                                                         <div
-                                                            class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                                                            <svg class="w-4 h-4 text-white" fill="none"
+                                                            class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                                            <svg class="w-3 h-3 text-white" fill="none"
                                                                 stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path stroke-linecap="round" stroke-linejoin="round"
                                                                     stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -291,7 +291,7 @@
                                                     </div>
 
                                                     <!-- Horário de funcionamento -->
-                                                    <div class="mb-2">
+                                                    <div class="mb-1">
                                                         <span class="text-green-400 text-sm font-medium">{{ __('unitSettings.operation') }}:</span>
                                                         <span class="text-green-400 font-mono ml-1">{{ $startDisplay }} - {{ $endDisplay }}</span>
                                                     </div>
