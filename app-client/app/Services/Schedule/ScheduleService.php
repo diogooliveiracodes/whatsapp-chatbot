@@ -12,6 +12,7 @@ use App\Exceptions\Schedule\OutsideWorkingHoursException;
 use App\Exceptions\Schedule\ScheduleConflictException;
 use App\Exceptions\Schedule\ScheduleBlockedException;
 use App\Exceptions\Schedule\PastScheduleException;
+use App\Exceptions\Schedule\InsideBreakPeriodException;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Schedule;
 use App\Repositories\ScheduleRepository;
@@ -351,6 +352,10 @@ class ScheduleService
             throw new OutsideWorkingHoursException();
         }
 
+        if ($this->isInsideBreakPeriod($scheduleDate, $validated['start_time'], $endTime, $unitSettings)) {
+            throw new InsideBreakPeriodException();
+        }
+
         // Convert to UTC after validation
         $utcData = $this->convertToUtc($validated, $unitSettings);
         $utcData['end_time'] = Carbon::parse($utcData['start_time'])->addMinutes($duration)->format('H:i');
@@ -424,6 +429,10 @@ class ScheduleService
             throw new OutsideWorkingHoursException();
         }
 
+        if ($this->isInsideBreakPeriod($scheduleDate, $validated['start_time'], $endTime, $unitSettings)) {
+            throw new InsideBreakPeriodException();
+        }
+
         // Convert to UTC after validation
         $utcData = $this->convertToUtc($validated, $unitSettings);
         $utcData['end_time'] = Carbon::parse($utcData['start_time'])->addMinutes($unitSettings->appointment_duration_minutes)->format('H:i');
@@ -453,6 +462,58 @@ class ScheduleService
         ]);
 
         return $this->scheduleRepository->update($schedule, $scheduleData);
+    }
+
+    /**
+     * Check if a time range intersects with the configured break period for the given day
+     */
+    private function isInsideBreakPeriod(Carbon $scheduleDate, string $startTime, string $endTime, $unitSettings): bool
+    {
+        // Map day of week to model keys (1 => sunday, 7 => saturday)
+        $dayOfWeek = $scheduleDate->dayOfWeek + 1;
+        $dayMap = [
+            1 => 'sunday',
+            2 => 'monday',
+            3 => 'tuesday',
+            4 => 'wednesday',
+            5 => 'thursday',
+            6 => 'friday',
+            7 => 'saturday',
+        ];
+        $dayKey = $dayMap[$dayOfWeek] ?? 'monday';
+
+        // If day not enabled, handled by other validation
+        if (!$unitSettings->$dayKey) {
+            return false;
+        }
+
+        $hasBreak = (bool) ($unitSettings->{$dayKey . '_has_break'} ?? false);
+        $breakStartUtc = $unitSettings->{$dayKey . '_break_start'} ?? null;
+        $breakEndUtc = $unitSettings->{$dayKey . '_break_end'} ?? null;
+
+        if (!$hasBreak || !$breakStartUtc || !$breakEndUtc) {
+            return false;
+        }
+
+        // Convert break times (stored in UTC) to user timezone using the schedule date as reference
+        $userTimezone = $unitSettings->timezone ?? 'America/Sao_Paulo';
+        $referenceDate = $scheduleDate->format('Y-m-d');
+
+        $breakStartLocal = \App\Helpers\TimezoneHelper::convertTimeFromUtc($breakStartUtc, $userTimezone, $referenceDate);
+        $breakEndLocal = \App\Helpers\TimezoneHelper::convertTimeFromUtc($breakEndUtc, $userTimezone, $referenceDate);
+
+        if (!$breakStartLocal || !$breakEndLocal) {
+            return false;
+        }
+
+        // Build comparable Carbon instances in the same timezone
+        $startTimeCarbon = Carbon::parse($referenceDate . ' ' . $startTime, $userTimezone);
+        $endTimeCarbon = Carbon::parse($referenceDate . ' ' . $endTime, $userTimezone);
+        $breakStartCarbon = Carbon::parse($referenceDate . ' ' . $breakStartLocal, $userTimezone);
+        $breakEndCarbon = Carbon::parse($referenceDate . ' ' . $breakEndLocal, $userTimezone);
+
+        // Intersects if start < breakEnd and end > breakStart
+        return $startTimeCarbon->lt($breakEndCarbon) && $endTimeCarbon->gt($breakStartCarbon);
     }
 
     public function getActiveSchedulesFromNow(int $unitId): bool

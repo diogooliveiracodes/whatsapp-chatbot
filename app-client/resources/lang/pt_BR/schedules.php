@@ -5,6 +5,7 @@ return [
         'closed' => 'Fechado',
         'outside_working_days' => 'O agendamento não pode ser realizado fora dos dias de funcionamento.',
         'outside_working_hours' => 'O agendamento deve estar dentro do horário de funcionamento.',
+        'inside_break_period' => 'O agendamento não pode ser realizado durante o intervalo.',
         'time_conflict' => 'Já existe um agendamento neste horário.',
         'time_blocked' => 'Este horário está bloqueado e não pode ser agendado.',
         'created' => 'Agendamento criado com sucesso!',

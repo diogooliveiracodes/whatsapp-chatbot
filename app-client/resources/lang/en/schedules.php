@@ -5,6 +5,7 @@ return [
         'closed' => 'Closed',
         'outside_working_days' => 'The appointment cannot be scheduled outside working days.',
         'outside_working_hours' => 'The appointment must be within business hours.',
+        'inside_break_period' => 'The appointment cannot be scheduled during the break period.',
         'time_conflict' => 'There is already an appointment at this time.',
         'time_blocked' => 'This time slot is blocked and cannot be scheduled.',
         'created' => 'Appointment created successfully!',

@@ -27,6 +27,7 @@ use App\Services\Unit\UnitService;
 use Illuminate\Support\Facades\Auth;
 use App\Enum\DaysOfWeekEnum;
 use App\Enum\UserRoleEnum;
+use App\Exceptions\Schedule\InsideBreakPeriodException;
 
 /**
  * Controller responsible for managing schedules in the application.
@@ -313,6 +314,12 @@ class ScheduleController extends Controller
                 ->route('schedules.create', request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])
                 ->withInput()
                 ->with('error', __('schedules.messages.time_blocked'));
+        } catch (InsideBreakPeriodException $e) {
+
+            return redirect()
+                ->route('schedules.create', request()->has('unit_id') ? ['unit_id' => request('unit_id')] : [])
+                ->withInput()
+                ->with('error', __('schedules.messages.inside_break_period'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
@@ -419,6 +426,8 @@ class ScheduleController extends Controller
             return redirect()->route('schedules.edit', array_merge([$schedule->id], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : []))->withInput()->with('error', __('schedules.messages.time_conflict'));
         } catch (ScheduleBlockedException $e) {
             return redirect()->route('schedules.edit', array_merge([$schedule->id], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : []))->withInput()->with('error', __('schedules.messages.time_blocked'));
+        } catch (InsideBreakPeriodException $e) {
+            return redirect()->route('schedules.edit', array_merge([$schedule->id], request()->has('unit_id') ? ['unit_id' => request('unit_id')] : []))->withInput()->with('error', __('schedules.messages.inside_break_period'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e);
 
