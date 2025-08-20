@@ -251,6 +251,82 @@
                             </div>
                         </div>
 
+                        <!-- Payment Methods Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                                    </path>
+                                </svg>
+                                <h3 class="text-lg font-medium text-white">
+                                    {{ __('unitSettings.payment_methods_section') }}</h3>
+                            </div>
+
+                            <div class="bg-gray-700/50 rounded-lg p-6">
+                                <p class="text-gray-400 text-sm mb-6">{{ __('unitSettings.payment_methods_description') }}</p>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <!-- Pix -->
+                                    <div class="flex items-center space-x-3 p-4 bg-gray-600/30 rounded-lg">
+                                        <input type="checkbox" id="pix_enabled" name="pix_enabled" value="1"
+                                            {{ old('pix_enabled', $unitSettings->pix_enabled) ? 'checked' : '' }}
+                                            class="w-4 h-4 text-green-600 bg-gray-700 border-gray-600 rounded focus:ring-green-500 focus:ring-2">
+                                        <label for="pix_enabled" class="text-sm font-medium text-gray-300 flex items-center">
+                                            <svg class="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                            {{ __('unitSettings.pix_enabled') }}
+                                        </label>
+                                    </div>
+
+                                    <!-- Credit Card -->
+                                    {{-- <div class="flex items-center space-x-3 p-4 bg-gray-600/30 rounded-lg">
+                                        <input type="checkbox" id="credit_card_enabled" name="credit_card_enabled" value="1"
+                                            {{ old('credit_card_enabled', $unitSettings->credit_card_enabled) ? 'checked' : '' }}
+                                            class="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2">
+                                        <label for="credit_card_enabled" class="text-sm font-medium text-gray-300 flex items-center">
+                                            <svg class="w-5 h-5 mr-2 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                                            </svg>
+                                            {{ __('unitSettings.credit_card_enabled') }}
+                                        </label>
+                                    </div> --}}
+
+                                    <!-- Debit Card -->
+                                    {{-- <div class="flex items-center space-x-3 p-4 bg-gray-600/30 rounded-lg">
+                                        <input type="checkbox" id="debit_card_enabled" name="debit_card_enabled" value="1"
+                                            {{ old('debit_card_enabled', $unitSettings->debit_card_enabled) ? 'checked' : '' }}
+                                            class="w-4 h-4 text-purple-600 bg-gray-700 border-gray-600 rounded focus:ring-purple-500 focus:ring-2">
+                                        <label for="debit_card_enabled" class="text-sm font-medium text-gray-300 flex items-center">
+                                            <svg class="w-5 h-5 mr-2 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+                                            </svg>
+                                            {{ __('unitSettings.debit_card_enabled') }}
+                                        </label>
+                                    </div> --}}
+
+                                    <!-- Cash -->
+                                    <div class="flex items-center space-x-3 p-4 bg-gray-600/30 rounded-lg">
+                                        <input type="checkbox" id="cash_enabled" name="cash_enabled" value="1"
+                                            {{ old('cash_enabled', $unitSettings->cash_enabled) ? 'checked' : '' }}
+                                            class="w-4 h-4 text-yellow-600 bg-gray-700 border-gray-600 rounded focus:ring-yellow-500 focus:ring-2">
+                                        <label for="cash_enabled" class="text-sm font-medium text-gray-300 flex items-center">
+                                            <svg class="w-5 h-5 mr-2 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+                                            </svg>
+                                            {{ __('unitSettings.cash_enabled') }}
+                                        </label>
+                                    </div>
+                                </div>
+
+                                @error('payment_methods')
+                                    <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
                         <!-- Additional Settings Section -->
                         <div class="space-y-6">
                             <div class="flex items-center space-x-2">

@@ -29,6 +29,10 @@ class UnitSettings extends Model
         'whatsapp_number',
         'default_language',
         'timezone',
+        'pix_enabled',
+        'credit_card_enabled',
+        'debit_card_enabled',
+        'cash_enabled',
         'appointment_duration_minutes',
         'sunday_start',
         'sunday_end',
@@ -78,6 +82,10 @@ class UnitSettings extends Model
 
     protected $casts = [
         'appointment_duration_minutes' => 'integer',
+        'pix_enabled' => 'boolean',
+        'credit_card_enabled' => 'boolean',
+        'debit_card_enabled' => 'boolean',
+        'cash_enabled' => 'boolean',
         'sunday_start' => 'string',
         'sunday_end' => 'string',
         'sunday' => 'boolean',
@@ -152,5 +160,45 @@ class UnitSettings extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    /**
+     * Get enabled payment methods for this unit
+     */
+    public function getEnabledPaymentMethods(): array
+    {
+        $methods = [];
+
+        if ($this->pix_enabled) {
+            $methods[] = 'pix';
+        }
+
+        if ($this->credit_card_enabled) {
+            $methods[] = 'credit_card';
+        }
+
+        if ($this->debit_card_enabled) {
+            $methods[] = 'debit_card';
+        }
+
+        if ($this->cash_enabled) {
+            $methods[] = 'cash';
+        }
+
+        return $methods;
+    }
+
+    /**
+     * Check if a specific payment method is enabled
+     */
+    public function isPaymentMethodEnabled(string $method): bool
+    {
+        return match ($method) {
+            'pix' => $this->pix_enabled,
+            'credit_card' => $this->credit_card_enabled,
+            'debit_card' => $this->debit_card_enabled,
+            'cash' => $this->cash_enabled,
+            default => false,
+        };
     }
 }

@@ -325,6 +325,51 @@
                         </div>
                     </div>
 
+                    <!-- Payment Methods Section -->
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-2">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                                </path>
+                            </svg>
+                            <h3 class="text-lg font-medium text-white">
+                                {{ __('unitSettings.payment_methods_section') }}</h3>
+                        </div>
+
+                        <div class="bg-gray-700/50 rounded-lg p-6">
+                            @php
+                                $enabledMethods = [];
+                                if ($unitSettings->pix_enabled) $enabledMethods[] = __('unitSettings.pix_enabled');
+                                if ($unitSettings->credit_card_enabled) $enabledMethods[] = __('unitSettings.credit_card_enabled');
+                                if ($unitSettings->debit_card_enabled) $enabledMethods[] = __('unitSettings.debit_card_enabled');
+                                if ($unitSettings->cash_enabled) $enabledMethods[] = __('unitSettings.cash_enabled');
+                            @endphp
+
+                            @if(count($enabledMethods) > 0)
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    @foreach($enabledMethods as $method)
+                                        <div class="flex items-center space-x-3 p-3 bg-gray-600/30 rounded-lg">
+                                            <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                            </svg>
+                                            <span class="text-sm font-medium text-gray-300">{{ $method }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="flex items-center justify-center space-x-2 text-gray-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <p>{{ __('unitSettings.no_payment_methods_configured') }}</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
                     <!-- Additional Settings Section -->
                     <div class="space-y-6">
                         <div class="flex items-center space-x-2">

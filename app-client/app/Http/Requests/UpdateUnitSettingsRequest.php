@@ -36,6 +36,10 @@ class UpdateUnitSettingsRequest extends FormRequest
             'use_ai_chatbot' => ['boolean'],
             'default_language' => ['nullable', 'string', 'max:5'],
             'timezone' => ['nullable', 'string', 'max:50'],
+            'pix_enabled' => ['boolean'],
+            'credit_card_enabled' => ['boolean'],
+            'debit_card_enabled' => ['boolean'],
+            'cash_enabled' => ['boolean'],
             'appointment_duration_minutes' => ['nullable', 'integer', 'min:1'],
             'sunday' => ['boolean'],
             'sunday_start' => ['nullable', 'required_if:sunday,true', 'date_format:H:i'],
@@ -86,6 +90,43 @@ class UpdateUnitSettingsRequest extends FormRequest
     }
 
     /**
+     * Configure the validator instance.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     */
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            // Check if at least one payment method is enabled
+            $pixEnabled = $this->boolean('pix_enabled');
+            $creditCardEnabled = $this->boolean('credit_card_enabled');
+            $debitCardEnabled = $this->boolean('debit_card_enabled');
+            $cashEnabled = $this->boolean('cash_enabled');
+
+            if (!$pixEnabled && !$creditCardEnabled && !$debitCardEnabled && !$cashEnabled) {
+                $validator->errors()->add('payment_methods', __('unitSettings.at_least_one_payment_method'));
+            }
+        });
+    }
+
+    /**
+     * Prepare the data for validation.
+     *
+     * @return void
+     */
+    protected function prepareForValidation()
+    {
+        // Convert checkbox values to boolean
+        $this->merge([
+            'pix_enabled' => $this->boolean('pix_enabled'),
+            'credit_card_enabled' => $this->boolean('credit_card_enabled'),
+            'debit_card_enabled' => $this->boolean('debit_card_enabled'),
+            'cash_enabled' => $this->boolean('cash_enabled'),
+        ]);
+    }
+
+    /**
      * Get custom messages for validator errors.
      *
      * @return array<string, string>
@@ -116,6 +157,10 @@ class UpdateUnitSettingsRequest extends FormRequest
             'whatsapp_webhook_url.max' => __('validation.max.string', ['attribute' => __('company-settings.whatsapp_webhook_url'), 'max' => 255]),
             'whatsapp_number.string' => __('validation.string', ['attribute' => __('company-settings.whatsapp_number')]),
             'whatsapp_number.max' => __('validation.max.string', ['attribute' => __('company-settings.whatsapp_number'), 'max' => 20]),
+            'pix_enabled.boolean' => __('validation.boolean', ['attribute' => __('unitSettings.pix_enabled')]),
+            'credit_card_enabled.boolean' => __('validation.boolean', ['attribute' => __('unitSettings.credit_card_enabled')]),
+            'debit_card_enabled.boolean' => __('validation.boolean', ['attribute' => __('unitSettings.debit_card_enabled')]),
+            'cash_enabled.boolean' => __('validation.boolean', ['attribute' => __('unitSettings.cash_enabled')]),
             'sunday_start.required_if' => __('unitSettings.validation.sunday_start_required'),
             'sunday_end.required_if' => __('unitSettings.validation.sunday_end_required'),
             'sunday_start.date_format' => __('validation.date_format', ['attribute' => __('unitSettings.sunday_start'), 'format' => 'HH:mm']),
