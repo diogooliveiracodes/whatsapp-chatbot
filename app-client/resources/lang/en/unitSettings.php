@@ -39,6 +39,8 @@ return [
     'working_hours' => 'Working Hours',
     'has_break' => 'Has break',
     'break_time' => 'Break Time',
+    'operation' => 'Operation',
+    'break' => 'Break',
     'sunday_start' => 'Start Time (Sunday)',
     'sunday_end' => 'End Time (Sunday)',
     'sunday_break_start' => 'Break Start (Sunday)',

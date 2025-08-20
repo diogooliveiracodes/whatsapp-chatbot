@@ -233,9 +233,52 @@
 
                                         @foreach ($days as $day => $label)
                                             @if ($unitSettings->$day)
-                                                <div
-                                                    class="flex items-center justify-between bg-gray-600/50 rounded-lg p-3">
-                                                    <div class="flex items-center space-x-3">
+                                                <div class="bg-gray-600/50 rounded-lg p-4">
+                                                    @php
+                                                        $userTimezone =
+                                                            auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                        $referenceDate = now()->format('Y-m-d');
+                                                        $rawStart = $unitSettings->{$day . '_start'};
+                                                        $rawEnd = $unitSettings->{$day . '_end'};
+                                                        $rawBreakStart = $unitSettings->{$day . '_break_start'};
+                                                        $rawBreakEnd = $unitSettings->{$day . '_break_end'};
+                                                        $hasBreak = $unitSettings->{$day . '_has_break'};
+                                                        $startDisplay = $rawStart
+                                                            ? \Carbon\Carbon::parse(
+                                                                $referenceDate . ' ' . $rawStart,
+                                                                'UTC',
+                                                            )
+                                                                ->setTimezone($userTimezone)
+                                                                ->format('H:i')
+                                                            : null;
+                                                        $endDisplay = $rawEnd
+                                                            ? \Carbon\Carbon::parse(
+                                                                $referenceDate . ' ' . $rawEnd,
+                                                                'UTC',
+                                                            )
+                                                                ->setTimezone($userTimezone)
+                                                                ->format('H:i')
+                                                            : null;
+                                                        $breakStartDisplay = $rawBreakStart
+                                                            ? \Carbon\Carbon::parse(
+                                                                $referenceDate . ' ' . $rawBreakStart,
+                                                                'UTC',
+                                                            )
+                                                                ->setTimezone($userTimezone)
+                                                                ->format('H:i')
+                                                            : null;
+                                                        $breakEndDisplay = $rawBreakEnd
+                                                            ? \Carbon\Carbon::parse(
+                                                                $referenceDate . ' ' . $rawBreakEnd,
+                                                                'UTC',
+                                                            )
+                                                                ->setTimezone($userTimezone)
+                                                                ->format('H:i')
+                                                            : null;
+                                                    @endphp
+
+                                                    <!-- Dia da semana -->
+                                                    <div class="flex items-center space-x-3 mb-3">
                                                         <div
                                                             class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                                                             <svg class="w-4 h-4 text-white" fill="none"
@@ -244,59 +287,22 @@
                                                                     stroke-width="2" d="M5 13l4 4L19 7"></path>
                                                             </svg>
                                                         </div>
-                                                        <span
-                                                            class="text-white font-medium">{{ $label }}</span>
+                                                        <span class="text-white font-medium text-lg">{{ $label }}</span>
                                                     </div>
-                                                    <div class="text-green-400 font-mono">
-                                                        @php
-                                                            $userTimezone =
-                                                                auth()->user()->unit->unitSettings->timezone ?? 'UTC';
-                                                            $referenceDate = now()->format('Y-m-d');
-                                                            $rawStart = $unitSettings->{$day . '_start'};
-                                                            $rawEnd = $unitSettings->{$day . '_end'};
-                                                            $rawBreakStart = $unitSettings->{$day . '_break_start'};
-                                                            $rawBreakEnd = $unitSettings->{$day . '_break_end'};
-                                                            $hasBreak = $unitSettings->{$day . '_has_break'};
-                                                            $startDisplay = $rawStart
-                                                                ? \Carbon\Carbon::parse(
-                                                                    $referenceDate . ' ' . $rawStart,
-                                                                    'UTC',
-                                                                )
-                                                                    ->setTimezone($userTimezone)
-                                                                    ->format('H:i')
-                                                                : null;
-                                                            $endDisplay = $rawEnd
-                                                                ? \Carbon\Carbon::parse(
-                                                                    $referenceDate . ' ' . $rawEnd,
-                                                                    'UTC',
-                                                                )
-                                                                    ->setTimezone($userTimezone)
-                                                                    ->format('H:i')
-                                                                : null;
-                                                            $breakStartDisplay = $rawBreakStart
-                                                                ? \Carbon\Carbon::parse(
-                                                                    $referenceDate . ' ' . $rawBreakStart,
-                                                                    'UTC',
-                                                                )
-                                                                    ->setTimezone($userTimezone)
-                                                                    ->format('H:i')
-                                                                : null;
-                                                            $breakEndDisplay = $rawBreakEnd
-                                                                ? \Carbon\Carbon::parse(
-                                                                    $referenceDate . ' ' . $rawBreakEnd,
-                                                                    'UTC',
-                                                                )
-                                                                    ->setTimezone($userTimezone)
-                                                                    ->format('H:i')
-                                                                : null;
-                                                        @endphp
-                                                        {{ $startDisplay }} - {{ $endDisplay }}
-                                                        @if ($hasBreak && $breakStartDisplay && $breakEndDisplay)
-                                                            <span class="text-gray-300">|</span>
-                                                            <span class="text-yellow-400">{{ __('unitSettings.break_time') }}:</span>
-                                                            {{ $breakStartDisplay }} - {{ $breakEndDisplay }}
-                                                        @endif
+
+                                                    <!-- Horário de funcionamento -->
+                                                    <div class="mb-2">
+                                                        <span class="text-green-400 text-sm font-medium">{{ __('unitSettings.operation') }}:</span>
+                                                        <span class="text-green-400 font-mono ml-1">{{ $startDisplay }} - {{ $endDisplay }}</span>
                                                     </div>
+
+                                                    <!-- Horário do intervalo -->
+                                                    @if ($hasBreak && $breakStartDisplay && $breakEndDisplay)
+                                                        <div>
+                                                            <span class="text-yellow-400 text-sm font-medium">{{ __('unitSettings.break') }}:</span>
+                                                            <span class="text-yellow-400 font-mono ml-1">{{ $breakStartDisplay }} - {{ $breakEndDisplay }}</span>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             @endif
                                         @endforeach

@@ -39,6 +39,8 @@ return [
     'working_hours' => 'Horário de Funcionamento',
     'has_break' => 'Possui intervalo',
     'break_time' => 'Horário de Intervalo',
+    'operation' => 'Funcionamento',
+    'break' => 'Intervalo',
     'sunday_start' => 'Horário de Início (Domingo)',
     'sunday_end' => 'Horário de Término (Domingo)',
     'sunday_break_start' => 'Início do Intervalo (Domingo)',
