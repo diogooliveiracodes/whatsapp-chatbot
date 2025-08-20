@@ -7,6 +7,7 @@ enum PaymentMethodEnum: int
     case CREDIT_CARD = 1;
     case DEBIT_CARD = 2;
     case PIX = 3;
+    case CASH = 4;
 
     public function name(): string
     {
@@ -14,6 +15,7 @@ enum PaymentMethodEnum: int
             self::CREDIT_CARD => __('payments.payment_method_credit_card'),
             self::DEBIT_CARD => __('payments.payment_method_debit_card'),
             self::PIX => __('payments.payment_method_pix'),
+            self::CASH => __('payments.payment_method_cash'),
         };
     }
 
