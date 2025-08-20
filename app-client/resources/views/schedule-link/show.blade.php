@@ -322,20 +322,22 @@
     }
 
     function onSelectDate(dateStr, btn) {
-        // Remove selection from all day cards
-        document.querySelectorAll('#calendar button').forEach(b => {
-            b.classList.remove('ring-2', 'ring-blue-400', 'scale-105');
-            if (b.classList.contains('from-yellow-400')) {
-                b.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-500', 'border-yellow-400',
-                    'text-black', 'shadow-yellow-500/25');
-            } else {
-                b.classList.add('bg-gradient-to-br', 'from-gray-700', 'to-gray-800', 'border-gray-600',
-                    'text-white');
-            }
-        });
+                 // Remove selection from all day cards
+         document.querySelectorAll('#calendar button').forEach(b => {
+             b.classList.remove('ring-2', 'ring-green-500', 'scale-105');
+             if (b.classList.contains('from-yellow-400')) {
+                 b.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-500', 'border-yellow-400',
+                     'text-black', 'shadow-yellow-500/25');
+             } else if (b.classList.contains('bg-green-50')) {
+                 b.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-200', 'dark:border-green-800', 'text-green-800', 'dark:text-green-200');
+             } else {
+                 b.classList.add('bg-gradient-to-br', 'from-gray-700', 'to-gray-800', 'border-gray-600',
+                     'text-white');
+             }
+         });
 
-        // Add selection to clicked card
-        btn.classList.add('ring-2', 'ring-blue-400', 'scale-105');
+         // Add selection to clicked card
+         btn.classList.add('ring-2', 'ring-green-500', 'scale-105');
         document.getElementById('schedule_date').value = dateStr;
 
         // Show loading state
