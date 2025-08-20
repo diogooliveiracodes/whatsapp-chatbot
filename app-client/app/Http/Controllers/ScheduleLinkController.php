@@ -1,0 +1,326 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Exceptions\Schedule\OutsideWorkingDaysException;
+use App\Exceptions\Schedule\OutsideWorkingHoursException;
+use App\Exceptions\Schedule\ScheduleBlockedException;
+use App\Exceptions\Schedule\ScheduleConflictException;
+use App\Models\Customer;
+use App\Models\Unit;
+use App\Repositories\ScheduleRepository;
+use App\Services\Schedule\ScheduleBlockService;
+use App\Services\Schedule\ScheduleTimeService;
+use App\Services\Schedule\Validators\WorkingDaysValidator;
+use App\Services\Schedule\Validators\WorkingHoursValidator;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\View\View;
+
+class ScheduleLinkController extends Controller
+{
+    public function __construct(
+        private readonly ScheduleRepository $scheduleRepository,
+        private readonly ScheduleTimeService $scheduleTimeService,
+        private readonly ScheduleBlockService $scheduleBlockService,
+        private readonly WorkingDaysValidator $workingDaysValidator,
+        private readonly WorkingHoursValidator $workingHoursValidator,
+    ) {}
+
+    /**
+     * Entry point: list active units for a specific company or redirect if only one.
+     */
+    public function index($company): View|RedirectResponse
+    {
+        $units = Unit::query()
+            ->where('active', true)
+            ->where('company_id', $company)
+            ->get();
+
+        if ($units->count() === 1) {
+            return redirect()->route('schedule-link.show', ['company' => $company, 'unit' => $units->first()->id]);
+        }
+
+        return view('schedule-link.index', [
+            'units' => $units,
+            'company' => $company,
+        ]);
+    }
+
+    /**
+     * Show scheduling page for a specific unit.
+     */
+    public function show($company, Unit $unit, Request $request): View
+    {
+        // Ensure the unit belongs to the specified company
+        if ($unit->company_id != $company) {
+            abort(404);
+        }
+
+        $unit->load(['unitSettings', 'unitServiceTypes' => function ($q) {
+            $q->where('active', true);
+        }]);
+
+        $month = $request->get('month', now()->format('Y-m'));
+        $availableDays = $this->getAvailableDaysForMonth($unit, $month);
+
+        return view('schedule-link.show', [
+            'unit' => $unit,
+            'unitSettings' => $unit->unitSettings,
+            'serviceTypes' => $unit->unitServiceTypes,
+            'month' => $month,
+            'availableDays' => $availableDays,
+            'company' => $company,
+        ]);
+    }
+
+    /**
+     * JSON: Available days for a given month (YYYY-MM).
+     */
+    public function availableDays($company, Unit $unit, Request $request): JsonResponse
+    {
+        // Ensure the unit belongs to the specified company
+        if ($unit->company_id != $company) {
+            abort(404);
+        }
+
+        $month = $request->get('month', now()->format('Y-m'));
+        $days = $this->getAvailableDaysForMonth($unit, $month);
+        return response()->json(['days' => $days]);
+    }
+
+    /**
+     * JSON: Available times for a given date (YYYY-MM-DD).
+     */
+    public function availableTimes($company, Unit $unit, Request $request): JsonResponse
+    {
+        // Ensure the unit belongs to the specified company
+        if ($unit->company_id != $company) {
+            abort(404);
+        }
+
+        $date = $request->string('date')->toString();
+        if (!$date) {
+            return response()->json(['times' => []]);
+        }
+
+        $times = $this->getAvailableTimesForDate($unit, $date)->map(fn ($t) => $t->format('H:i'))->values();
+        return response()->json(['times' => $times]);
+    }
+
+    /**
+     * Store a schedule created via public link.
+     */
+    public function store($company, Unit $unit, Request $request): RedirectResponse
+    {
+        // Ensure the unit belongs to the specified company
+        if ($unit->company_id != $company) {
+            abort(404);
+        }
+
+        $unit->load('unitSettings');
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:30'],
+            'unit_service_type_id' => ['required', 'integer', 'exists:unit_service_types,id'],
+            'schedule_date' => ['required', 'date_format:Y-m-d'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        $unitSettings = $unit->unitSettings;
+        $duration = (int) ($unitSettings->appointment_duration_minutes ?? 30);
+
+        try {
+            // Validate business rules in local timezone
+            $scheduleDate = Carbon::parse($validated['schedule_date']);
+            $endTimeLocal = Carbon::parse($validated['start_time'])->copy()->addMinutes($duration)->format('H:i');
+
+            if ($this->workingDaysValidator->isOutsideWorkingDays($scheduleDate, $unitSettings)) {
+                throw new OutsideWorkingDaysException();
+            }
+
+            if ($this->workingHoursValidator->isOutsideWorkingHours($scheduleDate, $validated['start_time'], $endTimeLocal, $unitSettings)) {
+                throw new OutsideWorkingHoursException();
+            }
+
+            // Convert to UTC for persistence and conflict checks
+            [$utcDate, $utcStart, $utcEnd] = $this->convertToUtc($validated['schedule_date'], $validated['start_time'], $duration, $unitSettings->timezone);
+
+            // Conflict and block validations
+            if ($this->scheduleRepository->findConflictingSchedule($unit->id, $utcDate, $utcStart, $utcEnd, null)) {
+                throw new ScheduleConflictException();
+            }
+            if ($this->scheduleBlockService->isTimeSlotBlocked($unit->id, $utcDate, $utcStart, $utcEnd)) {
+                throw new ScheduleBlockedException();
+            }
+
+            // Resolve or create customer
+            $customer = Customer::query()
+                ->where('company_id', $unit->company_id)
+                ->where('phone', $validated['phone'])
+                ->first();
+            if (!$customer) {
+                $customer = Customer::create([
+                    'active' => true,
+                    'company_id' => $unit->company_id,
+                    'unit_id' => $unit->id,
+                    'name' => $validated['name'],
+                    'phone' => $validated['phone'],
+                ]);
+            }
+
+            // Pick a responsible user for the unit
+            $targetUser = $unit->users()->where('active', true)->first() ?? $unit->users()->first();
+            if (!$targetUser) {
+                return back()->withErrors(['general' => Lang::get('schedule_link.messages.no_user_available')])->withInput();
+            }
+
+            $schedule = $this->scheduleRepository->create([
+                'unit_id' => $unit->id,
+                'customer_id' => $customer->id,
+                'user_id' => $targetUser->id,
+                'unit_service_type_id' => (int) $validated['unit_service_type_id'],
+                'schedule_date' => $utcDate,
+                'start_time' => $utcStart,
+                'end_time' => $utcEnd,
+                'status' => 'pending',
+                'notes' => $validated['notes'] ?? null,
+                'is_confirmed' => true,
+                'active' => true,
+            ]);
+
+            return redirect()
+                ->route('schedule-link.success', ['company' => $company, 'unit' => $unit->id, 'schedule' => $schedule->id])
+                ->with('status', Lang::get('schedule_link.messages.created'))
+                ->with('schedule_data', (new \App\Http\Resources\ScheduleResource($schedule))->toArray(request()));
+        } catch (OutsideWorkingDaysException $e) {
+            return back()->withErrors(['schedule_date' => Lang::get('schedules.messages.outside_working_days')])->withInput();
+        } catch (OutsideWorkingHoursException $e) {
+            return back()->withErrors(['start_time' => Lang::get('schedules.messages.outside_working_hours')])->withInput();
+        } catch (ScheduleConflictException $e) {
+            return back()->withErrors(['start_time' => Lang::get('schedules.messages.time_conflict')])->withInput();
+        } catch (ScheduleBlockedException $e) {
+            return back()->withErrors(['start_time' => Lang::get('schedules.messages.time_blocked')])->withInput();
+        } catch (\Throwable $e) {
+            return back()->withErrors(['general' => Lang::get('schedule_link.messages.unexpected_error')])->withInput();
+        }
+    }
+
+    /**
+     * Success page.
+     */
+    public function success($company, Unit $unit, Request $request): View
+    {
+        // Ensure the unit belongs to the specified company
+        if ($unit->company_id != $company) {
+            abort(404);
+        }
+
+        // Get schedule data from session if available
+        $schedule = null;
+        if (session()->has('schedule_data')) {
+            $schedule = session('schedule_data');
+        }
+
+        return view('schedule-link.success', [
+            'unit' => $unit,
+            'company' => $company,
+            'schedule' => $schedule,
+        ]);
+    }
+
+    /**
+     * Helpers
+     */
+    private function getAvailableDaysForMonth(Unit $unit, string $month): array
+    {
+        $unit->loadMissing('unitSettings');
+        $unitSettings = $unit->unitSettings;
+        $duration = (int) ($unitSettings->appointment_duration_minutes ?? 30);
+
+        $start = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        $todayLocal = now($unitSettings->timezone ?? 'UTC')->startOfDay();
+
+        $availableDays = [];
+        $cursor = $start->copy();
+        while ($cursor->lte($end)) {
+            $isFutureOrToday = $cursor->greaterThanOrEqualTo($todayLocal);
+
+            if ($isFutureOrToday && !$this->workingDaysValidator->isOutsideWorkingDays($cursor, $unitSettings)) {
+                $hasAnySlot = $this->getAvailableTimesForDate($unit, $cursor->format('Y-m-d'))->isNotEmpty();
+                if ($hasAnySlot) {
+                    $availableDays[] = $cursor->format('Y-m-d');
+                }
+            }
+
+            $cursor->addDay();
+        }
+
+        return $availableDays;
+    }
+
+    private function getAvailableTimesForDate(Unit $unit, string $date): \Illuminate\Support\Collection
+    {
+        $unit->loadMissing('unitSettings');
+        $unitSettings = $unit->unitSettings;
+        $duration = (int) ($unitSettings->appointment_duration_minutes ?? 30);
+
+        $dayOfWeek = Carbon::parse($date)->dayOfWeek + 1;
+        $map = [1 => 'sunday', 2 => 'monday', 3 => 'tuesday', 4 => 'wednesday', 5 => 'thursday', 6 => 'friday', 7 => 'saturday'];
+        $dayKey = $map[$dayOfWeek];
+
+        // Generate time slots based on unit settings and local timezone
+        $slots = $this->scheduleTimeService->getAvailableTimeSlots(Carbon::parse($date), $unitSettings)
+            ->filter(function (Carbon $time) use ($dayKey, $unitSettings) {
+                return $this->scheduleTimeService->isWithinOperatingHours($time, $dayKey, $unitSettings);
+            });
+
+        // Filter out conflicts and blocks
+        $available = $slots->filter(function (Carbon $localStart) use ($unit, $unitSettings, $duration, $date) {
+            // Skip past times for today
+            $nowLocal = now($unitSettings->timezone ?? 'UTC');
+            if ($date === $nowLocal->format('Y-m-d') && $localStart->lte($nowLocal)) {
+                return false;
+            }
+
+            [$utcDate, $utcStart, $utcEnd] = $this->convertToUtc($date, $localStart->format('H:i'), $duration, $unitSettings->timezone);
+
+            if ($this->scheduleRepository->findConflictingSchedule($unit->id, $utcDate, $utcStart, $utcEnd, null)) {
+                return false;
+            }
+            if ($this->scheduleBlockService->isTimeSlotBlocked($unit->id, $utcDate, $utcStart, $utcEnd)) {
+                return false;
+            }
+            return true;
+        });
+
+        return $available->values();
+    }
+
+    /**
+     * Convert local date/time to UTC strings used for persistence.
+     * Returns array [utcDate:Y-m-d, utcStart:H:i, utcEnd:H:i]
+     */
+    private function convertToUtc(string $localDate, string $localStartTime, int $durationMinutes, ?string $timezone): array
+    {
+        $tz = $timezone ?: 'America/Sao_Paulo';
+        $startLocal = Carbon::parse($localDate . ' ' . $localStartTime, $tz);
+        $startUtc = $startLocal->copy()->setTimezone('UTC');
+        $endUtc = $startLocal->copy()->addMinutes($durationMinutes)->setTimezone('UTC');
+
+        return [
+            $startUtc->format('Y-m-d'),
+            $startUtc->format('H:i'),
+            $endUtc->format('H:i'),
+        ];
+    }
+}
+
+

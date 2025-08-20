@@ -12,10 +12,21 @@ use App\Http\Controllers\UnitServiceTypeController;
 use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ScheduleLinkController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect(route('login'));
+});
+
+// Public schedule link (no auth)
+Route::prefix('{company}/schedule-link')->group(function () {
+    Route::get('/', [ScheduleLinkController::class, 'index'])->name('schedule-link.index');
+    Route::get('/{unit}', [ScheduleLinkController::class, 'show'])->name('schedule-link.show');
+    Route::get('/{unit}/available-days', [ScheduleLinkController::class, 'availableDays'])->name('schedule-link.available-days');
+    Route::get('/{unit}/available-times', [ScheduleLinkController::class, 'availableTimes'])->name('schedule-link.available-times');
+    Route::post('/{unit}', [ScheduleLinkController::class, 'store'])->name('schedule-link.store');
+    Route::get('/{unit}/success', [ScheduleLinkController::class, 'success'])->name('schedule-link.success');
 });
 
 Route::middleware('auth', 'company.active', 'subscription.active', 'user.active')->group(function () {
