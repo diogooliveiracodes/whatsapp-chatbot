@@ -68,30 +68,53 @@
                                 </div>
                             </div>
 
-                            <!-- Step 2: Service Selection -->
-                            <div class="space-y-4">
-                                <div class="flex items-center space-x-3 mb-4">
-                                    <div
-                                        class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                                        2</div>
-                                    <h2 class="text-xl font-semibold text-white">Tipo de Serviço</h2>
-                                </div>
+                                                         <!-- Step 2: Service Selection -->
+                             <div class="space-y-4">
+                                 <div class="flex items-center space-x-3 mb-4">
+                                     <div
+                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                                         2</div>
+                                     <h2 class="text-xl font-semibold text-white">Tipo de Serviço</h2>
+                                 </div>
 
-                                <div class="space-y-2">
-                                    <label for="service_type" class="block text-gray-300 text-sm font-medium">
-                                        {{ __('schedules.service_type') }} <span class="text-red-400">*</span>
-                                    </label>
-                                    <select id="service_type" name="unit_service_type_id" required
-                                        class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                                        <option value="">{{ __('schedule_link.select_service') }}</option>
-                                        @foreach ($serviceTypes as $type)
-                                            <option value="{{ $type->id }}" @selected(old('unit_service_type_id') == $type->id)>
-                                                {{ $type->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <x-input-error :messages="$errors->get('unit_service_type_id')" class="mt-1" />
-                                </div>
-                            </div>
+                                 <div class="space-y-4">
+                                     <label class="block text-gray-300 text-sm font-medium">
+                                         {{ __('schedules.service_type') }} <span class="text-red-400">*</span>
+                                     </label>
+                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" role="radiogroup" aria-label="Seleção de tipo de serviço">
+                                         @foreach($serviceTypes as $type)
+                                             <div class="relative">
+                                                 <input
+                                                     type="radio"
+                                                     id="service_{{ $type->id }}"
+                                                     name="unit_service_type_id"
+                                                     value="{{ $type->id }}"
+                                                     @checked(old('unit_service_type_id') == $type->id)
+                                                     class="sr-only"
+                                                     required
+                                                 >
+                                                 <label
+                                                     for="service_{{ $type->id }}"
+                                                     class="block w-full h-24 p-4 rounded-xl border-2 border-gray-600 bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-800"
+                                                 >
+                                                     <div class="flex items-center space-x-3">
+                                                         <div class="w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center transition-all duration-200">
+                                                             <div class="w-2.5 h-2.5 rounded-full bg-blue-500 opacity-0 transition-all duration-200"></div>
+                                                         </div>
+                                                         <div class="flex-1">
+                                                             <div class="text-white font-medium">{{ $type->name }}</div>
+                                                             @if($type->description)
+                                                                 <div class="text-gray-400 text-sm mt-1">{{ $type->description }}</div>
+                                                             @endif
+                                                         </div>
+                                                     </div>
+                                                 </label>
+                                             </div>
+                                         @endforeach
+                                     </div>
+                                     <x-input-error :messages="$errors->get('unit_service_type_id')" class="mt-1" />
+                                 </div>
+                             </div>
 
                             <!-- Step 3: Date and Time Selection -->
                             <div class="space-y-6">
@@ -358,13 +381,13 @@
             });
     }
 
-    function updateSubmitEnabled() {
-        const name = document.querySelector('input[name="name"]').value.trim();
-        const phone = document.querySelector('input[name="phone"]').value.trim();
-        const service = document.querySelector('select[name="unit_service_type_id"]').value;
-        const date = document.getElementById('schedule_date').value;
-        const time = document.getElementById('start_time').value;
-        const can = name && phone && service && date && time;
+         function updateSubmitEnabled() {
+         const name = document.querySelector('input[name="name"]').value.trim();
+         const phone = document.querySelector('input[name="phone"]').value.trim();
+         const service = document.querySelector('input[name="unit_service_type_id"]:checked')?.value || '';
+         const date = document.getElementById('schedule_date').value;
+         const time = document.getElementById('start_time').value;
+         const can = name && phone && service && date && time;
 
         const submitBtn = document.getElementById('submit-button');
         submitBtn.disabled = !can;
@@ -421,13 +444,52 @@
         });
     }
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', () => {
-        document.addEventListener('input', updateSubmitEnabled);
-        renderCalendar(month);
-        addSmoothScrolling();
-        updateSubmitEnabled();
-    });
+         // Initialize
+     document.addEventListener('DOMContentLoaded', () => {
+         document.addEventListener('input', updateSubmitEnabled);
+         renderCalendar(month);
+         addSmoothScrolling();
+         updateSubmitEnabled();
+
+                  // Add radio button functionality for service types
+         document.querySelectorAll('input[name="unit_service_type_id"]').forEach(radio => {
+             radio.addEventListener('change', function() {
+                 // Remove selected state from all labels
+                 document.querySelectorAll('label[for^="service_"]').forEach(label => {
+                     label.classList.remove('border-blue-500', 'from-blue-600', 'to-blue-700');
+                     label.classList.add('border-gray-600', 'from-gray-700', 'to-gray-800');
+                     const radioCircle = label.querySelector('.w-5.h-5');
+                     const radioDot = label.querySelector('.w-2\\.5.h-2\\.5');
+                     radioCircle.classList.remove('border-blue-500');
+                     radioCircle.classList.add('border-gray-400');
+                     radioDot.classList.remove('opacity-100');
+                     radioDot.classList.add('opacity-0');
+                 });
+
+                 // Add selected state to current label
+                 if (this.checked) {
+                     const label = document.querySelector(`label[for="${this.id}"]`);
+                     label.classList.remove('border-gray-600', 'from-gray-700', 'to-gray-800');
+                     label.classList.add('border-blue-500', 'from-blue-600', 'to-blue-700');
+                     const radioCircle = label.querySelector('.w-5.h-5');
+                     const radioDot = label.querySelector('.w-2\\.5.h-2\\.5');
+                     radioCircle.classList.remove('border-gray-400');
+                     radioCircle.classList.add('border-blue-500');
+                     radioDot.classList.remove('opacity-0');
+                     radioDot.classList.add('opacity-100');
+                 }
+
+                 // Update submit button state
+                 updateSubmitEnabled();
+             });
+         });
+
+         // Trigger change event for pre-selected radio button
+         const preSelectedRadio = document.querySelector('input[name="unit_service_type_id"]:checked');
+         if (preSelectedRadio) {
+             preSelectedRadio.dispatchEvent(new Event('change'));
+         }
+     });
 </script>
 
 </html>
