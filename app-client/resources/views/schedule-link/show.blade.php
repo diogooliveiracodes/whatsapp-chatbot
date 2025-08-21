@@ -14,6 +14,18 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        /* Prevent automatic scrolling on page load */
+        html {
+            scroll-behavior: auto;
+        }
+
+        /* Only enable smooth scrolling for user interactions */
+        html.user-interaction {
+            scroll-behavior: smooth;
+        }
+    </style>
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
@@ -287,12 +299,13 @@
         // Update week display
         updateWeekDisplay(weekStartStr);
 
-        // Auto-select first available day
+        // Auto-select first available day (without scroll)
         const firstAvailableDay = weekDays.find(day => day.available);
         if (firstAvailableDay) {
             const firstDayCard = calendar.querySelector(`[data-date="${firstAvailableDay.date}"]`);
             if (firstDayCard) {
-                onSelectDate(firstAvailableDay.date, firstDayCard);
+                // Select the date without scrolling
+                onSelectDate(firstAvailableDay.date, firstDayCard, false);
             }
         } else {
             // Clear times if no available days
@@ -320,7 +333,7 @@
         return days[dayOfWeek];
     }
 
-    function onSelectDate(dateStr, btn) {
+    function onSelectDate(dateStr, btn, shouldScroll = true) {
         // Remove selection from all day cards
         document.querySelectorAll('#calendar button').forEach(b => {
             b.classList.remove('ring-2', 'ring-green-500', 'scale-105');
@@ -340,23 +353,25 @@
         btn.classList.add('ring-2', 'ring-green-500', 'scale-105');
         document.getElementById('schedule_date').value = dateStr;
 
-        // Scroll to time selection after a short delay
-        setTimeout(() => {
-            document.getElementById('step-time').scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 500);
+        // Scroll to time selection only if shouldScroll is true (user interaction)
+        if (shouldScroll) {
+            setTimeout(() => {
+                document.getElementById('step-time').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 500);
+        }
 
         // Show loading state
         const timesEl = document.getElementById('times');
         timesEl.innerHTML =
             '<div class="col-span-full flex justify-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div></div>';
 
-        fetchTimes(dateStr);
+        fetchTimes(dateStr, shouldScroll);
     }
 
-    function fetchTimes(dateStr) {
+    function fetchTimes(dateStr, shouldScroll = true) {
         const timesEl = document.getElementById('times');
 
         fetch(`${window.location.origin}/${companyId}/schedule-link/${unitId}/available-times?date=${dateStr}`)
@@ -399,13 +414,15 @@
                         document.getElementById('start_time').value = time;
                         updateSubmitEnabled();
 
-                        // Scroll to submit button after a short delay
-                        setTimeout(() => {
-                            document.getElementById('submit-button').scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'center'
-                            });
-                        }, 300);
+                        // Scroll to submit button only if shouldScroll is true (user interaction)
+                        if (shouldScroll) {
+                            setTimeout(() => {
+                                document.getElementById('submit-button').scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'center'
+                                });
+                            }, 300);
+                        }
                     });
 
                     b.addEventListener('keydown', (e) => {
@@ -536,6 +553,11 @@
         renderCalendar(weekStart);
         updateSubmitEnabled();
 
+        // Enable smooth scrolling for user interactions
+        document.addEventListener('click', function() {
+            document.documentElement.classList.add('user-interaction');
+        }, { once: true });
+
         // Add week navigation functionality
         document.getElementById('prev-week').addEventListener('click', () => navigateWeek('prev'));
         document.getElementById('next-week').addEventListener('click', () => navigateWeek('next'));
@@ -569,21 +591,28 @@
                     radioDot.classList.remove('opacity-0');
                     radioDot.classList.add('opacity-100');
 
-                    // Scroll to next step (Date and Time)
-                    setTimeout(() => {
-                        document.getElementById('step-date-time').scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }, 300);
+                    // Scroll to next step (Date and Time) only on user interaction
+                    if (this.hasAttribute('data-user-interaction')) {
+                        setTimeout(() => {
+                            document.getElementById('step-date-time').scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }, 300);
+                    }
                 }
 
                 // Update submit button state
                 updateSubmitEnabled();
             });
+
+            // Add click event to mark user interaction
+            radio.addEventListener('click', function() {
+                this.setAttribute('data-user-interaction', 'true');
+            });
         });
 
-        // Trigger change event for pre-selected radio button
+        // Trigger change event for pre-selected radio button (without scroll)
         const preSelectedRadio = document.querySelector('input[name="unit_service_type_id"]:checked');
         if (preSelectedRadio) {
             preSelectedRadio.dispatchEvent(new Event('change'));
