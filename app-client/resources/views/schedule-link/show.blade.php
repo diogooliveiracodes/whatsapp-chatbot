@@ -34,9 +34,9 @@
 
         @if($hasMultipleUnits)
             <!-- Floating Back Button for Mobile -->
-            <div class="fixed top-4 left-4 z-50 sm:hidden">
+            <div class="sticky top-[calc(env(safe-area-inset-top,0px)+1rem)] z-50 sm:hidden w-full">
                 <a href="{{ route('schedule-link.index', ['company' => $company]) }}"
-                    class="flex items-center justify-center w-12 h-12 bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-gray-800">
+                    class="ml-4 flex items-center justify-center w-12 h-12 bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-gray-800">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
