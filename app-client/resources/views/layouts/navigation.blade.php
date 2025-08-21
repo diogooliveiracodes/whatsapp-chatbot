@@ -3,18 +3,11 @@
     <div
         class="w-64 fixed flex-shrink-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col h-full">
 
-        <!-- Logo area -->
-        {{-- <div class="flex items-center justify-between mb-6">
-            <h1 class="text-xl font-bold text-gray-800 dark:text-gray-200">
-                {{ config('app.name', 'Laravel') }}
-            </h1>
-        </div> --}}
-
         <!-- User info with dropdown -->
         <div x-data="{ userDropdownOpen: false }" class="mb-6 relative">
             <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                 <button @click="userDropdownOpen = !userDropdownOpen"
-                        class="flex items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md transition-colors">
+                    class="flex items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md transition-colors">
                     <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
                         <span class="text-white font-semibold text-sm">
                             {{ substr(Auth::user()->name, 0, 1) }}
@@ -25,23 +18,21 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</p>
                     </div>
                     <svg class="h-5 w-5 text-gray-400 transition-transform duration-200"
-                         :class="{ 'rotate-180': userDropdownOpen }"
-                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        :class="{ 'rotate-180': userDropdownOpen }" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
             </div>
 
             <!-- Dropdown menu -->
-            <div x-show="userDropdownOpen"
-                 x-transition:enter="transition ease-out duration-100"
-                 x-transition:enter-start="transform opacity-0 scale-95"
-                 x-transition:enter-end="transform opacity-100 scale-100"
-                 x-transition:leave="transition ease-in duration-75"
-                 x-transition:leave-start="transform opacity-100 scale-100"
-                 x-transition:leave-end="transform opacity-0 scale-95"
-                 @click.away="userDropdownOpen = false"
-                 class="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+            <div x-show="userDropdownOpen" x-transition:enter="transition ease-out duration-100"
+                x-transition:enter-start="transform opacity-0 scale-95"
+                x-transition:enter-end="transform opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-75"
+                x-transition:leave-start="transform opacity-100 scale-100"
+                x-transition:leave-end="transform opacity-0 scale-95" @click.away="userDropdownOpen = false"
+                class="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
 
                 <a href="{{ route('profile.edit') }}"
                     class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors first:rounded-t-lg last:rounded-b-lg">
@@ -114,17 +105,16 @@
                 <span class="ml-2">{{ __('pages.daily_schedules') }}</span>
             </a>
 
-                            <a href="{{ route('schedule-blocks.index') }}"
-                    class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('schedule-blocks.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
-                    <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 9l-6 6" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 9l6 6" />
-                    </svg>
-                    <span class="ml-2">{{ __('schedule-blocks.schedule_blocks') }}</span>
-                </a>
+            <a href="{{ route('schedule-blocks.index') }}"
+                class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('schedule-blocks.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"
+                        fill="none" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9l-6 6" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9l6 6" />
+                </svg>
+                <span class="ml-2">{{ __('schedule-blocks.schedule_blocks') }}</span>
+            </a>
 
             @if (auth()->user()->isOwner() && auth()->user()->company)
                 <!-- Settings Section -->
@@ -164,7 +154,9 @@
                 <a href="{{ route('customers.index') }}"
                     class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('customers.*') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
                     <svg class="mr-4 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
                     </svg>
                     <span class="ml-2">{{ __('pages.customers') }}</span>
                 </a>
