@@ -60,8 +60,8 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                     <div class="min-w-0 flex-1">
-                                        <h4 class="text-sm font-medium text-blue-300 mb-1">Como usar</h4>
-                                        <p class="text-sm text-blue-200">{{ __('dashboard.schedule_link.description') }}</p>
+                                        <h4 class="text-sm font-medium text-white mb-1">Como usar</h4>
+                                        <p class="text-sm text-gray-300">{{ __('dashboard.schedule_link.description') }}</p>
                                     </div>
                                 </div>
                             </div>
