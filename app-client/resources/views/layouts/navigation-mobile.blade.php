@@ -104,8 +104,20 @@
 
             <!-- Navigation Links -->
             <nav class="space-y-1">
+                <!-- Dashboard -->
+                <a href="{{ route('dashboard') }}" @click="closeMenu()"
+                    class="flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors {{ request()->routeIs('dashboard') ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' }}">
+                    <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z" />
+                    </svg>
+                    <span class="ml-2">{{ __('pages.dashboard') }}</span>
+                </a>
+
                 <!-- Schedules Section -->
-                <div class="mb-4">
+                <div class="mt-6 mb-4">
                     <h3 class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         {{ __('pages.schedules') }}
                     </h3>

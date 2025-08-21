@@ -6,6 +6,7 @@ return [
     'chatSession' => 'Chat Sessions',
     'schedules' => 'Schedules',
     'semanal_schedules' => 'Weekly Schedule',
+    'daily_schedules' => 'Daily Schedule',
     'settings' => 'Settings',
     'units' => 'Units',
     'configure_units' => 'Configure Units',
