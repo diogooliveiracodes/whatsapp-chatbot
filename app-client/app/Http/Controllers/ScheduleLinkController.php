@@ -86,6 +86,14 @@ class ScheduleLinkController extends Controller
             }
         }
 
+        // Check if there are multiple units for this company
+        $allUnits = Unit::query()
+            ->where('active', true)
+            ->where('company_id', $company)
+            ->get();
+
+        $hasMultipleUnits = $allUnits->count() > 1;
+
         return view('schedule-link.show', [
             'unit' => $unit,
             'unitSettings' => $unit->unitSettings,
@@ -94,6 +102,7 @@ class ScheduleLinkController extends Controller
             'weekDays' => $weekDays,
             'company' => $company,
             'companyName' => $unit->company->name ?? 'Agendamento',
+            'hasMultipleUnits' => $hasMultipleUnits,
         ]);
     }
 

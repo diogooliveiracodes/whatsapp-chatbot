@@ -31,13 +31,42 @@
 <body class="font-sans text-gray-900 antialiased">
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
         <x-global.session-alerts />
+
+        @if($hasMultipleUnits)
+            <!-- Floating Back Button for Mobile -->
+            <div class="fixed top-4 left-4 z-50 sm:hidden">
+                <a href="{{ route('schedule-link.index', ['company' => $company]) }}"
+                    class="flex items-center justify-center w-12 h-12 bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </a>
+            </div>
+        @endif
+
         <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-4 sm:py-8 px-3 sm:px-6 lg:px-8">
             <div class="w-full max-w-4xl mx-auto">
-                <!-- Header Section -->
-                <div class="text-center mb-8">
-                    <h1 class="text-3xl font-bold text-white mb-2">
-                        {{ __('schedule_link.title', ['unit' => $unit->name]) }}</h1>
-                    <p class="text-gray-400">Escolha uma data e horário disponível para seu agendamento</p>
+                                <!-- Header Section -->
+                <div class="mb-8">
+                    @if($hasMultipleUnits)
+                        <!-- Back Button - Desktop Only -->
+                        <div class="hidden sm:block mb-4">
+                            <a href="{{ route('schedule-link.index', ['company' => $company]) }}"
+                                class="group inline-flex items-center px-4 py-3 bg-gray-800/60 hover:bg-gray-700/80 backdrop-blur-sm border border-gray-600/50 hover:border-gray-500/70 text-white text-sm font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-gray-800 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95">
+                                <svg class="w-5 h-5 mr-2 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                                {{ __('schedule_link.back') }}
+                            </a>
+                        </div>
+                    @endif
+
+                    <!-- Title Section -->
+                    <div class="text-center pt-16 sm:pt-0">
+                        <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
+                            {{ __('schedule_link.title', ['unit' => $unit->name]) }}</h1>
+                        <p class="text-gray-400 text-sm sm:text-base">Escolha uma data e horário disponível para seu agendamento</p>
+                    </div>
                 </div>
 
                 <!-- Main Form Card -->

@@ -2,6 +2,7 @@
 
 return [
     'choose_unit' => 'Escolha a unidade para o atendimento',
+    'back' => 'Voltar',
     'title' => 'Agendar atendimento em :unit',
     'name' => 'Seu nome',
     'phone' => 'Seu telefone (WhatsApp)',

@@ -2,6 +2,7 @@
 
 return [
     'choose_unit' => 'Choose a unit for your appointment',
+    'back' => 'Back',
     'title' => 'Book an appointment at :unit',
     'name' => 'Your name',
     'phone' => 'Your phone (WhatsApp)',
