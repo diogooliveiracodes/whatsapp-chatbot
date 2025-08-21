@@ -72,9 +72,10 @@
                                         <label for="phone" class="block text-gray-300 text-sm font-medium">
                                             {{ __('schedule_link.phone') }} <span class="text-red-400">*</span>
                                         </label>
-                                        <input type="text" id="phone" name="phone" value="{{ old('phone') }}"
+                                        <input type="text" id="phone_display" value="{{ old('phone') }}"
                                             required placeholder="(11) 99999-9999"
                                             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                        <input type="hidden" id="phone" name="phone" value="{{ old('phone') ? preg_replace('/\D/', '', old('phone')) : '' }}">
                                         <x-input-error :messages="$errors->get('phone')" class="mt-1" />
                                     </div>
                                 </div>
@@ -547,7 +548,7 @@
         loadWeek(newWeekStart);
     }
 
-    // Phone mask function
+        // Phone mask function
     function formatPhoneNumber(input) {
         let value = input.value.replace(/\D/g, '').substring(0, 11);
         let formattedValue = '';
@@ -573,6 +574,12 @@
         }
 
         input.value = formattedValue;
+
+        // Update hidden field with only numbers
+        const hiddenPhoneInput = document.getElementById('phone');
+        if (hiddenPhoneInput) {
+            hiddenPhoneInput.value = value;
+        }
     }
 
     // Initialize
@@ -646,17 +653,19 @@
             preSelectedRadio.dispatchEvent(new Event('change'));
         }
 
-        // Add phone mask functionality
-        const phoneInput = document.getElementById('phone');
-        if (phoneInput) {
+                // Add phone mask functionality
+        const phoneDisplayInput = document.getElementById('phone_display');
+        const phoneHiddenInput = document.getElementById('phone');
+
+        if (phoneDisplayInput && phoneHiddenInput) {
             // Apply mask on input
-            phoneInput.addEventListener('input', function() {
+            phoneDisplayInput.addEventListener('input', function() {
                 formatPhoneNumber(this);
             });
 
             // Apply mask on page load if there's a value
-            if (phoneInput.value) {
-                formatPhoneNumber(phoneInput);
+            if (phoneDisplayInput.value) {
+                formatPhoneNumber(phoneDisplayInput);
             }
         }
     });
