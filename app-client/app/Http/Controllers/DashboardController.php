@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Services\Dashboard\OwnerDashboardMetricsService;
 
 /**
  * Controller for handling dashboard functionality.
@@ -19,6 +20,7 @@ class DashboardController extends Controller
      * @var User
      */
     private User $user;
+    private OwnerDashboardMetricsService $ownerMetricsService;
 
     /**
      * Create a new controller instance.
@@ -27,9 +29,10 @@ class DashboardController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(OwnerDashboardMetricsService $ownerMetricsService)
     {
         $this->user = Auth::user();
+        $this->ownerMetricsService = $ownerMetricsService;
     }
 
     /**
@@ -42,10 +45,18 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        if ($this->user->isAdmin()) {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if ($user instanceof User && $user->isAdmin()) {
             return redirect()->route('admin.index');
         }
 
-        return view('dashboard.index');
+        $metrics = null;
+        if ($user instanceof User && $user->isOwner()) {
+            $metrics = $this->ownerMetricsService->getMetricsForOwner($user);
+        }
+
+        return view('dashboard.index', compact('metrics'));
     }
 }

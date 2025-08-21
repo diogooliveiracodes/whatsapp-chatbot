@@ -8,6 +8,163 @@
             <!-- Main Content Grid -->
             <div class="grid grid-cols-1 gap-6 lg:gap-8">
 
+                @if(isset($metrics))
+                    <!-- Owner Insights Header -->
+                    <div class="w-full">
+                        <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+                            <div class="bg-gradient-to-r from-gray-700 to-gray-800 px-4 sm:px-6 py-4 border-b border-gray-700">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                                        </svg>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <h2 class="text-lg sm:text-xl font-semibold text-white truncate">{{ __('dashboard.owner.insights.title') }}</h2>
+                                        <p class="text-gray-400 text-sm truncate">{{ __('dashboard.owner.insights.description') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 sm:p-6">
+                                <!-- Owner KPI Cards -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    <!-- Schedules Today -->
+                                    <div class="bg-gray-700/50 rounded-lg p-4">
+                                        <div class="text-gray-400 text-xs">{{ __('dashboard.owner.kpis.schedules_today') }}</div>
+                                        <div class="text-2xl font-semibold text-white mt-1">{{ $metrics['kpis']['schedules']['day'] }}</div>
+                                    </div>
+                                    <!-- Schedules Month -->
+                                    <div class="bg-gray-700/50 rounded-lg p-4">
+                                        <div class="text-gray-400 text-xs">{{ __('dashboard.owner.kpis.schedules_month') }}</div>
+                                        <div class="text-2xl font-semibold text-white mt-1">{{ $metrics['kpis']['schedules']['month'] }}</div>
+                                    </div>
+                                    <!-- Schedules Year -->
+                                    <div class="bg-gray-700/50 rounded-lg p-4">
+                                        <div class="text-gray-400 text-xs">{{ __('dashboard.owner.kpis.schedules_year') }}</div>
+                                        <div class="text-2xl font-semibold text-white mt-1">{{ $metrics['kpis']['schedules']['year'] }}</div>
+                                    </div>
+                                    <!-- Payments Received -->
+                                    <div class="bg-gray-700/50 rounded-lg p-4">
+                                        <div class="text-gray-400 text-xs">{{ __('dashboard.owner.kpis.payments_received') }}</div>
+                                        <div class="text-2xl font-semibold text-white mt-1">
+                                            <span id="kpi-payments-received"></span>
+                                        </div>
+                                    </div>
+                                    <!-- Cancellations Today -->
+                                    <div class="bg-gray-700/50 rounded-lg p-4">
+                                        <div class="text-gray-400 text-xs">{{ __('dashboard.owner.kpis.cancellations_today') }}</div>
+                                        <div class="text-2xl font-semibold text-white mt-1">{{ $metrics['kpis']['cancellations']['day'] }}</div>
+                                    </div>
+                                    <!-- Cancellations Month -->
+                                    <div class="bg-gray-700/50 rounded-lg p-4">
+                                        <div class="text-gray-400 text-xs">{{ __('dashboard.owner.kpis.cancellations_month') }}</div>
+                                        <div class="text-2xl font-semibold text-white mt-1">{{ $metrics['kpis']['cancellations']['month'] }}</div>
+                                    </div>
+                                    <!-- Cancellations Year -->
+                                    <div class="bg-gray-700/50 rounded-lg p-4">
+                                        <div class="text-gray-400 text-xs">{{ __('dashboard.owner.kpis.cancellations_year') }}</div>
+                                        <div class="text-2xl font-semibold text-white mt-1">{{ $metrics['kpis']['cancellations']['year'] }}</div>
+                                    </div>
+                                    <!-- Payments Receivable -->
+                                    <div class="bg-gray-700/50 rounded-lg p-4">
+                                        <div class="text-gray-400 text-xs">{{ __('dashboard.owner.kpis.payments_receivable') }}</div>
+                                        <div class="text-2xl font-semibold text-white mt-1">
+                                            <span id="kpi-payments-receivable"></span>
+                                        </div>
+                                    </div>
+                                    <!-- Pending Schedules -->
+                                    <div class="bg-gray-700/50 rounded-lg p-4">
+                                        <div class="text-gray-400 text-xs">{{ __('dashboard.owner.kpis.schedules_pending') }}</div>
+                                        <div class="text-2xl font-semibold text-white mt-1">{{ $metrics['kpis']['schedules']['pending'] }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Owner Charts -->
+                    <div class="w-full">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                            <!-- Schedules by Month -->
+                            <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+                                <div class="bg-gradient-to-r from-gray-700 to-gray-800 px-4 sm:px-6 py-4 border-b border-gray-700">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12" />
+                                            </svg>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <h2 class="text-lg sm:text-xl font-semibold text-white truncate">{{ __('dashboard.owner.charts.schedules_by_month') }}</h2>
+                                            <p class="text-gray-400 text-sm truncate">{{ __('dashboard.owner.insights.description') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 sm:p-6">
+                                    <canvas id="chartSchedulesByMonth" height="140"></canvas>
+                                </div>
+                            </div>
+                            <!-- Payments by Month -->
+                            <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+                                <div class="bg-gradient-to-r from-gray-700 to-gray-800 px-4 sm:px-6 py-4 border-b border-gray-700">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-4.418 0-8 1.79-8 4s3.582 4 8 4 8-1.79 8-4-3.582-4-8-4z" />
+                                            </svg>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <h2 class="text-lg sm:text-xl font-semibold text-white truncate">{{ __('dashboard.owner.charts.payments_by_month') }}</h2>
+                                            <p class="text-gray-400 text-sm truncate">{{ __('dashboard.owner.insights.description') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 sm:p-6">
+                                    <canvas id="chartPaymentsByMonth" height="140"></canvas>
+                                </div>
+                            </div>
+                            <!-- Schedules by Weekday (last 30 days) -->
+                            <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+                                <div class="bg-gradient-to-r from-gray-700 to-gray-800 px-4 sm:px-6 py-4 border-b border-gray-700">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 19h14" />
+                                            </svg>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <h2 class="text-lg sm:text-xl font-semibold text-white truncate">{{ __('dashboard.owner.charts.schedules_by_weekday_30d') }}</h2>
+                                            <p class="text-gray-400 text-sm truncate">{{ __('dashboard.owner.insights.description') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 sm:p-6">
+                                    <canvas id="chartSchedulesByWeekday30" height="140"></canvas>
+                                </div>
+                            </div>
+                            <!-- Cancellations by Month -->
+                            <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+                                <div class="bg-gradient-to-r from-gray-700 to-gray-800 px-4 sm:px-6 py-4 border-b border-gray-700">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <h2 class="text-lg sm:text-xl font-semibold text-white truncate">{{ __('dashboard.owner.charts.cancellations_by_month') }}</h2>
+                                            <p class="text-gray-400 text-sm truncate">{{ __('dashboard.owner.insights.description') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 sm:p-6">
+                                    <canvas id="chartCancellationsByMonth" height="140"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Schedule Link Section -->
                 <div class="w-full">
                     <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
@@ -72,6 +229,142 @@
             </div>
         </div>
     </div>
+
+    @if(isset($metrics))
+        @push('scripts')
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                (function() {
+                    const metrics = @json($metrics);
+
+                    const formatCurrency = (value) => {
+                        const locale = '{{ app()->getLocale() }}';
+                        const currency = (locale === 'pt_BR') ? 'BRL' : 'USD';
+                        try {
+                            return new Intl.NumberFormat(locale.replace('_','-'), { style: 'currency', currency }).format(value || 0);
+                        } catch (e) {
+                            return (currency === 'BRL') ? `R$ ${Number(value || 0).toFixed(2)}` : `$ ${Number(value || 0).toFixed(2)}`;
+                        }
+                    };
+
+                    // Update KPI currency values
+                    document.getElementById('kpi-payments-received').textContent = formatCurrency(metrics.kpis.payments.received_total);
+                    document.getElementById('kpi-payments-receivable').textContent = formatCurrency(metrics.kpis.payments.receivable_total);
+
+                    const baseOptions = {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { ticks: { color: '#9CA3AF' }, grid: { color: 'rgba(55,65,81,0.3)' } },
+                            y: { ticks: { color: '#9CA3AF' }, grid: { color: 'rgba(55,65,81,0.3)' } }
+                        },
+                        plugins: {
+                            legend: { labels: { color: '#E5E7EB' } }
+                        }
+                    };
+
+                    // Schedules by Month
+                    new Chart(document.getElementById('chartSchedulesByMonth'), {
+                        type: 'line',
+                        data: {
+                            labels: metrics.charts.schedules_by_month.labels,
+                            datasets: [{
+                                label: 'Agendamentos',
+                                data: metrics.charts.schedules_by_month.data,
+                                borderColor: 'rgb(16, 185, 129)',
+                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                                fill: true,
+                                tension: 0.3
+                            }]
+                        },
+                        options: baseOptions
+                    });
+
+                    // Payments by Month
+                    new Chart(document.getElementById('chartPaymentsByMonth'), {
+                        type: 'bar',
+                        data: {
+                            labels: metrics.charts.payments_by_month.labels,
+                            datasets: [
+                                {
+                                    label: '{{ __('dashboard.owner.kpis.payments_received') }}',
+                                    data: metrics.charts.payments_by_month.received,
+                                    backgroundColor: 'rgba(59, 130, 246, 0.6)'
+                                },
+                                {
+                                    label: '{{ __('dashboard.owner.kpis.payments_receivable') }}',
+                                    data: metrics.charts.payments_by_month.receivable,
+                                    backgroundColor: 'rgba(234, 179, 8, 0.6)'
+                                }
+                            ]
+                        },
+                        options: {
+                            ...baseOptions,
+                            plugins: {
+                                legend: { labels: { color: '#E5E7EB' } },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(ctx) {
+                                            const label = ctx.dataset.label || '';
+                                            const v = ctx.parsed.y;
+                                            return `${label}: ${formatCurrency(v)}`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                ...baseOptions.scales,
+                                y: {
+                                    ...baseOptions.scales.y,
+                                    ticks: {
+                                        color: '#9CA3AF',
+                                        callback: function(value) { return formatCurrency(value); }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Schedules by Weekday (last 30 days) Monday..Sunday
+                    const weekdayLabels = (function() {
+                        const locale = '{{ app()->getLocale() }}'.replace('_','-');
+                        const base = new Date(2023,0,2); // Monday
+                        const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+                        const arr = [];
+                        for (let i=0;i<7;i++){ const d = new Date(base); d.setDate(base.getDate()+i); arr.push(fmt.format(d)); }
+                        return arr;
+                    })();
+
+                    new Chart(document.getElementById('chartSchedulesByWeekday30'), {
+                        type: 'bar',
+                        data: {
+                            labels: weekdayLabels,
+                            datasets: [{
+                                label: 'Agendamentos',
+                                data: metrics.charts.schedules_by_weekday_30d.data,
+                                backgroundColor: 'rgba(99, 102, 241, 0.6)'
+                            }]
+                        },
+                        options: baseOptions
+                    });
+
+                    // Cancellations by Month
+                    new Chart(document.getElementById('chartCancellationsByMonth'), {
+                        type: 'bar',
+                        data: {
+                            labels: metrics.charts.cancellations_by_month.labels,
+                            datasets: [{
+                                label: 'Cancelamentos',
+                                data: metrics.charts.cancellations_by_month.data,
+                                backgroundColor: 'rgba(239, 68, 68, 0.6)'
+                            }]
+                        },
+                        options: baseOptions
+                    });
+                })();
+            </script>
+        @endpush
+    @endif
 
     <script>
     async function copyScheduleLink() {
