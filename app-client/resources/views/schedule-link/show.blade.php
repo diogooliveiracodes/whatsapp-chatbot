@@ -72,7 +72,7 @@
                                         <label for="phone" class="block text-gray-300 text-sm font-medium">
                                             {{ __('schedule_link.phone') }} <span class="text-red-400">*</span>
                                         </label>
-                                        <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
+                                        <input type="text" id="phone" name="phone" value="{{ old('phone') }}"
                                             required placeholder="(11) 99999-9999"
                                             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                         <x-input-error :messages="$errors->get('phone')" class="mt-1" />
@@ -547,6 +547,34 @@
         loadWeek(newWeekStart);
     }
 
+    // Phone mask function
+    function formatPhoneNumber(input) {
+        let value = input.value.replace(/\D/g, '').substring(0, 11);
+        let formattedValue = '';
+
+        if (value.length > 0) {
+            let ddd = value.substring(0, 2);
+            let firstPart = '';
+            let secondPart = '';
+
+            if (value.length >= 7) {
+                if (value.length === 11) {
+                    firstPart = value.substring(2, 7);
+                    secondPart = value.substring(7, 11);
+                } else {
+                    firstPart = value.substring(2, 6);
+                    secondPart = value.substring(6, 10);
+                }
+            } else {
+                firstPart = value.substring(2);
+            }
+
+            formattedValue = `(${ddd}) ${firstPart}${secondPart ? '-' + secondPart : ''}`;
+        }
+
+        input.value = formattedValue;
+    }
+
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('input', updateSubmitEnabled);
@@ -616,6 +644,20 @@
         const preSelectedRadio = document.querySelector('input[name="unit_service_type_id"]:checked');
         if (preSelectedRadio) {
             preSelectedRadio.dispatchEvent(new Event('change'));
+        }
+
+        // Add phone mask functionality
+        const phoneInput = document.getElementById('phone');
+        if (phoneInput) {
+            // Apply mask on input
+            phoneInput.addEventListener('input', function() {
+                formatPhoneNumber(this);
+            });
+
+            // Apply mask on page load if there's a value
+            if (phoneInput.value) {
+                formatPhoneNumber(phoneInput);
+            }
         }
     });
 </script>
