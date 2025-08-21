@@ -52,7 +52,7 @@
                             @foreach($customers as $customer)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ $customer->name }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ $customer->phone }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ \App\Helpers\PhoneHelper::format($customer->phone) }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ $customer->active ? __('customers.yes') : __('customers.no') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">{{ \Carbon\Carbon::parse($customer->created_at)->format('d/m/Y H:i') }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
@@ -76,7 +76,7 @@
                                 <div class="flex justify-between items-start mb-3">
                                     <div class="flex-1">
                                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $customer->name }}</h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $customer->phone }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ \App\Helpers\PhoneHelper::format($customer->phone) }}</p>
                                     </div>
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $customer->active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' }}">
                                         {{ $customer->active ? __('customers.active') : __('customers.inactive') }}

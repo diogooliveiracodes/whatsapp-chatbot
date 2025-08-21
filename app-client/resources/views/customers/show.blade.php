@@ -17,7 +17,7 @@
                         <!-- Phone Field -->
                         <div>
                             <label for="phone" class="block text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('customers.phone') }}</label>
-                            <p class="text-md text-gray-900 dark:text-gray-300">{{ $customer->phone }}</p>
+                            <p class="text-md text-gray-900 dark:text-gray-300">{{ \App\Helpers\PhoneHelper::format($customer->phone) }}</p>
                         </div>
 
                         <!-- Active Status -->

@@ -107,7 +107,7 @@
                                     <label
                                         class="text-sm font-medium text-gray-300">{{ __('unitSettings.phone') }}</label>
                                 </div>
-                                <p class="text-white font-medium">{{ $unitSettings->phone ?? '-' }}</p>
+                                <p class="text-white font-medium">{{ $unitSettings->phone ? \App\Helpers\PhoneHelper::format($unitSettings->phone) : '-' }}</p>
                             </div>
                         </div>
                     </div>
@@ -188,7 +188,7 @@
                             <div class="bg-gray-700/50 rounded-lg p-4">
                                 <label
                                     class="text-sm font-medium text-gray-300">{{ __('unitSettings.whatsapp_number') }}</label>
-                                <p class="text-white mt-1">{{ $unitSettings->whatsapp_number ?? '-' }}</p>
+                                <p class="text-white mt-1">{{ $unitSettings->whatsapp_number ? \App\Helpers\PhoneHelper::format($unitSettings->whatsapp_number) : '-' }}</p>
                             </div>
                         </div>
                     </div>
