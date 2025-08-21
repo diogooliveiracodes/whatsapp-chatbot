@@ -46,18 +46,59 @@
                 </button>
             </div>
 
-            <!-- User info -->
-            <div class="mb-6 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div class="flex items-center">
-                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                        <span class="text-white font-semibold text-sm">
-                            {{ substr(Auth::user()->name, 0, 1) }}
-                        </span>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</p>
-                    </div>
+            <!-- User info with dropdown -->
+            <div x-data="{ userDropdownOpen: false }" class="mb-6 relative">
+                <div class="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <button @click="userDropdownOpen = !userDropdownOpen"
+                            class="flex items-center w-full text-left hover:bg-gray-100 dark:hover:bg-gray-600 rounded-md transition-colors">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                            <span class="text-white font-semibold text-sm">
+                                {{ substr(Auth::user()->name, 0, 1) }}
+                            </span>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <p class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ Auth::user()->name }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</p>
+                        </div>
+                        <svg class="h-5 w-5 text-gray-400 transition-transform duration-200"
+                             :class="{ 'rotate-180': userDropdownOpen }"
+                             fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Dropdown menu -->
+                <div x-show="userDropdownOpen"
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="transform opacity-0 scale-95"
+                     x-transition:enter-end="transform opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="transform opacity-100 scale-100"
+                     x-transition:leave-end="transform opacity-0 scale-95"
+                     @click.away="userDropdownOpen = false"
+                     class="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
+
+                    <a href="{{ route('profile.edit') }}" @click="closeMenu()"
+                        class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors first:rounded-t-lg">
+                        <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>{{ __('auth.profile') }}</span>
+                    </a>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" @click="closeMenu()"
+                            class="flex items-center w-full px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors last:rounded-b-lg">
+                            <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            <span>{{ __('auth.log_out') }}</span>
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -181,30 +222,6 @@
                     </a>
                 @endif
             </nav>
-
-            <!-- Bottom actions -->
-            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <a href="{{ route('profile.edit') }}" @click="closeMenu()"
-                    class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-md transition-colors">
-                    <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span class="ml-2">{{ __('auth.profile') }}</span>
-                </a>
-
-                <form method="POST" action="{{ route('logout') }}" class="mt-2">
-                    @csrf
-                    <button type="submit" @click="closeMenu()"
-                        class="flex items-center w-full px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-md transition-colors">
-                        <svg class="mr-4 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                        <span class="ml-2">{{ __('auth.log_out') }}</span>
-                    </button>
-                </form>
-            </div>
         </div>
     </div>
 </div>
