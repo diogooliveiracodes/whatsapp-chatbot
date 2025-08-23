@@ -20,13 +20,11 @@ class AutomatedMessage extends Model
         'user_id',
         'name',
         'type',
-        'content',
-        'is_active'
+        'content'
     ];
 
     protected $casts = [
-        'type' => AutomatedMessageTypeEnum::class,
-        'is_active' => 'boolean'
+        'type' => AutomatedMessageTypeEnum::class
     ];
 
     public function company(): BelongsTo
@@ -60,13 +58,7 @@ class AutomatedMessage extends Model
         return $this->type->getDescription();
     }
 
-    /**
-     * Scope to get only active messages
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
+
 
     /**
      * Scope to get messages by type
