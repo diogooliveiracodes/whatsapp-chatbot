@@ -352,5 +352,53 @@ class AutomatedMessageController extends Controller
         }
     }
 
+    /**
+     * Get automated messages by unit for AJAX requests
+     *
+     * @param Request $request The incoming request
+     * @return \Illuminate\Http\JsonResponse JSON response with messages
+     */
+    public function getByUnit(Request $request): \Illuminate\Http\JsonResponse
+    {
+        try {
+            /** @var User $user */
+            $user = Auth::user();
+            $unitId = $request->get('unit_id', $user->unit_id);
 
+            // Validate if user has access to this unit
+            if (!$user->isOwner() && $unitId != $user->unit_id) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
+
+            $messages = $this->automatedMessageService->getMessagesByUnit($unitId);
+
+            $formattedMessages = $messages->map(function ($message) {
+                return [
+                    'id' => $message->id,
+                    'name' => $message->name,
+                    'type' => $message->type->value,
+                    'type_label' => $message->getTypeLabel(),
+                    'content' => $message->content,
+                    'unit_id' => $message->unit_id,
+                    'created_at' => $message->created_at->format('d/m/Y H:i'),
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'messages' => $formattedMessages
+            ]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'unit_id' => $request->get('unit_id'),
+                'user_id' => Auth::id(),
+                'method' => 'AutomatedMessageController::getByUnit'
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => __('automated-messages.messages.load_error')
+            ], 500);
+        }
+    }
 }

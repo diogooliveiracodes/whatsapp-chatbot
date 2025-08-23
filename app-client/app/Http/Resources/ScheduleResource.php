@@ -34,6 +34,7 @@ class ScheduleResource extends JsonResource
             'customer' => [
                 'id' => $this->customer->id,
                 'name' => $this->customer->name,
+                'phone' => $this->customer->phone,
             ],
             'user' => [
                 'id' => $this->user->id,
