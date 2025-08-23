@@ -50,8 +50,7 @@ return [
         'created' => 'Mensagem automatizada criada com sucesso!',
         'updated' => 'Mensagem automatizada atualizada com sucesso!',
         'deleted' => 'Mensagem automatizada excluída com sucesso!',
-        'activated' => 'Mensagem automatizada ativada com sucesso!',
-        'deactivated' => 'Mensagem automatizada desativada com sucesso!',
+
         'validation_error' => 'Erro de validação',
         'create_error' => 'Erro ao criar mensagem automatizada: :message',
         'update_error' => 'Erro ao atualizar mensagem automatizada: :message',
