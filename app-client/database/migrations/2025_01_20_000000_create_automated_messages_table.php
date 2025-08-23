@@ -25,7 +25,6 @@ return new class extends Migration
                 'custom_message'
             ]);
             $table->text('content');
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });
