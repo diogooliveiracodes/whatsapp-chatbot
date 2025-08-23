@@ -8,4 +8,5 @@ return [
     'create' => 'Create',
     'view' => 'View',
     'settings' => 'Settings',
+    'back' => 'Back',
 ];

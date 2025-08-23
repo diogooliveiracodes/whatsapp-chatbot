@@ -8,4 +8,5 @@ return [
     'create' => 'Criar',
     'view' => 'Visualizar',
     'settings' => 'Configurações',
+    'back' => 'Voltar',
 ];
