@@ -34,42 +34,15 @@ class AutomatedMessageRepository
             ->with(['unit', 'user', 'company'])
             ->where('unit_id', $unitId)
             ->where('type', $type)
-            ->where('is_active', true)
             ->orderBy('name')
             ->get();
     }
 
-    public function findActiveByUnitId(int $unitId): Collection
-    {
-        return $this
-            ->model
-            ->with(['unit', 'user', 'company'])
-            ->where('unit_id', $unitId)
-            ->where('is_active', true)
-            ->orderBy('name')
-            ->get();
-    }
 
-    public function findByCompanyId(int $companyId): Collection
-    {
-        return $this
-            ->model
-            ->with(['unit', 'user', 'company'])
-            ->where('company_id', $companyId)
-            ->orderBy('name')
-            ->get();
-    }
 
-    public function findActiveByCompanyId(int $companyId): Collection
-    {
-        return $this
-            ->model
-            ->with(['unit', 'user', 'company'])
-            ->where('company_id', $companyId)
-            ->where('is_active', true)
-            ->orderBy('name')
-            ->get();
-    }
+
+
+
 
     public function create(array $data): AutomatedMessage
     {
@@ -90,28 +63,7 @@ class AutomatedMessageRepository
 
 
 
-    public function getByCompanyId(int $companyId): Collection
-    {
-        return $this
-            ->model
-            ->with(['unit', 'user'])
-            ->whereHas('unit', function ($query) use ($companyId) {
-                $query->where('company_id', $companyId);
-            })
-            ->orderBy('name')
-            ->get();
-    }
 
-    public function getActiveByCompanyId(int $companyId): Collection
-    {
-        return $this
-            ->model
-            ->with(['unit', 'user'])
-            ->where('is_active', true)
-            ->whereHas('unit', function ($query) use ($companyId) {
-                $query->where('company_id', $companyId);
-            })
-            ->orderBy('name')
-            ->get();
-    }
+
+
 }
