@@ -451,18 +451,31 @@
         const tooltip = thumb.querySelector(`.range-tooltip-${handle}`);
         const tooltipTime = thumb.querySelector(`.range-tooltip-time-${handle}`);
 
-        thumb.addEventListener('mousedown', (e) => {
+        // Helper function to get coordinates from either mouse or touch event
+        function getEventCoordinates(e) {
+            if (e.touches && e.touches.length > 0) {
+                return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            } else if (e.changedTouches && e.changedTouches.length > 0) {
+                return { x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY };
+            }
+            return { x: e.clientX, y: e.clientY };
+        }
+
+        // Helper function to handle start of drag (both mouse and touch)
+        function handleDragStart(e) {
             isDragging = true;
             thumb.style.cursor = 'grabbing';
             if (tooltip) tooltip.style.opacity = '1';
             e.preventDefault();
-        });
+        }
 
-        document.addEventListener('mousemove', (e) => {
+        // Helper function to handle drag move (both mouse and touch)
+        function handleDragMove(e) {
             if (!isDragging) return;
 
+            const coords = getEventCoordinates(e);
             const rect = track.getBoundingClientRect();
-            const x = e.clientX - rect.left;
+            const x = coords.x - rect.left;
             const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
             const minutes = Math.min(1439, Math.round((percent / 100) * 1440));
 
@@ -475,16 +488,29 @@
                 const time = minutesToTime(snappedMinutes);
                 tooltipTime.textContent = time;
             }
-        });
+        }
 
-        document.addEventListener('mouseup', () => {
+        // Helper function to handle end of drag (both mouse and touch)
+        function handleDragEnd() {
             if (isDragging) {
                 isDragging = false;
                 thumb.style.cursor = 'grab';
                 if (tooltip) tooltip.style.opacity = '0';
             }
-        });
+        }
 
+        // Mouse events
+        thumb.addEventListener('mousedown', handleDragStart);
+        document.addEventListener('mousemove', handleDragMove);
+        document.addEventListener('mouseup', handleDragEnd);
+
+        // Touch events
+        thumb.addEventListener('touchstart', handleDragStart, { passive: false });
+        document.addEventListener('touchmove', handleDragMove, { passive: false });
+        document.addEventListener('touchend', handleDragEnd);
+        document.addEventListener('touchcancel', handleDragEnd);
+
+        // Hover events (only for mouse, not touch)
         thumb.addEventListener('mouseenter', () => {
             if (!isDragging) {
                 thumb.style.cursor = 'grab';
@@ -501,9 +527,13 @@
     }
 
     function addTrackClickListeners(track, day, context) {
-        track.addEventListener('click', (e) => {
+        // Helper function to handle track click/tap
+        function handleTrackInteraction(e) {
+            // Get coordinates from either mouse or touch event
+            const coords = e.touches ? e.touches[0] : e.changedTouches ? e.changedTouches[0] : e;
+
             const rect = track.getBoundingClientRect();
-            const x = e.clientX - rect.left;
+            const x = coords.clientX - rect.left;
             const percent = (x / rect.width) * 100;
             const minutes = Math.min(1439, Math.round((percent / 100) * 1440));
 
@@ -523,6 +553,17 @@
                 updateRangeSlider(day, context, 'start', minutes);
             } else {
                 updateRangeSlider(day, context, 'end', minutes);
+            }
+        }
+
+        // Mouse click
+        track.addEventListener('click', handleTrackInteraction);
+
+        // Touch tap (using touchend to avoid conflicts with drag)
+        track.addEventListener('touchend', (e) => {
+            // Only handle tap if it wasn't a drag operation
+            if (e.changedTouches && e.changedTouches.length === 1) {
+                handleTrackInteraction(e);
             }
         });
     }
