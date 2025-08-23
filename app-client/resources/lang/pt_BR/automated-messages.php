@@ -17,7 +17,7 @@ return [
         'name' => 'Nome',
         'type' => 'Tipo',
         'content' => 'Conteúdo da Mensagem',
-        'is_active' => 'Ativa',
+
         'unit' => 'Unidade',
         'created_by' => 'Criado por',
         'created_at' => 'Criado em',
@@ -90,10 +90,7 @@ return [
         'payment_method' => '{payment_method} - Método de pagamento',
     ],
 
-    'status' => [
-        'active' => 'Ativa',
-        'inactive' => 'Inativa',
-    ],
+
 
     'unit_selection' => 'Seleção de Unidade',
     'show_unit_selector' => 'Mostrar seletor de unidade',
