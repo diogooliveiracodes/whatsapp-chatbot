@@ -219,6 +219,7 @@ class AutomatedMessageController extends Controller
 
             $units = collect();
             $showUnitSelector = false;
+            $selectedUnit = null;
 
             // Se o usuário é proprietário, buscar todas as unidades ativas da empresa
             if ($user->isOwner()) {
@@ -227,12 +228,22 @@ class AutomatedMessageController extends Controller
                 // Se há mais de uma unidade, mostrar o seletor
                 if ($units->count() > 1) {
                     $showUnitSelector = true;
+
+                    // Obter a unidade selecionada (da query string ou da mensagem atual)
+                    $selectedUnitId = request()->get('unit_id', $automatedMessage->unit_id);
+                    $selectedUnit = $units->firstWhere('id', $selectedUnitId) ?? $automatedMessage->unit;
+                } else {
+                    // Se há apenas uma unidade, selecioná-la automaticamente
+                    $selectedUnit = $units->first();
                 }
+            } else {
+                // Para outros tipos de usuário, usar a unidade da mensagem
+                $selectedUnit = $automatedMessage->unit;
             }
 
             $messageTypes = $this->automatedMessageService->getMessageTypes();
 
-            return view('automated-messages.edit', compact('automatedMessage', 'units', 'showUnitSelector', 'messageTypes'));
+            return view('automated-messages.edit', compact('automatedMessage', 'units', 'selectedUnit', 'showUnitSelector', 'messageTypes'));
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'message_id' => $automatedMessage->id,
