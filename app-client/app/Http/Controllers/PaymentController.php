@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use App\Services\ErrorLog\ErrorLogService;
 use App\Enum\PaymentStatusEnum;
+use App\Enum\PaymentMethodEnum;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +49,8 @@ class PaymentController extends Controller
                 ->paginate(15);
 
             return view('payments.index', compact('payments'))
-                ->with('paymentStatusEnum', PaymentStatusEnum::class);
+                ->with('paymentStatusEnum', PaymentStatusEnum::class)
+                ->with('paymentMethodEnum', PaymentMethodEnum::class);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, ['action' => 'payment_history_index']);
             return redirect()->route('dashboard')->with('error', 'Erro ao carregar histórico de pagamentos.');

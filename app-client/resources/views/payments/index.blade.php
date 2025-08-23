@@ -34,6 +34,9 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                         {{ __('payments.plan') }}
                                     </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                        {{ __('payments.pix_code') }}
+                                    </th>
 
                                 </tr>
                             </thead>
@@ -87,11 +90,36 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                             {{ $payment->plan->name ?? 'N/A' }}
                                         </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                            @if ($payment->status->value === $paymentStatusEnum::PENDING->value && $payment->payment_method->value === $paymentMethodEnum::PIX->value && $payment->pix_copy_paste)
+                                                <button onclick="togglePixCode('pix-code-{{ $payment->id }}')"
+                                                        class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+                                                    {{ __('payments.show_pix_code') }}
+                                                </button>
+                                                <div id="pix-code-{{ $payment->id }}" class="hidden mt-2">
+                                                    <div class="flex items-center space-x-2">
+                                                        <input type="text"
+                                                               id="pix-input-{{ $payment->id }}"
+                                                               value="{{ $payment->pix_copy_paste }}"
+                                                               readonly
+                                                               class="flex-1 text-xs bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1">
+                                                        <button onclick="copyPixCode('pix-input-{{ $payment->id }}')"
+                                                                class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
 
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                                             {{ __('payments.no_payments_found') }}
                                         </td>
                                     </tr>
@@ -159,6 +187,36 @@
                                         {{ $payment->payment_method->name() }}
                                     </p>
                                 </div>
+
+                                <!-- Código PIX para pagamentos pendentes -->
+                                @if ($payment->status->value === $paymentStatusEnum::PENDING->value && $payment->payment_method->value === $paymentMethodEnum::PIX->value && $payment->pix_copy_paste)
+                                    <div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
+                                        <button onclick="togglePixCode('mobile-pix-code-{{ $payment->id }}')"
+                                                class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm">
+                                            {{ __('payments.show_pix_code') }}
+                                        </button>
+                                        <div id="mobile-pix-code-{{ $payment->id }}" class="hidden mt-2">
+                                            <div class="bg-gray-100 dark:bg-gray-600 rounded-lg p-3">
+                                                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                    {{ __('payments.pix_code') }}:
+                                                </label>
+                                                <div class="flex items-center space-x-2">
+                                                    <input type="text"
+                                                           id="mobile-pix-input-{{ $payment->id }}"
+                                                           value="{{ $payment->pix_copy_paste }}"
+                                                           readonly
+                                                           class="flex-1 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-2 py-1">
+                                                    <button onclick="copyPixCode('mobile-pix-input-{{ $payment->id }}')"
+                                                            class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         @empty
                             <div class="text-center py-12">
@@ -182,4 +240,83 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function togglePixCode(elementId) {
+            const element = document.getElementById(elementId);
+            const button = element.previousElementSibling;
+
+            if (element.classList.contains('hidden')) {
+                element.classList.remove('hidden');
+                button.textContent = '{{ __("payments.hide_pix_code") }}';
+            } else {
+                element.classList.add('hidden');
+                button.textContent = '{{ __("payments.show_pix_code") }}';
+            }
+        }
+
+        function copyPixCode(inputId) {
+            const input = document.getElementById(inputId);
+            input.select();
+            input.setSelectionRange(0, 99999); // Para dispositivos móveis
+
+            try {
+                document.execCommand('copy');
+
+                // Feedback visual temporário
+                const button = input.nextElementSibling;
+                const originalHTML = button.innerHTML;
+                button.innerHTML = `
+                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                `;
+
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                }, 2000);
+
+                // Mostrar notificação
+                showNotification('{{ __("payments.pix_code_copied") }}', 'success');
+            } catch (err) {
+                console.error('Erro ao copiar código PIX:', err);
+                showNotification('Erro ao copiar código PIX', 'error');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            // Criar elemento de notificação
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
+
+            // Definir cores baseadas no tipo
+            const colors = {
+                success: 'bg-green-500 text-white',
+                error: 'bg-red-500 text-white',
+                info: 'bg-blue-500 text-white',
+                warning: 'bg-yellow-500 text-white'
+            };
+
+            notification.className += ` ${colors[type] || colors.info}`;
+            notification.innerHTML = message;
+
+            // Adicionar ao DOM
+            document.body.appendChild(notification);
+
+            // Animar entrada
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+
+            // Remover após 3 segundos
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
 </x-app-layout>

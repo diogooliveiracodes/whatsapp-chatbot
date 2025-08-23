@@ -4,6 +4,7 @@ namespace App\Services\Signature;
 
 use App\Models\Signature;
 use App\Models\Plan;
+use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 use App\Enum\SignatureStatusEnum;
 use App\Services\Payment\AsaasPaymentService;
@@ -72,6 +73,19 @@ class SignatureService
     public function generateSignaturePayment(Signature $signature, AsaasCustomer $asaasCustomer)
     {
         try {
+            // Verificar se já existe um pagamento pendente para esta assinatura
+            $existingPayment = $this->findPendingPaymentForSignature($signature);
+
+            if ($existingPayment) {
+                // Se já existe um pagamento pendente, retornar os dados existentes
+                return [
+                    'id' => $existingPayment->gateway_payment_id,
+                    'status' => 'PENDING',
+                    'existing_payment' => true,
+                    'payment_id' => $existingPayment->id
+                ];
+            }
+
             $payment = $this->paymentService->createPayment([
                 'company_id' => $signature->company_id,
                 'plan_id' => $signature->plan_id,
@@ -97,6 +111,27 @@ class SignatureService
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, ['action' => 'generateSignaturePayment', 'signature_id' => $signature->id]);
             throw $e;
+        }
+    }
+
+    /**
+     * Find pending payment for signature
+     *
+     * @param Signature $signature
+     * @return Payment|null
+     */
+    private function findPendingPaymentForSignature(Signature $signature): ?Payment
+    {
+        try {
+            return $signature->payments()
+                ->where('status', PaymentStatusEnum::PENDING->value)
+                ->where('payment_method', PaymentMethodEnum::PIX->value)
+                ->where('service', PaymentServiceEnum::SIGNATURE->value)
+                ->where('expires_at', '>', now())
+                ->first();
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, ['action' => 'findPendingPaymentForSignature', 'signature_id' => $signature->id]);
+            return null;
         }
     }
 

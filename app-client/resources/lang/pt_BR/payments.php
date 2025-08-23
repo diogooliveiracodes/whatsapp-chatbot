@@ -24,4 +24,11 @@ return [
     'payment_method_debit_card' => 'Cartão de Débito',
     'payment_method_pix' => 'Pix',
     'payment_method_cash' => 'Dinheiro',
+
+    // PIX
+    'pix_code' => 'Código PIX',
+    'copy_pix_code' => 'Copiar código PIX',
+    'pix_code_copied' => 'Código PIX copiado!',
+    'show_pix_code' => 'Mostrar código PIX',
+    'hide_pix_code' => 'Ocultar código PIX',
 ];

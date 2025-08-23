@@ -80,6 +80,30 @@
                     <!-- Código PIX -->
                     <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
                         <div class="text-center">
+                            <!-- Pagamentos Pendentes Existentes -->
+                            @if($signature->payments->isNotEmpty())
+                                <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                    <div class="flex items-center mb-3">
+                                        <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                                            Pagamento Pendente Encontrado
+                                        </h3>
+                                    </div>
+                                    <p class="text-sm text-blue-700 dark:text-blue-300 mb-3">
+                                        Já existe um pagamento pendente para esta assinatura. Clique no botão abaixo para obter o código PIX.
+                                    </p>
+                                    <button onclick="loadExistingPayment()"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                        </svg>
+                                        Carregar Pagamento Existente
+                                    </button>
+                                </div>
+                            @endif
+
                             <!-- Botão para Gerar Código PIX -->
                             <div id="pixGenerateButton" class="mb-6">
                                 <button onclick="generatePixCode()"
@@ -182,19 +206,104 @@
     </x-global.content-card>
 </x-app-layout>
 
-<script>
-    // Constantes do enum de status de pagamento
-    const PAYMENT_STATUS = {
-        PENDING: {{ $paymentStatusEnum::PENDING->value }},
-        PAID: {{ $paymentStatusEnum::PAID->value }},
-        REJECTED: {{ $paymentStatusEnum::REJECTED->value }},
-        EXPIRED: {{ $paymentStatusEnum::EXPIRED->value }},
-        OVERDUE: {{ $paymentStatusEnum::OVERDUE->value }}
-    };
+    <script>
+        // Constantes do enum de status de pagamento
+        const PAYMENT_STATUS = {
+            PENDING: {{ $paymentStatusEnum::PENDING->value }},
+            PAID: {{ $paymentStatusEnum::PAID->value }},
+            REJECTED: {{ $paymentStatusEnum::REJECTED->value }},
+            EXPIRED: {{ $paymentStatusEnum::EXPIRED->value }},
+            OVERDUE: {{ $paymentStatusEnum::OVERDUE->value }}
+        };
 
-    let currentPaymentId = null;
+        // Dados do pagamento pendente existente (se houver)
+        const existingPayment = @json($signature->payments->first());
 
-    function generatePixCode() {
+                let currentPaymentId = null;
+
+        function loadExistingPayment() {
+            if (!existingPayment) {
+                showNotification('Nenhum pagamento pendente encontrado', 'error');
+                return;
+            }
+
+            // Esconder botão de carregar e mostrar loading
+            document.querySelector('button[onclick="loadExistingPayment()"]').style.display = 'none';
+            document.getElementById('pixLoading').classList.remove('hidden');
+            document.getElementById('pixContent').classList.add('hidden');
+
+            // Definir o ID do pagamento atual
+            currentPaymentId = existingPayment.gateway_payment_id;
+
+            // Obter o token CSRF
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            const signatureId = {{ $signature->id }};
+
+            // Fazer requisição para obter o código PIX
+            fetch(`/signature/${signatureId}/get-pix-code`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    payment_id: existingPayment.gateway_payment_id
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(pixData => {
+                // Esconder loading
+                document.getElementById('pixLoading').classList.add('hidden');
+
+                if (pixData.success && pixData.data) {
+                    // Verificar diferentes campos possíveis para o código PIX
+                    // Priorizar o payload que é o código PIX copia e cola
+                    let pixCode = null;
+                    if (pixData.data.payload) {
+                        pixCode = pixData.data.payload;
+                    } else if (pixData.data.encodedImage) {
+                        pixCode = pixData.data.encodedImage;
+                    } else if (pixData.data.pixCode) {
+                        pixCode = pixData.data.pixCode;
+                    } else if (pixData.data.qrCode) {
+                        pixCode = pixData.data.qrCode;
+                    } else if (pixData.data.copyPaste) {
+                        pixCode = pixData.data.copyPaste;
+                    } else if (pixData.data.pixCopyPaste) {
+                        pixCode = pixData.data.pixCopyPaste;
+                    }
+
+                    if (pixCode) {
+                        // Mostrar conteúdo do PIX
+                        document.getElementById('pixContent').classList.remove('hidden');
+                        document.getElementById('pixCode').value = pixCode;
+                        showNotification('Pagamento existente carregado com sucesso!', 'success');
+                    } else {
+                        // Em caso de erro, mostrar o botão novamente
+                        document.querySelector('button[onclick="loadExistingPayment()"]').style.display = 'inline-flex';
+                        showNotification('Código PIX não encontrado na resposta', 'error');
+                    }
+                } else {
+                    // Em caso de erro, mostrar o botão novamente
+                    document.querySelector('button[onclick="loadExistingPayment()"]').style.display = 'inline-flex';
+                    showNotification('Erro ao carregar código PIX do pagamento existente', 'error');
+                }
+            })
+            .catch(error => {
+                // Esconder loading e mostrar botão novamente em caso de erro
+                document.getElementById('pixLoading').classList.add('hidden');
+                document.querySelector('button[onclick="loadExistingPayment()"]').style.display = 'inline-flex';
+                showNotification('Erro ao carregar pagamento existente', 'error');
+            });
+        }
+
+        function generatePixCode() {
         // Mostrar loading
         document.getElementById('pixGenerateButton').classList.add('hidden');
         document.getElementById('pixLoading').classList.remove('hidden');
@@ -229,6 +338,12 @@
                     // Salvar o ID do pagamento para uso posterior
                     currentPaymentId = data.data.id;
 
+                    // Verificar se é um pagamento existente
+                    if (data.data.existing_payment) {
+                        // Se é um pagamento existente, buscar o código PIX diretamente
+                        showNotification('Pagamento pendente encontrado! Buscando código PIX...', 'info');
+                    }
+
                     // Fazer segunda requisição para obter o código PIX
                     return fetch(`/signature/${signatureId}/get-pix-code`, {
                         method: 'POST',
@@ -254,10 +369,33 @@
                 return response.json();
             })
             .then(pixData => {
-                if (pixData.success && pixData.data && pixData.data.encodedImage) {
-                    // Mostrar conteúdo do PIX
-                    document.getElementById('pixContent').classList.remove('hidden');
-                    document.getElementById('pixCode').value = pixData.data.encodedImage;
+                if (pixData.success && pixData.data) {
+                    // Verificar diferentes campos possíveis para o código PIX
+                    // Priorizar o payload que é o código PIX copia e cola
+                    let pixCode = null;
+                    if (pixData.data.payload) {
+                        pixCode = pixData.data.payload;
+                    } else if (pixData.data.encodedImage) {
+                        pixCode = pixData.data.encodedImage;
+                    } else if (pixData.data.pixCode) {
+                        pixCode = pixData.data.pixCode;
+                    } else if (pixData.data.qrCode) {
+                        pixCode = pixData.data.qrCode;
+                    } else if (pixData.data.copyPaste) {
+                        pixCode = pixData.data.copyPaste;
+                    } else if (pixData.data.pixCopyPaste) {
+                        pixCode = pixData.data.pixCopyPaste;
+                    }
+
+                    if (pixCode) {
+                        // Mostrar conteúdo do PIX
+                        document.getElementById('pixContent').classList.remove('hidden');
+                        document.getElementById('pixCode').value = pixCode;
+                    } else {
+                        // Em caso de erro, mostrar o botão novamente
+                        document.getElementById('pixGenerateButton').classList.remove('hidden');
+                        showNotification('Código PIX não encontrado na resposta', 'error');
+                    }
                 } else {
                     // Em caso de erro, mostrar o botão novamente
                     document.getElementById('pixGenerateButton').classList.remove('hidden');

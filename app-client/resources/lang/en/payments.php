@@ -24,4 +24,11 @@ return [
     'payment_method_debit_card' => 'Debit Card',
     'payment_method_pix' => 'Pix',
     'payment_method_cash' => 'Cash',
+
+    // PIX
+    'pix_code' => 'PIX Code',
+    'copy_pix_code' => 'Copy PIX code',
+    'pix_code_copied' => 'PIX code copied!',
+    'show_pix_code' => 'Show PIX code',
+    'hide_pix_code' => 'Hide PIX code',
 ];
