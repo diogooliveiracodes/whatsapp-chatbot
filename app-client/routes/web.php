@@ -13,6 +13,7 @@ use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ScheduleLinkController;
+use App\Http\Controllers\AutomatedMessageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -126,6 +127,15 @@ Route::middleware('auth', 'company.active', 'subscription.active', 'user.active'
         Route::put('/{user}/password', [UserController::class, 'updatePassword'])->name('users.update-password');
         Route::patch('/{user}', [UserController::class, 'deactivate'])->name('users.deactivate');
         Route::patch('/{user}/activate', [UserController::class, 'activate'])->name('users.activate');
+    });
+
+    Route::group(['prefix' => 'automated-messages'], function () {
+        Route::get('/', [AutomatedMessageController::class, 'index'])->name('automated-messages.index');
+        Route::get('/create', [AutomatedMessageController::class, 'create'])->name('automated-messages.create');
+        Route::post('/', [AutomatedMessageController::class, 'store'])->name('automated-messages.store');
+        Route::get('/{automatedMessage}/edit', [AutomatedMessageController::class, 'edit'])->name('automated-messages.edit');
+        Route::put('/{automatedMessage}', [AutomatedMessageController::class, 'update'])->name('automated-messages.update');
+        Route::delete('/{automatedMessage}', [AutomatedMessageController::class, 'destroy'])->name('automated-messages.destroy');
     });
 });
 
