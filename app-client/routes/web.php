@@ -136,6 +136,7 @@ Route::middleware('auth', 'company.active', 'subscription.active', 'user.active'
         Route::get('/{automatedMessage}/edit', [AutomatedMessageController::class, 'edit'])->name('automated-messages.edit');
         Route::put('/{automatedMessage}', [AutomatedMessageController::class, 'update'])->name('automated-messages.update');
         Route::delete('/{automatedMessage}', [AutomatedMessageController::class, 'destroy'])->name('automated-messages.destroy');
+        Route::get('/get-by-unit', [AutomatedMessageController::class, 'getByUnit'])->name('automated-messages.get-by-unit');
     });
 });
 
