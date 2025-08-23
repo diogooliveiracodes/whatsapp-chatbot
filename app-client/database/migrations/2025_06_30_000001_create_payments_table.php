@@ -33,7 +33,7 @@ return new class extends Migration {
             $table->enum('service', PaymentServiceEnum::getValues());
             $table->enum('status', PaymentStatusEnum::getValues());
             $table->decimal('amount', 10, 2);
-            $table->string('pix_copy_paste')->nullable();
+            $table->text('pix_copy_paste')->nullable();
             $table->string('credit_card_payment_link')->nullable();
             $table->string('payment_receipt_path')->nullable();
             $table->dateTime('paid_at')->nullable();
