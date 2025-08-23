@@ -96,4 +96,14 @@ return [
     'show_unit_selector' => 'Mostrar seletor de unidade',
     'filter_by_unit' => 'Filtrar por unidade',
     'all_units' => 'Todas as unidades',
+
+    // Modal translations
+    'select_message' => 'Selecionar Mensagem',
+    'send_message' => 'Enviar Mensagem',
+    'loading_messages' => 'Carregando mensagens...',
+    'no_messages_available' => 'Nenhuma mensagem disponível',
+    'create_message_first' => 'Crie uma mensagem automatizada primeiro para poder enviá-la.',
+    'create_message' => 'Criar Mensagem',
+    'cancel' => 'Cancelar',
+    'whatsapp_not_configured' => 'WhatsApp não está configurado para esta unidade.',
 ];
