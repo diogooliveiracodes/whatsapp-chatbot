@@ -106,4 +106,5 @@ return [
     'create_message' => 'Create Message',
     'cancel' => 'Cancel',
     'whatsapp_not_configured' => 'WhatsApp is not configured for this unit.',
+    'invalid_phone' => 'Invalid or missing customer phone number.',
 ];

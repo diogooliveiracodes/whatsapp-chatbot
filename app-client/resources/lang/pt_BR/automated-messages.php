@@ -106,4 +106,5 @@ return [
     'create_message' => 'Criar Mensagem',
     'cancel' => 'Cancelar',
     'whatsapp_not_configured' => 'WhatsApp não está configurado para esta unidade.',
+    'invalid_phone' => 'Telefone do cliente inválido ou não informado.',
 ];
