@@ -1,3 +1,8 @@
+@php
+    use App\Enum\WeekDaysEnum;
+    $weekDays = WeekDaysEnum::getAll();
+@endphp
+
 <x-app-layout>
     <x-global.header>
         {{ __('unit-service-types.title') }}
@@ -28,6 +33,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.name') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('units.name') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('fields.price') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.week_days.title') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.actions') }}</th>
                                 </tr>
                             </thead>
@@ -42,6 +48,17 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                             R$ {{ number_format($type->price, 2, ',', '.') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                            <div class="flex flex-wrap gap-1">
+                                                @foreach($weekDays as $day)
+                                                    @if($type->{$day->value})
+                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                                            {{ $day->getShortName() }}
+                                                        </span>
+                                                    @endif
+                                                @endforeach
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <x-actions.view :route="route('unitServiceTypes.show', $type)" />
@@ -66,6 +83,20 @@
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                         R$ {{ number_format($type->price, 2, ',', '.') }}
                                     </span>
+                                </div>
+
+                                <!-- Dias da semana ativos -->
+                                <div class="mb-3">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">{{ __('unit-service-types.week_days.title') }}:</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        @foreach($weekDays as $day)
+                                            @if($type->{$day->value})
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                                    {{ $day->getShortName() }}
+                                                </span>
+                                            @endif
+                                        @endforeach
+                                    </div>
                                 </div>
 
                                 <div class="flex justify-end space-x-2">

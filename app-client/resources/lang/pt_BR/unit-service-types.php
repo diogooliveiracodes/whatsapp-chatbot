@@ -64,4 +64,15 @@ return [
         'description' => 'descrição',
         'active' => 'ativo',
     ],
+    'week_days' => [
+        'title' => 'Dias da Semana',
+        'description' => 'Selecione os dias da semana em que este serviço estará disponível',
+        'monday' => 'Segunda-feira',
+        'tuesday' => 'Terça-feira',
+        'wednesday' => 'Quarta-feira',
+        'thursday' => 'Quinta-feira',
+        'friday' => 'Sexta-feira',
+        'saturday' => 'Sábado',
+        'sunday' => 'Domingo',
+    ],
 ];

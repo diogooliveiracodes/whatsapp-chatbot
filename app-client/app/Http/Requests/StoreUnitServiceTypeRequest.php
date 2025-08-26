@@ -25,7 +25,14 @@ class StoreUnitServiceTypeRequest extends FormRequest
             'unit_id' => ['required', 'exists:units,id'],
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'string', 'max:10'],
-            'description' => ['nullable', 'string']
+            'description' => ['nullable', 'string'],
+            'monday' => ['nullable', 'boolean'],
+            'tuesday' => ['nullable', 'boolean'],
+            'wednesday' => ['nullable', 'boolean'],
+            'thursday' => ['nullable', 'boolean'],
+            'friday' => ['nullable', 'boolean'],
+            'saturday' => ['nullable', 'boolean'],
+            'sunday' => ['nullable', 'boolean'],
         ];
     }
 

@@ -157,11 +157,11 @@
                             </div>
 
                             <!-- Step 3: Date and Time Selection -->
-                            <div class="space-y-6" id="step-date-time">
+                            <div class="space-y-6 hidden" id="step-date-time">
                                 <div class="flex items-center space-x-3 mb-4">
                                     <div
                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                                        4</div>
+                                        3</div>
                                     <h2 class="text-xl font-semibold text-white">Data e Horário</h2>
                                 </div>
 
@@ -276,6 +276,11 @@
     const companyId = @json($company);
     let currentWeekStart = weekStart;
 
+    // Service types data with week days availability
+    const serviceTypes = @json($serviceTypes);
+
+    let selectedServiceType = null;
+
     function renderCalendar(weekStartStr) {
         const calendar = document.getElementById('calendar');
         calendar.innerHTML = '';
@@ -289,10 +294,17 @@
             card.setAttribute('aria-label', `Selecionar data ${dayData.day} de ${dayData.month}`);
             card.setAttribute('data-date', dayData.date);
 
+            // Check if the day is available for the selected service type
+            let isServiceAvailable = true;
+            if (selectedServiceType) {
+                const dayName = getDayNameForService(dayData.day_of_week);
+                isServiceAvailable = selectedServiceType[dayName];
+            }
+
             if (dayData.is_today) {
                 card.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-500', 'border-yellow-400',
                     'text-black', 'shadow-yellow-500/25');
-            } else if (dayData.available) {
+            } else if (dayData.available && isServiceAvailable) {
                 card.classList.add('bg-green-50', 'dark:bg-green-900/20', 'border-green-200',
                     'dark:border-green-800', 'text-green-800', 'dark:text-green-200', 'hover:bg-green-100',
                     'dark:hover:bg-green-900/30');
@@ -330,7 +342,12 @@
         updateWeekDisplay(weekStartStr);
 
         // Auto-select first available day (without scroll)
-        const firstAvailableDay = weekDays.find(day => day.available);
+        const firstAvailableDay = weekDays.find(day => {
+            if (!day.available) return false;
+            if (!selectedServiceType) return true;
+            const dayName = getDayNameForService(day.day_of_week);
+            return selectedServiceType[dayName];
+        });
         if (firstAvailableDay) {
             const firstDayCard = calendar.querySelector(`[data-date="${firstAvailableDay.date}"]`);
             if (firstDayCard) {
@@ -340,13 +357,26 @@
         } else {
             // Clear times if no available days
             const timesEl = document.getElementById('times');
+            let message = 'Nenhum horário disponível para esta semana';
+
+            if (selectedServiceType) {
+                const availableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
+                    .filter(day => selectedServiceType[day]).length;
+
+                if (availableDays === 0) {
+                    message = 'Este serviço não está disponível em nenhum dia da semana';
+                } else {
+                    message = `Este serviço está disponível em ${availableDays} dia(s) da semana, mas não há horários livres nesta semana`;
+                }
+            }
+
             timesEl.innerHTML = `
                  <div class="col-span-full text-center py-8">
                      <div class="text-gray-400 text-sm">
                          <svg class="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                          </svg>
-                         Nenhum horário disponível para esta semana
+                         ${message}
                      </div>
                  </div>
              `;
@@ -360,6 +390,11 @@
 
     function getDayName(dayOfWeek) {
         const days = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
+        return days[dayOfWeek];
+    }
+
+    function getDayNameForService(dayOfWeek) {
+        const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
         return days[dayOfWeek];
     }
 
@@ -487,7 +522,9 @@
         const service = document.querySelector('input[name="unit_service_type_id"]:checked')?.value || '';
         const date = document.getElementById('schedule_date').value;
         const time = document.getElementById('start_time').value;
-        const can = name && phone && service && date && time;
+
+        // If no service is selected, only require name and phone
+        const can = service ? (name && phone && service && date && time) : (name && phone);
 
         const submitBtn = document.getElementById('submit-button');
         submitBtn.disabled = !can;
@@ -502,11 +539,20 @@
                     {{ __('actions.save') }}
                 `;
         } else {
+            let message = 'Preencha todos os campos obrigatórios';
+            if (!service) {
+                message = 'Selecione um tipo de serviço';
+            } else if (!date) {
+                message = 'Selecione uma data';
+            } else if (!time) {
+                message = 'Selecione um horário';
+            }
+
             btnText.innerHTML = `
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    Preencha todos os campos obrigatórios
+                    ${message}
                 `;
         }
     }
@@ -655,15 +701,34 @@
                     radioDot.classList.remove('opacity-0');
                     radioDot.classList.add('opacity-100');
 
+                    // Set selected service type
+                    selectedServiceType = serviceTypes.find(type => type.id == this.value);
+
+                    // Show date and time section
+                    const dateTimeSection = document.getElementById('step-date-time');
+                    dateTimeSection.classList.remove('hidden');
+
+                    // Clear previous selections
+                    document.getElementById('schedule_date').value = '';
+                    document.getElementById('start_time').value = '';
+                    document.getElementById('times').innerHTML = '';
+
+                    // Re-render calendar with service type filter
+                    renderCalendar(currentWeekStart);
+
                     // Scroll to next step (Date and Time) only on user interaction
                     if (this.hasAttribute('data-user-interaction')) {
                         setTimeout(() => {
-                            document.getElementById('step-date-time').scrollIntoView({
+                            dateTimeSection.scrollIntoView({
                                 behavior: 'smooth',
                                 block: 'start'
                             });
                         }, 300);
                     }
+                } else {
+                    // Hide date and time section if no service is selected
+                    document.getElementById('step-date-time').classList.add('hidden');
+                    selectedServiceType = null;
                 }
 
                 // Update submit button state
@@ -680,6 +745,9 @@
         const preSelectedRadio = document.querySelector('input[name="unit_service_type_id"]:checked');
         if (preSelectedRadio) {
             preSelectedRadio.dispatchEvent(new Event('change'));
+        } else {
+            // If no service is pre-selected, hide the date/time section
+            document.getElementById('step-date-time').classList.add('hidden');
         }
 
                 // Add phone mask functionality

@@ -37,6 +37,23 @@
                             <label class="block text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('fields.updated_at') }}</label>
                             <p class="mt-1 text-gray-900 dark:text-gray-100">{{ \Carbon\Carbon::parse($unitServiceType->updated_at)->format('d/m/Y H:i') }}</p>
                         </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('unit-service-types.week_days.title') }}</label>
+                            <div class="mt-2 flex flex-wrap gap-2">
+                                @foreach($weekDays as $day)
+                                    @if($unitServiceType->{$day->value})
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                            {{ $day->getName() }}
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                                            {{ $day->getName() }}
+                                        </span>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-6 flex justify-between">
