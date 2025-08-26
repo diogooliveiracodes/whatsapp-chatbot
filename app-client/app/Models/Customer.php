@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\PhoneHelper;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +23,28 @@ class Customer extends Model
         'name',
         'phone'
     ];
+
+    /**
+     * Mutator para o campo phone - remove formatação antes de salvar
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setPhoneAttribute($value): void
+    {
+        $this->attributes['phone'] = PhoneHelper::unformat($value);
+    }
+
+    /**
+     * Accessor para o campo phone - formata para exibição
+     *
+     * @param string $value
+     * @return string
+     */
+    public function getPhoneAttribute($value): string
+    {
+        return PhoneHelper::format($value);
+    }
 
     public function company(): BelongsTo
     {
