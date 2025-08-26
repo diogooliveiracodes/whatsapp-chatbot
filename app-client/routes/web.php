@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChatSessionController;
 use App\Http\Controllers\UnitSettingsController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerInactiveController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScheduleController;
@@ -38,6 +39,7 @@ Route::middleware('auth', 'company.active', 'subscription.active', 'user.active'
 
     Route::group(['prefix' => 'customers'], function () {
         Route::get('/', [CustomerController::class, 'index'])->name('customers.index');
+        Route::get('/inactive', [CustomerInactiveController::class, 'index'])->name('customers.inactive');
         Route::get('/create', [CustomerController::class, 'create'])->name('customers.create');
         Route::get('/{customer}', [CustomerController::class, 'show'])->name('customers.show');
         Route::post('/', [CustomerController::class, 'store'])->name('customers.store');
