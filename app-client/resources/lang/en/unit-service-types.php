@@ -64,4 +64,15 @@ return [
         'description' => 'description',
         'active' => 'active',
     ],
+    'week_days' => [
+        'title' => 'Week Days',
+        'description' => 'Select the days of the week when this service will be available',
+        'monday' => 'Monday',
+        'tuesday' => 'Tuesday',
+        'wednesday' => 'Wednesday',
+        'thursday' => 'Thursday',
+        'friday' => 'Friday',
+        'saturday' => 'Saturday',
+        'sunday' => 'Sunday',
+    ],
 ];
