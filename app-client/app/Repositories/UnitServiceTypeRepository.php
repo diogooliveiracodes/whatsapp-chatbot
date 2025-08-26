@@ -38,6 +38,14 @@ class UnitServiceTypeRepository
     {
         $data['company_id'] = Auth::user()->company_id;
         $data['price'] = MoneyHelper::parse($data['price']);
+
+        // Process week days - unchecked checkboxes are not sent, so we need to set them as false
+        $weekDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        foreach ($weekDays as $day) {
+            // If the checkbox is not in the request, it means it's unchecked (false)
+            $data[$day] = isset($data[$day]) && $data[$day] == '1';
+        }
+
         return $this->model->create($data);
     }
 
@@ -51,6 +59,14 @@ class UnitServiceTypeRepository
     public function update(UnitServiceType $unitServiceType, array $data): UnitServiceType
     {
         $data['price'] = MoneyHelper::parse($data['price']);
+
+        // Process week days - unchecked checkboxes are not sent, so we need to set them as false
+        $weekDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        foreach ($weekDays as $day) {
+            // If the checkbox is not in the request, it means it's unchecked (false)
+            $data[$day] = isset($data[$day]) && $data[$day] == '1';
+        }
+
         $unitServiceType->update($data);
         return $unitServiceType;
     }

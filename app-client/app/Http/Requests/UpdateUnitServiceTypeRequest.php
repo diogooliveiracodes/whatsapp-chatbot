@@ -26,6 +26,13 @@ class UpdateUnitServiceTypeRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:255'],
             'active' => ['nullable', 'boolean'],
             'price' => ['required', 'string', 'max:10'],
+            'monday' => ['nullable', 'boolean'],
+            'tuesday' => ['nullable', 'boolean'],
+            'wednesday' => ['nullable', 'boolean'],
+            'thursday' => ['nullable', 'boolean'],
+            'friday' => ['nullable', 'boolean'],
+            'saturday' => ['nullable', 'boolean'],
+            'sunday' => ['nullable', 'boolean'],
         ];
     }
 

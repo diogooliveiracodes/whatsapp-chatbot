@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateUnitServiceTypeRequest;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Services\Unit\UnitService;
+use App\Enum\WeekDaysEnum;
 
 class UnitServiceTypeController extends Controller
 {
@@ -56,8 +57,9 @@ class UnitServiceTypeController extends Controller
     public function create(): View
     {
         $units = $this->unitService->getUnits();
+        $weekDays = WeekDaysEnum::getAll();
 
-        return view('unit-service-types.create', compact('units'));
+        return view('unit-service-types.create', compact('units', 'weekDays'));
     }
 
     /**
@@ -68,7 +70,8 @@ class UnitServiceTypeController extends Controller
      */
     public function show(UnitServiceType $unitServiceType): View
     {
-        return view('unit-service-types.show', compact('unitServiceType'));
+        $weekDays = WeekDaysEnum::getAll();
+        return view('unit-service-types.show', compact('unitServiceType', 'weekDays'));
     }
 
     /**
@@ -79,7 +82,8 @@ class UnitServiceTypeController extends Controller
      */
     public function edit(UnitServiceType $unitServiceType): View
     {
-        return view('unit-service-types.edit', compact('unitServiceType'));
+        $weekDays = WeekDaysEnum::getAll();
+        return view('unit-service-types.edit', compact('unitServiceType', 'weekDays'));
     }
 
     /**

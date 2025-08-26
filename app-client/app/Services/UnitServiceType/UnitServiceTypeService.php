@@ -44,6 +44,14 @@ class UnitServiceTypeService
         if (!isset($data['active'])) {
             $data['active'] = false;
         }
+
+        // Process week days - unchecked checkboxes are not sent, so we need to set them as false
+        $weekDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        foreach ($weekDays as $day) {
+            // If the checkbox is not in the request, it means it's unchecked (false)
+            $data[$day] = isset($data[$day]) && $data[$day] == '1';
+        }
+
         return $this->unitServiceTypeRepository->update($unitServiceType, $data);
     }
 
