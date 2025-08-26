@@ -53,6 +53,10 @@
                             <div class="md:col-span-2">
                                 <x-buttons.toggle-switch name="active" :label="__('fields.active')" :value="old('active', true)" />
                             </div>
+
+                            <div class="md:col-span-2">
+                                <x-unit-service-types.week-days-checkboxes :weekDays="$weekDays" />
+                            </div>
                         </div>
 
                         <div class="mt-6 flex justify-between">
