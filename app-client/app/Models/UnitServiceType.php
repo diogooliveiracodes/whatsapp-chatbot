@@ -18,6 +18,24 @@ class UnitServiceType extends Model
         'description',
         'price',
         'active',
+        'monday',
+        'tuesday',
+        'wednesday',
+        'thursday',
+        'friday',
+        'saturday',
+        'sunday',
+    ];
+
+    protected $casts = [
+        'active' => 'boolean',
+        'monday' => 'boolean',
+        'tuesday' => 'boolean',
+        'wednesday' => 'boolean',
+        'thursday' => 'boolean',
+        'friday' => 'boolean',
+        'saturday' => 'boolean',
+        'sunday' => 'boolean',
     ];
 
     protected $table = 'unit_service_types';
