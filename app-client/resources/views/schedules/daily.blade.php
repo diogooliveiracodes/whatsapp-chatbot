@@ -55,8 +55,16 @@
                         $endTime = $unitSettings->{$dayKey . '_end'};
                         $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
                         $dateString = $date->format('Y-m-d');
-                        $startDisplay = $startTime ? \Carbon\Carbon::parse($dateString . ' ' . $startTime, 'UTC')->setTimezone($userTimezone)->format('H:i') : '--:--';
-                        $endDisplay = $endTime ? \Carbon\Carbon::parse($dateString . ' ' . $endTime, 'UTC')->setTimezone($userTimezone)->format('H:i') : '--:--';
+                        $startDisplay = $startTime
+                            ? \Carbon\Carbon::parse($dateString . ' ' . $startTime, 'UTC')
+                                ->setTimezone($userTimezone)
+                                ->format('H:i')
+                            : '--:--';
+                        $endDisplay = $endTime
+                            ? \Carbon\Carbon::parse($dateString . ' ' . $endTime, 'UTC')
+                                ->setTimezone($userTimezone)
+                                ->format('H:i')
+                            : '--:--';
                     @endphp
 
                     @if (!$isEnabled)
@@ -77,12 +85,14 @@
                             class="mb-4 sm:mb-6 p-3 sm:p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
                                 <div class="flex items-center">
-                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mr-2 flex-shrink-0" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
-                                    <span class="text-sm sm:text-base text-green-800 dark:text-green-200 font-medium">Horário de
+                                    <span
+                                        class="text-sm sm:text-base text-green-800 dark:text-green-200 font-medium">Horário
+                                        de
                                         Funcionamento</span>
                                 </div>
                                 <div class="text-sm sm:text-base text-green-700 dark:text-green-300 font-semibold">
@@ -97,7 +107,10 @@
                         <div class="space-y-4">
                             @php
                                 $interval = $unitSettings->appointment_duration_minutes;
-                                $dayWorkingHours = $scheduleService->calculateWorkingHoursForDay($dayKey, $unitSettings);
+                                $dayWorkingHours = $scheduleService->calculateWorkingHoursForDay(
+                                    $dayKey,
+                                    $unitSettings,
+                                );
                                 $startTime = $dayWorkingHours['startTime'];
                                 $endTime = $dayWorkingHours['endTime'];
                                 $currentDate = $date->format('Y-m-d');
@@ -105,9 +118,13 @@
                             @endphp
 
                             @if ($break['startTime'] && $break['endTime'])
-                                <div class="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded">
-                                    <span class="text-xs sm:text-sm font-medium text-yellow-800 dark:text-yellow-200">{{ __('schedules.break') }}</span>
-                                    <span class="text-xs sm:text-sm font-mono text-yellow-700 dark:text-yellow-300">{{ $break['startTime']->format('H:i') }} - {{ $break['endTime']->format('H:i') }}</span>
+                                <div
+                                    class="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded">
+                                    <span
+                                        class="text-xs sm:text-sm font-medium text-yellow-800 dark:text-yellow-200">{{ __('schedules.break') }}</span>
+                                    <span
+                                        class="text-xs sm:text-sm font-mono text-yellow-700 dark:text-yellow-300">{{ $break['startTime']->format('H:i') }}
+                                        - {{ $break['endTime']->format('H:i') }}</span>
                                 </div>
                             @endif
 
@@ -138,18 +155,29 @@
                                     @endphp
 
                                     @php
-                                        $isBreakSlot = $break['startTime'] && $break['endTime'] && $time->gte($break['startTime']) && $time->lt($break['endTime']);
+                                        $isBreakSlot =
+                                            $break['startTime'] &&
+                                            $break['endTime'] &&
+                                            $time->gte($break['startTime']) &&
+                                            $time->lt($break['endTime']);
                                     @endphp
                                     @if ($isBreakSlot)
-                                        <div class="border border-yellow-200 dark:border-yellow-700 rounded-lg overflow-hidden">
-                                            <div class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/30">
-                                                <span class="text-yellow-800 dark:text-yellow-200 font-medium">{{ __('schedules.break') }}</span>
-                                                <span class="text-yellow-700 dark:text-yellow-300 font-mono">{{ $time->format('H:i') }} - {{ $time->copy()->addMinutes($interval)->format('H:i') }}</span>
+                                        <div
+                                            class="border border-yellow-200 dark:border-yellow-700 rounded-lg overflow-hidden">
+                                            <div
+                                                class="flex items-center justify-between p-4 bg-yellow-50 dark:bg-yellow-900/30">
+                                                <span
+                                                    class="text-yellow-800 dark:text-yellow-200 font-medium">{{ __('schedules.break') }}</span>
+                                                <span
+                                                    class="text-yellow-700 dark:text-yellow-300 font-mono">{{ $time->format('H:i') }}
+                                                    - {{ $time->copy()->addMinutes($interval)->format('H:i') }}</span>
                                             </div>
                                         </div>
                                     @elseif ($isWithinOperatingHours)
-                                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                                            <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700">
+                                        <div
+                                            class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                                            <div
+                                                class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700">
                                                 <div class="flex items-center space-x-3">
                                                     <div class="h-16 flex flex-col items-left justify-center">
                                                         <span
@@ -163,10 +191,16 @@
 
                                                 @if ($schedule)
                                                     @php
-                                                        $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
-                                                        $scheduleEndDateTime = \Carbon\Carbon::parse($schedule['end'], $userTimezone);
+                                                        $userTimezone =
+                                                            auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                        $scheduleEndDateTime = \Carbon\Carbon::parse(
+                                                            $schedule['end'],
+                                                            $userTimezone,
+                                                        );
                                                         $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
-                                                        $isPastSchedule = $currentTimeInUserTimezone->gt($scheduleEndDateTime);
+                                                        $isPastSchedule = $currentTimeInUserTimezone->gt(
+                                                            $scheduleEndDateTime,
+                                                        );
                                                     @endphp
                                                     <div class="flex items-center space-x-2">
                                                         <span
@@ -175,23 +209,30 @@
                                                         </span>
                                                         @if (!$isPastSchedule)
                                                             <div class="flex space-x-2">
+                                                                <x-automated_messages.message-button :schedule="$schedule"
+                                                                    :unit="$unit" />
                                                                 <a href="{{ route('schedules.edit', $schedule['id']) }}"
                                                                     class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                        viewBox="0 0 24 24">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                                            stroke-width="2"
+                                                                    <svg class="w-5 h-5" fill="none"
+                                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round" stroke-width="2"
                                                                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                                     </svg>
                                                                 </a>
-                                                                <form action="{{ route('schedules.destroy', $schedule['id']) }}" method="POST" class="inline delete-form">
+
+                                                                <form
+                                                                    action="{{ route('schedules.destroy', $schedule['id']) }}"
+                                                                    method="POST" class="inline delete-form">
                                                                     @csrf
                                                                     @method('DELETE')
-                                                                    <button type="submit" class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300" onclick="return confirm('{{ __('schedules.messages.confirm_delete') }}')">
-                                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                            viewBox="0 0 24 24">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                                stroke-width="2"
+                                                                    <button type="submit"
+                                                                        class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                                                                        onclick="return confirm('{{ __('schedules.messages.confirm_delete') }}')">
+                                                                        <svg class="w-5 h-5" fill="none"
+                                                                            stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round"
+                                                                                stroke-linejoin="round" stroke-width="2"
                                                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                                         </svg>
                                                                     </button>
@@ -209,10 +250,18 @@
                                                 @else
                                                     <div class="flex items-center space-x-2">
                                                         @php
-                                                            $userTimezone = auth()->user()->unit->unitSettings->timezone ?? 'UTC';
-                                                            $currentTimeInUserTimezone = now()->setTimezone($userTimezone);
-                                                            $slotStartDateTime = \Carbon\Carbon::parse($currentDate . ' ' . $currentTime, $userTimezone);
-                                                            $isPastSlot = $currentTimeInUserTimezone->gt($slotStartDateTime);
+                                                            $userTimezone =
+                                                                auth()->user()->unit->unitSettings->timezone ?? 'UTC';
+                                                            $currentTimeInUserTimezone = now()->setTimezone(
+                                                                $userTimezone,
+                                                            );
+                                                            $slotStartDateTime = \Carbon\Carbon::parse(
+                                                                $currentDate . ' ' . $currentTime,
+                                                                $userTimezone,
+                                                            );
+                                                            $isPastSlot = $currentTimeInUserTimezone->gt(
+                                                                $slotStartDateTime,
+                                                            );
                                                         @endphp
                                                         @if ($isPastSlot)
                                                             <span
@@ -229,10 +278,11 @@
                                                                 'start_time' => $currentTime,
                                                             ]) }}"
                                                                 class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300">
-                                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                                    viewBox="0 0 24 24">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                                                <svg class="w-5 h-5" fill="none"
+                                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round"
+                                                                        stroke-linejoin="round" stroke-width="2"
+                                                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                                                 </svg>
                                                             </a>
                                                         @endif
@@ -256,7 +306,8 @@
                                                                 class="text-sm font-medium text-gray-500 dark:text-gray-400">
                                                                 Serviço</div>
                                                             <div class="text-sm text-gray-900 dark:text-gray-100">
-                                                                {{ $schedule['unit_service_type']['name'] ?? 'N/A' }}</div>
+                                                                {{ $schedule['unit_service_type']['name'] ?? 'N/A' }}
+                                                            </div>
                                                         </div>
                                                         <div>
                                                             <div
@@ -304,7 +355,8 @@
                                     </svg>
                                     <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                         Horários não configurados</h3>
-                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Este dia não possui horários de funcionamento configurados.</p>
+                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Este dia não possui
+                                        horários de funcionamento configurados.</p>
                                 </div>
                             @endif
                         </div>
@@ -349,7 +401,8 @@
                 const button = e.target.querySelector('button[type="submit"]');
                 if (button) {
                     button.disabled = true;
-                    button.innerHTML = '<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+                    button.innerHTML =
+                        '<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
                 }
 
                 // Submete o formulário
@@ -384,3 +437,6 @@
 @endpush
 
 <x-scroll-to-top />
+
+<!-- Include message modal -->
+<x-automated_messages.message-modal />

@@ -96,4 +96,15 @@ return [
     'show_unit_selector' => 'Show unit selector',
     'filter_by_unit' => 'Filter by unit',
     'all_units' => 'All units',
+
+    // Modal translations
+    'select_message' => 'Select Message',
+    'send_message' => 'Send Message',
+    'loading_messages' => 'Loading messages...',
+    'no_messages_available' => 'No messages available',
+    'create_message_first' => 'Create an automated message first to be able to send it.',
+    'create_message' => 'Create Message',
+    'cancel' => 'Cancel',
+    'whatsapp_not_configured' => 'WhatsApp is not configured for this unit.',
+    'invalid_phone' => 'Invalid or missing customer phone number.',
 ];

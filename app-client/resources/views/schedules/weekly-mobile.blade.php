@@ -240,6 +240,7 @@
                                                                 </span>
                                                                                                                                  @if (!$isPastSchedule)
                                                                      <div class="flex space-x-2">
+                                                                         <x-automated_messages.message-button :schedule="$schedule" :unit="$unit" />
                                                                          <a href="{{ route('schedules.edit', array_merge([$schedule['id']], auth()->user()->isOwner() && isset($schedule['unit']['id']) ? ['unit_id' => $schedule['unit']['id']] : [])) }}"
                                                                              class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
                                                                              <svg class="w-5 h-5" fill="none"

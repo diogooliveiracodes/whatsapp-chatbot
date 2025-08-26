@@ -85,8 +85,8 @@
                                     <div>{{ __('automated-messages.variables.service_name') }}</div>
                                     <div>{{ __('automated-messages.variables.unit_name') }}</div>
                                     <div>{{ __('automated-messages.variables.company_name') }}</div>
-                                    <div>{{ __('automated-messages.variables.payment_amount') }}</div>
-                                    <div>{{ __('automated-messages.variables.payment_method') }}</div>
+                                    {{-- <div>{{ __('automated-messages.variables.payment_amount') }}</div> --}}
+                                    {{-- <div>{{ __('automated-messages.variables.payment_method') }}</div> --}}
                                 </div>
                             </div>
                         </div>
