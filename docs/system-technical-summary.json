@@ -1,0 +1,280 @@
+{
+  "system_overview": {
+    "name": "WhatsApp Chatbot - Sistema de Agendamento e Pagamentos",
+    "architecture": "Laravel 12.1.1 + MySQL 8.0 + Docker",
+    "frontend": "Blade + Tailwind CSS + Alpine.js + Vite",
+    "ai_integration": "Google Gemini API",
+    "real_time": "Pusher + Laravel Echo",
+    "payment_gateway": "Asaas (PIX, Cartão de Crédito)"
+  },
+  "core_entities": {
+    "Company": {
+      "description": "Entidade raiz do sistema multi-tenant",
+      "attributes": ["id", "name", "document_number", "document_type", "active"],
+      "relationships": {
+        "hasMany": ["users", "units", "customers", "payments", "chat_sessions", "messages"],
+        "hasOne": ["companySettings", "signature"]
+      }
+    },
+    "User": {
+      "description": "Usuários do sistema com diferentes roles",
+      "attributes": ["id", "name", "email", "password", "company_id", "unit_id", "user_role_id", "active"],
+      "roles": {
+        "ADMIN": 1,
+        "OWNER": 2,
+        "EMPLOYEE": 3
+      },
+      "relationships": {
+        "belongsTo": ["company", "unit", "user_role"],
+        "hasMany": ["customers", "chat_sessions", "messages"]
+      }
+    },
+    "Unit": {
+      "description": "Unidades físicas de negócio",
+      "attributes": ["id", "company_id", "name", "description", "address", "city", "active"],
+      "relationships": {
+        "belongsTo": ["company"],
+        "hasMany": ["users", "customers", "schedules", "chat_sessions", "messages", "unitServiceTypes"],
+        "hasOne": ["unitSettings", "scheduleSettings"]
+      }
+    },
+    "Customer": {
+      "description": "Clientes atendidos pelo sistema",
+      "attributes": ["id", "company_id", "user_id", "unit_id", "name", "phone", "active"],
+      "relationships": {
+        "belongsTo": ["company", "user", "unit"],
+        "hasMany": ["schedules", "chat_sessions", "messages"]
+      }
+    },
+    "Schedule": {
+      "description": "Agendamentos de serviços",
+      "attributes": ["id", "unit_id", "customer_id", "user_id", "schedule_date", "start_time", "end_time", "status", "notes", "unit_service_type_id", "is_confirmed", "active"],
+      "relationships": {
+        "belongsTo": ["unit", "customer", "user", "unitServiceType"],
+        "belongsToMany": ["payments"]
+      }
+    },
+    "Payment": {
+      "description": "Transações de pagamento",
+      "attributes": ["id", "company_id", "schedule_id", "plan_id", "customer_id", "user_id", "payment_method", "gateway", "service", "status", "amount", "pix_copy_paste", "credit_card_payment_link", "payment_receipt_path", "paid_at", "expires_at", "gateway_payment_id"],
+      "statuses": {
+        "PENDING": 1,
+        "PAID": 2,
+        "REJECTED": 3,
+        "EXPIRED": 4,
+        "OVERDUE": 5
+      },
+      "relationships": {
+        "belongsTo": ["company", "schedule", "customer", "user", "plan"],
+        "belongsToMany": ["signatures"]
+      }
+    },
+    "ChatSession": {
+      "description": "Sessões de chat com clientes",
+      "attributes": ["id", "company_id", "unit_id", "customer_id", "user_id", "active", "closed_by", "closed_at", "channel"],
+      "relationships": {
+        "belongsTo": ["company", "unit", "customer", "user"],
+        "hasMany": ["messages"]
+      }
+    },
+    "AutomatedMessage": {
+      "description": "Mensagens automatizadas do sistema",
+      "attributes": ["id", "company_id", "unit_id", "user_id", "name", "type", "content"],
+      "types": {
+        "SCHEDULE_CONFIRMATION": "schedule_confirmation",
+        "SCHEDULE_REMINDER": "schedule_reminder",
+        "SCHEDULE_CANCELLATION": "schedule_cancellation",
+        "SCHEDULE_RESCHEDULE": "schedule_reschedule",
+        "PAYMENT_CONFIRMATION": "payment_confirmation",
+        "PAYMENT_REMINDER": "payment_reminder",
+        "WELCOME_MESSAGE": "welcome_message",
+        "CUSTOM_MESSAGE": "custom_message"
+      },
+      "relationships": {
+        "belongsTo": ["company", "unit", "user"]
+      }
+    }
+  },
+  "supporting_entities": {
+    "UnitServiceType": {
+      "description": "Tipos de serviços oferecidos pelas unidades",
+      "attributes": ["id", "company_id", "unit_id", "name", "description", "duration", "price", "active", "week_days"]
+    },
+    "UnitSettings": {
+      "description": "Configurações específicas de cada unidade",
+      "attributes": ["id", "unit_id", "settings_data"]
+    },
+    "ScheduleBlock": {
+      "description": "Bloqueios de horários nas agendas",
+      "attributes": ["id", "unit_id", "start_time", "end_time", "type", "description", "active"]
+    },
+    "Signature": {
+      "description": "Assinaturas de planos",
+      "attributes": ["id", "company_id", "customer_id", "plan_id", "status", "start_date", "end_date"]
+    },
+    "Plan": {
+      "description": "Planos de assinatura",
+      "attributes": ["id", "name", "description", "price", "duration", "active"]
+    },
+    "Message": {
+      "description": "Mensagens individuais nas sessões de chat",
+      "attributes": ["id", "chat_session_id", "company_id", "unit_id", "customer_id", "user_id", "content", "type", "sent_at"]
+    }
+  },
+  "business_flows": {
+    "scheduling": {
+      "description": "Fluxo de agendamento de serviços",
+      "steps": [
+        "Cliente acessa link público de agendamento",
+        "Seleciona unidade e tipo de serviço",
+        "Escolhe data e horário disponível",
+        "Preenche dados pessoais",
+        "Sistema cria agendamento e cliente",
+        "Envia mensagem de confirmação"
+      ],
+      "controllers": ["ScheduleLinkController", "ScheduleController"],
+      "services": ["ScheduleService"]
+    },
+    "payment": {
+      "description": "Fluxo de pagamentos",
+      "steps": [
+        "Usuário gera pagamento para agendamento",
+        "Sistema integra com gateway Asaas",
+        "Gera PIX ou link de cartão",
+        "Cliente realiza pagamento",
+        "Sistema recebe webhook de confirmação",
+        "Atualiza status do pagamento"
+      ],
+      "controllers": ["PaymentController", "SignatureController"],
+      "services": ["PaymentService"]
+    },
+    "chat": {
+      "description": "Sistema de chat em tempo real",
+      "steps": [
+        "Cliente inicia conversa via WhatsApp",
+        "Sistema cria sessão de chat",
+        "Usuário responde via interface web",
+        "Mensagens sincronizadas via Pusher",
+        "Histórico salvo no banco de dados"
+      ],
+      "controllers": ["ChatSessionController", "MessageController"],
+      "services": ["ChatService"]
+    },
+    "automated_messages": {
+      "description": "Sistema de mensagens automatizadas",
+      "types": ["confirmação", "lembrete", "cancelamento", "pagamento"],
+      "controllers": ["AutomatedMessageController"],
+      "services": ["AutomatedMessageService"]
+    }
+  },
+  "technical_architecture": {
+    "layers": {
+      "presentation": {
+        "framework": "Laravel Blade",
+        "styling": "Tailwind CSS",
+        "interactivity": "Alpine.js",
+        "build_tool": "Vite"
+      },
+      "application": {
+        "controllers": "Laravel Controllers",
+        "middleware": ["auth", "company.active", "subscription.active", "user.active", "owner", "admin"],
+        "validation": "Laravel Form Requests"
+      },
+      "business": {
+        "services": "Service Layer Pattern",
+        "repositories": "Repository Pattern",
+        "exceptions": "Custom Exception Classes"
+      },
+      "data": {
+        "orm": "Eloquent ORM",
+        "database": "MySQL 8.0",
+        "migrations": "Laravel Migrations"
+      }
+    },
+    "integrations": {
+      "ai": {
+        "provider": "Google Gemini",
+        "config": "config/gemini.php",
+        "usage": "Automação de respostas e análise de dados"
+      },
+      "payments": {
+        "gateway": "Asaas",
+        "methods": ["PIX", "Cartão de Crédito"],
+        "webhooks": "Confirmação de pagamentos"
+      },
+      "real_time": {
+        "provider": "Pusher",
+        "usage": "Chat em tempo real e notificações"
+      }
+    }
+  },
+  "security": {
+    "authentication": "Laravel Breeze + Sanctum",
+    "authorization": "Role-based access control (ADMIN, OWNER, EMPLOYEE)",
+    "middleware": {
+      "auth": "Verificação de autenticação",
+      "company.active": "Verificação de empresa ativa",
+      "subscription.active": "Verificação de assinatura ativa",
+      "user.active": "Verificação de usuário ativo",
+      "owner": "Acesso restrito a proprietários",
+      "admin": "Acesso restrito a administradores"
+    }
+  },
+  "deployment": {
+    "containerization": "Docker Compose",
+    "services": {
+      "app-client": "Laravel application (port 8000)",
+      "database": "MySQL 8.0 (port 3306)",
+      "builder": "Setup and migration container"
+    },
+    "environment": {
+      "database": {
+        "host": "database",
+        "database": "laravel",
+        "username": "laravel",
+        "password": "laravel"
+      }
+    }
+  },
+  "file_structure": {
+    "app/": {
+      "Controllers/": "HTTP Controllers",
+      "Models/": "Eloquent Models",
+      "Services/": "Business Logic Services",
+      "Repositories/": "Data Access Layer",
+      "Enum/": "Enumeration Classes",
+      "Exceptions/": "Custom Exceptions",
+      "Middleware/": "HTTP Middleware",
+      "Policies/": "Authorization Policies",
+      "Events/": "Event Classes",
+      "Jobs/": "Queue Jobs"
+    },
+    "resources/": {
+      "views/": "Blade Templates",
+      "lang/": "Translation Files",
+      "css/": "Stylesheets",
+      "js/": "JavaScript Files"
+    },
+    "routes/": {
+      "web.php": "Web Routes",
+      "api.php": "API Routes",
+      "admin.php": "Admin Routes",
+      "auth.php": "Authentication Routes"
+    },
+    "database/": {
+      "migrations/": "Database Migrations",
+      "seeders/": "Database Seeders",
+      "factories/": "Model Factories"
+    }
+  },
+  "key_features": {
+    "multi_tenant": "Sistema multi-empresa com isolamento de dados",
+    "scheduling": "Agendamento online com link público",
+    "payments": "Integração com gateway de pagamentos",
+    "chat": "Sistema de chat em tempo real",
+    "automation": "Mensagens automatizadas com IA",
+    "reports": "Dashboard e relatórios",
+    "user_management": "Gestão de usuários com roles",
+    "unit_management": "Gestão de unidades de negócio"
+  }
+}
