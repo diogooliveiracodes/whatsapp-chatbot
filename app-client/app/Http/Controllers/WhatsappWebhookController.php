@@ -28,10 +28,8 @@ class WhatsappWebhookController extends Controller
         $this->errorLogService->logError(new Exception('teste'), [
             'action' => 'whatsapp_webhook',
             'message' => request()->all(),
-            'company_id' => $company->id,
-            'level' => 'teste',
             'resolved' => 0,
-        ]);
+        ], 'teste', $company->id);
 
         if (!$unitSettings) {
             return response()->json(['error' => 'Unit settings not found'], 404);
@@ -44,7 +42,7 @@ class WhatsappWebhookController extends Controller
         //     return response()->json(['error' => 'Invalid signature'], 401);
         // }
         $providedSecret = $request->header('X-Webhook-Secret');
-        if ($providedSecret !== $mockSecret) {
+        if ($providedSecret != $mockSecret) {
             return response()->json(['error' => 'Invalid signature'], 401);
         }
 
