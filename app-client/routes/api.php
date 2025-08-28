@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\WhatsappWebhookController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -14,3 +15,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/customers', [CustomerController::class, 'store'])->name('api.customers.store');
     });
 });
+
+// Public webhook for WhatsApp (multi-tenant by company and unit)
+Route::post('/whatsapp/webhook/{company}/{unit}', [WhatsappWebhookController::class, '__invoke'])->name('api.whatsapp.webhook');
