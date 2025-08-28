@@ -17,4 +17,5 @@ return [
     'users' => 'Users',
     'companies' => 'Companies',
     'plans' => 'Plans',
+    'logs' => 'Logs',
 ];
