@@ -102,4 +102,9 @@ class ErrorLogService
             ->orderBy('created_at', 'desc')
             ->get();
     }
+
+    public function getLogs()
+    {
+        return ErrorLog::orderBy('created_at', 'desc')->limit(10)->get();
+    }
 }

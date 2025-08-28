@@ -26,5 +26,7 @@ Route::middleware('admin')->group(function () {
             Route::put('/{company}', [AdminController::class, 'updateCompany'])->name('admin.companies.update');
             Route::patch('/{company}/deactivate', [AdminController::class, 'deactivateCompany'])->name('admin.companies.deactivate');
         });
+
+        Route::get('/logs', [AdminController::class, 'logs'])->name('admin.logs');
     });
 });

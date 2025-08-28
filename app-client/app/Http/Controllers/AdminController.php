@@ -217,4 +217,11 @@ class AdminController extends Controller
 
         return CpfHelper::isValid($documentNumber);
     }
+
+    public function logs(): View
+    {
+        $logs = $this->errorLogService->getLogs();
+
+        return view('admin.logs', ['logs' => $logs]);
+    }
 }

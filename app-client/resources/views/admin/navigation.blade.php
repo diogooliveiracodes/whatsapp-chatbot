@@ -25,6 +25,15 @@
             <x-nav-link :href="route('admin.companies.index')" :active="request()->routeIs('admin.companies.index')">
                 {{ __('pages.companies') }}
             </x-nav-link>
+
+            <div class="mt-4 mb-2">
+                <h3 class="px-0 text-s font-semibold text-gray-500 uppercase tracking-wider">
+                    {{ __('pages.logs') }}
+                </h3>
+            </div>
+            <x-nav-link :href="route('admin.logs')" :active="request()->routeIs('admin.logs')">
+                {{ __('pages.logs') }}
+            </x-nav-link>
         </nav>
 
         <!-- User Profile Dropdown -->
