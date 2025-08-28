@@ -15,11 +15,15 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ScheduleLinkController;
 use App\Http\Controllers\AutomatedMessageController;
+use App\Http\Controllers\PrivacyPolicyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect(route('login'));
 });
+
+// Public privacy policy (no auth)
+Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy');
 
 // Public schedule link (no auth)
 Route::prefix('{company}/schedule-link')->group(function () {
