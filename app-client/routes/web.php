@@ -16,6 +16,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ScheduleLinkController;
 use App\Http\Controllers\AutomatedMessageController;
 use App\Http\Controllers\PrivacyPolicyController;
+use App\Http\Controllers\WhatsappWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -146,6 +147,7 @@ Route::middleware('auth', 'company.active', 'subscription.active', 'user.active'
     });
 });
 
+Route::get('/whatsapp/webhook', [WhatsappWebhookController::class, 'verify'])->name('api.whatsapp.webhook.verify');
 
 require __DIR__ . '/admin.php';
 require __DIR__ . '/auth.php';

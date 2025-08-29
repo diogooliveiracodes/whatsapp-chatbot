@@ -22,31 +22,33 @@ class WhatsappWebhookController extends Controller
     /**
      * Valida o webhook do WhatsApp conforme documentação oficial
      */
-    public function verify(Request $request): Response
+    public function verify(Request $request)
     {
-        $this->errorLogService->logError(new Exception('verify_webhook'), [
-            'action' => 'whatsapp_webhook',
-            'message' => 'recebido',
-            'resolved' => 0,
-        ], 'teste', 2);
-
-        $mode = $request->query('hub.mode');
-        $challenge = $request->query('hub.challenge');
-        $token = $request->query('hub.verify_token');
-
-        $verifyToken = 'EAAJZCZA7kZC0sBAKZCZBxZCZA0H1ZCYw0dYZBZBHZCYZB1ZA9ZB8oZCZBZCZBZBZC5hZBZCZB3tZCZAQf4hZBZCZA4nZBZB2ZBZCZA9oZCZB3lZBZBZBZCZA6ZBZBvZBZBZCZA';
-
-        if ($mode === 'subscribe' && $token === $verifyToken) {
-            $this->errorLogService->logError(new Exception('verify_webhook'), [
+        try{
+            $this->errorLogService->logError(new Exception('recebido'), [
                 'action' => 'whatsapp_webhook',
-                'message' => 'testeee',
                 'resolved' => 0,
             ], 'teste', 2);
 
-            return response($challenge, 200);
-        }
+            $mode = $request->query('hub.mode');
+            $challenge = $request->query('hub.challenge');
+            $token = $request->query('hub.verify_token');
 
-        return response('', 403);
+            $verifyToken = 'EAAJZCZA7kZC0sBAKZCZBxZCZA0H1ZCYw0dYZBZBHZCYZB1ZA9ZB8oZCZBZCZBZBZC5hZBZCZB3tZCZAQf4hZBZCZA4nZBZB2ZBZCZA9oZCZB3lZBZBZBZCZA6ZBZBvZBZBZCZA';
+
+            if ($mode === 'subscribe' && $token === $verifyToken) {
+                $this->errorLogService->logError(new Exception('verificado'), [
+                    'action' => 'whatsapp_webhook',
+                    'resolved' => 0,
+                ], 'teste', 2);
+
+                return response()->json(['status' => 'ok'], 200);
+            }
+
+            return response()->json(['error' => 'Invalid signature'], 401);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 401);
+        }
     }
 
     public function __invoke(Request $request, Company $company, Unit $unit): JsonResponse
