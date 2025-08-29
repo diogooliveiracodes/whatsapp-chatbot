@@ -31,13 +31,13 @@ class WhatsappWebhookController extends Controller
                 'company_id' => 2,
             ], 'teste', 2);
 
-            $mode = $request->query('hub.mode');
-            $challenge = $request->query('hub.challenge');
-            $token = $request->query('hub.verify_token');
+            $mode = $request->query('hub_mode');
+            $challenge = $request->query('hub_challenge');
+            $token = $request->query('hub_verify_token');
 
             $verifyToken = 'EAAJZCZA7kZC0sBAKZCZBxZCZA0H1ZCYw0dYZBZBHZCYZB1ZA9ZB8oZCZBZCZBZBZC5hZBZCZB3tZCZAQf4hZBZCZA4nZBZB2ZBZCZA9oZCZB3lZBZBZBZCZA6ZBZBvZBZBZCZA';
 
-            if ($mode === 'subscribe' && $token === $verifyToken) {
+            if ($mode == 'subscribe' && $token == $verifyToken) {
                 $this->errorLogService->logError(new Exception('verificado'), [
                     'action' => 'whatsapp_webhook',
                     'resolved' => 0,
