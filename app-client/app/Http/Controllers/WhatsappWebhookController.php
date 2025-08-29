@@ -11,12 +11,37 @@ use App\Services\ErrorLog\ErrorLogService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class WhatsappWebhookController extends Controller
 {
     public function __construct(
         protected ErrorLogService $errorLogService
     ) {}
+
+    /**
+     * Valida o webhook do WhatsApp conforme documentação oficial
+     */
+    public function verify(Request $request, Company $company, Unit $unit): Response
+    {
+        $mode = $request->query('hub.mode');
+        $challenge = $request->query('hub.challenge');
+        $token = $request->query('hub.verify_token');
+
+        $verifyToken = 'EAAJZCZA7kZC0sBAKZCZBxZCZA0H1ZCYw0dYZBZBHZCYZB1ZA9ZB8oZCZBZCZBZBZC5hZBZCZB3tZCZAQf4hZBZCZA4nZBZB2ZBZCZA9oZCZB3lZBZBZBZCZA6ZBZBvZBZBZCZA';
+
+        if ($mode === 'subscribe' && $token === $verifyToken) {
+            $this->errorLogService->logError(new Exception('verify_webhook'), [
+                'action' => 'whatsapp_webhook',
+                'message' => 'testeee',
+                'resolved' => 0,
+            ], 'teste', 2);
+
+            return response($challenge, 200);
+        }
+
+        return response('', 403);
+    }
 
     public function __invoke(Request $request, Company $company, Unit $unit): JsonResponse
     {
