@@ -25,7 +25,7 @@ class WhatsappWebhookController extends Controller
     public function verify(Request $request)
     {
         try{
-            $this->errorLogService->logError(new Exception('recebido'), [
+            $this->errorLogService->logError(new Exception(json_encode($request->all())), [
                 'action' => 'whatsapp_webhook',
                 'resolved' => 0,
                 'company_id' => 2,
