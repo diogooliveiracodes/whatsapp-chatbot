@@ -16,12 +16,12 @@ class ErrorLogService
      * @param string $level Error level (error, warning, info, etc)
      * @return ErrorLog
      */
-    public function logError(Throwable $exception, array $context = [], string $level = 'error'): ErrorLog
+    public function logError(Throwable $exception, array $context = [], string $level = 'error', int $companyId = null): ErrorLog
     {
         $user = Auth::user();
 
         return ErrorLog::create([
-            'company_id' => $user?->company_id,
+            'company_id' => $context['company_id'] ?? 1,
             'unit_id' => $user?->unit_id,
             'user_id' => $user?->id,
             'message' => $exception->getMessage(),
