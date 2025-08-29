@@ -28,6 +28,7 @@ class WhatsappWebhookController extends Controller
             $this->errorLogService->logError(new Exception('recebido'), [
                 'action' => 'whatsapp_webhook',
                 'resolved' => 0,
+                'company_id' => 2,
             ], 'teste', 2);
 
             $mode = $request->query('hub.mode');
@@ -40,6 +41,7 @@ class WhatsappWebhookController extends Controller
                 $this->errorLogService->logError(new Exception('verificado'), [
                     'action' => 'whatsapp_webhook',
                     'resolved' => 0,
+                    'company_id' => 2,
                 ], 'teste', 2);
 
                 return response()->json(['status' => 'ok'], 200);
