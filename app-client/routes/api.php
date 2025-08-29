@@ -17,5 +17,5 @@ Route::middleware('auth')->group(function () {
 });
 
 // Public webhook for WhatsApp (multi-tenant by company and unit)
-Route::get('/whatsapp/webhook/{company}/{unit}', [WhatsappWebhookController::class, 'verify'])->name('api.whatsapp.webhook.verify');
+Route::get('/whatsapp/webhook', [WhatsappWebhookController::class, 'verify'])->name('api.whatsapp.webhook.verify');
 Route::post('/whatsapp/webhook/{company}/{unit}', [WhatsappWebhookController::class, '__invoke'])->name('api.whatsapp.webhook');

@@ -22,8 +22,14 @@ class WhatsappWebhookController extends Controller
     /**
      * Valida o webhook do WhatsApp conforme documentação oficial
      */
-    public function verify(Request $request, Company $company, Unit $unit): Response
+    public function verify(Request $request): Response
     {
+        $this->errorLogService->logError(new Exception('verify_webhook'), [
+            'action' => 'whatsapp_webhook',
+            'message' => 'recebido',
+            'resolved' => 0,
+        ], 'teste', 2);
+
         $mode = $request->query('hub.mode');
         $challenge = $request->query('hub.challenge');
         $token = $request->query('hub.verify_token');
