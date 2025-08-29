@@ -44,7 +44,7 @@ class WhatsappWebhookController extends Controller
                     'company_id' => 2,
                 ], 'teste', 2);
 
-                return response()->json(['status' => 'ok'], 200);
+                return response($challenge, 200);
             }
 
             return response()->json(['error' => 'Invalid signature'], 401);
