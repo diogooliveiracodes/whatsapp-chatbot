@@ -21,19 +21,21 @@ class WhatsappWebhookController extends Controller
     public function __invoke(Request $request, Company $company, Unit $unit): JsonResponse
     {
         /** @var UnitSettings|null $unitSettings */
-        $unitSettings = UnitSettings::where('company_id', $company->id)
-            ->where('unit_id', $unit->id)
-            ->first();
+        // $unitSettings = UnitSettings::where('company_id', $company->id)
+        //     ->where('unit_id', $unit->id)
+        //     ->first();
 
         $this->errorLogService->logError(new Exception('teste'), [
             'action' => 'whatsapp_webhook',
-            'message' => request()->all(),
+            'message' => 'testeee',
             'resolved' => 0,
-        ], 'teste', $company->id);
+        ], 'teste', 2);
 
-        if (!$unitSettings) {
-            return response()->json(['error' => 'Unit settings not found'], 404);
-        }
+        return response()->json(['status' => 'ok']);
+
+        // if (!$unitSettings) {
+        //     return response()->json(['error' => 'Unit settings not found'], 404);
+        // }
 
         $mockSecret = 'EAAJZCZA7kZC0sBAKZCZBxZCZA0H1ZCYw0dYZBZBHZCYZB1ZA9ZB8oZCZBZCZBZBZC5hZBZCZB3tZCZAQf4hZBZCZA4nZBZB2ZBZCZA9oZCZB3lZBZBZBZCZA6ZBZBvZBZBZCZA';
         // Optional basic signature/secret validation
