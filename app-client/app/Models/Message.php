@@ -23,7 +23,8 @@ class Message extends Model
         'chat_session_id',
         'active',
         'content',
-        'type'
+        'type',
+        'whatsapp_message_id'
     ];
 
     protected $table = 'messages';
