@@ -147,8 +147,5 @@ Route::middleware('auth', 'company.active', 'subscription.active', 'user.active'
     });
 });
 
-Route::get('/whatsapp/webhook', [WhatsappWebhookController::class, 'verify'])->name('api.whatsapp.webhook.verify');
-Route::post('/whatsapp/webhook/{company}/{unit}', [WhatsappWebhookController::class, '__invoke'])->name('api.whatsapp.webhook');
-
 require __DIR__ . '/admin.php';
 require __DIR__ . '/auth.php';

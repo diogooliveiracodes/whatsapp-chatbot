@@ -15,3 +15,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/customers', [CustomerController::class, 'store'])->name('api.customers.store');
     });
 });
+
+Route::get('/whatsapp/webhook', [WhatsappWebhookController::class, 'verify'])->name('api.whatsapp.webhook.verify');
+Route::post('/whatsapp/webhook/{company}/{unit}', [WhatsappWebhookController::class, '__invoke'])->name('api.whatsapp.webhook');
