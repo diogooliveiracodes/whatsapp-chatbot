@@ -132,11 +132,44 @@
                                             <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                                         @enderror
                                     </div>
+
+                                    <div>
+                                        <label for="whatsapp_access_token"
+                                            class="label-style">{{ __('company-settings.whatsapp_access_token') }}</label>
+                                        <input type="text" id="whatsapp_access_token" name="whatsapp_access_token"
+                                            value="{{ old('whatsapp_access_token', $company->companySettings?->whatsapp_access_token) }}"
+                                            class="input-style @error('whatsapp_access_token') border-red-500 @enderror">
+                                        @error('whatsapp_access_token')
+                                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="whatsapp_phone_number_id"
+                                            class="label-style">{{ __('company-settings.whatsapp_phone_number_id') }}</label>
+                                        <input type="text" id="whatsapp_phone_number_id" name="whatsapp_phone_number_id"
+                                            value="{{ old('whatsapp_phone_number_id', $company->companySettings?->whatsapp_phone_number_id) }}"
+                                            class="input-style @error('whatsapp_phone_number_id') border-red-500 @enderror">
+                                        @error('whatsapp_phone_number_id')
+                                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="whatsapp_business_account_id"
+                                            class="label-style">{{ __('company-settings.whatsapp_business_account_id') }}</label>
+                                        <input type="text" id="whatsapp_business_account_id" name="whatsapp_business_account_id"
+                                            value="{{ old('whatsapp_business_account_id', $company->companySettings?->whatsapp_business_account_id) }}"
+                                            class="input-style @error('whatsapp_business_account_id') border-red-500 @enderror">
+                                        @error('whatsapp_business_account_id')
+                                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
 
                             <!-- General Settings Section -->
-                            <div class="space-y-6">
+                            {{-- <div class="space-y-6">
                                 <h3 class="text-md font-medium text-gray-200">
                                     {{ __('company-settings.general_section') }}</h3>
 
@@ -202,7 +235,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <!-- Payment Gateway Section -->
                             <div class="space-y-6">
@@ -281,7 +314,7 @@
                             </div>
 
                             <!-- Bank Account Section -->
-                            <div class="space-y-6">
+                            {{-- <div class="space-y-6">
                                 <h3 class="text-md font-medium text-gray-200">
                                     {{ __('company-settings.bank_account_section') }}</h3>
 
@@ -378,10 +411,10 @@
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <!-- Status Active -->
-                            <div class="space-y-6">
+                            {{-- <div class="space-y-6">
                                 <div class="md:col-span-2">
                                     <x-buttons.toggle-switch name="settings_active" :label="__('company-settings.active')"
                                         :value="old('settings_active', $company->companySettings?->active)" />
@@ -389,7 +422,7 @@
                                         <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <!-- Action Buttons -->
                             <div class="mt-6 flex justify-between">

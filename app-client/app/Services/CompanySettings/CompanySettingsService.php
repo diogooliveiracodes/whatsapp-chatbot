@@ -42,6 +42,20 @@ class CompanySettingsService
      */
     public function updateByCompanyId(int $companyId, array $data): bool
     {
-        return $this->companySettingsRepository->updateByCompanyId($companyId, $data);
+        // Adicionar company_id aos dados se não estiver presente
+        if (!isset($data['company_id'])) {
+            $data['company_id'] = $companyId;
+        }
+
+        // Tentar atualizar primeiro
+        $updated = $this->companySettingsRepository->updateByCompanyId($companyId, $data);
+
+        // Se não foi atualizado (não existe), criar
+        if (!$updated) {
+            $this->companySettingsRepository->create($data);
+            return true;
+        }
+
+        return $updated;
     }
 }

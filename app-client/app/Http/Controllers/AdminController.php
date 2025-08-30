@@ -12,6 +12,7 @@ use App\Services\Company\CompanyService;
 use App\Services\Unit\UnitService;
 use App\Services\User\UserService;
 use App\Services\Plan\PlanService;
+use App\Services\CompanySettings\CompanySettingsService;
 use App\Models\Company;
 use Illuminate\Http\RedirectResponse;
 use App\Enum\DocumentTypeEnum;
@@ -48,7 +49,8 @@ class AdminController extends Controller
         protected CreateUserService $createUserService,
         protected DeactivateCompanyService $deactivateCompanyService,
         protected ErrorLogService $errorLogService,
-        protected PlanService $planService
+        protected PlanService $planService,
+        protected CompanySettingsService $companySettingsService
     ) {}
 
     /**
@@ -215,11 +217,8 @@ class AdminController extends Controller
                 unset($data['settings_active']);
             }
 
-            // Usar updateOrCreate para garantir que as configurações existam
-            $company->companySettings()->updateOrCreate(
-                ['company_id' => $company->id],
-                $data
-            );
+            // Usar o service para atualizar as configurações
+            $this->companySettingsService->updateByCompanyId($company->id, $data);
 
             return redirect()->back()->with('success', 'Configurações atualizadas com sucesso!');
         } catch (\Exception $e) {
