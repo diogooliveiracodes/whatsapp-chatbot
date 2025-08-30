@@ -18,6 +18,9 @@ class CompanySettings extends Model
     protected $fillable = [
         'company_id',
         'whatsapp_verify_token',
+        'whatsapp_access_token',
+        'whatsapp_phone_number_id',
+        'whatsapp_business_account_id',
         'default_language',
         'timezone',
         'use_ai_chatbot',
