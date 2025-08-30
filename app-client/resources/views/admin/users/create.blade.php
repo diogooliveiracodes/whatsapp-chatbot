@@ -185,12 +185,12 @@
                                     <select id="company_document_type" name="company_document_type"
                                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
                                         <option value="">{{ __('Selecione o tipo') }}</option>
-                                        <option value="1"
-                                            {{ old('company_document_type') == '1' ? 'selected' : '' }}>
-                                            {{ __('CPF') }}</option>
-                                        <option value="2"
-                                            {{ old('company_document_type') == '2' ? 'selected' : '' }}>
+                                        <option value="{{ \App\Enum\CompanyTypeEnum::CNPJ }}"
+                                            {{ old('company_document_type') == \App\Enum\CompanyTypeEnum::CNPJ ? 'selected' : '' }}>
                                             {{ __('CNPJ') }}</option>
+                                        <option value="{{ \App\Enum\CompanyTypeEnum::CPF }}"
+                                            {{ old('company_document_type') == \App\Enum\CompanyTypeEnum::CPF ? 'selected' : '' }}>
+                                            {{ __('CPF') }}</option>
                                     </select>
                                 </div>
 

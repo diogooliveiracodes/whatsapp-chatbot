@@ -4,6 +4,7 @@ namespace App\Services\Admin;
 
 use App\Http\Requests\AdminStoreUserRequest;
 use App\Services\Company\CompanyService;
+use App\Services\CompanySettings\CompanySettingsService;
 use App\Services\Signature\SignatureService;
 use App\Services\Unit\UnitService;
 use App\Services\User\UserService;
@@ -18,7 +19,8 @@ class CreateUserService
         protected UserService $userService,
         protected CompanyService $companyService,
         protected UnitService $unitService,
-        protected SignatureService $signatureService
+        protected SignatureService $signatureService,
+        protected CompanySettingsService $companySettingsService
     ) {}
 
     /**
@@ -50,6 +52,11 @@ class CreateUserService
                     'document_number' => $request->company_document_number,
                     'document_type' => $request->company_document_type,
                     'active' => true,
+                ]);
+
+                // Create the company settings
+                $this->companySettingsService->create([
+                    'company_id' => $company->id,
                 ]);
 
                 // Create the plan for the user

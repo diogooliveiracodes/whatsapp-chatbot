@@ -14,4 +14,6 @@ return [
     'document_placeholder' => 'Enter document number',
     'updated_success' => 'Company updated successfully!',
     'updated_error' => 'Error updating company: :message',
+    'basic_information' => 'Basic Information',
+    'basic_information_description' => 'Manage the basic company information.',
 ];

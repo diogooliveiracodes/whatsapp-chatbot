@@ -12,6 +12,7 @@ use App\Services\Company\CompanyService;
 use App\Services\Unit\UnitService;
 use App\Services\User\UserService;
 use App\Services\Plan\PlanService;
+use App\Services\CompanySettings\CompanySettingsService;
 use App\Models\Company;
 use Illuminate\Http\RedirectResponse;
 use App\Enum\DocumentTypeEnum;
@@ -19,6 +20,7 @@ use App\Helpers\CnpjHelper;
 use App\Helpers\CpfHelper;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Http\Requests\UpdateCompanySettingsRequest;
 
 /**
  * Admin Controller
@@ -47,7 +49,8 @@ class AdminController extends Controller
         protected CreateUserService $createUserService,
         protected DeactivateCompanyService $deactivateCompanyService,
         protected ErrorLogService $errorLogService,
-        protected PlanService $planService
+        protected PlanService $planService,
+        protected CompanySettingsService $companySettingsService
     ) {}
 
     /**
@@ -174,6 +177,7 @@ class AdminController extends Controller
     public function editCompany(int $id): View
     {
         $company = $this->companyService->findById($id);
+        $company->load('companySettings');
         $plans = $this->planService->getPlans();
 
         return view('admin.companies.edit', ['company' => $company, 'plans' => $plans]);
@@ -195,10 +199,36 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'update',
-                'request_data' => $request->validated(),
+                'request_data' => $request->all(),
             ]);
 
             return redirect()->back()->withInput()->with('error', __('admin.company_updated_error', ['message' => $e->getMessage()]));
+        }
+    }
+
+    public function updateCompanySettings(UpdateCompanySettingsRequest $request, Company $company): RedirectResponse
+    {
+        try {
+            $data = $request->validated();
+
+            // Mapear o campo settings_active para active
+            if (isset($data['settings_active'])) {
+                $data['active'] = $data['settings_active'];
+                unset($data['settings_active']);
+            }
+
+            // Usar o service para atualizar as configurações
+            $this->companySettingsService->updateByCompanyId($company->id, $data);
+
+            return redirect()->back()->with('success', 'Configurações atualizadas com sucesso!');
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, [
+                'action' => 'update_settings',
+                'company_id' => $company->id,
+                'request_data' => $request->validated(),
+            ]);
+
+            return redirect()->back()->withInput()->with('error', 'Erro ao atualizar configurações: ' . $e->getMessage());
         }
     }
 

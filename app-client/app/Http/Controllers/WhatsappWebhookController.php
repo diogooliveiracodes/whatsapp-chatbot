@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\Whatsapp\WhatsappValidationException;
 use App\Jobs\ProcessWhatsappWebhookJob;
+use App\Jobs\WhatsappWebhookProcessReceivedMessageJob;
 use App\Models\Company;
 use App\Models\Unit;
 use App\Models\UnitSettings;
@@ -50,6 +51,7 @@ class WhatsappWebhookController extends Controller
     {
         try {
             $this->logError(['message' => 'recebido mensagem no webhook company: ' . $company->id . ' unit: ' . $unit->id . ' ' . json_encode($request->all())]);
+            WhatsappWebhookProcessReceivedMessageJob::dispatch($request->all(), $company->id, $unit->id);
 
             return response()->json(['status' => 'ok']);
         } catch (Exception $e) {

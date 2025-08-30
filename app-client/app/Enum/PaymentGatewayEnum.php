@@ -4,12 +4,12 @@ namespace App\Enum;
 
 enum PaymentGatewayEnum: int
 {
-    case ASSAS = 1;
+    case ASAAS = 1;
 
     public function name(): string
     {
         return match ($this) {
-            self::ASSAS => 'Assas',
+            self::ASAAS => 'Asaas',
         };
     }
 

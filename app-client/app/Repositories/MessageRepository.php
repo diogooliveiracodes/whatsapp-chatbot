@@ -25,6 +25,7 @@ class MessageRepository
             'active' => true,
             'content' => $data['content'],
             'type' => $data['type'],
+            'whatsapp_message_id' => $data['whatsapp_message_id'] ?? null,
         ]);
     }
 
