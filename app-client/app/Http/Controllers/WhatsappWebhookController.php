@@ -22,33 +22,26 @@ class WhatsappWebhookController extends Controller
     /**
      * Valida o webhook do WhatsApp conforme documentação oficial
      */
-    public function verify(Request $request)
+    public function verify(Request $request, Company $company, Unit $unit)
     {
         try{
-            $this->errorLogService->logError(new Exception(json_encode($request->all())), [
-                'action' => 'whatsapp_webhook',
-                'resolved' => 0,
-                'company_id' => 2,
-            ], 'teste', 2);
+            $this->logError(['message' => 'recebido teste do webhook: '.json_encode($request->all())]);
 
             $mode = $request->query('hub_mode');
             $challenge = $request->query('hub_challenge');
             $token = $request->query('hub_verify_token');
 
-            $verifyToken = 'EAAJZCZA7kZC0sBAKZCZBxZCZA0H1ZCYw0dYZBZBHZCYZB1ZA9ZB8oZCZBZCZBZBZC5hZBZCZB3tZCZAQf4hZBZCZA4nZBZB2ZBZCZA9oZCZB3lZBZBZBZCZA6ZBZBvZBZBZCZA';
+            $verifyToken = config('services.whatsapp.verify_token');
 
             if ($mode == 'subscribe' && $token == $verifyToken) {
-                $this->errorLogService->logError(new Exception('verificado'), [
-                    'action' => 'whatsapp_webhook',
-                    'resolved' => 0,
-                    'company_id' => 2,
-                ], 'teste', 2);
+                $this->logError(['message' => 'Whatsapp webhook company: '.$company->id.' unit: '.$unit->id.' verificado']);
 
                 return response($challenge, 200);
             }
 
             return response()->json(['error' => 'Invalid signature'], 401);
         } catch (Exception $e) {
+            $this->logError(['message' => 'erro no verify: '.$e->getMessage()]);
             return response()->json(['error' => $e->getMessage()], 401);
         }
     }
@@ -60,10 +53,10 @@ class WhatsappWebhookController extends Controller
         //     ->where('unit_id', $unit->id)
         //     ->first();
 
-        $this->errorLogService->logError(new Exception('teste'), [
+        $this->errorLogService->logError(new Exception(json_encode($request->all())), [
             'action' => 'whatsapp_webhook',
-            'message' => 'testeee',
             'resolved' => 0,
+            'company_id' => 2,
         ], 'teste', 2);
 
         return response()->json(['status' => 'ok']);
@@ -72,17 +65,12 @@ class WhatsappWebhookController extends Controller
         //     return response()->json(['error' => 'Unit settings not found'], 404);
         // }
 
-        $mockSecret = 'EAAJZCZA7kZC0sBAKZCZBxZCZA0H1ZCYw0dYZBZBHZCYZB1ZA9ZB8oZCZBZCZBZBZC5hZBZCZB3tZCZAQf4hZBZCZA4nZBZB2ZBZCZA9oZCZB3lZBZBZBZCZA6ZBZBvZBZBZCZA';
+        $mockSecret = config('services.whatsapp.verify_token');
         // Optional basic signature/secret validation
         // $providedSecret = $request->header('X-Webhook-Secret');
         // if (!empty($unitSettings->whatsapp_webhook_secret) && $providedSecret !== $unitSettings->whatsapp_webhook_secret) {
         //     return response()->json(['error' => 'Invalid signature'], 401);
         // }
-        $providedSecret = $request->header('X-Webhook-Secret');
-        if ($providedSecret != $mockSecret) {
-            return response()->json(['error' => 'Invalid signature'], 401);
-        }
-
 
         // Normalize a minimal payload shape; adapt here to real provider payload
         // $from = (string) ($request->input('from') ?? $request->input('sender') ?? '');
@@ -101,5 +89,14 @@ class WhatsappWebhookController extends Controller
         // );
 
         return response()->json(['status' => 'ok']);
+    }
+
+    private function logError(array $data): void
+    {
+        $this->errorLogService->logError(new Exception($data['message']), [
+            'action' => 'whatsapp_webhook',
+            'resolved' => 0,
+            'company_id' => $data['company_id'] ?? 1,
+        ], 'whatsapp_webhook');
     }
 }

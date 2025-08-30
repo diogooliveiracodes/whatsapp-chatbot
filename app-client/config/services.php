@@ -44,4 +44,8 @@ return [
         'webhook_url' => env('ASAAS_WEBHOOK_URL'),
     ],
 
+    'whatsapp' => [
+        'verify_token' => env('WHATSAPP_VERIFY_TOKEN', 'your_verify_token_here'),
+    ],
+
 ];
