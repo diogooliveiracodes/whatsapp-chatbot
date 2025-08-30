@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
             $table->string('whatsapp_verify_token')->nullable();
+            $table->string('whatsapp_access_token')->nullable();
+            $table->string('whatsapp_phone_number_id')->nullable();
+            $table->string('whatsapp_business_account_id')->nullable();
             $table->string('default_language')->nullable();
             $table->string('timezone')->nullable();
             $table->boolean('use_ai_chatbot')->default(false);
