@@ -24,6 +24,9 @@ class UpdateCompanySettingsRequest extends FormRequest
     {
         return [
             'whatsapp_verify_token' => ['nullable', 'string', 'max:255'],
+            'whatsapp_access_token' => ['nullable', 'string', 'max:500'],
+            'whatsapp_phone_number_id' => ['nullable', 'string', 'max:255'],
+            'whatsapp_business_account_id' => ['nullable', 'string', 'max:255'],
             'default_language' => ['nullable', 'string', 'max:5'],
             'timezone' => ['nullable', 'string', 'max:50'],
             'use_ai_chatbot' => ['boolean'],
