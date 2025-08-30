@@ -10,8 +10,18 @@ class CompanySettingsRepository
         protected CompanySettings $model
     ) {}
 
-    public function deactivateByCompanyId(int $companyId): void
+    public function create(array $data): CompanySettings
     {
-        $this->model->where('company_id', $companyId)->update(['active' => false]);
+        return $this->model->create($data);
+    }
+
+    public function findByCompanyId(int $companyId): ?CompanySettings
+    {
+        return $this->model->where('company_id', $companyId)->first();
+    }
+
+    public function updateByCompanyId(int $companyId, array $data): bool
+    {
+        return $this->model->where('company_id', $companyId)->update($data);
     }
 }

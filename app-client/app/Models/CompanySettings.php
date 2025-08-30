@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Enum\PaymentGatewayEnum;
+use App\Enum\PixKeyTypeEnum;
+use App\Enum\BankAccountTypeEnum;
 
 class CompanySettings extends Model
 {
@@ -13,19 +16,30 @@ class CompanySettings extends Model
 
     protected $table = 'company_settings';
     protected $fillable = [
-        'name',
-        'identification',
-        'phone',
-        'whatsapp_webhook_url',
-        'whatsapp_number',
+        'company_id',
+        'asaas_api_key',
+        'whatsapp_verify_token',
         'default_language',
         'timezone',
-        'working_hour_start',
-        'working_hour_end',
-        'working_day_start',
-        'working_day_end',
         'use_ai_chatbot',
-        'active'
+        'active',
+        'payment_gateway',
+        'gateway_api_key',
+        'pix_key',
+        'pix_key_type',
+        'bank_code',
+        'bank_agency',
+        'bank_account',
+        'bank_account_digit',
+        'bank_account_type',
+        'account_holder_name',
+        'account_holder_document'
+    ];
+
+    protected $casts = [
+        'payment_gateway' => PaymentGatewayEnum::class,
+        'pix_key_type' => PixKeyTypeEnum::class,
+        'bank_account_type' => BankAccountTypeEnum::class,
     ];
 
     public function company(): BelongsTo
