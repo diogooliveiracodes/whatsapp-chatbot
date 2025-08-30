@@ -7,5 +7,6 @@ return [
     'company_deactivated_error' => 'Erro ao desativar empresa: :message',
     'company_updated_success' => 'Empresa atualizada com sucesso!',
     'company_updated_error' => 'Erro ao atualizar empresa: :message',
+    'company_settings_updated_error' => 'Erro ao atualizar configurações da empresa: :message',
     'invalid_document' => 'Documento inválido',
 ];

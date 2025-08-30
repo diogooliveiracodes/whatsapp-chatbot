@@ -7,5 +7,6 @@ return [
     'company_deactivated_error' => 'Error deactivating company: :message',
     'company_updated_success' => 'Company updated successfully!',
     'company_updated_error' => 'Error updating company: :message',
+    'company_settings_updated_error' => 'Error updating company settings: :message',
     'invalid_document' => 'Invalid document',
 ];
