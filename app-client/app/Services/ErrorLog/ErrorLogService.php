@@ -105,6 +105,6 @@ class ErrorLogService
 
     public function getLogs()
     {
-        return ErrorLog::orderBy('created_at', 'desc')->limit(10)->get();
+        return ErrorLog::orderBy('id', 'desc')->limit(10)->get();
     }
 }
