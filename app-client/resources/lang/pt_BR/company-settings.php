@@ -32,6 +32,9 @@ return [
 
     // Campos do WhatsApp
     'whatsapp_verify_token' => 'Token de Verificação do WhatsApp',
+    'whatsapp_access_token' => 'Token de Acesso do WhatsApp',
+    'whatsapp_phone_number_id' => 'ID do Número de Telefone do WhatsApp',
+    'whatsapp_business_account_id' => 'ID da Conta Business do WhatsApp',
 
     // Campos Gerais
     'select_language' => 'Selecione o idioma',

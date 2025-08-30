@@ -32,6 +32,9 @@ return [
 
     // WhatsApp Fields
     'whatsapp_verify_token' => 'WhatsApp Verify Token',
+    'whatsapp_access_token' => 'WhatsApp Access Token',
+    'whatsapp_phone_number_id' => 'WhatsApp Phone Number ID',
+    'whatsapp_business_account_id' => 'WhatsApp Business Account ID',
 
     // General Fields
     'select_language' => 'Select language',
