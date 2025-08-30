@@ -39,10 +39,10 @@
                                     class="input-style @error('document_type') border-red-500 @enderror"
                                 >
                                     <option value="">{{ __('companies.select_type') }}</option>
-                                    <option value="1" {{ old('document_type', $company->document_type) == '1' ? 'selected' : '' }}>
+                                    <option value="{{ \App\Enum\CompanyTypeEnum::CNPJ }}" {{ old('document_type', $company->document_type) == \App\Enum\CompanyTypeEnum::CNPJ ? 'selected' : '' }}>
                                         {{ __('companies.cnpj') }}
                                     </option>
-                                    <option value="2" {{ old('document_type', $company->document_type) == '2' ? 'selected' : '' }}>
+                                    <option value="{{ \App\Enum\CompanyTypeEnum::CPF }}" {{ old('document_type', $company->document_type) == \App\Enum\CompanyTypeEnum::CPF ? 'selected' : '' }}>
                                         {{ __('companies.cpf') }}
                                     </option>
                                 </select>
