@@ -17,7 +17,6 @@ class CompanySettings extends Model
     protected $table = 'company_settings';
     protected $fillable = [
         'company_id',
-        'asaas_api_key',
         'whatsapp_verify_token',
         'default_language',
         'timezone',

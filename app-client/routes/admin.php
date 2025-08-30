@@ -24,6 +24,7 @@ Route::middleware('admin')->group(function () {
             Route::get('/', [AdminController::class, 'indexCompanies'])->name('admin.companies.index');
             Route::get('/{company}/edit', [AdminController::class, 'editCompany'])->name('admin.companies.edit');
             Route::put('/{company}', [AdminController::class, 'updateCompany'])->name('admin.companies.update');
+            Route::put('/{company}/settings', [AdminController::class, 'updateCompanySettings'])->name('admin.companies.settings.update');
             Route::patch('/{company}/deactivate', [AdminController::class, 'deactivateCompany'])->name('admin.companies.deactivate');
         });
 
