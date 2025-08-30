@@ -31,7 +31,6 @@ return [
     'bank_account_section' => 'Dados Bancários',
 
     // Campos do WhatsApp
-    'asaas_api_key' => 'Chave da API Asaas',
     'whatsapp_verify_token' => 'Token de Verificação do WhatsApp',
 
     // Campos Gerais

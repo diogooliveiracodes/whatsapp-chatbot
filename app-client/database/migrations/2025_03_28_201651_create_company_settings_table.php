@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('company_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
-            $table->string('asaas_api_key')->nullable();
             $table->string('whatsapp_verify_token')->nullable();
             $table->string('default_language')->nullable();
             $table->string('timezone')->nullable();

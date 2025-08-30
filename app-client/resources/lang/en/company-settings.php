@@ -31,7 +31,6 @@ return [
     'bank_account_section' => 'Bank Account Data',
 
     // WhatsApp Fields
-    'asaas_api_key' => 'Asaas API Key',
     'whatsapp_verify_token' => 'WhatsApp Verify Token',
 
     // General Fields
