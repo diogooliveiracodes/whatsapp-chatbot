@@ -76,6 +76,9 @@ return new class extends Migration {
             $table->boolean('debit_card_enabled')->default(false);
             $table->boolean('cash_enabled')->default(false);
             $table->boolean('active')->default(true);
+            $table->string('whatsapp_api_base_url')->nullable();
+            $table->string('whatsapp_api_token')->nullable();
+            $table->string('whatsapp_webhook_secret')->nullable();
             $table->timestamps();
         });
     }

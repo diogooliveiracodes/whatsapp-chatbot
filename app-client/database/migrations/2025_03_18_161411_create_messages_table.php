@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->text('content');
             $table->enum('type', ['text', 'image', 'video', 'audio', 'file'])->default('text');
+            $table->string('whatsapp_message_id')->nullable()->index();
             $table->timestamps();
         });
     }

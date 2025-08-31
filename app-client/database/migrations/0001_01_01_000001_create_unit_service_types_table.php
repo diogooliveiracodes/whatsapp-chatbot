@@ -19,6 +19,13 @@ return new class extends Migration
             $table->string('description', 255)->nullable();
             $table->decimal('price', 10, 2);
             $table->boolean('active')->default(true);
+            $table->boolean('monday')->default(true);
+            $table->boolean('tuesday')->default(true);
+            $table->boolean('wednesday')->default(true);
+            $table->boolean('thursday')->default(true);
+            $table->boolean('friday')->default(true);
+            $table->boolean('saturday')->default(true);
+            $table->boolean('sunday')->default(true);
             $table->timestamps();
         });
     }
