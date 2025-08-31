@@ -56,46 +56,23 @@ class WhatsappSendGenericMessageJob implements ShouldQueue
 
             // Check if WhatsApp is configured for this company
             if (!$whatsAppService->isConfigured($this->companyId)) {
-                throw new Exception('WhatsApp não está configurado para esta empresa');
-            }
+                $this->logError($errorLogService, ['message' => 'WhatsApp não está configurado para esta empresa phone: ' . $this->phone . ' company_id: ' . $this->companyId . ' unit_id: ' . $this->unitId]);
 
-            // If message type is provided, try to get automated message
-            if ($this->messageType) {
-                $automatedMessage = $automatedMessageService->getMessageByType($this->messageType, $this->unitId);
-
-                if ($automatedMessage) {
-                    // Use the automated message content
-                    $messageToSend = $automatedMessage->content;
-
-                    Log::info('Using automated message for generic job', [
-                        'message_type' => $this->messageType->value,
-                        'automated_message_id' => $automatedMessage->id,
-                        'unit_id' => $this->unitId
-                    ]);
-                } else {
-                    // Fallback to provided message
-                    $messageToSend = $this->message;
-
-                    Log::warning('Automated message not found, using fallback message', [
-                        'message_type' => $this->messageType->value,
-                        'unit_id' => $this->unitId
-                    ]);
-                }
-            } else {
-                // Use provided message directly
-                $messageToSend = $this->message;
+                return;
             }
 
             // Send message via WhatsApp
             $result = $whatsAppService->sendTextMessage(
                 $this->phone,
-                $messageToSend,
+                $this->message,
                 $this->companyId,
                 $this->unitId
             );
 
             if (!$result['success']) {
-                throw new Exception('Erro ao enviar mensagem via WhatsApp: ' . ($result['error'] ?? 'Erro desconhecido'));
+                $this->logError($errorLogService, ['message' => 'Erro ao enviar mensagem via WhatsApp: ' . ($result['error'] ?? 'Erro desconhecido') . ' phone: ' . $this->phone . ' company_id: ' . $this->companyId . ' unit_id: ' . $this->unitId]);
+
+                return;
             }
 
             $this->logError($errorLogService, ['message' => 'mensagem genérica enviada com sucesso phone: ' . $this->phone . ' message_id: ' . ($result['message_id'] ?? 'N/A')]);

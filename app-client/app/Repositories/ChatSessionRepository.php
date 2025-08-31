@@ -54,7 +54,8 @@ class ChatSessionRepository
             ->model
             ->where('active', true)
             ->where('customer_id', $data['customer_id'])
-            ->where('user_id', $data['user_id'])
+            ->where('company_id', $data['company_id'])
+            ->where('unit_id', $data['unit_id'])
             ->first();
     }
 

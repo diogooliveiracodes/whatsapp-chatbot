@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\Helpers\PhoneHelper;
+use App\Jobs\WhatsappSendGenericMessageJob;
+use App\Jobs\WhatsappSendPersonalizedMessageJob;
 use App\Models\Customer;
 use App\Models\ChatSession;
 use App\Models\Message;
@@ -16,6 +18,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use App\Enum\AutomatedMessageTypeEnum;
+use App\Models\AutomatedMessage;
 
 class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
 {
@@ -53,10 +57,12 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
         ErrorLogService $errorLogService
     ): void {
         try {
-            $this->logError($errorLogService, ['message' => 'processando mensagem recebida do WhatsApp company: ' . $this->companyId . ' unit: ' . $this->unitId . ' ' . json_encode($this->webhookData)]);
+            $this->logError($errorLogService, ['message' => 'DEBUG: Extraindo dados da mensagem.' . json_encode($this->webhookData)]);
 
             // Extrair dados da mensagem do webhook
             $messageData = $this->extractMessageData($errorLogService);
+
+            $this->logError($errorLogService, ['message' => 'DEBUG: Mensagem Extraída.' . json_encode($messageData)]);
 
             if (!$messageData) {
                 $this->logError($errorLogService, ['message' => 'dados da mensagem não encontrados no webhook']);
@@ -66,7 +72,6 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
             $phone = $messageData['phone'];
             $messageId = $messageData['message_id'];
             $messageContent = $messageData['content'];
-            $customerName = $messageData['customer_name'];
 
             // 1. Verificar se já recebeu esta mensagem anteriormente
             if ($this->isMessageAlreadyProcessed($messageId)) {
@@ -74,17 +79,11 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
                 return;
             }
 
-            // 2. Verificar se o Customer já existe na base para esta company
-            $customer = Customer::where('phone', PhoneHelper::unformat($phone))
-                ->where('company_id', $this->companyId)
-                ->first();
-
-            if (!$customer) {
+            if (!$this->isCustomerAlreadyExists($phone)) {
                 // Customer NÃO existe - Disparar Job para responder com link genérico de cadastro
                 $this->logError($errorLogService, ['message' => 'customer não encontrado, enviando mensagem genérica phone: ' . $phone . ' company_id: ' . $this->companyId]);
 
-                $genericMessage = "Olá! Bem-vindo ao nosso sistema. Para continuar, acesse nosso link de cadastro: " .
-                    route('schedule-link.index', ['company' => $this->companyId]);
+                $genericMessage = $this->getGenericMessage($this->companyId);
 
                 WhatsappSendGenericMessageJob::dispatch(
                     $phone,
@@ -96,41 +95,25 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
                 return;
             }
 
-            // Customer JÁ existe - Verificar se já existe um ChatSession para este Customer
-            $chatSession = $chatSessionRepository->findActiveChatSession([
-                'customer_id' => $customer->id,
-                'user_id' => null // ChatSession do WhatsApp não tem user_id
-            ]);
+            $customer = $this->getCustomer($phone);
+            $chatSession = $this->getChatSession($customer->id, $chatSessionRepository);
 
             if (!$chatSession) {
                 // NÃO existe ChatSession - Criar ChatSession
                 $this->logError($errorLogService, ['message' => 'criando nova ChatSession para customer customer_id: ' . $customer->id . ' company_id: ' . $this->companyId]);
 
-                $chatSession = $chatSessionRepository->store([
-                    'company_id' => $this->companyId,
-                    'unit_id' => $this->unitId,
-                    'customer_id' => $customer->id,
-                    'user_id' => null
-                ]);
+                $chatSession = $this->storeChatSession($customer->id, $chatSessionRepository);
+                $this->logError($errorLogService, ['message' => 'ChatSession criada com sucesso, chat_session_id: ' . $chatSession->id]);
             }
 
-            // Salvar Message vinculando ao ChatSession
-            $this->logError($errorLogService, ['message' => 'salvando mensagem do WhatsApp chat_session_id: ' . $chatSession->id . ' customer_id: ' . $customer->id . ' content: ' . $messageContent]);
-
-            $messageRepository->store([
-                'company_id' => $this->companyId,
-                'unit_id' => $this->unitId,
-                'customer_id' => $customer->id,
-                'user_id' => null,
-                'chat_session_id' => $chatSession->id,
-                'content' => $messageContent,
-                'type' => 'text',
-                'whatsapp_message_id' => $messageId
-            ]);
+            // Salvar Message
+            $this->storeMessage($customer->id, $chatSession->id, $messageContent, $messageId, $messageRepository);
+            $this->logError($errorLogService, ['message' => 'mensagem recebida via webhook salva com sucesso, message_id: ' . $messageId]);
 
             // Disparar Job para responder com link personalizado do Customer
             $this->logError($errorLogService, ['message' => 'enviando mensagem personalizada para customer customer_id: ' . $customer->id . ' phone: ' . $phone]);
 
+            // TO DO: pegar a mensagem personalizada do Customer
             $personalizedMessage = "Olá {$customer->name}! Obrigado por entrar em contato. " .
                 "Para agendar um horário, acesse: " .
                 route('schedule-link.show', ['company' => $this->companyId, 'unit' => $this->unitId]);
@@ -158,37 +141,44 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
     private function extractMessageData(ErrorLogService $errorLogService): ?array
     {
         try {
-            $entry = $this->webhookData['entry'][0] ?? null;
-            if (!$entry) {
-                return null;
-            }
+            $this->logError($errorLogService, ['message' => 'DEBUG: Iniciando extração de dados do webhook']);
 
-            $changes = $entry['changes'][0] ?? null;
-            if (!$changes) {
-                return null;
-            }
+            // Verificar se é o formato direto (value no nível raiz)
+            $value = $this->webhookData['value'] ?? null;
 
-            $value = $changes['value'] ?? null;
-            if (!$value) {
-                return null;
-            }
+            $this->logError($errorLogService, ['message' => 'DEBUG: Value encontrado, verificando messages e contacts']);
 
             $messages = $value['messages'][0] ?? null;
             if (!$messages) {
+                $this->logError($errorLogService, ['message' => 'DEBUG: Messages não encontrado']);
                 return null;
             }
 
             $contacts = $value['contacts'][0] ?? null;
             if (!$contacts) {
+                $this->logError($errorLogService, ['message' => 'DEBUG: Contacts não encontrado']);
                 return null;
             }
 
-            return [
-                'phone' => $messages['from'],
+            $metadata = $value['metadata'] ?? null;
+            if (!$metadata) {
+                $this->logError($errorLogService, ['message' => 'DEBUG: Metadata não encontrado']);
+                return null;
+            }
+
+            $this->logError($errorLogService, ['message' => 'DEBUG: Extraindo dados - phone: ' . ($metadata['phone_number_id'] ?? 'N/A') . ', message_id: ' . ($messages['id'] ?? 'N/A')]);
+
+            $result = [
+                'whatsapp_phone_number_id' => $metadata['phone_number_id'],
+                'phone' => $metadata['display_phone_number'],
                 'message_id' => $messages['id'],
                 'content' => $messages['text']['body'] ?? '',
                 'customer_name' => $contacts['profile']['name'] ?? 'Cliente'
             ];
+
+            $this->logError($errorLogService, ['message' => 'DEBUG: Dados extraídos com sucesso: ' . json_encode($result)]);
+
+            return $result;
 
         } catch (\Exception $e) {
             $this->logError($errorLogService, ['message' => 'erro ao extrair dados da mensagem error: ' . $e->getMessage() . ' webhook_data: ' . json_encode($this->webhookData)]);
@@ -205,6 +195,69 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
         return Message::where('whatsapp_message_id', $messageId)
             ->where('company_id', $this->companyId)
             ->exists();
+    }
+
+    /**
+     * Verificar se o Customer já existe na base para esta company
+     */
+    private function isCustomerAlreadyExists(string $phone): bool
+    {
+        return Customer::where('phone', PhoneHelper::unformat($phone))
+            ->where('company_id', $this->companyId)
+            ->exists();
+    }
+
+    private function getGenericMessage($companyId): string
+    {
+        $automatedMessage = AutomatedMessage::where('company_id', $companyId)
+            ->where('type', AutomatedMessageTypeEnum::WELCOME_MESSAGE->value)
+            ->first();
+
+        if (!$automatedMessage) {
+            return "Olá! Bem-vindo ao nosso sistema. Para continuar, acesse nosso link de cadastro: " .
+                route('schedule-link.index', ['company' => $this->companyId]);
+        }
+
+        return $automatedMessage->content;
+    }
+
+    private function getCustomer(string $phone): Customer
+    {
+        return Customer::where('phone', PhoneHelper::unformat($phone))
+            ->where('company_id', $this->companyId)
+            ->first();
+    }
+
+    private function getChatSession(int $customerId, ChatSessionRepository $chatSessionRepository): ChatSession
+    {
+        return $chatSessionRepository->findActiveChatSession([
+            'customer_id' => $customerId,
+            'company_id' => $this->companyId,
+            'unit_id' => $this->unitId
+        ]);
+    }
+
+    private function storeChatSession(int $customerId, ChatSessionRepository $chatSessionRepository): ChatSession
+    {
+        return $chatSessionRepository->store([
+            'customer_id' => $customerId,
+            'company_id' => $this->companyId,
+            'unit_id' => $this->unitId
+        ]);
+    }
+
+    private function storeMessage(int $customerId, int $chatSessionId, string $messageContent, string $messageId, MessageRepository $messageRepository): Message
+    {
+        return $messageRepository->store([
+            'company_id' => $this->companyId,
+            'unit_id' => $this->unitId,
+            'customer_id' => $customerId,
+            'user_id' => null,
+            'chat_session_id' => $chatSessionId,
+            'content' => $messageContent,
+            'type' => 'text',
+            'whatsapp_message_id' => $messageId
+        ]);
     }
 
     /**

@@ -27,9 +27,6 @@ class WhatsAppService
         try {
             // Get company settings
             $companySettings = $this->getCompanySettings($companyId);
-            if (!$companySettings) {
-                throw new Exception("Company settings not found for company ID: {$companyId}");
-            }
 
             // Validate WhatsApp configuration
             $this->validateWhatsAppConfig($companySettings);
@@ -41,9 +38,12 @@ class WhatsAppService
             $messageData = [
                 'messaging_product' => 'whatsapp',
                 'to' => $formattedPhone,
-                'type' => 'text',
-                'text' => [
-                    'body' => $message
+                'type' => 'template',
+                'template' => [
+                    'name' => 'hello_world',
+                    'language' => [
+                        'code' => 'en_US'
+                    ]
                 ]
             ];
 

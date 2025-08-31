@@ -50,7 +50,7 @@ class WhatsappWebhookController extends Controller
     public function __invoke(Request $request, Company $company, Unit $unit): JsonResponse
     {
         try {
-            $this->logError(['message' => 'recebido mensagem no webhook company: ' . $company->id . ' unit: ' . $unit->id . ' ' . json_encode($request->all())]);
+            $this->logError(['message' => 'Controller: recebido mensagem no webhook company: ' . $company->id . ' unit: ' . $unit->id . ' ' . json_encode($request->all())]);
             WhatsappWebhookProcessReceivedMessageJob::dispatch($request->all(), $company->id, $unit->id);
 
             return response()->json(['status' => 'ok']);
