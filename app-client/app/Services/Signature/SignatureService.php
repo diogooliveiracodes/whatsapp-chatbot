@@ -92,7 +92,7 @@ class SignatureService
                 'amount' => $signature->plan->price,
                 'expires_at' => now()->addDays(1),
                 'status' => PaymentStatusEnum::PENDING->value,
-                'gateway' => PaymentGatewayEnum::ASSAS->value,
+                'gateway' => PaymentGatewayEnum::ASAAS->value,
                 'service' => PaymentServiceEnum::SIGNATURE->value,
                 'payment_method' => PaymentMethodEnum::PIX->value,
             ]);
