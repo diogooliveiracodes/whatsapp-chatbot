@@ -21,7 +21,9 @@ class Customer extends Model
         'user_id',
         'unit_id',
         'name',
-        'phone'
+        'phone',
+        'whatsapp_id',
+        'whatsapp_phone_number_id'
     ];
 
     /**

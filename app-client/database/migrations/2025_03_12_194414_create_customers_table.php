@@ -18,6 +18,8 @@ return new class extends Migration {
             $table->foreignId('unit_id')->constrained('units');
             $table->string('name', 120);
             $table->string('phone', 20)->nullable();
+            $table->string('whatsapp_id', 50)->nullable();
+            $table->string('whatsapp_phone_number_id', 50)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
