@@ -29,6 +29,11 @@ Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index'])->name('
 // Public schedule link (no auth)
 Route::prefix('{company}/schedule-link')->group(function () {
     Route::get('/', [ScheduleLinkController::class, 'index'])->name('schedule-link.index');
+
+    // Payment routes for schedules (must come before {unit} routes)
+    Route::post('/schedule/{schedule}/generate-pix', [ScheduleLinkController::class, 'generatePayment'])->name('schedule-link.generate-pix');
+    Route::post('/schedule/{schedule}/get-pix-code', [ScheduleLinkController::class, 'getPixCode'])->name('schedule-link.get-pix-code');
+
     Route::get('/{unit}', [ScheduleLinkController::class, 'show'])->name('schedule-link.show');
     Route::get('/{unit}/week-days', [ScheduleLinkController::class, 'weekDays'])->name('schedule-link.week-days');
     Route::get('/{unit}/available-times', [ScheduleLinkController::class, 'availableTimes'])->name('schedule-link.available-times');
