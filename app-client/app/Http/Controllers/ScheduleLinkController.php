@@ -275,7 +275,7 @@ class ScheduleLinkController extends Controller
     /**
      * Generate PIX payment for schedule
      */
-    public function generatePayment(Company $company, Schedule $schedule): JsonResponse
+    public function generatePayment(Company $company, Schedule $schedule, Request $request): JsonResponse
     {
         try {
             // Ensure the schedule belongs to the specified company
@@ -296,21 +296,24 @@ class ScheduleLinkController extends Controller
                 $schedule->load('customer');
             }
 
+            // Update customer document_number if provided and not already set
+            $documentNumber = $request->input('document_number');
+            if (!empty($documentNumber) && empty($schedule->customer->document_number)) {
+                $schedule->customer->update(['document_number' => $documentNumber]);
+                // Reload the customer to get the updated data
+                $schedule->load('customer');
+            }
+
             // Check if customer exists in Asaas
             $customerExists = $this->asaasCustomerService->customerExists([
                 'type' => AsaasCustomerTypeEnum::CUSTOMER->value,
                 'customer_id' => $schedule->customer_id,
             ]);
 
-            $this->errorLogService->logError(new \Exception('Customer exists: ' . $customerExists), ['action' => 'generatePayment', 'schedule_id' => $schedule->id]);
-
             if (!$customerExists) {
-                // For schedule payments, we'll use the company's document as the customer document
-                // since customers don't have document_number in the database
-                $customerDocument = $company->document_number;
+                $customerDocument = $schedule->customer->document_number;
                 if (empty($customerDocument)) {
-                    // Generate a temporary CPF for testing (in production, this should be handled differently)
-                    $customerDocument = '000.000.000-00';
+                    throw new \Exception('Customer document number not found');
                 }
 
                 $asaasCustomer = $this->asaasCustomerService->create([
@@ -331,6 +334,8 @@ class ScheduleLinkController extends Controller
             }
 
             $asaasCustomer = $this->asaasCustomerService->findByCustomerId($schedule->customer_id);
+
+            $this->errorLogService->logError(new \Exception('ASAAS CUSTOMER: ' . json_encode($asaasCustomer)), ['action' => 'generatePayment', 'schedule_id' => $schedule->id]);
 
             $response = $this->schedulePaymentService->generateSchedulePayment(
                 $schedule,

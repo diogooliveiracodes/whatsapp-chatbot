@@ -36,13 +36,17 @@ class SchedulePaymentService
             // Check if there's already a pending payment for this schedule
             $existingPayment = $this->findPendingPaymentForSchedule($schedule);
 
-            if ($existingPayment) {
+            if ($existingPayment && $existingPayment->gateway_payment_id) {
+                // If payment exists and has gateway_payment_id, return it
                 return [
                     'id' => $existingPayment->gateway_payment_id,
                     'status' => 'PENDING',
                     'existing_payment' => true,
                     'payment_id' => $existingPayment->id
                 ];
+            } elseif ($existingPayment && !$existingPayment->gateway_payment_id) {
+                // If payment exists but doesn't have gateway_payment_id, delete it and create a new one
+                $existingPayment->update(['status' => PaymentStatusEnum::EXPIRED->value]);
             }
 
             // Load the necessary relationships if not already loaded
@@ -53,16 +57,9 @@ class SchedulePaymentService
                 $schedule->load('unit');
             }
 
-            // Validate service price
-            $servicePrice = $schedule->unit_service_type->price ?? 0;
 
-            // Log for debugging
-            $this->errorLogService->logError(new \Exception('Service price debug: ' . $servicePrice), [
-                'action' => 'generateSchedulePayment',
-                'schedule_id' => $schedule->id,
-                'unit_service_type_id' => $schedule->unit_service_type_id,
-                'service_price' => $servicePrice
-            ]);
+            // Validate service price
+            $servicePrice = $schedule->unitServiceType->price ?? 0;
 
             if ($servicePrice <= 0) {
                 throw new \Exception('O serviço selecionado não possui preço válido para pagamento. Preço atual: ' . $servicePrice);
@@ -87,9 +84,24 @@ class SchedulePaymentService
             // Create payment in Asaas
             $asaasResponse = $this->asaasPaymentService->createPixPayment($payment, $asaasCustomer);
 
+            // Log Asaas response for debugging
+            $this->errorLogService->logError(new \Exception('Asaas response: ' . json_encode($asaasResponse)), [
+                'action' => 'generateSchedulePayment',
+                'schedule_id' => $schedule->id,
+                'payment_id' => $payment->id
+            ]);
+
             // Save Asaas payment ID
             if (isset($asaasResponse['id'])) {
                 $payment->update(['gateway_payment_id' => $asaasResponse['id']]);
+            } else {
+                // Log error if no ID in response
+                $this->errorLogService->logError(new \Exception('No payment ID in Asaas response'), [
+                    'action' => 'generateSchedulePayment',
+                    'schedule_id' => $schedule->id,
+                    'payment_id' => $payment->id,
+                    'asaas_response' => $asaasResponse
+                ]);
             }
 
             return $asaasResponse;
