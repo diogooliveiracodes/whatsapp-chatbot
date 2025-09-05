@@ -12,6 +12,26 @@ return [
     'success_title' => 'Appointment scheduled!',
     'success_message' => 'Your appointment has been created successfully. You may receive updates on WhatsApp if this unit uses that feature.',
     'book_another' => 'Book another time',
+
+    // Payment section
+    'payment_section_title' => 'Appointment Payment',
+    'payment_amount' => '$:amount',
+    'generate_pix' => 'Generate PIX',
+    'generating_pix' => 'Generating PIX code...',
+    'pix_code_label' => 'PIX Code (Copy and Paste)',
+    'copy_pix' => 'Copy',
+    'pix_instructions' => 'Copy the PIX code and paste it into your banking app to make the payment.',
+
+    // Messages
+    'schedule_not_found' => 'Schedule not found.',
+    'pix_generation_error' => 'Error generating PIX code. Please try again.',
+    'pix_generated_success' => 'PIX code generated successfully!',
+    'pix_code_not_found' => 'PIX code not found in response.',
+    'pix_code_error' => 'Error getting PIX code.',
+    'pix_copied_success' => 'PIX code copied to clipboard!',
+    'pix_copy_error' => 'Error copying PIX code.',
+    'payment_id_not_found' => 'Payment ID not found.',
+
     'messages' => [
         'created' => 'Schedule created successfully.',
         'unexpected_error' => 'An unexpected error occurred while creating the schedule.',
