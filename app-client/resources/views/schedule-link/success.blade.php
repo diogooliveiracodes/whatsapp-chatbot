@@ -1,4 +1,8 @@
 <x-guest-layout>
+    @section('head')
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    @endsection
+
     <div class="py-10">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
@@ -92,6 +96,21 @@
 
                                 <!-- PIX Payment Section -->
                                 <div id="pixPaymentSection" class="space-y-4">
+                                    <!-- Document Number Field (only if customer doesn't have it) -->
+                                    @if(empty($schedule['customer']['document_number']))
+                                        <div id="documentNumberSection" class="space-y-2">
+                                            <label for="document_number" class="block text-gray-300 text-sm font-medium">
+                                                {{ __('schedule_link.document_number') }} <span class="text-red-400">*</span>
+                                            </label>
+                                            <input type="text" id="document_number" name="document_number"
+                                                placeholder="000.000.000-00 ou 00.000.000/0000-00"
+                                                class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                            <div class="text-xs text-gray-400">
+                                                {{ __('schedule_link.document_required_for_pix') }}
+                                            </div>
+                                        </div>
+                                    @endif
+
                                     <!-- Generate PIX Button -->
                                     <div id="pixGenerateButton" class="text-center">
                                         <button onclick="generatePixCode()"
@@ -160,6 +179,14 @@
     let currentPaymentId = null;
 
     function generatePixCode() {
+        // Check if document_number is required and validate it
+        const documentNumberInput = document.getElementById('document_number');
+        if (documentNumberInput && !documentNumberInput.value.trim()) {
+            showNotification('{{ __('schedule_link.document_number_required') }}', 'error');
+            documentNumberInput.focus();
+            return;
+        }
+
         // Show loading state
         document.getElementById('pixGenerateButton').classList.add('hidden');
         document.getElementById('pixLoading').classList.remove('hidden');
@@ -178,6 +205,12 @@
             return;
         }
 
+        // Prepare request data
+        const requestData = {};
+        if (documentNumberInput && documentNumberInput.value.trim()) {
+            requestData.document_number = documentNumberInput.value.trim();
+        }
+
         // Make request to generate PIX
         fetch(`/${companyId}/schedule-link/schedule/${scheduleId}/generate-pix`, {
             method: 'POST',
@@ -185,7 +218,8 @@
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': token,
                 'Accept': 'application/json'
-            }
+            },
+            body: JSON.stringify(requestData)
         })
         .then(response => response.json())
         .then(data => {
@@ -241,6 +275,13 @@
                     document.getElementById('pixCode').value = pixCode;
                     document.getElementById('pixLoading').classList.add('hidden');
                     document.getElementById('pixContent').classList.remove('hidden');
+
+                    // Hide document number section after successful PIX generation
+                    const documentSection = document.getElementById('documentNumberSection');
+                    if (documentSection) {
+                        documentSection.style.display = 'none';
+                    }
+
                     showNotification('{{ __('schedule_link.pix_generated_success') }}', 'success');
                 } else {
                     showNotification('{{ __('schedule_link.pix_code_not_found') }}', 'error');

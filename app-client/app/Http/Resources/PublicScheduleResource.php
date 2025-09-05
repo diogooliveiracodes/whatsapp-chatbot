@@ -34,6 +34,7 @@ class PublicScheduleResource extends JsonResource
                 'id' => $this->customer->id,
                 'name' => $this->customer->name,
                 'phone' => $this->customer->phone,
+                'document_number' => $this->customer->document_number,
             ],
             'user' => [
                 'id' => $this->user->id,
