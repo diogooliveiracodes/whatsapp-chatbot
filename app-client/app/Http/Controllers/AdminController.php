@@ -13,6 +13,7 @@ use App\Services\Unit\UnitService;
 use App\Services\User\UserService;
 use App\Services\Plan\PlanService;
 use App\Services\CompanySettings\CompanySettingsService;
+use App\Services\Dashboard\AdminDashboardMetricsService;
 use App\Models\Company;
 use Illuminate\Http\RedirectResponse;
 use App\Enum\DocumentTypeEnum;
@@ -50,7 +51,8 @@ class AdminController extends Controller
         protected DeactivateCompanyService $deactivateCompanyService,
         protected ErrorLogService $errorLogService,
         protected PlanService $planService,
-        protected CompanySettingsService $companySettingsService
+        protected CompanySettingsService $companySettingsService,
+        protected AdminDashboardMetricsService $adminMetricsService
     ) {}
 
     /**
@@ -61,11 +63,12 @@ class AdminController extends Controller
      *
      * @return View The admin dashboard view with users data
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = $this->userService->getUsers();
+        $period = $request->get('period', '1_month');
+        $metrics = $this->adminMetricsService->getMetricsForAdmin($period);
 
-        return view('admin.index', ['users' => $users]);
+        return view('admin.index', compact('metrics'));
     }
 
     /**

@@ -18,4 +18,15 @@ return [
     'companies' => 'Empresas',
     'plans' => 'Planos',
     'logs' => 'Logs',
+
+    // Admin Navigation
+    'admin_panel' => 'Painel Administrativo',
+    'whatsapp_chatbot' => 'WhatsApp Chatbot',
+    'management' => 'Gestão',
+    'system' => 'Sistema',
+    'quick_actions' => 'Ações Rápidas',
+    'new_user' => 'Novo Usuário',
+    'system_logs' => 'Logs do Sistema',
+    'administrator' => 'Administrador',
+    'settings' => 'Configurações',
 ];
