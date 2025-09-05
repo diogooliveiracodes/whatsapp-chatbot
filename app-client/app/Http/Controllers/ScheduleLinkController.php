@@ -8,11 +8,18 @@ use App\Exceptions\Schedule\ScheduleBlockedException;
 use App\Exceptions\Schedule\ScheduleConflictException;
 use App\Models\Customer;
 use App\Models\Unit;
+use App\Models\Schedule;
+use App\Models\Company;
 use App\Repositories\ScheduleRepository;
 use App\Services\Schedule\ScheduleBlockService;
 use App\Services\Schedule\ScheduleTimeService;
+use App\Services\Schedule\SchedulePaymentService;
+use App\Services\Payment\AsaasCustomerService;
+use App\Services\ErrorLog\ErrorLogService;
 use App\Services\Schedule\Validators\WorkingDaysValidator;
 use App\Services\Schedule\Validators\WorkingHoursValidator;
+use App\Enum\AsaasCustomerTypeEnum;
+use App\Http\Resources\PublicScheduleResource;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -28,6 +35,9 @@ class ScheduleLinkController extends Controller
         private readonly ScheduleBlockService $scheduleBlockService,
         private readonly WorkingDaysValidator $workingDaysValidator,
         private readonly WorkingHoursValidator $workingHoursValidator,
+        private readonly SchedulePaymentService $schedulePaymentService,
+        private readonly AsaasCustomerService $asaasCustomerService,
+        private readonly ErrorLogService $errorLogService,
     ) {}
 
     /**
@@ -225,7 +235,7 @@ class ScheduleLinkController extends Controller
             return redirect()
                 ->route('schedule-link.success', ['company' => $company, 'unit' => $unit->id, 'schedule' => $schedule->id])
                 ->with('status', Lang::get('schedule_link.messages.created'))
-                ->with('schedule_data', (new \App\Http\Resources\ScheduleResource($schedule))->toArray(request()));
+                ->with('schedule_data', (new PublicScheduleResource($schedule))->toArray(request()));
         } catch (OutsideWorkingDaysException $e) {
             return back()->withErrors(['schedule_date' => Lang::get('schedules.messages.outside_working_days')])->withInput();
         } catch (OutsideWorkingHoursException $e) {
@@ -260,6 +270,117 @@ class ScheduleLinkController extends Controller
             'company' => $company,
             'schedule' => $schedule,
         ]);
+    }
+
+    /**
+     * Generate PIX payment for schedule
+     */
+    public function generatePayment(Company $company, Schedule $schedule): JsonResponse
+    {
+        try {
+            // Ensure the schedule belongs to the specified company
+            if ($schedule->unit->company_id != $company->id) {
+                return response()->json(['success' => false, 'error' => 'Agendamento não encontrado'], 404);
+            }
+
+            $company->load('companySettings');
+            if (!$company->companySettings || !$company->companySettings->gateway_api_key) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Configurações de pagamento não encontradas para esta empresa'
+                ], 400);
+            }
+
+            // Load the customer relationship if not already loaded
+            if (!$schedule->relationLoaded('customer')) {
+                $schedule->load('customer');
+            }
+
+            // Check if customer exists in Asaas
+            $customerExists = $this->asaasCustomerService->customerExists([
+                'type' => AsaasCustomerTypeEnum::CUSTOMER->value,
+                'customer_id' => $schedule->customer_id,
+            ]);
+
+            $this->errorLogService->logError(new \Exception('Customer exists: ' . $customerExists), ['action' => 'generatePayment', 'schedule_id' => $schedule->id]);
+
+            if (!$customerExists) {
+                // For schedule payments, we'll use the company's document as the customer document
+                // since customers don't have document_number in the database
+                $customerDocument = $company->document_number;
+                if (empty($customerDocument)) {
+                    // Generate a temporary CPF for testing (in production, this should be handled differently)
+                    $customerDocument = '000.000.000-00';
+                }
+
+                $asaasCustomer = $this->asaasCustomerService->create([
+                    'type' => AsaasCustomerTypeEnum::CUSTOMER->value,
+                    'customer_id' => $schedule->customer_id,
+                    'name' => $schedule->customer->name,
+                    'cpf_cnpj' => $customerDocument,
+                ]);
+
+                $integrationResult = $this->asaasCustomerService->integrateCustomerToAsaas($asaasCustomer, $company->companySettings->gateway_api_key);
+
+                if ($integrationResult !== true) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Erro ao integrar cliente com Asaas: ' . $integrationResult
+                    ], 500);
+                }
+            }
+
+            $asaasCustomer = $this->asaasCustomerService->findByCustomerId($schedule->customer_id);
+
+            $response = $this->schedulePaymentService->generateSchedulePayment(
+                $schedule,
+                $asaasCustomer,
+                $company->companySettings->gateway_api_key
+            );
+
+            return response()->json(['success' => true, 'data' => $response]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, ['action' => 'generatePayment', 'schedule_id' => $schedule->id]);
+
+            return response()->json(['success' => false, 'error' => 'Erro ao gerar pagamento'], 500);
+        }
+    }
+
+    /**
+     * Get PIX code for schedule payment
+     */
+    public function getPixCode(Company $company, Schedule $schedule, Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'payment_id' => 'required|string'
+            ]);
+
+            // Ensure the schedule belongs to the specified company
+            if ($schedule->unit->company_id != $company->id) {
+                return response()->json(['success' => false, 'error' => 'Agendamento não encontrado'], 404);
+            }
+
+            $company->load('companySettings');
+            if (!$company->companySettings || !$company->companySettings->gateway_api_key) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Configurações de pagamento não encontradas para esta empresa'
+                ], 400);
+            }
+
+            $response = $this->schedulePaymentService->getSchedulePixCode(
+                $schedule,
+                $request->payment_id,
+                $company->companySettings->gateway_api_key
+            );
+
+            return response()->json(['success' => true, 'data' => $response]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, ['action' => 'getPixCode', 'schedule_id' => $schedule->id, 'payment_id' => $request->payment_id ?? null]);
+
+            return response()->json(['success' => false, 'error' => 'Erro ao obter código PIX'], 500);
+        }
     }
 
     /**
