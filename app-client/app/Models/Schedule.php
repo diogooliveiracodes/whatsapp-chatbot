@@ -54,7 +54,7 @@ class Schedule extends Model
 
     public function unitServiceType(): BelongsTo
     {
-        return $this->belongsTo(UnitServiceType::class);
+        return $this->belongsTo(UnitServiceType::class, 'unit_service_type_id');
     }
 
     public function payments(): BelongsToMany
