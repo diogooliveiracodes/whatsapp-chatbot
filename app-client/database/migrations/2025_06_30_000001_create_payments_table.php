@@ -21,6 +21,7 @@ return new class extends Migration {
                 ->nullable()
                 ->constrained('schedules');
             $table->foreignId('plan_id')
+                ->nullable()
                 ->constrained('plans');
             $table->foreignId('customer_id')
                 ->nullable()
