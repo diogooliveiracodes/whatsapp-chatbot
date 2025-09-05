@@ -29,5 +29,13 @@ Route::middleware('admin')->group(function () {
         });
 
         Route::get('/logs', [AdminController::class, 'logs'])->name('admin.logs');
+
+        // Admin Profile Routes
+        Route::group(['prefix' => 'profile'], function () {
+            Route::get('/edit', [AdminController::class, 'editProfile'])->name('admin.profile.edit');
+            Route::patch('/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+            Route::put('/password', [AdminController::class, 'updatePassword'])->name('admin.password.update');
+            Route::delete('/destroy', [AdminController::class, 'destroyProfile'])->name('admin.profile.destroy');
+        });
     });
 });

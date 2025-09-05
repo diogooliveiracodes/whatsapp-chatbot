@@ -123,7 +123,7 @@
                 x-transition:leave-end="transform opacity-0 scale-95" @click.away="userDropdownOpen = false"
                 class="absolute bottom-full left-0 right-0 mb-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
 
-                <a href="{{ route('profile.edit') }}"
+                <a href="{{ route('admin.profile.edit') }}"
                     class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors first:rounded-t-lg last:rounded-b-lg">
                     <svg class="mr-3 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

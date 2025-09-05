@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AdminStoreUserRequest;
 use App\Models\Unit;
+use App\Models\User;
 use App\Models\UserRole;
 use App\Services\Admin\CreateUserService;
 use App\Services\Admin\DeactivateCompanyService;
@@ -22,6 +23,8 @@ use App\Helpers\CpfHelper;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Http\Requests\UpdateCompanySettingsRequest;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Admin Controller
@@ -256,5 +259,83 @@ class AdminController extends Controller
         $logs = $this->errorLogService->getLogs();
 
         return view('admin.logs', ['logs' => $logs]);
+    }
+
+    /**
+     * Display the admin profile edit page.
+     *
+     * @return View The admin profile edit view
+     */
+    public function editProfile(): View
+    {
+        return view('admin.profile.edit', [
+            'user' => Auth::user()
+        ]);
+    }
+
+    /**
+     * Update the admin profile information.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function updateProfile(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
+        ]);
+
+        /** @var User $user */
+        $user = Auth::user();
+        $user->update($request->only('name', 'email'));
+
+        return redirect()->route('admin.profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Update the admin password.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'password' => ['required', 'confirmed', 'min:8'],
+        ]);
+
+        /** @var User $user */
+        $user = Auth::user();
+        $user->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return redirect()->route('admin.profile.edit')->with('status', 'password-updated');
+    }
+
+    /**
+     * Delete the admin profile.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function destroyProfile(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'password' => ['required', 'current_password'],
+        ]);
+
+        $user = $request->user();
+
+        Auth::logout();
+
+        $user->delete();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }
