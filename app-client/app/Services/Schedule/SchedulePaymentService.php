@@ -168,6 +168,60 @@ class SchedulePaymentService
     }
 
     /**
+     * Check payment status for schedule
+     */
+    public function checkSchedulePaymentStatus(Schedule $schedule, string $paymentId, string $companyApiKey): array
+    {
+        try {
+            // Set dynamic API key for this company
+            $this->asaasPaymentService->setApiKey($companyApiKey);
+
+            // Get payment status from Asaas
+            $asaasResponse = $this->asaasPaymentService->checkPaymentStatus($paymentId);
+            $asaasStatus = $asaasResponse['status'] ?? 'PENDING';
+
+            // Find the payment in our database
+            $payment = $this->paymentService->findByAsaasPaymentId($paymentId);
+
+            if (!$payment) {
+                throw new \Exception('Payment not found in database');
+            }
+
+            // Update payment status based on Asaas response
+            $internalStatus = $this->mapAsaasStatusToInternal($asaasStatus);
+
+            if ($payment->status !== $internalStatus) {
+                $payment->update(['status' => $internalStatus]);
+            }
+
+            return [
+                'status' => $asaasStatus,
+                'internal_status' => $internalStatus,
+                'payment_id' => $payment->id,
+                'asaas_payment_id' => $paymentId
+            ];
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, ['action' => 'checkSchedulePaymentStatus', 'schedule_id' => $schedule->id, 'payment_id' => $paymentId]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Map Asaas status to internal status
+     */
+    private function mapAsaasStatusToInternal(string $asaasStatus): int
+    {
+        return match (strtoupper($asaasStatus)) {
+            'CONFIRMED', 'RECEIVED' => PaymentStatusEnum::PAID->value,
+            'PENDING' => PaymentStatusEnum::PENDING->value,
+            'REJECTED', 'CANCELLED' => PaymentStatusEnum::REJECTED->value,
+            'OVERDUE' => PaymentStatusEnum::OVERDUE->value,
+            'EXPIRED' => PaymentStatusEnum::EXPIRED->value,
+            default => PaymentStatusEnum::PENDING->value,
+        };
+    }
+
+    /**
      * Save PIX code to payment record
      */
     private function savePixCodeToPayment(string $asaasPaymentId, string $pixCode): void

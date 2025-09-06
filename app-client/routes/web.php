@@ -33,6 +33,7 @@ Route::prefix('{company}/schedule-link')->group(function () {
     // Payment routes for schedules (must come before {unit} routes)
     Route::post('/schedule/{schedule}/generate-pix', [ScheduleLinkController::class, 'generatePayment'])->name('schedule-link.generate-pix');
     Route::post('/schedule/{schedule}/get-pix-code', [ScheduleLinkController::class, 'getPixCode'])->name('schedule-link.get-pix-code');
+    Route::post('/schedule/{schedule}/check-payment-status', [ScheduleLinkController::class, 'checkPaymentStatus'])->name('schedule-link.check-payment-status');
 
     Route::get('/{unit}', [ScheduleLinkController::class, 'show'])->name('schedule-link.show');
     Route::get('/{unit}/week-days', [ScheduleLinkController::class, 'weekDays'])->name('schedule-link.week-days');

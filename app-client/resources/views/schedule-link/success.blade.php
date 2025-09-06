@@ -153,6 +153,45 @@
                                         <div class="text-center text-sm text-gray-400">
                                             {{ __('schedule_link.pix_instructions') }}
                                         </div>
+
+                                        <!-- Status do Pagamento -->
+                                        <div class="mt-6">
+                                            <div id="paymentStatusContainer"
+                                                class="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4">
+                                                <div class="flex">
+                                                    <div class="flex-shrink-0">
+                                                        <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20"
+                                                            fill="currentColor">
+                                                            <path fill-rule="evenodd"
+                                                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                                                clip-rule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                    <div class="ml-3">
+                                                        <h3 class="text-sm font-medium text-yellow-300">
+                                                            {{ __('schedule_link.payment_pending') }}
+                                                        </h3>
+                                                        <div class="mt-2 text-sm text-yellow-200">
+                                                            <p>{{ __('schedule_link.payment_pending_message') }}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Botão de Verificar Status -->
+                                        <div class="mt-4 text-center">
+                                            <button id="checkStatusButton" onclick="checkPaymentStatus()"
+                                                class="inline-flex items-center px-6 py-3 bg-blue-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                                                    </path>
+                                                </svg>
+                                                {{ __('schedule_link.check_payment_status') }}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -176,6 +215,15 @@
 </x-guest-layout>
 
 <script>
+    // Constantes do enum de status de pagamento
+    const PAYMENT_STATUS = {
+        PENDING: 1,
+        PAID: 2,
+        REJECTED: 3,
+        EXPIRED: 4,
+        OVERDUE: 5
+    };
+
     let currentPaymentId = null;
 
     function generatePixCode() {
@@ -341,11 +389,165 @@
         document.getElementById('pixContent').classList.add('hidden');
     }
 
+    function checkPaymentStatus() {
+        if (!currentPaymentId) {
+            showNotification('{{ __('schedule_link.payment_not_found') }}', 'error');
+            return;
+        }
+
+        // Desabilitar botão e mostrar loading
+        const checkButton = document.getElementById('checkStatusButton');
+        const originalText = checkButton.innerHTML;
+        checkButton.disabled = true;
+        checkButton.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Verificando...
+        `;
+
+        // Obter o token CSRF
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const scheduleId = {{ $schedule['id'] ?? 'null' }};
+        const companyId = {{ $company }};
+
+        if (!scheduleId) {
+            showNotification('{{ __('schedule_link.schedule_not_found') }}', 'error');
+            checkButton.disabled = false;
+            checkButton.innerHTML = originalText;
+            return;
+        }
+
+        // Fazer a requisição para verificar o status
+        fetch(`/${companyId}/schedule-link/schedule/${scheduleId}/check-payment-status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    payment_id: currentPaymentId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Restaurar botão
+                checkButton.disabled = false;
+                checkButton.innerHTML = originalText;
+
+                if (data.success && data.data) {
+                    const paymentData = data.data;
+                    updatePaymentStatus(paymentData.status, paymentData.internal_status);
+
+                    if (paymentData.status === 'CONFIRMED' || paymentData.status === 'RECEIVED' || paymentData.internal_status === PAYMENT_STATUS.PAID) {
+                        showNotification('{{ __('schedule_link.payment_confirmed') }}', 'success');
+
+
+                    } else if (paymentData.status === 'OVERDUE' || paymentData.internal_status === PAYMENT_STATUS.OVERDUE) {
+                        showNotification('{{ __('schedule_link.payment_overdue_message') }}', 'warning');
+                    } else if (paymentData.status === 'REJECTED' || paymentData.status === 'CANCELLED' || paymentData.internal_status === PAYMENT_STATUS.REJECTED) {
+                        showNotification('{{ __('schedule_link.payment_rejected_message') }}', 'error');
+                    } else {
+                        showNotification('{{ __('schedule_link.payment_still_pending') }}', 'info');
+                    }
+                } else {
+                    showNotification(data.message || 'Erro ao verificar status', 'error');
+                }
+            })
+            .catch(error => {
+                // Restaurar botão
+                checkButton.disabled = false;
+                checkButton.innerHTML = originalText;
+
+                showNotification('Erro ao verificar status do pagamento', 'error');
+            });
+    }
+
+    function updatePaymentStatus(asaasStatus, internalStatus) {
+        const statusContainer = document.getElementById('paymentStatusContainer');
+
+        // Mapear status para cores e mensagens
+        let statusConfig = {
+            bgColor: 'bg-yellow-900/20',
+            borderColor: 'border-yellow-700',
+            iconColor: 'text-yellow-400',
+            textColor: 'text-yellow-300',
+            messageColor: 'text-yellow-200',
+            title: '{{ __('schedule_link.payment_pending') }}',
+            message: '{{ __('schedule_link.payment_pending_message') }}',
+            icon: `<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />`
+        };
+
+        if (asaasStatus === 'CONFIRMED' || asaasStatus === 'RECEIVED' || internalStatus === PAYMENT_STATUS.PAID) {
+            statusConfig = {
+                bgColor: 'bg-green-900/20',
+                borderColor: 'border-green-700',
+                iconColor: 'text-green-400',
+                textColor: 'text-green-300',
+                messageColor: 'text-green-200',
+                title: '{{ __('schedule_link.payment_status_paid') }}',
+                message: '{{ __('schedule_link.payment_confirmed') }}',
+                icon: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />`
+            };
+        } else if (asaasStatus === 'REJECTED' || asaasStatus === 'CANCELLED' || internalStatus === PAYMENT_STATUS.REJECTED) {
+            statusConfig = {
+                bgColor: 'bg-red-900/20',
+                borderColor: 'border-red-700',
+                iconColor: 'text-red-400',
+                textColor: 'text-red-300',
+                messageColor: 'text-red-200',
+                title: '{{ __('schedule_link.payment_status_rejected') }}',
+                message: '{{ __('schedule_link.payment_rejected_message') }}',
+                icon: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />`
+            };
+        } else if (asaasStatus === 'OVERDUE' || internalStatus === PAYMENT_STATUS.OVERDUE) {
+            statusConfig = {
+                bgColor: 'bg-orange-900/20',
+                borderColor: 'border-orange-700',
+                iconColor: 'text-orange-400',
+                textColor: 'text-orange-300',
+                messageColor: 'text-orange-200',
+                title: '{{ __('schedule_link.payment_status_overdue') }}',
+                message: '{{ __('schedule_link.payment_overdue_message') }}',
+                icon: `<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />`
+            };
+        }
+
+        // Atualizar o container de status
+        statusContainer.className = `${statusConfig.bgColor} ${statusConfig.borderColor} rounded-lg p-4`;
+        statusContainer.innerHTML = `
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 ${statusConfig.iconColor}" viewBox="0 0 20 20" fill="currentColor">
+                        ${statusConfig.icon}
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium ${statusConfig.textColor}">
+                        ${statusConfig.title}
+                    </h3>
+                    <div class="mt-2 text-sm ${statusConfig.messageColor}">
+                        <p>${statusConfig.message}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     function showNotification(message, type) {
         // Create notification element
         const notification = document.createElement('div');
         notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white font-medium ${
-            type === 'success' ? 'bg-green-600' : 'bg-red-600'
+            type === 'success' ? 'bg-green-600' :
+            type === 'error' ? 'bg-red-600' :
+            type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600'
         }`;
         notification.textContent = message;
 

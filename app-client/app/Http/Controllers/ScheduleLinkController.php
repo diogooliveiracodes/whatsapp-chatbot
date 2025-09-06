@@ -389,6 +389,46 @@ class ScheduleLinkController extends Controller
     }
 
     /**
+     * Check payment status for schedule
+     */
+    public function checkPaymentStatus(Company $company, Schedule $schedule, Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'payment_id' => 'required|string'
+            ]);
+
+            // Ensure the schedule belongs to the specified company
+            if ($schedule->unit->company_id != $company->id) {
+                return response()->json(['success' => false, 'error' => 'Agendamento não encontrado'], 404);
+            }
+
+            $company->load('companySettings');
+            if (!$company->companySettings || !$company->companySettings->gateway_api_key) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Configurações de pagamento não encontradas para esta empresa'
+                ], 400);
+            }
+
+            $this->errorLogService->logError(new \Exception('CHECK PAYMENT STATUS: ' . $request->payment_id), ['action' => 'checkPaymentStatus', 'schedule_id' => $schedule->id, 'payment_id' => $request->payment_id ?? null]);
+
+
+            $response = $this->schedulePaymentService->checkSchedulePaymentStatus(
+                $schedule,
+                $request->payment_id,
+                $company->companySettings->gateway_api_key
+            );
+
+            return response()->json(['success' => true, 'data' => $response]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, ['action' => 'checkPaymentStatus', 'schedule_id' => $schedule->id, 'payment_id' => $request->payment_id ?? null]);
+
+            return response()->json(['success' => false, 'error' => 'Erro ao verificar status do pagamento'], 500);
+        }
+    }
+
+    /**
      * Helpers
      */
     private function getWeekDays(Unit $unit, string $weekStart): array
