@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,12 +10,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Schedule extends Model
 {
-    use HasFactory, SoftDeletes, HasUuids;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'schedules';
 
     protected $fillable = [
-        'id',
+        'uuid',
         'unit_id',
         'customer_id',
         'user_id',
@@ -27,8 +26,7 @@ class Schedule extends Model
         'notes',
         'unit_service_type_id',
         'is_confirmed',
-        'active',
-        'uuid'
+        'active'
     ];
 
     protected $casts = [

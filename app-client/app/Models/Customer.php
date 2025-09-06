@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Helpers\PhoneHelper;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,11 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Customer extends Model
 {
     /** @use HasFactory<\Database\Factories\CustomerFactory> */
-    use HasFactory, HasUuids;
+    use HasFactory;
 
     protected $table = 'customers';
 
     protected $fillable = [
+        'uuid',
         'active',
         'company_id',
         'user_id',
@@ -25,8 +25,7 @@ class Customer extends Model
         'phone',
         'document_number',
         'whatsapp_id',
-        'whatsapp_phone_number_id',
-        'uuid'
+        'whatsapp_phone_number_id'
     ];
 
     /**
