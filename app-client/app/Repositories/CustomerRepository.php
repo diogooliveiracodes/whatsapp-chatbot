@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CustomerRepository
 {
@@ -16,6 +17,7 @@ class CustomerRepository
 
     public function create(array $data): Customer
     {
+        $data['uuid'] = Str::uuid();
         return $this->model->create($data);
     }
 

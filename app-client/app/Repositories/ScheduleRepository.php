@@ -6,6 +6,7 @@ use App\Models\Schedule;
 use App\Services\Unit\UnitService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 class ScheduleRepository
 {
@@ -49,6 +50,7 @@ class ScheduleRepository
 
     public function create(array $data): Schedule
     {
+        $data['uuid'] = Str::uuid();
         $schedule = $this->model->create($data);
         return $schedule->load(['customer', 'user', 'unitServiceType', 'unit']);
     }
