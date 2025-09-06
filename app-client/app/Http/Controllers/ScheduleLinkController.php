@@ -233,7 +233,7 @@ class ScheduleLinkController extends Controller
             ]);
 
             return redirect()
-                ->route('schedule-link.success', ['company' => $company, 'unit' => $unit->id, 'schedule' => $schedule->uuid])
+                ->route('schedule-link.success', ['company' => $company, 'unit' => $unit->id, 'uuid' => $schedule->uuid])
                 ->with('status', Lang::get('schedule_link.messages.created'))
                 ->with('schedule_data', (new PublicScheduleResource($schedule))->toArray(request()));
         } catch (OutsideWorkingDaysException $e) {
@@ -245,7 +245,7 @@ class ScheduleLinkController extends Controller
         } catch (ScheduleBlockedException $e) {
             return back()->withErrors(['start_time' => Lang::get('schedules.messages.time_blocked')])->withInput();
         } catch (\Throwable $e) {
-            $this->errorLogService->logError(new \Exception('Aconteceu um erro ao criar o agendamento: ' . json_encode($e)), ['action' => 'store']);
+            $this->errorLogService->logError(new \Exception('Aconteceu um erro ao criar o agendamento: ' . json_encode($e->getMessage())), ['action' => 'store']);
 
             return back()->withErrors(['general' => Lang::get('schedule_link.messages.unexpected_error')])->withInput();
         }
