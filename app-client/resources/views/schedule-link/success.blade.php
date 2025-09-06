@@ -137,12 +137,12 @@
                                     <div id="pixContent" class="hidden">
                                         <div class="bg-gray-800 rounded-lg p-4 border border-gray-600">
                                             <h4 class="text-sm font-medium text-gray-300 mb-2">{{ __('schedule_link.pix_code_label') }}</h4>
-                                            <div class="flex items-center space-x-2">
+                                            <div class="space-y-3">
                                                 <input type="text" id="pixCode" readonly
-                                                       class="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white text-sm font-mono">
+                                                       class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white text-sm font-mono">
                                                 <button onclick="copyPixCode()"
-                                                        class="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                                                     </svg>
                                                     {{ __('schedule_link.copy_pix') }}
