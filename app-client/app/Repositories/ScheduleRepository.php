@@ -20,6 +20,11 @@ class ScheduleRepository
         return $this->model->find($id);
     }
 
+    public function findByUuid(string $uuid): ?Schedule
+    {
+        return $this->model->where('uuid', $uuid)->first();
+    }
+
     public function findByUnitIdAndDate(int $unitId, Carbon $startDate, Carbon $endDate): Collection
     {
         return $this

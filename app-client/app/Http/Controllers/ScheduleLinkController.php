@@ -233,7 +233,7 @@ class ScheduleLinkController extends Controller
             ]);
 
             return redirect()
-                ->route('schedule-link.success', ['company' => $company, 'unit' => $unit->id, 'schedule' => $schedule->id])
+                ->route('schedule-link.success', ['company' => $company, 'unit' => $unit->id, 'schedule' => $schedule->uuid])
                 ->with('status', Lang::get('schedule_link.messages.created'))
                 ->with('schedule_data', (new PublicScheduleResource($schedule))->toArray(request()));
         } catch (OutsideWorkingDaysException $e) {
@@ -245,6 +245,8 @@ class ScheduleLinkController extends Controller
         } catch (ScheduleBlockedException $e) {
             return back()->withErrors(['start_time' => Lang::get('schedules.messages.time_blocked')])->withInput();
         } catch (\Throwable $e) {
+            $this->errorLogService->logError(new \Exception('Aconteceu um erro ao criar o agendamento: ' . json_encode($e)), ['action' => 'store']);
+
             return back()->withErrors(['general' => Lang::get('schedule_link.messages.unexpected_error')])->withInput();
         }
     }
@@ -252,23 +254,32 @@ class ScheduleLinkController extends Controller
     /**
      * Success page.
      */
-    public function success($company, Unit $unit, Request $request): View
+    public function success($company, Unit $unit, string $uuid, Request $request): View
     {
+        $schedule = $this->scheduleRepository->findByUuid($uuid);
+
         // Ensure the unit belongs to the specified company
         if ($unit->company_id != $company) {
             abort(404);
         }
 
-        // Get schedule data from session if available
-        $schedule = null;
+        // Ensure the schedule belongs to the specified unit
+        if ($schedule->unit_id != $unit->id) {
+            abort(404);
+        }
+
+        // Get schedule data from session if available, otherwise use the schedule from route
+        $scheduleData = null;
         if (session()->has('schedule_data')) {
-            $schedule = session('schedule_data');
+            $scheduleData = session('schedule_data');
+        } else {
+            $scheduleData = (new PublicScheduleResource($schedule))->toArray(request());
         }
 
         return view('schedule-link.success', [
             'unit' => $unit,
             'company' => $company,
-            'schedule' => $schedule,
+            'schedule' => $scheduleData,
         ]);
     }
 

@@ -39,7 +39,7 @@ Route::prefix('{company}/schedule-link')->group(function () {
     Route::get('/{unit}/week-days', [ScheduleLinkController::class, 'weekDays'])->name('schedule-link.week-days');
     Route::get('/{unit}/available-times', [ScheduleLinkController::class, 'availableTimes'])->name('schedule-link.available-times');
     Route::post('/{unit}', [ScheduleLinkController::class, 'store'])->name('schedule-link.store');
-    Route::get('/{unit}/success', [ScheduleLinkController::class, 'success'])->name('schedule-link.success');
+    Route::get('/{unit}/success/{uuid}', [ScheduleLinkController::class, 'success'])->name('schedule-link.success');
 });
 
 Route::middleware('auth', 'company.active', 'subscription.active', 'user.active')->group(function () {
