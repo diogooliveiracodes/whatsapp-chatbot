@@ -35,6 +35,19 @@ return [
     'pix_copy_error' => 'Erro ao copiar código PIX.',
     'payment_id_not_found' => 'ID do pagamento não encontrado.',
 
+    // Payment status
+    'check_payment_status' => 'Verificar Status do Pagamento',
+    'payment_pending' => 'Pagamento Pendente',
+    'payment_pending_message' => 'Aguardando confirmação do pagamento. Clique em "Verificar Status" para atualizar.',
+    'payment_confirmed' => 'Pagamento confirmado com sucesso!',
+    'payment_still_pending' => 'Pagamento ainda está pendente.',
+    'payment_overdue_message' => 'O pagamento está em atraso. Entre em contato para mais informações.',
+    'payment_rejected_message' => 'O pagamento foi rejeitado. Tente gerar um novo código PIX.',
+    'payment_status_paid' => 'Pagamento Confirmado',
+    'payment_status_rejected' => 'Pagamento Rejeitado',
+    'payment_status_overdue' => 'Pagamento em Atraso',
+    'payment_not_found' => 'Pagamento não encontrado.',
+
     'messages' => [
         'created' => 'Agendamento criado com sucesso.',
         'unexpected_error' => 'Ocorreu um erro inesperado ao criar o agendamento.',

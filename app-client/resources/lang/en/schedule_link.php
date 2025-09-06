@@ -35,6 +35,19 @@ return [
     'pix_copy_error' => 'Error copying PIX code.',
     'payment_id_not_found' => 'Payment ID not found.',
 
+    // Payment status
+    'check_payment_status' => 'Check Payment Status',
+    'payment_pending' => 'Payment Pending',
+    'payment_pending_message' => 'Waiting for payment confirmation. Click "Check Status" to update.',
+    'payment_confirmed' => 'Payment confirmed successfully!',
+    'payment_still_pending' => 'Payment is still pending.',
+    'payment_overdue_message' => 'Payment is overdue. Please contact for more information.',
+    'payment_rejected_message' => 'Payment was rejected. Try generating a new PIX code.',
+    'payment_status_paid' => 'Payment Confirmed',
+    'payment_status_rejected' => 'Payment Rejected',
+    'payment_status_overdue' => 'Payment Overdue',
+    'payment_not_found' => 'Payment not found.',
+
     'messages' => [
         'created' => 'Schedule created successfully.',
         'unexpected_error' => 'An unexpected error occurred while creating the schedule.',
