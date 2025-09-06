@@ -15,7 +15,6 @@
                             </svg>
                         </div>
                         <h1 class="text-2xl font-semibold text-white mb-2">{{ __('schedule_link.success_title') }}</h1>
-                        <p class="text-gray-300 mb-6">{{ __('schedule_link.success_message') }}</p>
                     </div>
 
                     <!-- Schedule Card -->
@@ -198,15 +197,16 @@
                         </div>
                     @endif
 
-                    <!-- Action Button -->
-                    <div class="text-center">
-                        <a href="{{ route('schedule-link.show', ['company' => $company, 'unit' => $unit->id]) }}"
-                           class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
-                            {{ __('schedule_link.book_another') }}
-                        </a>
+                    <!-- Action Buttons -->
+                    <div class="text-center space-y-4">
+                        <div>
+                            <a href="{{ route('schedule-link.show', ['company' => $company, 'unit' => $unit->id]) }}"
+                               class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                {{ __('schedule_link.book_another') }}
+                            </a>
                     </div>
                 </div>
             </div>
@@ -452,6 +452,10 @@
 
                     } else if (paymentData.status === 'OVERDUE' || paymentData.internal_status === PAYMENT_STATUS.OVERDUE) {
                         showNotification('{{ __('schedule_link.payment_overdue_message') }}', 'warning');
+                        // Redirecionar para novo agendamento após 3 segundos quando pagamento venceu
+                        setTimeout(() => {
+                            window.location.href = '{{ route("schedule-link.show", ["company" => $company, "unit" => $unit->id]) }}';
+                        }, 8000);
                     } else if (paymentData.status === 'REJECTED' || paymentData.status === 'CANCELLED' || paymentData.internal_status === PAYMENT_STATUS.REJECTED) {
                         showNotification('{{ __('schedule_link.payment_rejected_message') }}', 'error');
                     } else {

@@ -41,7 +41,7 @@ return [
     'payment_pending_message' => 'Aguardando confirmação do pagamento. Clique em "Verificar Status" para atualizar.',
     'payment_confirmed' => 'Pagamento confirmado com sucesso!',
     'payment_still_pending' => 'Pagamento ainda está pendente.',
-    'payment_overdue_message' => 'O pagamento está em atraso. Entre em contato para mais informações.',
+    'payment_overdue_message' => 'O pagamento venceu. Você será redirecionado para fazer um novo agendamento.',
     'payment_rejected_message' => 'O pagamento foi rejeitado. Tente gerar um novo código PIX.',
     'payment_status_paid' => 'Pagamento Confirmado',
     'payment_status_rejected' => 'Pagamento Rejeitado',

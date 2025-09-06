@@ -41,7 +41,7 @@ return [
     'payment_pending_message' => 'Waiting for payment confirmation. Click "Check Status" to update.',
     'payment_confirmed' => 'Payment confirmed successfully!',
     'payment_still_pending' => 'Payment is still pending.',
-    'payment_overdue_message' => 'Payment is overdue. Please contact for more information.',
+    'payment_overdue_message' => 'The payment has expired. You will be redirected to make a new appointment.',
     'payment_rejected_message' => 'Payment was rejected. Try generating a new PIX code.',
     'payment_status_paid' => 'Payment Confirmed',
     'payment_status_rejected' => 'Payment Rejected',
