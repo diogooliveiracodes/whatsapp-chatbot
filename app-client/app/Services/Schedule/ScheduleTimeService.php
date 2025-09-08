@@ -45,7 +45,7 @@ class ScheduleTimeService
         }
 
         // Converter de UTC para o fuso do usuário (considerando a data de hoje, pois é apenas hora do dia)
-        $userTimezone = $unitSettings->timezone ?? 'UTC';
+        $userTimezone = $unitSettings->timezone ?? 'America/Sao_Paulo';
         $referenceDate = now()->format('Y-m-d');
         $startLocal = Carbon::parse($referenceDate . ' ' . $dayStartTime, 'UTC')->setTimezone($userTimezone)->format('H:i');
         $endLocal = Carbon::parse($referenceDate . ' ' . $dayEndTime, 'UTC')->setTimezone($userTimezone)->format('H:i');
@@ -77,7 +77,7 @@ class ScheduleTimeService
             ];
         }
 
-        $userTimezone = $unitSettings->timezone ?? 'UTC';
+        $userTimezone = $unitSettings->timezone ?? 'America/Sao_Paulo';
         $dateString = $referenceDate->format('Y-m-d');
 
         $startLocal = Carbon::parse($dateString . ' ' . $breakStartUtc, 'UTC')
@@ -112,7 +112,7 @@ class ScheduleTimeService
         ];
 
         // Calculate earliest start time (convertendo para timezone do usuário)
-        $userTimezone = $unitSettings->timezone ?? 'UTC';
+        $userTimezone = $unitSettings->timezone ?? 'America/Sao_Paulo';
         $referenceDate = now()->format('Y-m-d');
         $earliestStartTime = collect($days)
             ->map(function ($dayName, $dayKey) use ($unitSettings) {
@@ -162,13 +162,46 @@ class ScheduleTimeService
      */
     public function getAvailableTimeSlots(Carbon $date, $unitSettings): Collection
     {
-        $workingHours = $this->calculateWorkingHours($unitSettings);
+        $userTimezone = $unitSettings->timezone ?? 'America/Sao_Paulo';
+        $dateString = $date->format('Y-m-d');
+
+        // Map Carbon dayOfWeek (0..6) to setting keys
+        $dayKeyMap = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        $dayKey = $dayKeyMap[$date->dayOfWeek] ?? 'monday';
+
+        // If the day is not enabled, there are no slots
+        if (!(bool) ($unitSettings->$dayKey ?? false)) {
+            return collect();
+        }
+
+        // Get configured working hours in UTC and convert to user timezone anchored to selected date
+        $dayStartUtc = $unitSettings->{$dayKey . '_start'} ?? null;
+        $dayEndUtc = $unitSettings->{$dayKey . '_end'} ?? null;
+
+        // Defaults when not configured
+        if (!$dayStartUtc && !$dayEndUtc) {
+            $dayStartUtc = '08:00';
+            $dayEndUtc = '18:00';
+        }
+        if (!$dayStartUtc) {
+            $dayStartUtc = '08:00';
+        }
+        if (!$dayEndUtc) {
+            $dayEndUtc = '18:00';
+        }
+
+        $localStart = \App\Helpers\TimezoneHelper::convertTimeFromUtc($dayStartUtc, $userTimezone, $dateString) ?? '08:00';
+        $localEnd = \App\Helpers\TimezoneHelper::convertTimeFromUtc($dayEndUtc, $userTimezone, $dateString) ?? '18:00';
+
+        $start = Carbon::parse($dateString . ' ' . $localStart, $userTimezone);
+        $end = Carbon::parse($dateString . ' ' . $localEnd, $userTimezone);
+
         $interval = $unitSettings->appointment_duration_minutes ?? 30;
 
         $slots = collect();
-        $currentTime = $workingHours['startTime']->copy();
+        $currentTime = $start->copy();
 
-        while ($currentTime->lt($workingHours['endTime'])) {
+        while ($currentTime->lt($end)) {
             $slots->push($currentTime->copy());
             $currentTime->addMinutes($interval);
         }
@@ -294,5 +327,48 @@ class ScheduleTimeService
             return $schedule['status'] ?? '';
         }
         return $schedule->status ?? '';
+    }
+
+    /**
+     * Check if a time slot is inside break period for a specific day
+     *
+     * @param Carbon $time
+     * @param string $dayKey
+     * @param object $unitSettings
+     * @param int $durationMinutes
+     * @return bool
+     */
+    public function isInsideBreakPeriod(Carbon $time, string $dayKey, $unitSettings, int $durationMinutes = 30): bool
+    {
+        $hasBreak = (bool) ($unitSettings->{$dayKey . '_has_break'} ?? false);
+        $breakStartUtc = $unitSettings->{$dayKey . '_break_start'} ?? null;
+        $breakEndUtc = $unitSettings->{$dayKey . '_break_end'} ?? null;
+
+        if (!$hasBreak || !$breakStartUtc || !$breakEndUtc) {
+            return false;
+        }
+
+        $userTimezone = $unitSettings->timezone ?? 'UTC';
+        $referenceDate = $time->format('Y-m-d');
+
+        // Convert break times from UTC to user timezone
+        $breakStartLocal = Carbon::parse($referenceDate . ' ' . $breakStartUtc, 'UTC')
+            ->setTimezone($userTimezone)
+            ->format('H:i');
+        $breakEndLocal = Carbon::parse($referenceDate . ' ' . $breakEndUtc, 'UTC')
+            ->setTimezone($userTimezone)
+            ->format('H:i');
+
+        // Calculate appointment end time
+        $appointmentEnd = $time->copy()->addMinutes($durationMinutes);
+
+        // Build comparable Carbon instances in the same timezone
+        $startTimeCarbon = $time->copy();
+        $endTimeCarbon = $appointmentEnd;
+        $breakStartCarbon = Carbon::parse($referenceDate . ' ' . $breakStartLocal, $userTimezone);
+        $breakEndCarbon = Carbon::parse($referenceDate . ' ' . $breakEndLocal, $userTimezone);
+
+        // Intersects if start < breakEnd and end > breakStart
+        return $startTimeCarbon->lt($breakEndCarbon) && $endTimeCarbon->gt($breakStartCarbon);
     }
 }

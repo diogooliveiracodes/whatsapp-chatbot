@@ -585,10 +585,15 @@ class ScheduleLinkController extends Controller
             });
 
         // Filter out conflicts and blocks
-        $available = $slots->filter(function (Carbon $localStart) use ($unit, $unitSettings, $duration, $date) {
+        $available = $slots->filter(function (Carbon $localStart) use ($unit, $unitSettings, $duration, $date, $dayKey) {
             // Skip past times for today
             $nowLocal = now($unitSettings->timezone ?? 'UTC');
             if ($date === $nowLocal->format('Y-m-d') && $localStart->lte($nowLocal)) {
+                return false;
+            }
+
+            // Check if time slot is inside break period
+            if ($this->scheduleTimeService->isInsideBreakPeriod($localStart, $dayKey, $unitSettings, $duration)) {
                 return false;
             }
 
