@@ -47,6 +47,8 @@ return [
     'payment_status_rejected' => 'Pagamento Rejeitado',
     'payment_status_overdue' => 'Pagamento em Atraso',
     'payment_not_found' => 'Pagamento não encontrado.',
+    'generate_new_pix' => 'Gerar Novo PIX',
+    'payment_failed_new_pix_available' => 'Pagamento anterior falhou. Você pode gerar um novo código PIX.',
 
     'messages' => [
         'created' => 'Agendamento criado com sucesso.',
@@ -54,5 +56,3 @@ return [
         'no_user_available' => 'Não há usuário disponível para receber o agendamento nesta unidade.',
     ],
 ];
-
-

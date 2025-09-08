@@ -47,6 +47,8 @@ return [
     'payment_status_rejected' => 'Payment Rejected',
     'payment_status_overdue' => 'Payment Overdue',
     'payment_not_found' => 'Payment not found.',
+    'generate_new_pix' => 'Generate New PIX',
+    'payment_failed_new_pix_available' => 'Previous payment failed. You can generate a new PIX code.',
 
     'messages' => [
         'created' => 'Schedule created successfully.',
@@ -54,5 +56,3 @@ return [
         'no_user_available' => 'There is no available user in this unit to receive the appointment.',
     ],
 ];
-
-
