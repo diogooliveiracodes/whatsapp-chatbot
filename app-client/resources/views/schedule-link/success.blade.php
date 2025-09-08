@@ -254,10 +254,23 @@
         OVERDUE: 5
     };
 
+    // Status do agendamento (via enum do backend)
+    const SCHEDULE_STATUS = {
+        CONFIRMED: @json(\App\Enum\ScheduleStatusEnum::CONFIRMED->value)
+    };
+
     let currentPaymentId = null;
 
     // Verificar status do pagamento quando a página carrega
     document.addEventListener('DOMContentLoaded', function() {
+        // Se o agendamento já está confirmado (ex.: pagamento em dinheiro confirmado), esconder o card de pagamento
+        const scheduleStatus = @json($schedule['status'] ?? null);
+        if (scheduleStatus === SCHEDULE_STATUS.CONFIRMED) {
+            hidePaymentCard();
+            setTitleToSuccess();
+            return; // não mostrar métodos de pagamento
+        }
+
         @if(isset($paymentStatus) && $paymentStatus)
             const paymentStatus = @json($paymentStatus);
             handleExistingPayment(paymentStatus);
