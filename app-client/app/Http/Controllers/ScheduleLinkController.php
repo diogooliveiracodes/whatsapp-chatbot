@@ -276,10 +276,24 @@ class ScheduleLinkController extends Controller
             $scheduleData = (new PublicScheduleResource($schedule))->toArray(request());
         }
 
+        // Verificar se já existe um pagamento para este agendamento
+        $existingPayment = \App\Models\Payment::where('schedule_id', $schedule->id)->orderByDesc('created_at')->first();
+        $paymentStatus = null;
+
+        if ($existingPayment) {
+            $paymentStatus = [
+                'exists' => true,
+                'status' => $existingPayment->status->value,
+                'payment_id' => $existingPayment->gateway_payment_id,
+                'pix_copy_paste' => $existingPayment->pix_copy_paste,
+            ];
+        }
+
         return view('schedule-link.success', [
             'unit' => $unit,
             'company' => $company,
             'schedule' => $scheduleData,
+            'paymentStatus' => $paymentStatus,
         ]);
     }
 
@@ -424,7 +438,71 @@ class ScheduleLinkController extends Controller
 
             $this->errorLogService->logError(new \Exception('CHECK PAYMENT STATUS: ' . $request->payment_id), ['action' => 'checkPaymentStatus', 'schedule_id' => $schedule->id, 'payment_id' => $request->payment_id ?? null]);
 
+            // Verificar se já existe um pagamento ativo para este agendamento
+            $existingPayment = \App\Models\Payment::where('schedule_id', $schedule->id)
+                ->where('status', \App\Enum\PaymentStatusEnum::PAID)
+                ->first();
 
+            if ($existingPayment) {
+                // Se já houver um pagamento PAID (status 2), não exibir o card de pagamento
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'status' => 'CONFIRMED',
+                        'internal_status' => \App\Enum\PaymentStatusEnum::PAID->value,
+                        'hide_payment_card' => true,
+                        'message' => 'Pagamento já foi realizado para este agendamento'
+                    ]
+                ]);
+            }
+
+            // Verificar se existe pagamento PENDING
+            $pendingPayment = \App\Models\Payment::where('schedule_id', $schedule->id)
+                ->where('status', \App\Enum\PaymentStatusEnum::PENDING)
+                ->first();
+
+            if ($pendingPayment) {
+                // Se já houver um pagamento PENDING (status 1), exibir o card com código PIX preenchido
+                $response = $this->schedulePaymentService->checkSchedulePaymentStatus(
+                    $schedule,
+                    $request->payment_id,
+                    $company->companySettings->gateway_api_key
+                );
+
+                // Adicionar informações do pagamento pendente
+                $response['existing_pending_payment'] = true;
+                $response['pix_copy_paste'] = $pendingPayment->pix_copy_paste;
+                $response['payment_id'] = $pendingPayment->gateway_payment_id;
+
+                return response()->json(['success' => true, 'data' => $response]);
+            }
+
+            // Verificar se existe pagamento REJECTED, EXPIRED ou OVERDUE
+            $failedPayment = \App\Models\Payment::where('schedule_id', $schedule->id)
+                ->whereIn('status', [
+                    \App\Enum\PaymentStatusEnum::REJECTED,
+                    \App\Enum\PaymentStatusEnum::EXPIRED,
+                    \App\Enum\PaymentStatusEnum::OVERDUE
+                ])
+                ->first();
+
+            if ($failedPayment) {
+                // Se já houver um pagamento com status de falha, exibir o card com botão para gerar novo código PIX
+                $response = $this->schedulePaymentService->checkSchedulePaymentStatus(
+                    $schedule,
+                    $request->payment_id,
+                    $company->companySettings->gateway_api_key
+                );
+
+                // Adicionar informações do pagamento com falha
+                $response['existing_failed_payment'] = true;
+                $response['failed_payment_status'] = $failedPayment->status->value;
+                $response['show_new_pix_button'] = true;
+
+                return response()->json(['success' => true, 'data' => $response]);
+            }
+
+            // Se não há pagamento existente, verificar status normalmente
             $response = $this->schedulePaymentService->checkSchedulePaymentStatus(
                 $schedule,
                 $request->payment_id,

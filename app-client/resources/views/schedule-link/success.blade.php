@@ -80,7 +80,7 @@
 
                     <!-- Payment Section -->
                     @if(isset($schedule) && $schedule['id'])
-                        <div class="mb-6">
+                        <div class="mb-6" id="paymentSection">
                             <div class="bg-gray-700/50 rounded-lg p-6">
                                 <h3 class="text-lg font-semibold text-white mb-4 text-center">
                                     {{ __('schedule_link.payment_section_title') }}
@@ -226,6 +226,14 @@
 
     let currentPaymentId = null;
 
+    // Verificar status do pagamento quando a página carrega
+    document.addEventListener('DOMContentLoaded', function() {
+        @if(isset($paymentStatus) && $paymentStatus)
+            const paymentStatus = @json($paymentStatus);
+            handleExistingPayment(paymentStatus);
+        @endif
+    });
+
     function generatePixCode() {
         // Check if document_number is required and validate it
         const documentNumberInput = document.getElementById('document_number');
@@ -352,6 +360,79 @@
         getPixCode();
     }
 
+    function loadExistingPixCode(pixCode, paymentId) {
+        // Carregar código PIX existente para pagamento pendente
+        if (pixCode) {
+            document.getElementById('pixCode').value = pixCode;
+            currentPaymentId = paymentId;
+
+            // Esconder seção de documento se necessário
+            const documentSection = document.getElementById('documentNumberSection');
+            if (documentSection) {
+                documentSection.style.display = 'none';
+            }
+
+            // Esconder botão de gerar PIX e mostrar conteúdo
+            document.getElementById('pixGenerateButton').classList.add('hidden');
+            document.getElementById('pixLoading').classList.add('hidden');
+            document.getElementById('pixContent').classList.remove('hidden');
+
+            // Atualizar status para pendente
+            updatePaymentStatus('PENDING', PAYMENT_STATUS.PENDING);
+        }
+    }
+
+    function hidePaymentCard() {
+        // Esconder todo o card de pagamento quando pagamento já foi realizado
+        const paymentSection = document.getElementById('paymentSection');
+        if (paymentSection) {
+            paymentSection.style.display = 'none';
+        }
+    }
+
+    function showNewPixButton() {
+        // Mostrar botão para gerar novo código PIX quando pagamento falhou
+        document.getElementById('pixGenerateButton').classList.remove('hidden');
+        document.getElementById('pixLoading').classList.add('hidden');
+        document.getElementById('pixContent').classList.add('hidden');
+
+        // Atualizar texto do botão
+        const generateButton = document.querySelector('#pixGenerateButton button');
+        if (generateButton) {
+            generateButton.innerHTML = `
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+                {{ __('schedule_link.generate_new_pix') }}
+            `;
+        }
+    }
+
+    function handleExistingPayment(paymentStatus) {
+        if (!paymentStatus || !paymentStatus.exists) {
+            return;
+        }
+
+        const status = paymentStatus.status;
+        currentPaymentId = paymentStatus.payment_id;
+
+        if (status === PAYMENT_STATUS.PAID) {
+            // Pagamento já foi realizado - esconder card
+            hidePaymentCard();
+            showNotification('{{ __('schedule_link.payment_confirmed') }}', 'success');
+        } else if (status === PAYMENT_STATUS.PENDING) {
+            // Pagamento pendente - carregar código PIX existente
+            if (paymentStatus.pix_copy_paste) {
+                loadExistingPixCode(paymentStatus.pix_copy_paste, paymentStatus.payment_id);
+                showNotification('{{ __('schedule_link.payment_pending_message') }}', 'info');
+            }
+        } else if ([PAYMENT_STATUS.REJECTED, PAYMENT_STATUS.EXPIRED, PAYMENT_STATUS.OVERDUE].includes(status)) {
+            // Pagamento com falha - mostrar botão para novo PIX
+            showNewPixButton();
+            showNotification('{{ __('schedule_link.payment_failed_new_pix_available') }}', 'warning');
+        }
+    }
+
     function extractPixCode(response) {
         // Check different possible fields in Asaas response
         const possibleFields = ['payload', 'encodedImage', 'pixCode', 'qrCode', 'copyPaste', 'pixCopyPaste'];
@@ -444,12 +525,33 @@
 
                 if (data.success && data.data) {
                     const paymentData = data.data;
+
+                    // Verificar se deve esconder o card de pagamento (pagamento já pago)
+                    if (paymentData.hide_payment_card) {
+                        hidePaymentCard();
+                        showNotification(paymentData.message || '{{ __('schedule_link.payment_confirmed') }}', 'success');
+                        return;
+                    }
+
+                    // Verificar se existe pagamento pendente com código PIX
+                    if (paymentData.existing_pending_payment && paymentData.pix_copy_paste) {
+                        loadExistingPixCode(paymentData.pix_copy_paste, paymentData.payment_id);
+                        showNotification('{{ __('schedule_link.payment_pending_message') }}', 'info');
+                        return;
+                    }
+
+                    // Verificar se existe pagamento com falha e deve mostrar botão para novo PIX
+                    if (paymentData.existing_failed_payment && paymentData.show_new_pix_button) {
+                        showNewPixButton();
+                        showNotification('{{ __('schedule_link.payment_failed_new_pix_available') }}', 'warning');
+                        return;
+                    }
+
+                    // Lógica normal de verificação de status
                     updatePaymentStatus(paymentData.status, paymentData.internal_status);
 
                     if (paymentData.status === 'CONFIRMED' || paymentData.status === 'RECEIVED' || paymentData.internal_status === PAYMENT_STATUS.PAID) {
                         showNotification('{{ __('schedule_link.payment_confirmed') }}', 'success');
-
-
                     } else if (paymentData.status === 'OVERDUE' || paymentData.internal_status === PAYMENT_STATUS.OVERDUE) {
                         showNotification('{{ __('schedule_link.payment_overdue_message') }}', 'warning');
                         // Redirecionar para novo agendamento após 3 segundos quando pagamento venceu
