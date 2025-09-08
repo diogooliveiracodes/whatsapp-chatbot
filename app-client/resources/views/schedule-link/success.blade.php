@@ -172,6 +172,13 @@
 
                     <!-- Schedule Card -->
                     @if(isset($schedule))
+                        @php
+                            $tz = $unit->unitSettings->timezone ?? 'America/Sao_Paulo';
+                            $startUtc = \Carbon\Carbon::parse(($schedule['schedule_date'] ?? '') . ' ' . ($schedule['start_time'] ?? ''), 'UTC');
+                            $endUtc = \Carbon\Carbon::parse(($schedule['schedule_date'] ?? '') . ' ' . ($schedule['end_time'] ?? ''), 'UTC');
+                            $startLocal = $startUtc->copy()->setTimezone($tz);
+                            $endLocal = $endUtc->copy()->setTimezone($tz);
+                        @endphp
                         <div class="mb-6">
                             <h4 class="text-md font-medium text-white mb-4 text-center">
                                 {{ __('schedules.created_schedule_details') }}
@@ -181,10 +188,10 @@
                                     <div class="flex items-center space-x-3">
                                         <div class="h-16 flex flex-col items-left justify-center">
                                             <span class="text-white font-bold leading-tight">
-                                                {{ $schedule['start_time'] }} - {{ $schedule['end_time'] }}
+                                                {{ $startLocal->format('H:i') }} - {{ $endLocal->format('H:i') }}
                                             </span>
                                             <span class="text-gray-400 text-xs">
-                                                {{ \Carbon\Carbon::parse($schedule['schedule_date'])->format('d/m/Y') }}
+                                                {{ $startLocal->format('d/m/Y') }}
                                             </span>
                                         </div>
                                     </div>
