@@ -526,16 +526,20 @@ class ScheduleLinkController extends Controller
         $unitSettings = $unit->unitSettings;
         $duration = (int) ($unitSettings->appointment_duration_minutes ?? 30);
 
-        $start = Carbon::parse($weekStart)->startOfWeek(Carbon::SUNDAY);
+        $tz = $unitSettings->timezone ?? 'America/Sao_Paulo';
+
+        // Anchor week range in unit timezone to avoid UTC vs local mismatches
+        $start = Carbon::parse($weekStart . ' 00:00', $tz)->startOfWeek(Carbon::SUNDAY);
         $end = $start->copy()->endOfWeek(Carbon::SATURDAY);
 
-        $todayLocal = now($unitSettings->timezone ?? 'UTC')->startOfDay();
+        $todayLocal = now($tz)->startOfDay();
 
         $weekDays = [];
         $cursor = $start->copy();
 
         while ($cursor->lte($end)) {
             $dateStr = $cursor->format('Y-m-d');
+            // Compare in the same timezone (cursor is in $tz)
             $isFutureOrToday = $cursor->greaterThanOrEqualTo($todayLocal);
             $isWorkingDay = !$this->workingDaysValidator->isOutsideWorkingDays($cursor, $unitSettings);
 
@@ -587,7 +591,7 @@ class ScheduleLinkController extends Controller
         // Filter out conflicts and blocks
         $available = $slots->filter(function (Carbon $localStart) use ($unit, $unitSettings, $duration, $date, $dayKey) {
             // Skip past times for today
-            $nowLocal = now($unitSettings->timezone ?? 'UTC');
+            $nowLocal = now($unitSettings->timezone ?? 'America/Sao_Paulo');
             if ($date === $nowLocal->format('Y-m-d') && $localStart->lte($nowLocal)) {
                 return false;
             }
