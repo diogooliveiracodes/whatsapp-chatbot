@@ -7,84 +7,21 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <!-- Success Message -->
+                    <!-- Header Message -->
                     <div class="mb-6 text-center">
-                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/20 mb-4">
-                            <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        <div id="pageIconWrapper" class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/20 mb-4">
+                            <svg id="pageIcon" class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 18a6 6 0 110-12 6 6 0 010 12z"></path>
                             </svg>
                         </div>
-                        <h1 class="text-2xl font-semibold text-white mb-2">{{ __('schedule_link.success_title') }}</h1>
+                        <h1 id="pageTitle" class="text-2xl font-semibold text-white mb-2">{{ __('schedule_link.payment_section_title') }}</h1>
                     </div>
 
-                    <!-- Schedule Card -->
-                    @if(isset($schedule))
-                        <div class="mb-6">
-                            <h4 class="text-md font-medium text-white mb-4 text-center">
-                                {{ __('schedules.created_schedule_details') }}
-                            </h4>
-                            <div class="border border-gray-700 rounded-lg overflow-hidden">
-                                <div class="flex items-center justify-between p-4 bg-gray-700">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="h-16 flex flex-col items-left justify-center">
-                                            <span class="text-white font-bold leading-tight">
-                                                {{ $schedule['start_time'] }} - {{ $schedule['end_time'] }}
-                                            </span>
-                                            <span class="text-gray-400 text-xs">
-                                                {{ \Carbon\Carbon::parse($schedule['schedule_date'])->format('d/m/Y') }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-2">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-900/30 text-blue-300 border border-blue-700">
-                                            {{ __('schedules.booked_slots') }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="p-4 bg-gray-800 border-t border-gray-700">
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-400">Cliente</div>
-                                            <div class="text-sm text-white">{{ $schedule['customer']['name'] ?? 'N/A' }}</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-400">Serviço</div>
-                                            <div class="text-sm text-white">{{ $schedule['unit_service_type']['name'] ?? 'N/A' }}</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-400">Unidade</div>
-                                            <div class="text-sm text-white">{{ $schedule['unit']['name'] ?? 'N/A' }}</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-sm font-medium text-gray-400">Status</div>
-                                            <div class="text-sm">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                @if ($schedule['status'] === 'confirmed') bg-green-900/30 text-green-300 border border-green-700
-                                                @elseif($schedule['status'] === 'pending') bg-yellow-900/30 text-yellow-300 border border-yellow-700
-                                                @else bg-red-900/30 text-red-300 border border-red-700 @endif">
-                                                    {{ __('schedules.statuses.' . $schedule['status']) }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        @if ($schedule['notes'])
-                                            <div class="sm:col-span-2 lg:col-span-3">
-                                                <div class="text-sm font-medium text-gray-400">Observações</div>
-                                                <div class="text-sm text-white">{{ $schedule['notes'] }}</div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- Payment Section -->
+                    <!-- Payment Section (moved before schedule details) -->
                     @if(isset($schedule) && $schedule['id'])
                         <div class="mb-6" id="paymentSection">
                             <div class="bg-gray-700/50 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-white mb-4 text-center">
-                                    {{ __('schedule_link.payment_section_title') }}
-                                </h3>
+                                <h3 class="text-lg font-semibold text-white mb-4 text-center">{{ __('schedule_link.payment_section_title') }}</h3>
 
                                 <!-- Payment Amount -->
                                 <div class="text-center mb-4">
@@ -93,8 +30,32 @@
                                     </div>
                                 </div>
 
+                                <!-- Payment Method Selector (if more than one enabled) -->
+                                @php
+                                    $methods = $enabledPaymentMethods ?? [];
+                                @endphp
+                                @if(count($methods) > 1)
+                                    <div class="mb-6">
+                                        <label class="block text-gray-300 text-sm font-medium mb-2">Método de pagamento</label>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="paymentMethodOptions">
+                                            @if(in_array('pix', $methods))
+                                                <button type="button" onclick="selectPaymentMethod('pix')" id="btnMethodPix" class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white hover:bg-gray-700 focus:ring-2 focus:ring-blue-500">Pix</button>
+                                            @endif
+                                            @if(in_array('cash', $methods))
+                                                <button type="button" onclick="selectPaymentMethod('cash')" id="btnMethodCash" class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white hover:bg-gray-700 focus:ring-2 focus:ring-blue-500">Dinheiro</button>
+                                            @endif
+                                            @if(in_array('credit_card', $methods))
+                                                <button type="button" disabled class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed">Cartão de Crédito (em breve)</button>
+                                            @endif
+                                            @if(in_array('debit_card', $methods))
+                                                <button type="button" disabled class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed">Cartão de Débito (em breve)</button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <!-- PIX Payment Section -->
-                                <div id="pixPaymentSection" class="space-y-4">
+                                <div id="pixPaymentSection" class="space-y-4 hidden">
                                     <!-- Document Number Field (only if customer doesn't have it) -->
                                     @if(empty($schedule['customer']['document_number']))
                                         <div id="documentNumberSection" class="space-y-2">
@@ -193,9 +154,78 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- CASH Section -->
+                                <div id="cashSection" class="space-y-4 hidden">
+                                    <div class="bg-gray-800 rounded-lg p-4 border border-gray-600">
+                                        <p class="text-sm text-gray-300">Confirme seu agendamento para pagar em dinheiro no local.</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <button onclick="confirmCashPayment()" id="cashConfirmButton" class="inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                            Confirmar agendamento
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     @endif
+
+                    <!-- Schedule Card -->
+                    @if(isset($schedule))
+                        <div class="mb-6">
+                            <h4 class="text-md font-medium text-white mb-4 text-center">
+                                {{ __('schedules.created_schedule_details') }}
+                            </h4>
+                            <div class="border border-gray-700 rounded-lg overflow-hidden">
+                                <div class="flex items-center justify-between p-4 bg-gray-700">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="h-16 flex flex-col items-left justify-center">
+                                            <span class="text-white font-bold leading-tight">
+                                                {{ $schedule['start_time'] }} - {{ $schedule['end_time'] }}
+                                            </span>
+                                            <span class="text-gray-400 text-xs">
+                                                {{ \Carbon\Carbon::parse($schedule['schedule_date'])->format('d/m/Y') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-gray-800 border-t border-gray-700">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-400">Cliente</div>
+                                            <div class="text-sm text-white">{{ $schedule['customer']['name'] ?? 'N/A' }}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-400">Serviço</div>
+                                            <div class="text-sm text-white">{{ $schedule['unit_service_type']['name'] ?? 'N/A' }}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-400">Unidade</div>
+                                            <div class="text-sm text-white">{{ $schedule['unit']['name'] ?? 'N/A' }}</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-400">Status</div>
+                                            <div class="text-sm">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                @if ($schedule['status'] === 'confirmed') bg-green-900/30 text-green-300 border border-green-700
+                                                @elseif($schedule['status'] === 'pending') bg-yellow-900/30 text-yellow-300 border border-yellow-700
+                                                @else bg-red-900/30 text-red-300 border border-red-700 @endif">
+                                                    {{ __('schedules.statuses.' . $schedule['status']) }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        @if ($schedule['notes'])
+                                            <div class="sm:col-span-2 lg:col-span-3">
+                                                <div class="text-sm font-medium text-gray-400">Observações</div>
+                                                <div class="text-sm text-white">{{ $schedule['notes'] }}</div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
 
                     <!-- Action Buttons -->
                     <div class="text-center space-y-4">
@@ -232,7 +262,38 @@
             const paymentStatus = @json($paymentStatus);
             handleExistingPayment(paymentStatus);
         @endif
+
+        // Mostrar seção padrão com base nos métodos
+        const enabledMethods = @json($enabledPaymentMethods ?? []);
+        if (enabledMethods.length <= 1) {
+            // Se houver apenas um, escolher automaticamente
+            if (enabledMethods.includes('pix')) {
+                selectPaymentMethod('pix');
+            } else if (enabledMethods.includes('cash')) {
+                selectPaymentMethod('cash');
+            }
+        }
     });
+
+    function selectPaymentMethod(method) {
+        const pixSection = document.getElementById('pixPaymentSection');
+        const cashSection = document.getElementById('cashSection');
+        const pixBtn = document.getElementById('btnMethodPix');
+        const cashBtn = document.getElementById('btnMethodCash');
+
+        if (pixSection) pixSection.classList.add('hidden');
+        if (cashSection) cashSection.classList.add('hidden');
+        if (pixBtn) pixBtn.classList.remove('ring-2', 'ring-blue-500');
+        if (cashBtn) cashBtn.classList.remove('ring-2', 'ring-blue-500');
+
+        if (method === 'pix') {
+            if (pixSection) pixSection.classList.remove('hidden');
+            if (pixBtn) pixBtn.classList.add('ring-2', 'ring-blue-500');
+        } else if (method === 'cash') {
+            if (cashSection) cashSection.classList.remove('hidden');
+            if (cashBtn) cashBtn.classList.add('ring-2', 'ring-blue-500');
+        }
+    }
 
     function generatePixCode() {
         // Check if document_number is required and validate it
@@ -419,6 +480,7 @@
         if (status === PAYMENT_STATUS.PAID) {
             // Pagamento já foi realizado - esconder card
             hidePaymentCard();
+            setTitleToSuccess();
             showNotification('{{ __('schedule_link.payment_confirmed') }}', 'success');
         } else if (status === PAYMENT_STATUS.PENDING) {
             // Pagamento pendente - carregar código PIX existente
@@ -529,6 +591,7 @@
                     // Verificar se deve esconder o card de pagamento (pagamento já pago)
                     if (paymentData.hide_payment_card) {
                         hidePaymentCard();
+                        setTitleToSuccess();
                         showNotification(paymentData.message || '{{ __('schedule_link.payment_confirmed') }}', 'success');
                         return;
                     }
@@ -551,6 +614,7 @@
                     updatePaymentStatus(paymentData.status, paymentData.internal_status);
 
                     if (paymentData.status === 'CONFIRMED' || paymentData.status === 'RECEIVED' || paymentData.internal_status === PAYMENT_STATUS.PAID) {
+                        setTitleToSuccess();
                         showNotification('{{ __('schedule_link.payment_confirmed') }}', 'success');
                     } else if (paymentData.status === 'OVERDUE' || paymentData.internal_status === PAYMENT_STATUS.OVERDUE) {
                         showNotification('{{ __('schedule_link.payment_overdue_message') }}', 'warning');
@@ -574,6 +638,49 @@
 
                 showNotification('Erro ao verificar status do pagamento', 'error');
             });
+    }
+
+    function confirmCashPayment() {
+        const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const scheduleId = {{ $schedule['id'] ?? 'null' }};
+        const companyId = {{ $company }};
+
+        const btn = document.getElementById('cashConfirmButton');
+        const original = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Confirmando...
+        `;
+
+        fetch(`/${companyId}/schedule-link/schedule/${scheduleId}/confirm-cash`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token,
+                'Accept': 'application/json'
+            },
+        })
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.innerHTML = original;
+            if (data.success) {
+                hidePaymentCard();
+                setTitleToSuccess();
+                showNotification(data.data?.message || 'Agendamento confirmado!', 'success');
+            } else {
+                showNotification(data.error || 'Erro ao confirmar agendamento', 'error');
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.innerHTML = original;
+            showNotification('Erro ao confirmar agendamento', 'error');
+        });
     }
 
     function updatePaymentStatus(asaasStatus, internalStatus) {
@@ -602,6 +709,7 @@
                 message: '{{ __('schedule_link.payment_confirmed') }}',
                 icon: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />`
             };
+            setTitleToSuccess();
         } else if (asaasStatus === 'REJECTED' || asaasStatus === 'CANCELLED' || internalStatus === PAYMENT_STATUS.REJECTED) {
             statusConfig = {
                 bgColor: 'bg-red-900/20',
@@ -663,6 +771,25 @@
         setTimeout(() => {
             notification.remove();
         }, 3000);
+    }
+
+    function setTitleToSuccess() {
+        const titleEl = document.getElementById('pageTitle');
+        const icon = document.getElementById('pageIcon');
+        const iconWrap = document.getElementById('pageIconWrapper');
+        if (titleEl) {
+            titleEl.textContent = '{{ __('schedule_link.success_title') }}';
+        }
+        if (icon && iconWrap) {
+            // Update colors to green
+            icon.classList.remove('text-blue-600', 'dark:text-blue-400');
+            icon.classList.add('text-green-600', 'dark:text-green-400');
+            iconWrap.classList.remove('bg-blue-100', 'dark:bg-blue-900/20');
+            iconWrap.classList.add('bg-green-100', 'dark:bg-green-900/20');
+
+            // Replace icon path to a check icon
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />';
+        }
     }
 </script>
 

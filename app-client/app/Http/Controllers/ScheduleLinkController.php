@@ -19,6 +19,7 @@ use App\Services\ErrorLog\ErrorLogService;
 use App\Services\Schedule\Validators\WorkingDaysValidator;
 use App\Services\Schedule\Validators\WorkingHoursValidator;
 use App\Enum\AsaasCustomerTypeEnum;
+use App\Enum\ScheduleStatusEnum;
 use App\Http\Resources\PublicScheduleResource;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -289,11 +290,19 @@ class ScheduleLinkController extends Controller
             ];
         }
 
+        // Load settings to determine available payment methods
+        $unit->loadMissing('unitSettings');
+        $enabledPaymentMethods = [];
+        if ($unit->unitSettings) {
+            $enabledPaymentMethods = $unit->unitSettings->getEnabledPaymentMethods();
+        }
+
         return view('schedule-link.success', [
             'unit' => $unit,
             'company' => $company,
             'schedule' => $scheduleData,
             'paymentStatus' => $paymentStatus,
+            'enabledPaymentMethods' => $enabledPaymentMethods,
         ]);
     }
 
@@ -514,6 +523,35 @@ class ScheduleLinkController extends Controller
             $this->errorLogService->logError($e, ['action' => 'checkPaymentStatus', 'schedule_id' => $schedule->id, 'payment_id' => $request->payment_id ?? null]);
 
             return response()->json(['success' => false, 'error' => 'Erro ao verificar status do pagamento'], 500);
+        }
+    }
+
+    /**
+     * Confirm schedule with cash (no online payment). Public flow.
+     */
+    public function confirmCash(Company $company, Schedule $schedule, Request $request): JsonResponse
+    {
+        try {
+            // Ensure the schedule belongs to the specified company
+            if ($schedule->unit->company_id != $company->id) {
+                return response()->json(['success' => false, 'error' => 'Agendamento não encontrado'], 404);
+            }
+
+            $this->scheduleRepository->update($schedule, [
+                'status' => ScheduleStatusEnum::CONFIRMED->value,
+                'is_confirmed' => true,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'status' => 'CONFIRMED',
+                    'message' => __('schedule_link.payment_confirmed')
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            $this->errorLogService->logError($e, ['action' => 'confirmCash', 'schedule_id' => $schedule->id]);
+            return response()->json(['success' => false, 'error' => 'Erro ao confirmar agendamento'], 500);
         }
     }
 

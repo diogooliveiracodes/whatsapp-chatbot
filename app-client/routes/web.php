@@ -34,6 +34,7 @@ Route::prefix('{company}/schedule-link')->group(function () {
     Route::post('/schedule/{schedule}/generate-pix', [ScheduleLinkController::class, 'generatePayment'])->name('schedule-link.generate-pix');
     Route::post('/schedule/{schedule}/get-pix-code', [ScheduleLinkController::class, 'getPixCode'])->name('schedule-link.get-pix-code');
     Route::post('/schedule/{schedule}/check-payment-status', [ScheduleLinkController::class, 'checkPaymentStatus'])->name('schedule-link.check-payment-status');
+    Route::post('/schedule/{schedule}/confirm-cash', [ScheduleLinkController::class, 'confirmCash'])->name('schedule-link.confirm-cash');
 
     Route::get('/{unit}', [ScheduleLinkController::class, 'show'])->name('schedule-link.show');
     Route::get('/{unit}/week-days', [ScheduleLinkController::class, 'weekDays'])->name('schedule-link.week-days');
