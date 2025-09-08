@@ -21,6 +21,14 @@ class AsaasPaymentService
     }
 
     /**
+     * Set dynamic API key for company-specific requests
+     */
+    public function setApiKey(string $apiKey): void
+    {
+        $this->apiKey = $apiKey;
+    }
+
+    /**
      * Criar um pagamento via PIX dinâmico
      */
     public function createPixPayment(Payment $payment, AsaasCustomer $asaasCustomer): array

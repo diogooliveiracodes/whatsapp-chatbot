@@ -6,6 +6,7 @@ use App\Models\Schedule;
 use App\Services\Unit\UnitService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Str;
 
 class ScheduleRepository
 {
@@ -17,6 +18,11 @@ class ScheduleRepository
     public function findById(int $id): ?Schedule
     {
         return $this->model->find($id);
+    }
+
+    public function findByUuid(string $uuid): ?Schedule
+    {
+        return $this->model->where('uuid', $uuid)->first();
     }
 
     public function findByUnitIdAndDate(int $unitId, Carbon $startDate, Carbon $endDate): Collection
@@ -49,6 +55,7 @@ class ScheduleRepository
 
     public function create(array $data): Schedule
     {
+        $data['uuid'] = Str::uuid();
         $schedule = $this->model->create($data);
         return $schedule->load(['customer', 'user', 'unitServiceType', 'unit']);
     }

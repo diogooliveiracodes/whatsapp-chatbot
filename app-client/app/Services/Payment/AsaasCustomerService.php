@@ -65,18 +65,30 @@ class AsaasCustomerService
     }
 
     /**
+     * Find customer by customer ID.
+     *
+     * @param int $customerId
+     * @return AsaasCustomer|null
+     */
+    public function findByCustomerId(int $customerId): ?AsaasCustomer
+    {
+        return $this->asaasCustomerRepository->findByCustomerId($customerId);
+    }
+
+    /**
      * Integrate a customer to Asaas.
      *
      * @param AsaasCustomer $asaasCustomer
+     * @param string|null $customApiKey
      * @return bool|string
      */
-    public function integrateCustomerToAsaas(AsaasCustomer $asaasCustomer)
+    public function integrateCustomerToAsaas(AsaasCustomer $asaasCustomer, ?string $customApiKey = null)
     {
         try {
             $client = new \GuzzleHttp\Client();
 
             $baseUrl = AsaasConfigHelper::getBaseUrl();
-            $apiKey = AsaasConfigHelper::getApiKey();
+            $apiKey = $customApiKey ?? AsaasConfigHelper::getApiKey();
 
             if (empty($apiKey)) {
                 throw new \Exception('Asaas API key não configurada');

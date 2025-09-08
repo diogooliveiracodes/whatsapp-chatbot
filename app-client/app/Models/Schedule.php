@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Schedule extends Model
 {
@@ -15,6 +16,7 @@ class Schedule extends Model
     protected $table = 'schedules';
 
     protected $fillable = [
+        'uuid',
         'unit_id',
         'customer_id',
         'user_id',
@@ -36,6 +38,17 @@ class Schedule extends Model
         'active' => 'boolean'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = Str::uuid();
+            }
+        });
+    }
+
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
@@ -53,7 +66,7 @@ class Schedule extends Model
 
     public function unitServiceType(): BelongsTo
     {
-        return $this->belongsTo(UnitServiceType::class);
+        return $this->belongsTo(UnitServiceType::class, 'unit_service_type_id');
     }
 
     public function payments(): BelongsToMany

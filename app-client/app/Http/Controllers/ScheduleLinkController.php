@@ -8,11 +8,19 @@ use App\Exceptions\Schedule\ScheduleBlockedException;
 use App\Exceptions\Schedule\ScheduleConflictException;
 use App\Models\Customer;
 use App\Models\Unit;
+use App\Models\Schedule;
+use App\Models\Company;
 use App\Repositories\ScheduleRepository;
 use App\Services\Schedule\ScheduleBlockService;
 use App\Services\Schedule\ScheduleTimeService;
+use App\Services\Schedule\SchedulePaymentService;
+use App\Services\Payment\AsaasCustomerService;
+use App\Services\ErrorLog\ErrorLogService;
 use App\Services\Schedule\Validators\WorkingDaysValidator;
 use App\Services\Schedule\Validators\WorkingHoursValidator;
+use App\Enum\AsaasCustomerTypeEnum;
+use App\Enum\ScheduleStatusEnum;
+use App\Http\Resources\PublicScheduleResource;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -28,6 +36,9 @@ class ScheduleLinkController extends Controller
         private readonly ScheduleBlockService $scheduleBlockService,
         private readonly WorkingDaysValidator $workingDaysValidator,
         private readonly WorkingHoursValidator $workingHoursValidator,
+        private readonly SchedulePaymentService $schedulePaymentService,
+        private readonly AsaasCustomerService $asaasCustomerService,
+        private readonly ErrorLogService $errorLogService,
     ) {}
 
     /**
@@ -223,9 +234,9 @@ class ScheduleLinkController extends Controller
             ]);
 
             return redirect()
-                ->route('schedule-link.success', ['company' => $company, 'unit' => $unit->id, 'schedule' => $schedule->id])
+                ->route('schedule-link.success', ['company' => $company, 'unit' => $unit->id, 'uuid' => $schedule->uuid])
                 ->with('status', Lang::get('schedule_link.messages.created'))
-                ->with('schedule_data', (new \App\Http\Resources\ScheduleResource($schedule))->toArray(request()));
+                ->with('schedule_data', (new PublicScheduleResource($schedule))->toArray(request()));
         } catch (OutsideWorkingDaysException $e) {
             return back()->withErrors(['schedule_date' => Lang::get('schedules.messages.outside_working_days')])->withInput();
         } catch (OutsideWorkingHoursException $e) {
@@ -235,6 +246,8 @@ class ScheduleLinkController extends Controller
         } catch (ScheduleBlockedException $e) {
             return back()->withErrors(['start_time' => Lang::get('schedules.messages.time_blocked')])->withInput();
         } catch (\Throwable $e) {
+            $this->errorLogService->logError(new \Exception('Aconteceu um erro ao criar o agendamento: ' . json_encode($e->getMessage())), ['action' => 'store']);
+
             return back()->withErrors(['general' => Lang::get('schedule_link.messages.unexpected_error')])->withInput();
         }
     }
@@ -242,24 +255,304 @@ class ScheduleLinkController extends Controller
     /**
      * Success page.
      */
-    public function success($company, Unit $unit, Request $request): View
+    public function success($company, Unit $unit, string $uuid, Request $request): View
     {
+        $schedule = $this->scheduleRepository->findByUuid($uuid);
+
         // Ensure the unit belongs to the specified company
         if ($unit->company_id != $company) {
             abort(404);
         }
 
-        // Get schedule data from session if available
-        $schedule = null;
+        // Ensure the schedule belongs to the specified unit
+        if ($schedule->unit_id != $unit->id) {
+            abort(404);
+        }
+
+        // Get schedule data from session if available, otherwise use the schedule from route
+        $scheduleData = null;
         if (session()->has('schedule_data')) {
-            $schedule = session('schedule_data');
+            $scheduleData = session('schedule_data');
+        } else {
+            $scheduleData = (new PublicScheduleResource($schedule))->toArray(request());
+        }
+
+        // Verificar se já existe um pagamento para este agendamento
+        $existingPayment = \App\Models\Payment::where('schedule_id', $schedule->id)->orderByDesc('created_at')->first();
+        $paymentStatus = null;
+
+        if ($existingPayment) {
+            $paymentStatus = [
+                'exists' => true,
+                'status' => $existingPayment->status->value,
+                'payment_id' => $existingPayment->gateway_payment_id,
+                'pix_copy_paste' => $existingPayment->pix_copy_paste,
+            ];
+        }
+
+        // Load settings to determine available payment methods
+        $unit->loadMissing('unitSettings');
+        $enabledPaymentMethods = [];
+        if ($unit->unitSettings) {
+            $enabledPaymentMethods = $unit->unitSettings->getEnabledPaymentMethods();
         }
 
         return view('schedule-link.success', [
             'unit' => $unit,
             'company' => $company,
-            'schedule' => $schedule,
+            'schedule' => $scheduleData,
+            'paymentStatus' => $paymentStatus,
+            'enabledPaymentMethods' => $enabledPaymentMethods,
         ]);
+    }
+
+    /**
+     * Generate PIX payment for schedule
+     */
+    public function generatePayment(Company $company, Schedule $schedule, Request $request): JsonResponse
+    {
+        try {
+            // Ensure the schedule belongs to the specified company
+            if ($schedule->unit->company_id != $company->id) {
+                return response()->json(['success' => false, 'error' => 'Agendamento não encontrado'], 404);
+            }
+
+            $company->load('companySettings');
+            if (!$company->companySettings || !$company->companySettings->gateway_api_key) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Configurações de pagamento não encontradas para esta empresa'
+                ], 400);
+            }
+
+            // Load the customer relationship if not already loaded
+            if (!$schedule->relationLoaded('customer')) {
+                $schedule->load('customer');
+            }
+
+            // Update customer document_number if provided and not already set
+            $documentNumber = $request->input('document_number');
+            if (!empty($documentNumber) && empty($schedule->customer->document_number)) {
+                $schedule->customer->update(['document_number' => $documentNumber]);
+                // Reload the customer to get the updated data
+                $schedule->load('customer');
+            }
+
+            // Check if customer exists in Asaas
+            $customerExists = $this->asaasCustomerService->customerExists([
+                'type' => AsaasCustomerTypeEnum::CUSTOMER->value,
+                'customer_id' => $schedule->customer_id,
+            ]);
+
+            if (!$customerExists) {
+                $customerDocument = $schedule->customer->document_number;
+                if (empty($customerDocument)) {
+                    throw new \Exception('Customer document number not found');
+                }
+
+                $asaasCustomer = $this->asaasCustomerService->create([
+                    'type' => AsaasCustomerTypeEnum::CUSTOMER->value,
+                    'customer_id' => $schedule->customer_id,
+                    'name' => $schedule->customer->name,
+                    'cpf_cnpj' => $customerDocument,
+                ]);
+
+                $integrationResult = $this->asaasCustomerService->integrateCustomerToAsaas($asaasCustomer, $company->companySettings->gateway_api_key);
+
+                if ($integrationResult !== true) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => 'Erro ao integrar cliente com Asaas: ' . $integrationResult
+                    ], 500);
+                }
+            }
+
+            $asaasCustomer = $this->asaasCustomerService->findByCustomerId($schedule->customer_id);
+
+            $this->errorLogService->logError(new \Exception('ASAAS CUSTOMER: ' . json_encode($asaasCustomer)), ['action' => 'generatePayment', 'schedule_id' => $schedule->id]);
+
+            $response = $this->schedulePaymentService->generateSchedulePayment(
+                $schedule,
+                $asaasCustomer,
+                $company->companySettings->gateway_api_key
+            );
+
+            return response()->json(['success' => true, 'data' => $response]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, ['action' => 'generatePayment', 'schedule_id' => $schedule->id]);
+
+            return response()->json(['success' => false, 'error' => 'Erro ao gerar pagamento'], 500);
+        }
+    }
+
+    /**
+     * Get PIX code for schedule payment
+     */
+    public function getPixCode(Company $company, Schedule $schedule, Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'payment_id' => 'required|string'
+            ]);
+
+            // Ensure the schedule belongs to the specified company
+            if ($schedule->unit->company_id != $company->id) {
+                return response()->json(['success' => false, 'error' => 'Agendamento não encontrado'], 404);
+            }
+
+            $company->load('companySettings');
+            if (!$company->companySettings || !$company->companySettings->gateway_api_key) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Configurações de pagamento não encontradas para esta empresa'
+                ], 400);
+            }
+
+            $response = $this->schedulePaymentService->getSchedulePixCode(
+                $schedule,
+                $request->payment_id,
+                $company->companySettings->gateway_api_key
+            );
+
+            return response()->json(['success' => true, 'data' => $response]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, ['action' => 'getPixCode', 'schedule_id' => $schedule->id, 'payment_id' => $request->payment_id ?? null]);
+
+            return response()->json(['success' => false, 'error' => 'Erro ao obter código PIX'], 500);
+        }
+    }
+
+    /**
+     * Check payment status for schedule
+     */
+    public function checkPaymentStatus(Company $company, Schedule $schedule, Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'payment_id' => 'required|string'
+            ]);
+
+            // Ensure the schedule belongs to the specified company
+            if ($schedule->unit->company_id != $company->id) {
+                return response()->json(['success' => false, 'error' => 'Agendamento não encontrado'], 404);
+            }
+
+            $company->load('companySettings');
+            if (!$company->companySettings || !$company->companySettings->gateway_api_key) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Configurações de pagamento não encontradas para esta empresa'
+                ], 400);
+            }
+
+            $this->errorLogService->logError(new \Exception('CHECK PAYMENT STATUS: ' . $request->payment_id), ['action' => 'checkPaymentStatus', 'schedule_id' => $schedule->id, 'payment_id' => $request->payment_id ?? null]);
+
+            // Verificar se já existe um pagamento ativo para este agendamento
+            $existingPayment = \App\Models\Payment::where('schedule_id', $schedule->id)
+                ->where('status', \App\Enum\PaymentStatusEnum::PAID)
+                ->first();
+
+            if ($existingPayment) {
+                // Se já houver um pagamento PAID (status 2), não exibir o card de pagamento
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'status' => 'CONFIRMED',
+                        'internal_status' => \App\Enum\PaymentStatusEnum::PAID->value,
+                        'hide_payment_card' => true,
+                        'message' => 'Pagamento já foi realizado para este agendamento'
+                    ]
+                ]);
+            }
+
+            // Verificar se existe pagamento PENDING
+            $pendingPayment = \App\Models\Payment::where('schedule_id', $schedule->id)
+                ->where('status', \App\Enum\PaymentStatusEnum::PENDING)
+                ->first();
+
+            if ($pendingPayment) {
+                // Se já houver um pagamento PENDING (status 1), exibir o card com código PIX preenchido
+                $response = $this->schedulePaymentService->checkSchedulePaymentStatus(
+                    $schedule,
+                    $request->payment_id,
+                    $company->companySettings->gateway_api_key
+                );
+
+                // Adicionar informações do pagamento pendente
+                $response['existing_pending_payment'] = true;
+                $response['pix_copy_paste'] = $pendingPayment->pix_copy_paste;
+                $response['payment_id'] = $pendingPayment->gateway_payment_id;
+
+                return response()->json(['success' => true, 'data' => $response]);
+            }
+
+            // Verificar se existe pagamento REJECTED, EXPIRED ou OVERDUE
+            $failedPayment = \App\Models\Payment::where('schedule_id', $schedule->id)
+                ->whereIn('status', [
+                    \App\Enum\PaymentStatusEnum::REJECTED,
+                    \App\Enum\PaymentStatusEnum::EXPIRED,
+                    \App\Enum\PaymentStatusEnum::OVERDUE
+                ])
+                ->first();
+
+            if ($failedPayment) {
+                // Se já houver um pagamento com status de falha, exibir o card com botão para gerar novo código PIX
+                $response = $this->schedulePaymentService->checkSchedulePaymentStatus(
+                    $schedule,
+                    $request->payment_id,
+                    $company->companySettings->gateway_api_key
+                );
+
+                // Adicionar informações do pagamento com falha
+                $response['existing_failed_payment'] = true;
+                $response['failed_payment_status'] = $failedPayment->status->value;
+                $response['show_new_pix_button'] = true;
+
+                return response()->json(['success' => true, 'data' => $response]);
+            }
+
+            // Se não há pagamento existente, verificar status normalmente
+            $response = $this->schedulePaymentService->checkSchedulePaymentStatus(
+                $schedule,
+                $request->payment_id,
+                $company->companySettings->gateway_api_key
+            );
+
+            return response()->json(['success' => true, 'data' => $response]);
+        } catch (\Exception $e) {
+            $this->errorLogService->logError($e, ['action' => 'checkPaymentStatus', 'schedule_id' => $schedule->id, 'payment_id' => $request->payment_id ?? null]);
+
+            return response()->json(['success' => false, 'error' => 'Erro ao verificar status do pagamento'], 500);
+        }
+    }
+
+    /**
+     * Confirm schedule with cash (no online payment). Public flow.
+     */
+    public function confirmCash(Company $company, Schedule $schedule, Request $request): JsonResponse
+    {
+        try {
+            // Ensure the schedule belongs to the specified company
+            if ($schedule->unit->company_id != $company->id) {
+                return response()->json(['success' => false, 'error' => 'Agendamento não encontrado'], 404);
+            }
+
+            $this->scheduleRepository->update($schedule, [
+                'status' => ScheduleStatusEnum::CONFIRMED->value,
+                'is_confirmed' => true,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'status' => 'CONFIRMED',
+                    'message' => __('schedule_link.payment_confirmed')
+                ]
+            ]);
+        } catch (\Throwable $e) {
+            $this->errorLogService->logError($e, ['action' => 'confirmCash', 'schedule_id' => $schedule->id]);
+            return response()->json(['success' => false, 'error' => 'Erro ao confirmar agendamento'], 500);
+        }
     }
 
     /**
@@ -271,16 +564,20 @@ class ScheduleLinkController extends Controller
         $unitSettings = $unit->unitSettings;
         $duration = (int) ($unitSettings->appointment_duration_minutes ?? 30);
 
-        $start = Carbon::parse($weekStart)->startOfWeek(Carbon::SUNDAY);
+        $tz = $unitSettings->timezone ?? 'America/Sao_Paulo';
+
+        // Anchor week range in unit timezone to avoid UTC vs local mismatches
+        $start = Carbon::parse($weekStart . ' 00:00', $tz)->startOfWeek(Carbon::SUNDAY);
         $end = $start->copy()->endOfWeek(Carbon::SATURDAY);
 
-        $todayLocal = now($unitSettings->timezone ?? 'UTC')->startOfDay();
+        $todayLocal = now($tz)->startOfDay();
 
         $weekDays = [];
         $cursor = $start->copy();
 
         while ($cursor->lte($end)) {
             $dateStr = $cursor->format('Y-m-d');
+            // Compare in the same timezone (cursor is in $tz)
             $isFutureOrToday = $cursor->greaterThanOrEqualTo($todayLocal);
             $isWorkingDay = !$this->workingDaysValidator->isOutsideWorkingDays($cursor, $unitSettings);
 
@@ -330,10 +627,15 @@ class ScheduleLinkController extends Controller
             });
 
         // Filter out conflicts and blocks
-        $available = $slots->filter(function (Carbon $localStart) use ($unit, $unitSettings, $duration, $date) {
+        $available = $slots->filter(function (Carbon $localStart) use ($unit, $unitSettings, $duration, $date, $dayKey) {
             // Skip past times for today
-            $nowLocal = now($unitSettings->timezone ?? 'UTC');
+            $nowLocal = now($unitSettings->timezone ?? 'America/Sao_Paulo');
             if ($date === $nowLocal->format('Y-m-d') && $localStart->lte($nowLocal)) {
+                return false;
+            }
+
+            // Check if time slot is inside break period
+            if ($this->scheduleTimeService->isInsideBreakPeriod($localStart, $dayKey, $unitSettings, $duration)) {
                 return false;
             }
 

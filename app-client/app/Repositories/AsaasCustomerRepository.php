@@ -42,4 +42,11 @@ class AsaasCustomerRepository
                           ->where('type', AsaasCustomerTypeEnum::COMPANY->value)
                           ->first();
     }
+
+    public function findByCustomerId(int $customerId): ?AsaasCustomer
+    {
+        return $this->model->where('customer_id', $customerId)
+                          ->where('type', AsaasCustomerTypeEnum::CUSTOMER->value)
+                          ->first();
+    }
 }

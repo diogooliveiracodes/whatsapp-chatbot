@@ -29,11 +29,18 @@ Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index'])->name('
 // Public schedule link (no auth)
 Route::prefix('{company}/schedule-link')->group(function () {
     Route::get('/', [ScheduleLinkController::class, 'index'])->name('schedule-link.index');
+
+    // Payment routes for schedules (must come before {unit} routes)
+    Route::post('/schedule/{schedule}/generate-pix', [ScheduleLinkController::class, 'generatePayment'])->name('schedule-link.generate-pix');
+    Route::post('/schedule/{schedule}/get-pix-code', [ScheduleLinkController::class, 'getPixCode'])->name('schedule-link.get-pix-code');
+    Route::post('/schedule/{schedule}/check-payment-status', [ScheduleLinkController::class, 'checkPaymentStatus'])->name('schedule-link.check-payment-status');
+    Route::post('/schedule/{schedule}/confirm-cash', [ScheduleLinkController::class, 'confirmCash'])->name('schedule-link.confirm-cash');
+
     Route::get('/{unit}', [ScheduleLinkController::class, 'show'])->name('schedule-link.show');
     Route::get('/{unit}/week-days', [ScheduleLinkController::class, 'weekDays'])->name('schedule-link.week-days');
     Route::get('/{unit}/available-times', [ScheduleLinkController::class, 'availableTimes'])->name('schedule-link.available-times');
     Route::post('/{unit}', [ScheduleLinkController::class, 'store'])->name('schedule-link.store');
-    Route::get('/{unit}/success', [ScheduleLinkController::class, 'success'])->name('schedule-link.success');
+    Route::get('/{unit}/success/{uuid}', [ScheduleLinkController::class, 'success'])->name('schedule-link.success');
 });
 
 Route::middleware('auth', 'company.active', 'subscription.active', 'user.active')->group(function () {

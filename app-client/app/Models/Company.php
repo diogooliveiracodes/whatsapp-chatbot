@@ -21,6 +21,7 @@ class Company extends Model
      * @var array<string>
      */
     protected $fillable = [
+        'id',
         'name',
         'document_number',
         'document_type',
