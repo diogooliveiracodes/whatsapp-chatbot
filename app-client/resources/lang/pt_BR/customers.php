@@ -59,4 +59,5 @@ return [
     'view_inactive' => 'Ver Inativos',
     'no_schedule' => 'Nunca agendou',
     'days' => 'dias',
+    'my_schedules' => 'Meus Agendamentos',
 ];

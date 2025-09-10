@@ -14,6 +14,7 @@ use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ScheduleLinkController;
+use App\Http\Controllers\CustomerSchedulesController;
 use App\Http\Controllers\AutomatedMessageController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\WhatsappWebhookController;
@@ -42,6 +43,8 @@ Route::prefix('{company}/schedule-link')->group(function () {
     Route::post('/{unit}', [ScheduleLinkController::class, 'store'])->name('schedule-link.store');
     Route::get('/{unit}/success/{uuid}', [ScheduleLinkController::class, 'success'])->name('schedule-link.success');
 });
+
+Route::get('/customer/{uuid}', [CustomerSchedulesController::class, 'index'])->name('customer.schedules');
 
 Route::middleware('auth', 'company.active', 'subscription.active', 'user.active')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

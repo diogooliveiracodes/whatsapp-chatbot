@@ -59,4 +59,5 @@ return [
     'view_inactive' => 'View Inactive',
     'no_schedule' => 'Never scheduled',
     'days' => 'days',
+    'my_schedules' => 'My Appointments',
 ];

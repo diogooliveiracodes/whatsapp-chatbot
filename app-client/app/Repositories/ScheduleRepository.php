@@ -6,6 +6,7 @@ use App\Models\Schedule;
 use App\Services\Unit\UnitService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
 class ScheduleRepository
@@ -100,6 +101,22 @@ class ScheduleRepository
             ->whereNot('status', 'cancelled')
             ->where('schedule_date', '>=', now())
             ->exists();
+    }
+
+    /**
+     * Paginate schedules for a given customer UUID ordered from newest to oldest
+     */
+    public function paginateByCustomerUuid(string $customerUuid, int $perPage = 10): LengthAwarePaginator
+    {
+        return $this
+            ->model
+            ->with(['customer', 'user', 'unitServiceType', 'unit.unitSettings'])
+            ->whereHas('customer', function ($q) use ($customerUuid) {
+                $q->where('uuid', $customerUuid);
+            })
+            ->orderByDesc('schedule_date')
+            ->orderByDesc('start_time')
+            ->paginate($perPage);
     }
 
     /**

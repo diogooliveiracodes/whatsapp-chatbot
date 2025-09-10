@@ -7,6 +7,7 @@ return [
     'schedules' => 'Schedules',
     'semanal_schedules' => 'Weekly Schedule',
     'daily_schedules' => 'Daily Schedule',
+    'customer_schedules' => 'My Appointments',
     'settings' => 'Settings',
     'units' => 'Units',
     'configure_units' => 'Configure Units',

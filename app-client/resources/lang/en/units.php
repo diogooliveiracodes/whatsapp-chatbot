@@ -53,4 +53,5 @@ return [
         'active_schedules' => 'Cannot deactivate unit because there are active schedules.',
     ],
     'settings' => 'Settings',
+    'unit' => 'Unit',
 ];

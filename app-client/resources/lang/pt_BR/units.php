@@ -53,4 +53,5 @@ return [
         'active_schedules' => 'Não é possível desativar a unidade pois existem agendamentos ativos.',
     ],
     'settings' => 'Configurações',
+    'unit' => 'Unidade',
 ];

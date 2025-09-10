@@ -147,7 +147,7 @@ class ScheduleLinkController extends Controller
             return response()->json(['times' => []]);
         }
 
-        $times = $this->getAvailableTimesForDate($unit, $date)->map(fn ($t) => $t->format('H:i'))->values();
+        $times = $this->getAvailableTimesForDate($unit, $date)->map(fn($t) => $t->format('H:i'))->values();
         return response()->json(['times' => $times]);
     }
 
@@ -297,12 +297,17 @@ class ScheduleLinkController extends Controller
             $enabledPaymentMethods = $unit->unitSettings->getEnabledPaymentMethods();
         }
 
+        // Ensure customer UUID is available for navigation
+        $schedule->loadMissing('customer');
+        $customerUuid = $schedule->customer?->uuid;
+
         return view('schedule-link.success', [
             'unit' => $unit,
             'company' => $company,
             'schedule' => $scheduleData,
             'paymentStatus' => $paymentStatus,
             'enabledPaymentMethods' => $enabledPaymentMethods,
+            'customerUuid' => $customerUuid,
         ]);
     }
 
@@ -671,5 +676,3 @@ class ScheduleLinkController extends Controller
         ];
     }
 }
-
-
