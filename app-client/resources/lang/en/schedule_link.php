@@ -24,6 +24,13 @@ return [
     'pix_code_label' => 'PIX Code (Copy and Paste)',
     'copy_pix' => 'Copy',
     'pix_instructions' => 'Copy the PIX code and paste it into your banking app to make the payment.',
+    'payment_method_label' => 'Payment method',
+    'method_pix' => 'Pix',
+    'method_cash' => 'Cash',
+    'credit_card_soon' => 'Credit Card (coming soon)',
+    'debit_card_soon' => 'Debit Card (coming soon)',
+    'cash_info_text' => 'Confirm your appointment to pay in cash on site.',
+    'confirm_cash' => 'Confirm appointment',
 
     // Messages
     'schedule_not_found' => 'Schedule not found.',
@@ -55,4 +62,11 @@ return [
         'unexpected_error' => 'An unexpected error occurred while creating the schedule.',
         'no_user_available' => 'There is no available user in this unit to receive the appointment.',
     ],
+
+    // Labels
+    'customer_label' => 'Customer',
+    'service_label' => 'Service',
+    'unit_label' => 'Unit',
+    'status_label' => 'Status',
+    'notes_label' => 'Notes',
 ];

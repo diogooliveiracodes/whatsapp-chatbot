@@ -24,6 +24,13 @@ return [
     'pix_code_label' => 'Código PIX (Copia e Cola)',
     'copy_pix' => 'Copiar',
     'pix_instructions' => 'Copie o código PIX e cole no seu aplicativo bancário para realizar o pagamento.',
+    'payment_method_label' => 'Método de pagamento',
+    'method_pix' => 'Pix',
+    'method_cash' => 'Dinheiro',
+    'credit_card_soon' => 'Cartão de Crédito (em breve)',
+    'debit_card_soon' => 'Cartão de Débito (em breve)',
+    'cash_info_text' => 'Confirme seu agendamento para pagar em dinheiro no local.',
+    'confirm_cash' => 'Confirmar agendamento',
 
     // Messages
     'schedule_not_found' => 'Agendamento não encontrado.',
@@ -55,4 +62,11 @@ return [
         'unexpected_error' => 'Ocorreu um erro inesperado ao criar o agendamento.',
         'no_user_available' => 'Não há usuário disponível para receber o agendamento nesta unidade.',
     ],
+
+    // Labels
+    'customer_label' => 'Cliente',
+    'service_label' => 'Serviço',
+    'unit_label' => 'Unidade',
+    'status_label' => 'Status',
+    'notes_label' => 'Observações',
 ];

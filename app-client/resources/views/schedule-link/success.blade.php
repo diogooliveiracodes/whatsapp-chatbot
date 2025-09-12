@@ -41,28 +41,26 @@
                                 @endphp
                                 @if (count($methods) > 1)
                                     <div class="mb-6">
-                                        <label class="block text-gray-300 text-sm font-medium mb-2">Método de
-                                            pagamento</label>
+                                        <label
+                                            class="block text-gray-300 text-sm font-medium mb-2">{{ __('schedule_link.payment_method_label') }}</label>
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="paymentMethodOptions">
                                             @if (in_array('pix', $methods))
                                                 <button type="button" onclick="selectPaymentMethod('pix')"
                                                     id="btnMethodPix"
-                                                    class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white hover:bg-gray-700 focus:ring-2 focus:ring-blue-500">Pix</button>
+                                                    class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white hover:bg-gray-700 focus:ring-2 focus:ring-blue-500">{{ __('schedule_link.method_pix') }}</button>
                                             @endif
                                             @if (in_array('cash', $methods))
                                                 <button type="button" onclick="selectPaymentMethod('cash')"
                                                     id="btnMethodCash"
-                                                    class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white hover:bg-gray-700 focus:ring-2 focus:ring-blue-500">Dinheiro</button>
+                                                    class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white hover:bg-gray-700 focus:ring-2 focus:ring-blue-500">{{ __('schedule_link.method_cash') }}</button>
                                             @endif
                                             @if (in_array('credit_card', $methods))
                                                 <button type="button" disabled
-                                                    class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed">Cartão
-                                                    de Crédito (em breve)</button>
+                                                    class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed">{{ __('schedule_link.credit_card_soon') }}</button>
                                             @endif
                                             @if (in_array('debit_card', $methods))
                                                 <button type="button" disabled
-                                                    class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed">Cartão
-                                                    de Débito (em breve)</button>
+                                                    class="px-4 py-3 rounded-lg border border-gray-600 bg-gray-800 text-gray-400 cursor-not-allowed">{{ __('schedule_link.debit_card_soon') }}</button>
                                             @endif
                                         </div>
                                     </div>
@@ -90,7 +88,8 @@
                                     <!-- Generate PIX Button -->
                                     <div id="pixGenerateButton" class="text-center">
                                         <button onclick="generatePixCode()"
-                                            class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                            class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
+                                            style="background-color:#16a34a;">
                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -148,15 +147,16 @@
                                                 class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
                                                 <div class="flex">
                                                     <div class="flex-shrink-0">
-                                                        <svg class="h-5 w-5 text-yellow-600 dark:text-yellow-400" viewBox="0 0 20 20"
-                                                            fill="currentColor">
+                                                        <svg class="h-5 w-5 text-yellow-600 dark:text-yellow-400"
+                                                            viewBox="0 0 20 20" fill="currentColor">
                                                             <path fill-rule="evenodd"
                                                                 d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
                                                                 clip-rule="evenodd" />
                                                         </svg>
                                                     </div>
                                                     <div class="ml-3">
-                                                        <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+                                                        <h3
+                                                            class="text-sm font-medium text-yellow-800 dark:text-yellow-300">
                                                             {{ __('schedule_link.payment_pending') }}
                                                         </h3>
                                                         <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-200">
@@ -187,13 +187,13 @@
                                 <!-- CASH Section -->
                                 <div id="cashSection" class="space-y-4 hidden">
                                     <div class="bg-gray-800 rounded-lg p-4 border border-gray-600">
-                                        <p class="text-sm text-gray-300">Confirme seu agendamento para pagar em
-                                            dinheiro no local.</p>
+                                        <p class="text-sm text-gray-300">{{ __('schedule_link.cash_info_text') }}</p>
                                     </div>
                                     <div class="text-center">
                                         <button onclick="confirmCashPayment()" id="cashConfirmButton"
-                                            class="inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                            Confirmar agendamento
+                                            class="inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
+                                            style="background-color:#16a34a;">
+                                            {{ __('schedule_link.confirm_cash') }}
                                         </button>
                                     </div>
                                 </div>
@@ -236,22 +236,26 @@
                                 <div class="p-4 bg-gray-800 border-t border-gray-700">
                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                         <div>
-                                            <div class="text-sm font-medium text-gray-400">Cliente</div>
+                                            <div class="text-sm font-medium text-gray-400">
+                                                {{ __('schedule_link.customer_label') }}</div>
                                             <div class="text-sm text-white">
                                                 {{ $schedule['customer']['name'] ?? 'N/A' }}</div>
                                         </div>
                                         <div>
-                                            <div class="text-sm font-medium text-gray-400">Serviço</div>
+                                            <div class="text-sm font-medium text-gray-400">
+                                                {{ __('schedule_link.service_label') }}</div>
                                             <div class="text-sm text-white">
                                                 {{ $schedule['unit_service_type']['name'] ?? 'N/A' }}</div>
                                         </div>
                                         <div>
-                                            <div class="text-sm font-medium text-gray-400">Unidade</div>
+                                            <div class="text-sm font-medium text-gray-400">
+                                                {{ __('schedule_link.unit_label') }}</div>
                                             <div class="text-sm text-white">{{ $schedule['unit']['name'] ?? 'N/A' }}
                                             </div>
                                         </div>
                                         <div>
-                                            <div class="text-sm font-medium text-gray-400">Status</div>
+                                            <div class="text-sm font-medium text-gray-400">
+                                                {{ __('schedule_link.status_label') }}</div>
                                             <div class="text-sm">
                                                 <span
                                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
@@ -264,7 +268,8 @@
                                         </div>
                                         @if ($schedule['notes'])
                                             <div class="sm:col-span-2 lg:col-span-3">
-                                                <div class="text-sm font-medium text-gray-400">Observações</div>
+                                                <div class="text-sm font-medium text-gray-400">
+                                                    {{ __('schedule_link.notes_label') }}</div>
                                                 <div class="text-sm text-white">{{ $schedule['notes'] }}</div>
                                             </div>
                                         @endif
@@ -786,7 +791,8 @@
                 icon: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />`
             };
             setTitleToSuccess();
-        } else if (asaasStatus === 'REJECTED' || asaasStatus === 'CANCELLED' || internalStatus === PAYMENT_STATUS.REJECTED) {
+        } else if (asaasStatus === 'REJECTED' || asaasStatus === 'CANCELLED' || internalStatus === PAYMENT_STATUS
+            .REJECTED) {
             statusConfig = {
                 bgColor: 'bg-red-50 dark:bg-red-900/20',
                 borderColor: 'border border-red-200 dark:border-red-700',
@@ -843,9 +849,9 @@
         // Inline fallback background to avoid purge issues
         const bgMap = {
             success: '#16a34a', // green-600
-            error: '#dc2626',   // red-600
+            error: '#dc2626', // red-600
             warning: '#ca8a04', // yellow-600
-            info: '#2563eb'     // blue-600
+            info: '#2563eb' // blue-600
         };
         notification.style.backgroundColor = bgMap[type] || bgMap.info;
         notification.style.color = '#ffffff';
