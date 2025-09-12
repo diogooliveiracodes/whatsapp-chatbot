@@ -3,7 +3,7 @@
 return [
     'choose_unit' => 'Choose a unit for your appointment',
     'back' => 'Back',
-    'title' => 'Book an appointment at :unit',
+    'title' => 'Book an appointment with :unit',
     'name' => 'Your name',
     'phone' => 'Your phone (WhatsApp)',
     'document_number' => 'CPF/CNPJ',
@@ -69,4 +69,5 @@ return [
     'unit_label' => 'Unit',
     'status_label' => 'Status',
     'notes_label' => 'Notes',
+    'professional_label' => 'Professional',
 ];

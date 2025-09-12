@@ -239,7 +239,7 @@
                                         </div>
                                         <div>
                                             <div class="text-sm font-medium text-gray-400">
-                                                {{ __('schedule_link.unit_label') }}</div>
+                                                {{ __('schedule_link.professional_label') }}</div>
                                             <div class="text-sm text-white">{{ $schedule['unit']['name'] ?? 'N/A' }}
                                             </div>
                                         </div>

@@ -3,7 +3,7 @@
 return [
     'choose_unit' => 'Escolha a unidade para o atendimento',
     'back' => 'Voltar',
-    'title' => 'Agendar atendimento em :unit',
+    'title' => 'Agendar atendimento com :unit',
     'name' => 'Seu nome',
     'phone' => 'Seu telefone (WhatsApp)',
     'document_number' => 'CPF/CNPJ',
@@ -69,4 +69,5 @@ return [
     'unit_label' => 'Unidade',
     'status_label' => 'Status',
     'notes_label' => 'Observações',
+    'professional_label' => 'Profissional',
 ];
