@@ -29,7 +29,7 @@
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center bg-gradient-to-br from-gray-900 to-gray-800">
+    <div class="min-h-screen flex flex-col sm:justify-center items-center bg-gradient-to-br from-gray-900 to-gray-800 mt-6">
         <x-global.session-alerts />
 
         @if ($hasMultipleUnits)
