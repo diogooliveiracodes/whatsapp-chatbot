@@ -32,13 +32,14 @@
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
         <x-global.session-alerts />
 
-        @if($hasMultipleUnits)
+        @if ($hasMultipleUnits)
             <!-- Floating Back Button for Mobile -->
             <div class="sticky top-[calc(env(safe-area-inset-top,0px)+1rem)] z-50 sm:hidden w-full">
                 <a href="{{ route('schedule-link.index', ['company' => $company]) }}"
                     class="ml-4 flex items-center justify-center w-12 h-12 bg-gray-800/80 backdrop-blur-sm border border-gray-600/50 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-gray-800">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
                     </svg>
                 </a>
             </div>
@@ -46,15 +47,17 @@
 
         <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-4 sm:py-8 px-3 sm:px-6 lg:px-8">
             <div class="w-full max-w-4xl mx-auto">
-                                <!-- Header Section -->
+                <!-- Header Section -->
                 <div class="mb-8">
-                    @if($hasMultipleUnits)
+                    @if ($hasMultipleUnits)
                         <!-- Back Button - Desktop Only -->
                         <div class="hidden sm:block mb-4">
                             <a href="{{ route('schedule-link.index', ['company' => $company]) }}"
                                 class="group inline-flex items-center px-4 py-3 bg-gray-800/60 hover:bg-gray-700/80 backdrop-blur-sm border border-gray-600/50 hover:border-gray-500/70 text-white text-sm font-medium rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2 focus:ring-offset-gray-800 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95">
-                                <svg class="w-5 h-5 mr-2 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                <svg class="w-5 h-5 mr-2 transition-transform duration-300 group-hover:-translate-x-1"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 19l-7-7 7-7"></path>
                                 </svg>
                                 {{ __('schedule_link.back') }}
                             </a>
@@ -65,7 +68,8 @@
                     <div class="text-center pt-16 sm:pt-0">
                         <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
                             {{ __('schedule_link.title', ['unit' => $unit->name]) }}</h1>
-                        <p class="text-gray-400 text-sm sm:text-base">Escolha uma data e horário disponível para seu agendamento</p>
+                        <p class="text-gray-400 text-sm sm:text-base">Escolha uma data e horário disponível para seu
+                            agendamento</p>
                     </div>
                 </div>
 
@@ -101,23 +105,24 @@
                                         <label for="phone" class="block text-gray-300 text-sm font-medium">
                                             {{ __('schedule_link.phone') }} <span class="text-red-400">*</span>
                                         </label>
-                                        <input type="text" id="phone_display" value="{{ old('phone') }}" inputmode="numeric"
-                                            required placeholder="(11) 99999-9999"
+                                        <input type="text" id="phone_display" value="{{ old('phone') }}"
+                                            inputmode="numeric" required placeholder="(11) 99999-9999"
                                             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
-                                        <input type="hidden" id="phone" name="phone" value="{{ old('phone') ? preg_replace('/\D/', '', old('phone')) : '' }}">
+                                        <input type="hidden" id="phone" name="phone"
+                                            value="{{ old('phone') ? preg_replace('/\D/', '', old('phone')) : '' }}">
                                         <x-input-error :messages="$errors->get('phone')" class="mt-1" />
                                     </div>
                                 </div>
                             </div>
 
-                                                         <!-- Step 2: Service Selection -->
-                             <div class="space-y-4" id="step-service">
-                                 <div class="flex items-center space-x-3 mb-4">
-                                     <div
-                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                                         2</div>
-                                     <h2 class="text-xl font-semibold text-white">Tipo de Serviço</h2>
-                                 </div>
+                            <!-- Step 2: Service Selection -->
+                            <div class="space-y-4" id="step-service">
+                                <div class="flex items-center space-x-3 mb-4">
+                                    <div
+                                        class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                                        2</div>
+                                    <h2 class="text-xl font-semibold text-white">Tipo de Serviço</h2>
+                                </div>
 
                                 <div class="space-y-4">
                                     <label class="block text-gray-300 text-sm font-medium">
@@ -366,7 +371,8 @@
                 if (availableDays === 0) {
                     message = 'Este serviço não está disponível em nenhum dia da semana';
                 } else {
-                    message = `Este serviço está disponível em ${availableDays} dia(s) da semana, mas não há horários livres nesta semana`;
+                    message =
+                        `Este serviço está disponível em ${availableDays} dia(s) da semana, mas não há horários livres nesta semana`;
                 }
             }
 
@@ -623,7 +629,7 @@
         loadWeek(newWeekStart);
     }
 
-        // Phone mask function
+    // Phone mask function
     function formatPhoneNumber(input) {
         let value = input.value.replace(/\D/g, '').substring(0, 11);
         let formattedValue = '';
@@ -666,7 +672,9 @@
         // Enable smooth scrolling for user interactions
         document.addEventListener('click', function() {
             document.documentElement.classList.add('user-interaction');
-        }, { once: true });
+        }, {
+            once: true
+        });
 
         // Add week navigation functionality
         document.getElementById('prev-week').addEventListener('click', () => navigateWeek('prev'));
@@ -750,7 +758,7 @@
             document.getElementById('step-date-time').classList.add('hidden');
         }
 
-                // Add phone mask functionality
+        // Add phone mask functionality
         const phoneDisplayInput = document.getElementById('phone_display');
         const phoneHiddenInput = document.getElementById('phone');
 
