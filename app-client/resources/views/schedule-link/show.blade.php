@@ -29,7 +29,7 @@
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center bg-gray-100 dark:bg-gray-900">
+    <div class="min-h-screen flex flex-col sm:justify-center items-center bg-gradient-to-br from-gray-900 to-gray-800">
         <x-global.session-alerts />
 
         @if ($hasMultipleUnits)
@@ -87,7 +87,8 @@
                                     <div
                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                                         1</div>
-                                    <h2 class="text-xl font-semibold text-white">{{ __('schedule_link.personal_info') }}</h2>
+                                    <h2 class="text-xl font-semibold text-white">{{ __('schedule_link.personal_info') }}
+                                    </h2>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -105,7 +106,8 @@
                                             {{ __('schedule_link.phone') }} <span class="text-red-400">*</span>
                                         </label>
                                         <input type="text" id="phone_display" value="{{ old('phone') }}"
-                                            inputmode="numeric" required placeholder="{{ __('schedule_link.phone_placeholder') }}"
+                                            inputmode="numeric" required
+                                            placeholder="{{ __('schedule_link.phone_placeholder') }}"
                                             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                         <input type="hidden" id="phone" name="phone"
                                             value="{{ old('phone') ? preg_replace('/\D/', '', old('phone')) : '' }}">
@@ -120,7 +122,8 @@
                                     <div
                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                                         2</div>
-                                    <h2 class="text-xl font-semibold text-white">{{ __('schedules.service_type') }}</h2>
+                                    <h2 class="text-xl font-semibold text-white">{{ __('schedules.service_type') }}
+                                    </h2>
                                 </div>
 
                                 <div class="space-y-4">
@@ -166,7 +169,8 @@
                                     <div
                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                                         3</div>
-                                    <h2 class="text-xl font-semibold text-white">{{ __('schedule_link.date_time') }}</h2>
+                                    <h2 class="text-xl font-semibold text-white">{{ __('schedule_link.date_time') }}
+                                    </h2>
                                 </div>
 
                                 <!-- Date Selection -->
@@ -211,7 +215,8 @@
                                                 <div
                                                     class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4">
                                                 </div>
-                                                <p class="text-white text-sm">{{ __('schedule_link.loading_week') }}</p>
+                                                <p class="text-white text-sm">{{ __('schedule_link.loading_week') }}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -311,7 +316,8 @@
             card.type = 'button';
             card.className =
                 'flex flex-col items-center justify-center h-20 sm:h-24 rounded-xl border-2 transition-all duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800';
-            card.setAttribute('aria-label', i18n.ariaSelectDate.replace(':day', dayData.day).replace(':month', dayData.month));
+            card.setAttribute('aria-label', i18n.ariaSelectDate.replace(':day', dayData.day).replace(':month',
+                dayData.month));
             card.setAttribute('data-date', dayData.date);
 
             // Check if the day is available for the selected service type
