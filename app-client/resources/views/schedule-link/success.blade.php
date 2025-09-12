@@ -840,6 +840,16 @@
             type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600'
         }`;
 
+        // Inline fallback background to avoid purge issues
+        const bgMap = {
+            success: '#16a34a', // green-600
+            error: '#dc2626',   // red-600
+            warning: '#ca8a04', // yellow-600
+            info: '#2563eb'     // blue-600
+        };
+        notification.style.backgroundColor = bgMap[type] || bgMap.info;
+        notification.style.color = '#ffffff';
+
         // Decode possible HTML entities coming from Blade, including double-encoded cases
         const decodeEntities = (str) => {
             let prev = null;
