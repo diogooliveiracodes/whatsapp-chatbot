@@ -458,14 +458,19 @@ class ScheduleLinkController extends Controller
                 ->first();
 
             if ($existingPayment) {
-                // Se já houver um pagamento PAID (status 2), não exibir o card de pagamento
+                // Se já houver um pagamento PAID (status 2), confirmar o agendamento e não exibir o card de pagamento
+                $this->scheduleRepository->update($schedule, [
+                    'status' => ScheduleStatusEnum::CONFIRMED->value,
+                    'is_confirmed' => true,
+                ]);
+
                 return response()->json([
                     'success' => true,
                     'data' => [
                         'status' => 'CONFIRMED',
                         'internal_status' => \App\Enum\PaymentStatusEnum::PAID->value,
                         'hide_payment_card' => true,
-                        'message' => 'Pagamento já foi realizado para este agendamento'
+                        'message' => __('schedule_link.payment_confirmed')
                     ]
                 ]);
             }
@@ -476,18 +481,42 @@ class ScheduleLinkController extends Controller
                 ->first();
 
             if ($pendingPayment) {
-                // Se já houver um pagamento PENDING (status 1), exibir o card com código PIX preenchido
+                // Se já houver um pagamento PENDING (status 1), checar status no gateway
                 $response = $this->schedulePaymentService->checkSchedulePaymentStatus(
                     $schedule,
                     $request->payment_id,
                     $company->companySettings->gateway_api_key
                 );
 
-                // Adicionar informações do pagamento pendente
-                $response['existing_pending_payment'] = true;
-                $response['pix_copy_paste'] = $pendingPayment->pix_copy_paste;
-                $response['payment_id'] = $pendingPayment->gateway_payment_id;
+                // Se o pagamento foi confirmado agora, confirmar o agendamento e ocultar o card
+                if (($response['internal_status'] ?? null) === \App\Enum\PaymentStatusEnum::PAID->value || in_array(strtoupper($response['status'] ?? ''), ['CONFIRMED', 'RECEIVED'])) {
+                    $this->scheduleRepository->update($schedule, [
+                        'status' => ScheduleStatusEnum::CONFIRMED->value,
+                        'is_confirmed' => true,
+                    ]);
 
+                    $response['hide_payment_card'] = true;
+                    $response['message'] = __('schedule_link.payment_confirmed');
+
+                    return response()->json(['success' => true, 'data' => $response]);
+                }
+
+                // Se pagamento segue pendente, retornar com dados para exibir o PIX existente
+                if (($response['internal_status'] ?? null) === \App\Enum\PaymentStatusEnum::PENDING->value) {
+                    $response['existing_pending_payment'] = true;
+                    $response['pix_copy_paste'] = $pendingPayment->pix_copy_paste;
+                    $response['payment_id'] = $pendingPayment->gateway_payment_id;
+                    return response()->json(['success' => true, 'data' => $response]);
+                }
+
+                // Se status mudou para rejeitado/expirado/vencido, instruir front a mostrar novo PIX
+                if (in_array(($response['internal_status'] ?? null), [\App\Enum\PaymentStatusEnum::REJECTED->value, \App\Enum\PaymentStatusEnum::EXPIRED->value, \App\Enum\PaymentStatusEnum::OVERDUE->value], true)) {
+                    $response['existing_failed_payment'] = true;
+                    $response['show_new_pix_button'] = true;
+                    return response()->json(['success' => true, 'data' => $response]);
+                }
+
+                // Fallback
                 return response()->json(['success' => true, 'data' => $response]);
             }
 
@@ -501,14 +530,26 @@ class ScheduleLinkController extends Controller
                 ->first();
 
             if ($failedPayment) {
-                // Se já houver um pagamento com status de falha, exibir o card com botão para gerar novo código PIX
+                // Se já houver um pagamento com status de falha, consultar status atual no gateway
                 $response = $this->schedulePaymentService->checkSchedulePaymentStatus(
                     $schedule,
                     $request->payment_id,
                     $company->companySettings->gateway_api_key
                 );
 
-                // Adicionar informações do pagamento com falha
+                // Se o gateway reportar como pago agora, confirmar o agendamento
+                if (($response['internal_status'] ?? null) === \App\Enum\PaymentStatusEnum::PAID->value || in_array(strtoupper($response['status'] ?? ''), ['CONFIRMED', 'RECEIVED'])) {
+                    $this->scheduleRepository->update($schedule, [
+                        'status' => ScheduleStatusEnum::CONFIRMED->value,
+                        'is_confirmed' => true,
+                    ]);
+
+                    $response['hide_payment_card'] = true;
+                    $response['message'] = __('schedule_link.payment_confirmed');
+                    return response()->json(['success' => true, 'data' => $response]);
+                }
+
+                // Caso contrário, manter instrução para gerar novo PIX
                 $response['existing_failed_payment'] = true;
                 $response['failed_payment_status'] = $failedPayment->status->value;
                 $response['show_new_pix_button'] = true;
@@ -522,6 +563,16 @@ class ScheduleLinkController extends Controller
                 $request->payment_id,
                 $company->companySettings->gateway_api_key
             );
+
+            // Se pago, confirmar agendamento e ocultar card
+            if (($response['internal_status'] ?? null) === \App\Enum\PaymentStatusEnum::PAID->value || in_array(strtoupper($response['status'] ?? ''), ['CONFIRMED', 'RECEIVED'])) {
+                $this->scheduleRepository->update($schedule, [
+                    'status' => ScheduleStatusEnum::CONFIRMED->value,
+                    'is_confirmed' => true,
+                ]);
+                $response['hide_payment_card'] = true;
+                $response['message'] = __('schedule_link.payment_confirmed');
+            }
 
             return response()->json(['success' => true, 'data' => $response]);
         } catch (\Exception $e) {
