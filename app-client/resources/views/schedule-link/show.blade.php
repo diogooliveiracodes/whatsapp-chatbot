@@ -101,7 +101,7 @@
                                         <label for="phone" class="block text-gray-300 text-sm font-medium">
                                             {{ __('schedule_link.phone') }} <span class="text-red-400">*</span>
                                         </label>
-                                        <input type="text" id="phone_display" value="{{ old('phone') }}"
+                                        <input type="text" id="phone_display" value="{{ old('phone') }}" inputmode="numeric"
                                             required placeholder="(11) 99999-9999"
                                             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                         <input type="hidden" id="phone" name="phone" value="{{ old('phone') ? preg_replace('/\D/', '', old('phone')) : '' }}">
