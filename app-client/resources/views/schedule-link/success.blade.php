@@ -90,7 +90,7 @@
                                     <!-- Generate PIX Button -->
                                     <div id="pixGenerateButton" class="text-center">
                                         <button onclick="generatePixCode()"
-                                            class="inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                            class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -839,7 +839,22 @@
             type === 'error' ? 'bg-red-600' :
             type === 'warning' ? 'bg-yellow-600' : 'bg-blue-600'
         }`;
-        notification.textContent = message;
+
+        // Decode possible HTML entities coming from Blade, including double-encoded cases
+        const decodeEntities = (str) => {
+            let prev = null;
+            let curr = String(str);
+            let iterations = 0;
+            while (curr !== prev && iterations < 5) {
+                prev = curr;
+                const textarea = document.createElement('textarea');
+                textarea.innerHTML = prev;
+                curr = textarea.value;
+                iterations++;
+            }
+            return curr;
+        };
+        notification.textContent = decodeEntities(message);
 
         document.body.appendChild(notification);
 
