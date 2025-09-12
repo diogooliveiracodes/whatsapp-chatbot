@@ -145,10 +145,10 @@
                                         <!-- Status do Pagamento -->
                                         <div class="mt-6">
                                             <div id="paymentStatusContainer"
-                                                class="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4">
+                                                class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
                                                 <div class="flex">
                                                     <div class="flex-shrink-0">
-                                                        <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20"
+                                                        <svg class="h-5 w-5 text-yellow-600 dark:text-yellow-400" viewBox="0 0 20 20"
                                                             fill="currentColor">
                                                             <path fill-rule="evenodd"
                                                                 d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
@@ -156,10 +156,10 @@
                                                         </svg>
                                                     </div>
                                                     <div class="ml-3">
-                                                        <h3 class="text-sm font-medium text-yellow-300">
+                                                        <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-300">
                                                             {{ __('schedule_link.payment_pending') }}
                                                         </h3>
-                                                        <div class="mt-2 text-sm text-yellow-200">
+                                                        <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-200">
                                                             <p>{{ __('schedule_link.payment_pending_message') }}</p>
                                                         </div>
                                                     </div>
@@ -764,11 +764,11 @@
 
         // Mapear status para cores e mensagens
         let statusConfig = {
-            bgColor: 'bg-yellow-900/20',
-            borderColor: 'border-yellow-700',
-            iconColor: 'text-yellow-400',
-            textColor: 'text-yellow-300',
-            messageColor: 'text-yellow-200',
+            bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
+            borderColor: 'border border-yellow-200 dark:border-yellow-700',
+            iconColor: 'text-yellow-600 dark:text-yellow-400',
+            textColor: 'text-yellow-800 dark:text-yellow-300',
+            messageColor: 'text-yellow-700 dark:text-yellow-200',
             title: '{{ __('schedule_link.payment_pending') }}',
             message: '{{ __('schedule_link.payment_pending_message') }}',
             icon: `<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />`
@@ -776,35 +776,34 @@
 
         if (asaasStatus === 'CONFIRMED' || asaasStatus === 'RECEIVED' || internalStatus === PAYMENT_STATUS.PAID) {
             statusConfig = {
-                bgColor: 'bg-green-900/20',
-                borderColor: 'border-green-700',
-                iconColor: 'text-green-400',
-                textColor: 'text-green-300',
-                messageColor: 'text-green-200',
+                bgColor: 'bg-green-50 dark:bg-green-900/20',
+                borderColor: 'border border-green-200 dark:border-green-700',
+                iconColor: 'text-green-600 dark:text-green-400',
+                textColor: 'text-green-800 dark:text-green-300',
+                messageColor: 'text-green-700 dark:text-green-200',
                 title: '{{ __('schedule_link.payment_status_paid') }}',
                 message: '{{ __('schedule_link.payment_confirmed') }}',
                 icon: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />`
             };
             setTitleToSuccess();
-        } else if (asaasStatus === 'REJECTED' || asaasStatus === 'CANCELLED' || internalStatus === PAYMENT_STATUS
-            .REJECTED) {
+        } else if (asaasStatus === 'REJECTED' || asaasStatus === 'CANCELLED' || internalStatus === PAYMENT_STATUS.REJECTED) {
             statusConfig = {
-                bgColor: 'bg-red-900/20',
-                borderColor: 'border-red-700',
-                iconColor: 'text-red-400',
-                textColor: 'text-red-300',
-                messageColor: 'text-red-200',
+                bgColor: 'bg-red-50 dark:bg-red-900/20',
+                borderColor: 'border border-red-200 dark:border-red-700',
+                iconColor: 'text-red-600 dark:text-red-400',
+                textColor: 'text-red-800 dark:text-red-300',
+                messageColor: 'text-red-700 dark:text-red-200',
                 title: '{{ __('schedule_link.payment_status_rejected') }}',
                 message: '{{ __('schedule_link.payment_rejected_message') }}',
                 icon: `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />`
             };
         } else if (asaasStatus === 'OVERDUE' || internalStatus === PAYMENT_STATUS.OVERDUE) {
             statusConfig = {
-                bgColor: 'bg-orange-900/20',
-                borderColor: 'border-orange-700',
-                iconColor: 'text-orange-400',
-                textColor: 'text-orange-300',
-                messageColor: 'text-orange-200',
+                bgColor: 'bg-orange-50 dark:bg-orange-900/20',
+                borderColor: 'border border-orange-200 dark:border-orange-700',
+                iconColor: 'text-orange-600 dark:text-orange-400',
+                textColor: 'text-orange-800 dark:text-orange-300',
+                messageColor: 'text-orange-700 dark:text-orange-200',
                 title: '{{ __('schedule_link.payment_status_overdue') }}',
                 message: '{{ __('schedule_link.payment_overdue_message') }}',
                 icon: `<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />`
