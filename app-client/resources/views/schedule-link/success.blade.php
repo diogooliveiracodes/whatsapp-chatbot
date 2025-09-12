@@ -3,20 +3,12 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
     @endsection
 
-    <div class="py-10">
+    <div class="pb-10">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <!-- Header Message -->
                     <div class="mb-6 text-center">
-                        <div id="pageIconWrapper"
-                            class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/20 mb-4">
-                            <svg id="pageIcon" class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 16h-1v-4h-1m1-4h.01M12 18a6 6 0 110-12 6 6 0 010 12z"></path>
-                            </svg>
-                        </div>
                         <h1 id="pageTitle" class="text-2xl font-semibold text-white mb-2">
                             {{ __('schedule_link.payment_section_title') }}</h1>
                     </div>
@@ -25,8 +17,6 @@
                     @if (isset($schedule) && $schedule['id'])
                         <div class="mb-6" id="paymentSection">
                             <div class="bg-gray-700/50 rounded-lg p-6">
-                                <h3 class="text-lg font-semibold text-white mb-4 text-center">
-                                    {{ __('schedule_link.payment_section_title') }}</h3>
 
                                 <!-- Payment Amount -->
                                 <div class="text-center mb-4">
