@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $companyName ?? 'Agendamento' }}</title>
+    <title>{{ $companyName ?? __('schedule_link.page_title_default') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -29,7 +29,7 @@
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
+    <div class="min-h-screen flex flex-col sm:justify-center items-center bg-gray-100 dark:bg-gray-900">
         <x-global.session-alerts />
 
         @if ($hasMultipleUnits)
@@ -68,8 +68,7 @@
                     <div class="text-center pt-16 sm:pt-0">
                         <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
                             {{ __('schedule_link.title', ['unit' => $unit->name]) }}</h1>
-                        <p class="text-gray-400 text-sm sm:text-base">Escolha uma data e horário disponível para seu
-                            agendamento</p>
+                        <p class="text-gray-400 text-sm sm:text-base">{{ __('schedule_link.subtitle') }}</p>
                     </div>
                 </div>
 
@@ -88,7 +87,7 @@
                                     <div
                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                                         1</div>
-                                    <h2 class="text-xl font-semibold text-white">Informações Pessoais</h2>
+                                    <h2 class="text-xl font-semibold text-white">{{ __('schedule_link.personal_info') }}</h2>
                                 </div>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
@@ -97,7 +96,7 @@
                                             {{ __('schedule_link.name') }} <span class="text-red-400">*</span>
                                         </label>
                                         <input type="text" id="name" name="name" value="{{ old('name') }}"
-                                            required placeholder="Digite seu nome completo"
+                                            required placeholder="{{ __('schedule_link.name_placeholder') }}"
                                             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                         <x-input-error :messages="$errors->get('name')" class="mt-1" />
                                     </div>
@@ -106,7 +105,7 @@
                                             {{ __('schedule_link.phone') }} <span class="text-red-400">*</span>
                                         </label>
                                         <input type="text" id="phone_display" value="{{ old('phone') }}"
-                                            inputmode="numeric" required placeholder="(11) 99999-9999"
+                                            inputmode="numeric" required placeholder="{{ __('schedule_link.phone_placeholder') }}"
                                             class="w-full px-4 py-3 rounded-lg border border-gray-600 bg-gray-700/50 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
                                         <input type="hidden" id="phone" name="phone"
                                             value="{{ old('phone') ? preg_replace('/\D/', '', old('phone')) : '' }}">
@@ -121,7 +120,7 @@
                                     <div
                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                                         2</div>
-                                    <h2 class="text-xl font-semibold text-white">Tipo de Serviço</h2>
+                                    <h2 class="text-xl font-semibold text-white">{{ __('schedules.service_type') }}</h2>
                                 </div>
 
                                 <div class="space-y-4">
@@ -129,7 +128,7 @@
                                         {{ __('schedules.service_type') }} <span class="text-red-400">*</span>
                                     </label>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" role="radiogroup"
-                                        aria-label="Seleção de tipo de serviço">
+                                        aria-label="{{ __('schedule_link.service_selection_aria') }}">
                                         @foreach ($serviceTypes as $type)
                                             <div class="relative">
                                                 <input type="radio" id="service_{{ $type->id }}"
@@ -167,7 +166,7 @@
                                     <div
                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                                         3</div>
-                                    <h2 class="text-xl font-semibold text-white">Data e Horário</h2>
+                                    <h2 class="text-xl font-semibold text-white">{{ __('schedule_link.date_time') }}</h2>
                                 </div>
 
                                 <!-- Date Selection -->
@@ -201,7 +200,7 @@
 
                                         <!-- Calendar Grid -->
                                         <div class="grid grid-cols-7 gap-2" id="calendar" role="group"
-                                            aria-label="Seleção de data">
+                                            aria-label="{{ __('schedule_link.date_selection_aria') }}">
                                             <!-- Days will be rendered here -->
                                         </div>
 
@@ -212,7 +211,7 @@
                                                 <div
                                                     class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4">
                                                 </div>
-                                                <p class="text-white text-sm">Carregando semana...</p>
+                                                <p class="text-white text-sm">{{ __('schedule_link.loading_week') }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -228,7 +227,7 @@
                                     </label>
                                     <div id="times"
                                         class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3"
-                                        role="group" aria-label="Seleção de horário">
+                                        role="group" aria-label="{{ __('schedule_link.time_selection_aria') }}">
                                         <!-- Times will be rendered here -->
                                     </div>
                                     <input type="hidden" name="start_time" id="start_time"
@@ -281,6 +280,22 @@
     const companyId = @json($company);
     let currentWeekStart = weekStart;
 
+    // i18n strings
+    const i18n = {
+        daysShort: @json(__('schedule_link.days_short')),
+        ariaSelectDate: @json(__('schedule_link.aria_select_date')),
+        ariaSelectTime: @json(__('schedule_link.aria_select_time')),
+        noTimesThisWeek: @json(__('schedule_link.no_times_this_week')),
+        serviceNotAvailableAnyDay: @json(__('schedule_link.service_not_available_any_day')),
+        serviceAvailableDaysMessage: @json(__('schedule_link.service_available_days_message')),
+        noTimesThisDate: @json(__('schedule_link.no_times_this_date')),
+        errorLoadingTimes: @json(__('schedule_link.error_loading_times')),
+        submitRequiredAll: @json(__('schedule_link.submit_required_all')),
+        submitSelectService: @json(__('schedule_link.submit_select_service')),
+        submitSelectDate: @json(__('schedule_link.submit_select_date')),
+        submitSelectTime: @json(__('schedule_link.submit_select_time')),
+    };
+
     // Service types data with week days availability
     const serviceTypes = @json($serviceTypes);
 
@@ -296,7 +311,7 @@
             card.type = 'button';
             card.className =
                 'flex flex-col items-center justify-center h-20 sm:h-24 rounded-xl border-2 transition-all duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800';
-            card.setAttribute('aria-label', `Selecionar data ${dayData.day} de ${dayData.month}`);
+            card.setAttribute('aria-label', i18n.ariaSelectDate.replace(':day', dayData.day).replace(':month', dayData.month));
             card.setAttribute('data-date', dayData.date);
 
             // Check if the day is available for the selected service type
@@ -362,17 +377,16 @@
         } else {
             // Clear times if no available days
             const timesEl = document.getElementById('times');
-            let message = 'Nenhum horário disponível para esta semana';
+            let message = i18n.noTimesThisWeek;
 
             if (selectedServiceType) {
                 const availableDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']
                     .filter(day => selectedServiceType[day]).length;
 
                 if (availableDays === 0) {
-                    message = 'Este serviço não está disponível em nenhum dia da semana';
+                    message = i18n.serviceNotAvailableAnyDay;
                 } else {
-                    message =
-                        `Este serviço está disponível em ${availableDays} dia(s) da semana, mas não há horários livres nesta semana`;
+                    message = i18n.serviceAvailableDaysMessage.replace(':count', availableDays);
                 }
             }
 
@@ -395,8 +409,7 @@
     }
 
     function getDayName(dayOfWeek) {
-        const days = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB'];
-        return days[dayOfWeek];
+        return i18n.daysShort[dayOfWeek];
     }
 
     function getDayNameForService(dayOfWeek) {
@@ -457,7 +470,7 @@
                                     <svg class="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    Nenhum horário disponível para esta data
+                                    ${i18n.noTimesThisDate}
                                 </div>
                             </div>
                         `;
@@ -470,7 +483,7 @@
                     b.className =
                         'px-3 sm:px-4 py-3 sm:py-4 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 border border-gray-600 hover:border-gray-500';
                     b.textContent = time;
-                    b.setAttribute('aria-label', `Selecionar horário ${time}`);
+                    b.setAttribute('aria-label', i18n.ariaSelectTime.replace(':time', time));
 
                     b.addEventListener('click', () => {
                         document.querySelectorAll('#times button').forEach(x => {
@@ -514,7 +527,7 @@
                                 <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
-                                Erro ao carregar horários
+                                ${i18n.errorLoadingTimes}
                             </div>
                         </div>
                     `;
@@ -545,13 +558,13 @@
                     {{ __('actions.save') }}
                 `;
         } else {
-            let message = 'Preencha todos os campos obrigatórios';
+            let message = i18n.submitRequiredAll;
             if (!service) {
-                message = 'Selecione um tipo de serviço';
+                message = i18n.submitSelectService;
             } else if (!date) {
-                message = 'Selecione uma data';
+                message = i18n.submitSelectDate;
             } else if (!time) {
-                message = 'Selecione um horário';
+                message = i18n.submitSelectTime;
             }
 
             btnText.innerHTML = `
