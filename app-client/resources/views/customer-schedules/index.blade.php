@@ -1,11 +1,11 @@
 <x-guest-layout>
-    <div class="py-8 sm:py-12">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-2 sm:py-4 pb-12">
+        <div class="max-w-4xl mx-auto px-4 pb-4 sm:px-6 lg:px-8">
             <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-4 sm:p-6">
-                    <div class="mb-4 flex items-center justify-between">
-                        <h1 class="text-xl sm:text-2xl font-semibold text-white">{{ __('customer_schedules.title') }}
-                        </h1>
+                <div class="p-1">
+                    <div class="mb-6 text-center">
+                        <h1 id="pageTitle" class="text-2xl font-semibold text-white mb-2">
+                            {{ __('customer_schedules.title') }}</h1>
                     </div>
 
                     @if ($schedules->isEmpty())

@@ -29,7 +29,8 @@
 </head>
 
 <body class="font-sans text-gray-900 antialiased bg-gradient-to-br from-gray-900 to-gray-800">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center bg-gradient-to-br from-gray-900 to-gray-800 mt-6">
+    <div
+        class="min-h-screen flex flex-col sm:justify-center items-center bg-gradient-to-br from-gray-900 to-gray-800 mt-6">
         <x-global.session-alerts />
 
         @if ($hasMultipleUnits)
@@ -45,7 +46,7 @@
             </div>
         @endif
 
-        <div class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 pb-6 px-3 sm:px-6 lg:px-8">
+        <div class="min-h-screen pb-6 px-3 sm:px-6 lg:px-8">
             <div class="w-full max-w-4xl mx-auto">
                 <!-- Header Section -->
                 <div class="mb-8">
