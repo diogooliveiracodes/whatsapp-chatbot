@@ -3,6 +3,24 @@
         <div class="max-w-4xl mx-auto px-4 pb-4 sm:px-6 lg:px-8">
             <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-1">
+                    @php
+                        $firstSchedule = $schedules->first();
+                        $companyId = $firstSchedule?->unit?->company_id;
+                        $unitId = $firstSchedule?->unit_id;
+                    @endphp
+                    @if (!empty($companyId) && !empty($unitId))
+                        <div class="text-center mb-4">
+                            <a href="{{ route('schedule-link.show', ['company' => $companyId, 'unit' => $unitId]) }}"
+                                class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                {{ __('schedule_link.book_another') }}
+                            </a>
+                        </div>
+                    @endif
+
                     <div class="mb-6 text-center">
                         <h1 id="pageTitle" class="text-2xl font-semibold text-white mb-2">
                             {{ __('customer_schedules.title') }}</h1>
@@ -59,6 +77,7 @@
                                                 class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                                 {{ __('actions.view') }}
                                             </a>
+
                                         </div>
                                     </div>
                                     <div class="p-4 bg-gray-800 border-t border-gray-700">
@@ -77,7 +96,7 @@
                                             </div>
                                             <div>
                                                 <div class="text-sm font-medium text-gray-400">
-                                                    {{ __('units.unit') ?? 'Unidade' }}</div>
+                                                    {{ __('schedule_link.professional_label') }}</div>
                                                 <div class="text-sm text-white">{{ $schedule->unit->name ?? 'N/A' }}
                                                 </div>
                                             </div>
@@ -94,8 +113,13 @@
                             @endforeach
                         </div>
 
-                        <div class="mt-6">
-                            {{ $schedules->withQueryString()->links() }}
+                        <div class="mt-6 flex items-center justify-between">
+                            <div class="text-sm text-gray-400">
+                                Página {{ $schedules->currentPage() }} de {{ $schedules->lastPage() }}
+                            </div>
+                            <div>
+                                {{ $schedules->withQueryString()->onEachSide(1)->links() }}
+                            </div>
                         </div>
                     @endif
                 </div>
