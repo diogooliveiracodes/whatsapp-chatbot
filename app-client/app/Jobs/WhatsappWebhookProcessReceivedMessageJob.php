@@ -44,8 +44,7 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
      */
     public function __construct(
         private array $webhookData,
-        private int $companyId,
-        private int $unitId
+        private int $companyId
     ) {}
 
     /**
@@ -88,8 +87,7 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
                 WhatsappSendGenericMessageJob::dispatch(
                     $phone,
                     $genericMessage,
-                    $this->companyId,
-                    $this->unitId
+                    $this->companyId
                 );
 
                 return;
@@ -116,20 +114,19 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
             // TO DO: pegar a mensagem personalizada do Customer
             $personalizedMessage = "Olá {$customer->name}! Obrigado por entrar em contato. " .
                 "Para agendar um horário, acesse: " .
-                route('schedule-link.show', ['company' => $this->companyId, 'unit' => $this->unitId]);
+                route('schedule-link.show', ['company' => $this->companyId]);
 
             WhatsappSendPersonalizedMessageJob::dispatch(
                 $phone,
                 $personalizedMessage,
                 $this->companyId,
-                $this->unitId,
                 $customer->id
             );
 
             $this->logError($errorLogService, ['message' => 'processamento da mensagem do WhatsApp concluído com sucesso']);
 
         } catch (\Exception $e) {
-            $this->logError($errorLogService, ['message' => 'erro ao processar mensagem do WhatsApp company_id: ' . $this->companyId . ' unit_id: ' . $this->unitId . ' error: ' . $e->getMessage()]);
+            $this->logError($errorLogService, ['message' => 'erro ao processar mensagem do WhatsApp company_id: ' . $this->companyId . ' error: ' . $e->getMessage()]);
 
             throw $e;
         }
@@ -232,8 +229,7 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
     {
         return $chatSessionRepository->findActiveChatSession([
             'customer_id' => $customerId,
-            'company_id' => $this->companyId,
-            'unit_id' => $this->unitId
+            'company_id' => $this->companyId
         ]);
     }
 
@@ -241,8 +237,7 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
     {
         return $chatSessionRepository->store([
             'customer_id' => $customerId,
-            'company_id' => $this->companyId,
-            'unit_id' => $this->unitId
+            'company_id' => $this->companyId
         ]);
     }
 
@@ -250,7 +245,6 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
     {
         return $messageRepository->store([
             'company_id' => $this->companyId,
-            'unit_id' => $this->unitId,
             'customer_id' => $customerId,
             'user_id' => null,
             'chat_session_id' => $chatSessionId,

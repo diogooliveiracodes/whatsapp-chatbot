@@ -23,7 +23,7 @@ class WhatsappWebhookController extends Controller
     /**
      * Valida o webhook do WhatsApp conforme documentação oficial
      */
-    public function verify(Request $request, Company $company, Unit $unit)
+    public function verify(Request $request, Company $company)
     {
         try {
             $this->logError(['message' => 'recebido teste do webhook: ' . json_encode($request->all())]);
@@ -35,7 +35,7 @@ class WhatsappWebhookController extends Controller
             $verifyToken = config('services.whatsapp.verify_token');
 
             if ($mode == 'subscribe' && $token == $verifyToken) {
-                $this->logError(['message' => 'Whatsapp webhook company: ' . $company->id . ' unit: ' . $unit->id . ' verificado']);
+                $this->logError(['message' => 'Whatsapp webhook company: ' . $company->id . ' verificado']);
 
                 return response($challenge, 200);
             }
@@ -47,11 +47,11 @@ class WhatsappWebhookController extends Controller
         }
     }
 
-    public function __invoke(Request $request, Company $company, Unit $unit): JsonResponse
+    public function __invoke(Request $request, Company $company): JsonResponse
     {
         try {
-            $this->logError(['message' => 'Controller: recebido mensagem no webhook company: ' . $company->id . ' unit: ' . $unit->id . ' ' . json_encode($request->all())]);
-            WhatsappWebhookProcessReceivedMessageJob::dispatch($request->all(), $company->id, $unit->id);
+            $this->logError(['message' => 'Controller: recebido mensagem no webhook company: ' . $company->id . ' ' . json_encode($request->all())]);
+            WhatsappWebhookProcessReceivedMessageJob::dispatch($request->all(), $company->id);
 
             return response()->json(['status' => 'ok']);
         } catch (Exception $e) {

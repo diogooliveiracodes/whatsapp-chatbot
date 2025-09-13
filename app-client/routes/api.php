@@ -16,5 +16,5 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::get('/whatsapp/webhook/{company}/{unit}', [WhatsappWebhookController::class, 'verify'])->name('api.whatsapp.webhook.verify');
-Route::post('/whatsapp/webhook/{company}/{unit}', [WhatsappWebhookController::class, '__invoke'])->name('api.whatsapp.webhook');
+Route::get('/whatsapp/webhook/{company}', [WhatsappWebhookController::class, 'verify'])->name('api.whatsapp.webhook.verify');
+Route::post('/whatsapp/webhook/{company}', [WhatsappWebhookController::class, '__invoke'])->name('api.whatsapp.webhook');
