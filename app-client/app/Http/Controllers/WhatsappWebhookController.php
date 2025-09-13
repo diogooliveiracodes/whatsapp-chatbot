@@ -32,7 +32,13 @@ class WhatsappWebhookController extends Controller
             $challenge = $request->query('hub_challenge');
             $token = $request->query('hub_verify_token');
 
-            $verifyToken = config('services.whatsapp.verify_token');
+            // $verifyToken = config('services.whatsapp.verify_token');
+            $verifyToken = $company->companySettings->whatsapp_verify_token;
+
+            if (!$verifyToken) {
+                $this->logError(['message' => 'Whatsapp webhook company: ' . $company->id . ' verify token not found']);
+                return response()->json(['error' => 'Verify token not found'], 401);
+            }
 
             if ($mode == 'subscribe' && $token == $verifyToken) {
                 $this->logError(['message' => 'Whatsapp webhook company: ' . $company->id . ' verificado']);
