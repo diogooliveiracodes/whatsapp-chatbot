@@ -556,7 +556,7 @@
         const stepServiceEl = document.getElementById('step-service');
         const stepDateTimeEl = document.getElementById('step-date-time');
 
-        const phoneDigitsLen = phone.length; // hidden field contains only digits
+        const phoneDigitsLen = phone.length;
         const hasBasicInfo = !!(name && phoneDigitsLen >= 10);
 
         // Toggle visibility of Step 2 based on Step 1 completion
@@ -612,10 +612,8 @@
         const date = document.getElementById('schedule_date').value;
         const time = document.getElementById('start_time').value;
 
-        // If no service is selected, only require name and a minimally valid phone (DDD + 8 digits)
-        const can = service
-            ? (name && phoneDigitsLen >= 10 && service && date && time)
-            : (name && phoneDigitsLen >= 10);
+        // Save button only enabled when all steps completed
+        const can = (name && phoneDigitsLen >= 10 && service && date && time);
 
         const submitBtn = document.getElementById('submit-button');
         submitBtn.disabled = !can;
@@ -855,7 +853,11 @@
 
         // Trigger change event for pre-selected radio button (without scroll)
         const preSelectedRadio = document.querySelector('input[name="unit_service_type_id"]:checked');
-        const hasBasicInfoOnLoad = (document.querySelector('input[name="name"]').value.trim() && document.querySelector('input[name="phone"]').value.trim());
+        const hasBasicInfoOnLoad = (() => {
+            const n = document.querySelector('input[name="name"]').value.trim();
+            const p = document.querySelector('input[name="phone"]').value.trim();
+            return !!(n && p.length >= 10);
+        })();
         if (preSelectedRadio && hasBasicInfoOnLoad) {
             preSelectedRadio.dispatchEvent(new Event('change'));
         } else {
