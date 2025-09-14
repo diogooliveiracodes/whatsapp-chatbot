@@ -511,15 +511,13 @@
                         document.getElementById('start_time').value = time;
                         updateSubmitEnabled();
 
-                        // Scroll to submit button only if shouldScroll is true (user interaction)
-                        if (shouldScroll) {
-                            setTimeout(() => {
-                                document.getElementById('submit-button').scrollIntoView({
-                                    behavior: 'smooth',
-                                    block: 'center'
-                                });
-                            }, 300);
-                        }
+                        // Always scroll to submit button after selecting a time
+                        setTimeout(() => {
+                            document.getElementById('submit-button').scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }, 300);
                     });
 
                     b.addEventListener('keydown', (e) => {
