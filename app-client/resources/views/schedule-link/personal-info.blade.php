@@ -292,6 +292,9 @@
         phone: `scheduleLink:${companyId}:phone`
     };
 
+    // UI state flags
+    let autoScrolledToStep2 = false;
+
     // i18n strings
     const i18n = {
         daysShort: @json(__('schedule_link.days_short')),
@@ -557,6 +560,17 @@
         // Toggle visibility of Step 2 based on Step 1 completion
         if (hasBasicInfo) {
             if (stepServiceEl) stepServiceEl.classList.remove('hidden');
+
+            // Auto-scroll to Step 2 once when basic info becomes complete
+            if (!autoScrolledToStep2 && stepServiceEl) {
+                setTimeout(() => {
+                    stepServiceEl.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 200);
+                autoScrolledToStep2 = true;
+            }
         } else {
             if (stepServiceEl) stepServiceEl.classList.add('hidden');
 
@@ -570,6 +584,9 @@
             const startTimeEl = document.getElementById('start_time');
             if (scheduleDateEl) scheduleDateEl.value = '';
             if (startTimeEl) startTimeEl.value = '';
+
+            // Allow auto-scroll again when user completes basic info later
+            autoScrolledToStep2 = false;
 
             // Reset visual state of service type cards
             document.querySelectorAll('label[for^="service_"]').forEach(label => {
@@ -885,7 +902,7 @@
             // ignore storage errors
         }
 
-        // Re-evaluate UI state after potential prefill
+        // Re-evaluate UI state after potential prefill and scroll to step 2 if ready
         updateSubmitEnabled();
     });
 </script>
