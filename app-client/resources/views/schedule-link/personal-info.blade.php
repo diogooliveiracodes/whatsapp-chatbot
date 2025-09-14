@@ -118,7 +118,7 @@
                             </div>
 
                             <!-- Step 2: Service Selection -->
-                            <div class="space-y-4" id="step-service">
+                            <div class="space-y-4 hidden" id="step-service">
                                 <div class="flex items-center space-x-3 mb-4">
                                     <div
                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
@@ -285,6 +285,12 @@
     const unitId = @json($unit->id);
     const companyId = @json($company);
     let currentWeekStart = weekStart;
+
+    // Storage keys scoped by company
+    const storageKeys = {
+        name: `scheduleLink:${companyId}:name`,
+        phone: `scheduleLink:${companyId}:phone`
+    };
 
     // i18n strings
     const i18n = {
@@ -545,6 +551,46 @@
     function updateSubmitEnabled() {
         const name = document.querySelector('input[name="name"]').value.trim();
         const phone = document.querySelector('input[name="phone"]').value.trim();
+        const stepServiceEl = document.getElementById('step-service');
+        const stepDateTimeEl = document.getElementById('step-date-time');
+
+        const hasBasicInfo = !!(name && phone);
+
+        // Toggle visibility of Step 2 based on Step 1 completion
+        if (hasBasicInfo) {
+            if (stepServiceEl) stepServiceEl.classList.remove('hidden');
+        } else {
+            if (stepServiceEl) stepServiceEl.classList.add('hidden');
+
+            // Reset selections for steps 2 and 3 when basic info is incomplete
+            document.querySelectorAll('input[name="unit_service_type_id"]').forEach(r => r.checked = false);
+            selectedServiceType = null;
+            if (stepDateTimeEl) stepDateTimeEl.classList.add('hidden');
+            const timesEl = document.getElementById('times');
+            if (timesEl) timesEl.innerHTML = '';
+            const scheduleDateEl = document.getElementById('schedule_date');
+            const startTimeEl = document.getElementById('start_time');
+            if (scheduleDateEl) scheduleDateEl.value = '';
+            if (startTimeEl) startTimeEl.value = '';
+
+            // Reset visual state of service type cards
+            document.querySelectorAll('label[for^="service_"]').forEach(label => {
+                label.classList.remove('border-blue-500', 'from-blue-600', 'to-blue-700');
+                label.classList.add('border-gray-600', 'from-gray-700', 'to-gray-800');
+                const radioCircle = label.querySelector('.w-5.h-5');
+                const radioDot = label.querySelector('.w-2\\.5.h-2\\.5');
+                if (radioCircle) {
+                    radioCircle.classList.remove('border-blue-500');
+                    radioCircle.classList.add('border-gray-400');
+                }
+                if (radioDot) {
+                    radioDot.classList.remove('opacity-100');
+                    radioDot.classList.add('opacity-0');
+                }
+            });
+        }
+
+        // Recalculate after potential resets
         const service = document.querySelector('input[name="unit_service_type_id"]:checked')?.value || '';
         const date = document.getElementById('schedule_date').value;
         const time = document.getElementById('start_time').value;
@@ -681,6 +727,17 @@
         if (hiddenPhoneInput) {
             hiddenPhoneInput.value = value;
         }
+
+        // Persist phone digits in localStorage
+        try {
+            if (value) {
+                localStorage.setItem(storageKeys.phone, value);
+            } else {
+                localStorage.removeItem(storageKeys.phone);
+            }
+        } catch (e) {
+            // ignore storage errors (private mode, quotas)
+        }
     }
 
     // Initialize
@@ -771,7 +828,8 @@
 
         // Trigger change event for pre-selected radio button (without scroll)
         const preSelectedRadio = document.querySelector('input[name="unit_service_type_id"]:checked');
-        if (preSelectedRadio) {
+        const hasBasicInfoOnLoad = (document.querySelector('input[name="name"]').value.trim() && document.querySelector('input[name="phone"]').value.trim());
+        if (preSelectedRadio && hasBasicInfoOnLoad) {
             preSelectedRadio.dispatchEvent(new Event('change'));
         } else {
             // If no service is pre-selected, hide the date/time section
@@ -781,6 +839,7 @@
         // Add phone mask functionality
         const phoneDisplayInput = document.getElementById('phone_display');
         const phoneHiddenInput = document.getElementById('phone');
+        const nameInput = document.getElementById('name');
 
         if (phoneDisplayInput && phoneHiddenInput) {
             // Apply mask on input
@@ -793,6 +852,43 @@
                 formatPhoneNumber(phoneDisplayInput);
             }
         }
+
+        // Persist name as user types
+        if (nameInput) {
+            nameInput.addEventListener('input', function() {
+                const v = this.value.trim();
+                try {
+                    if (v) {
+                        localStorage.setItem(storageKeys.name, v);
+                    } else {
+                        localStorage.removeItem(storageKeys.name);
+                    }
+                } catch (e) {
+                    // ignore storage errors
+                }
+            });
+        }
+
+        // Prefill from localStorage if fields are empty
+        try {
+            const storedName = localStorage.getItem(storageKeys.name) || '';
+            const storedPhone = localStorage.getItem(storageKeys.phone) || '';
+
+            if (nameInput && !nameInput.value && storedName) {
+                nameInput.value = storedName;
+            }
+
+            if (phoneDisplayInput && !phoneDisplayInput.value && storedPhone) {
+                // Set digits then format to apply mask and hidden field
+                phoneDisplayInput.value = storedPhone;
+                formatPhoneNumber(phoneDisplayInput);
+            }
+        } catch (e) {
+            // ignore storage errors
+        }
+
+        // Re-evaluate UI state after potential prefill
+        updateSubmitEnabled();
     });
 </script>
 
