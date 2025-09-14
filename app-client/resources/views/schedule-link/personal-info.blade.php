@@ -306,6 +306,7 @@
         noTimesThisDate: @json(__('schedule_link.no_times_this_date')),
         errorLoadingTimes: @json(__('schedule_link.error_loading_times')),
         submitRequiredAll: @json(__('schedule_link.submit_required_all')),
+        submitFillPersonalInfo: @json(__('schedule_link.submit_fill_personal_info')),
         submitSelectService: @json(__('schedule_link.submit_select_service')),
         submitSelectDate: @json(__('schedule_link.submit_select_date')),
         submitSelectTime: @json(__('schedule_link.submit_select_time')),
@@ -555,7 +556,8 @@
         const stepServiceEl = document.getElementById('step-service');
         const stepDateTimeEl = document.getElementById('step-date-time');
 
-        const hasBasicInfo = !!(name && phone);
+        const phoneDigitsLen = phone.length; // hidden field contains only digits
+        const hasBasicInfo = !!(name && phoneDigitsLen >= 10);
 
         // Toggle visibility of Step 2 based on Step 1 completion
         if (hasBasicInfo) {
@@ -610,8 +612,10 @@
         const date = document.getElementById('schedule_date').value;
         const time = document.getElementById('start_time').value;
 
-        // If no service is selected, only require name and phone
-        const can = service ? (name && phone && service && date && time) : (name && phone);
+        // If no service is selected, only require name and a minimally valid phone (DDD + 8 digits)
+        const can = service
+            ? (name && phoneDigitsLen >= 10 && service && date && time)
+            : (name && phoneDigitsLen >= 10);
 
         const submitBtn = document.getElementById('submit-button');
         submitBtn.disabled = !can;
@@ -627,7 +631,11 @@
                 `;
         } else {
             let message = i18n.submitRequiredAll;
-            if (!service) {
+            // When Step 2 is hidden (missing name/phone), prioritize asking for personal info
+            const isStep2Hidden = document.getElementById('step-service')?.classList.contains('hidden');
+            if (!name || phoneDigitsLen < 10 || isStep2Hidden) {
+                message = i18n.submitFillPersonalInfo;
+            } else if (!service) {
                 message = i18n.submitSelectService;
             } else if (!date) {
                 message = i18n.submitSelectDate;

@@ -27,6 +27,7 @@ return [
     'no_times_this_date' => 'No times available for this date',
     'error_loading_times' => 'Error loading times',
     'submit_required_all' => 'Fill in all required fields',
+    'submit_fill_personal_info' => 'Fill in your personal information',
     'submit_select_service' => 'Select a service type',
     'submit_select_date' => 'Select a date',
     'submit_select_time' => 'Select a time',

@@ -27,6 +27,7 @@ return [
     'no_times_this_date' => 'Nenhum horário disponível para esta data',
     'error_loading_times' => 'Erro ao carregar horários',
     'submit_required_all' => 'Preencha todos os campos obrigatórios',
+    'submit_fill_personal_info' => 'Preencha suas informações pessoais',
     'submit_select_service' => 'Selecione um tipo de serviço',
     'submit_select_date' => 'Selecione uma data',
     'submit_select_time' => 'Selecione um horário',
