@@ -46,6 +46,17 @@ return [
         'custom_message' => 'Custom message for specific use',
     ],
 
+    'templates' => [
+        'schedule_confirmation' => 'Hello {customer_name}! Your appointment is confirmed for {schedule_date} at {schedule_time} for the service {service_name} with the professional {unit_name}. If you have any questions, reply to this message.',
+        'schedule_reminder' => 'Reminder: {customer_name}, you have an appointment on {schedule_date} at {schedule_time} for the service {service_name} with the professional {unit_name}. If you need to reschedule, let us know.',
+        'schedule_cancellation' => 'Hello {customer_name}, your appointment for {service_name} on {schedule_date} at {schedule_time} was canceled. If you wish, we can book a new date.',
+        'schedule_reschedule' => 'Hello {customer_name}, your appointment for {service_name} has been rescheduled to {schedule_date} at {schedule_time} with the professional {unit_name}.',
+        'payment_confirmation' => 'Payment confirmed! We received {payment_amount} via {payment_method}. Thank you for choosing {company_name}.',
+        'payment_reminder' => 'Hello {customer_name}, we identified a pending payment of {payment_amount}. If you have already paid, please disregard. Questions? Reply to this message.',
+        'welcome_message' => 'Welcome, {customer_name}! This is {company_name}. We are available to help. How can we assist you today?',
+        'custom_message' => 'Custom message: edit this content as needed.',
+    ],
+
     'messages' => [
         'created' => 'Automated message created successfully!',
         'updated' => 'Automated message updated successfully!',

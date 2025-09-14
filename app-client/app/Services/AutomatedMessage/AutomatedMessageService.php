@@ -212,4 +212,50 @@ class AutomatedMessageService
 
 
 
+    /**
+     * Seed default automated messages for a given unit/company.
+     * Creates one message per type if it does not already exist for the unit.
+     */
+    public function seedDefaultMessagesForUnitCompany(int $companyId, int $unitId, int $creatorUserId): void
+    {
+        foreach (AutomatedMessageTypeEnum::cases() as $type) {
+            $exists = AutomatedMessage::query()
+                ->where('unit_id', $unitId)
+                ->where('type', $type)
+                ->exists();
+
+            if ($exists) {
+                continue;
+            }
+
+            $this->automatedMessageRepository->create([
+                'company_id' => $companyId,
+                'unit_id' => $unitId,
+                'user_id' => $creatorUserId,
+                'name' => $type->getLabel(),
+                'type' => $type,
+                'content' => $this->getDefaultMessageContent($type),
+            ]);
+        }
+    }
+
+    /**
+     * Default content templates per automated message type using translations.
+     */
+    private function getDefaultMessageContent(AutomatedMessageTypeEnum $type): string
+    {
+        $key = match ($type) {
+            AutomatedMessageTypeEnum::SCHEDULE_CONFIRMATION => 'automated-messages.templates.schedule_confirmation',
+            AutomatedMessageTypeEnum::SCHEDULE_REMINDER => 'automated-messages.templates.schedule_reminder',
+            AutomatedMessageTypeEnum::SCHEDULE_CANCELLATION => 'automated-messages.templates.schedule_cancellation',
+            AutomatedMessageTypeEnum::SCHEDULE_RESCHEDULE => 'automated-messages.templates.schedule_reschedule',
+            AutomatedMessageTypeEnum::PAYMENT_CONFIRMATION => 'automated-messages.templates.payment_confirmation',
+            AutomatedMessageTypeEnum::PAYMENT_REMINDER => 'automated-messages.templates.payment_reminder',
+            AutomatedMessageTypeEnum::WELCOME_MESSAGE => 'automated-messages.templates.welcome_message',
+            AutomatedMessageTypeEnum::CUSTOM_MESSAGE => 'automated-messages.templates.custom_message',
+        };
+
+        $translated = __($key);
+        return is_string($translated) ? $translated : '';
+    }
 }

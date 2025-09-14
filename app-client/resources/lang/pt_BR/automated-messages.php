@@ -46,6 +46,17 @@ return [
         'custom_message' => 'Mensagem personalizada para uso específico',
     ],
 
+    'templates' => [
+        'schedule_confirmation' => 'Olá {customer_name}! Seu agendamento está confirmado para o dia {schedule_date} às {schedule_time}h para o serviço {service_name} com o profissional {unit_name}. Qualquer dúvida, responda esta mensagem.',
+        'schedule_reminder' => 'Lembrete: {customer_name}, você tem um agendamento em {schedule_date} às {schedule_time}h para o serviço {service_name} com o profissional {unit_name}. Se precisar reagendar, nos avise.',
+        'schedule_cancellation' => 'Olá {customer_name}, seu agendamento de {service_name} em {schedule_date} às {schedule_time}h foi cancelado. Se desejar, podemos marcar uma nova data.',
+        'schedule_reschedule' => 'Olá {customer_name}, seu agendamento de {service_name} foi reagendado para {schedule_date} às {schedule_time}h com o profissional {unit_name}.',
+        'payment_confirmation' => 'Pagamento confirmado! Recebemos {payment_amount} via {payment_method}. Obrigado por escolher a {company_name}.',
+        'payment_reminder' => 'Olá {customer_name}, identificamos um pagamento pendente no valor de {payment_amount}. Caso já tenha realizado, desconsidere. Em dúvida? Responda esta mensagem.',
+        'welcome_message' => 'Bem-vindo(a), {customer_name}! Aqui é a {company_name}. Estamos à disposição para ajudar. Como podemos atender você hoje?',
+        'custom_message' => 'Mensagem personalizada: edite este conteúdo conforme sua necessidade.',
+    ],
+
     'messages' => [
         'created' => 'Mensagem automatizada criada com sucesso!',
         'updated' => 'Mensagem automatizada atualizada com sucesso!',

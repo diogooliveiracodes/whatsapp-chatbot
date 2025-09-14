@@ -3,6 +3,7 @@
 namespace App\Services\Admin;
 
 use App\Http\Requests\AdminStoreUserRequest;
+use App\Services\AutomatedMessage\AutomatedMessageService as AutomatedMsgService;
 use App\Services\Company\CompanyService;
 use App\Services\CompanySettings\CompanySettingsService;
 use App\Services\Signature\SignatureService;
@@ -20,7 +21,8 @@ class CreateUserService
         protected CompanyService $companyService,
         protected UnitService $unitService,
         protected SignatureService $signatureService,
-        protected CompanySettingsService $companySettingsService
+        protected CompanySettingsService $companySettingsService,
+        protected AutomatedMsgService $automatedMessageService
     ) {}
 
     /**
@@ -83,6 +85,13 @@ class CreateUserService
 
             // Create the user
             $user = $this->userService->create($userData);
+
+            // Seed default automated messages for the user's unit/company
+            $this->automatedMessageService->seedDefaultMessagesForUnitCompany(
+                companyId: $user->company_id,
+                unitId: $user->unit_id,
+                creatorUserId: $user->id
+            );
 
             DB::commit();
 
