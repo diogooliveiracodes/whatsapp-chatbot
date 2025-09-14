@@ -7,7 +7,7 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         @foreach($units as $unit)
-                            <a href="{{ route('schedule-link.show', ['company' => $company, 'unit' => $unit->id]) }}" class="block p-4 rounded-lg border border-gray-700 hover:border-indigo-500 hover:bg-gray-700 transition">
+                            <a href="{{ route('schedule-link.personal-info', ['company' => $company, 'unit' => $unit->id]) }}" class="block p-4 rounded-lg border border-gray-700 hover:border-indigo-500 hover:bg-gray-700 transition">
                                 <div class="text-white font-medium">{{ $unit->name }}</div>
                                 <div class="text-gray-400 text-sm">{{ $unit->city }}</div>
                             </a>

@@ -37,11 +37,11 @@ Route::prefix('{company}/schedule-link')->group(function () {
     Route::post('/schedule/{schedule}/check-payment-status', [ScheduleLinkController::class, 'checkPaymentStatus'])->name('schedule-link.check-payment-status');
     Route::post('/schedule/{schedule}/confirm-cash', [ScheduleLinkController::class, 'confirmCash'])->name('schedule-link.confirm-cash');
 
-    Route::get('/{unit}', [ScheduleLinkController::class, 'show'])->name('schedule-link.show');
+    Route::get('/{unit}', [ScheduleLinkController::class, 'personalInfo'])->name('schedule-link.personal-info');
     Route::get('/{unit}/week-days', [ScheduleLinkController::class, 'weekDays'])->name('schedule-link.week-days');
     Route::get('/{unit}/available-times', [ScheduleLinkController::class, 'availableTimes'])->name('schedule-link.available-times');
     Route::post('/{unit}', [ScheduleLinkController::class, 'store'])->name('schedule-link.store');
-    Route::get('/{unit}/success/{uuid}', [ScheduleLinkController::class, 'success'])->name('schedule-link.success');
+    Route::get('/{unit}/success/{uuid}', [ScheduleLinkController::class, 'payment'])->name('schedule-link.payment');
 });
 
 Route::get('/customer/{uuid}', [CustomerSchedulesController::class, 'index'])->name('customer.schedules');

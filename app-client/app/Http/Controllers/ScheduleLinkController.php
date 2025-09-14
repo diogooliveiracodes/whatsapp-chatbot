@@ -52,10 +52,10 @@ class ScheduleLinkController extends Controller
             ->get();
 
         if ($units->count() === 1) {
-            return redirect()->route('schedule-link.show', ['company' => $company, 'unit' => $units->first()->id]);
+            return redirect()->route('schedule-link.personal-info', ['company' => $company, 'unit' => $units->first()->id]);
         }
 
-        return view('schedule-link.index', [
+        return view('schedule-link.select-unit', [
             'units' => $units,
             'company' => $company,
         ]);
@@ -64,7 +64,7 @@ class ScheduleLinkController extends Controller
     /**
      * Show scheduling page for a specific unit.
      */
-    public function show($company, Unit $unit, Request $request): View|RedirectResponse
+    public function personalInfo($company, Unit $unit, Request $request): View|RedirectResponse
     {
         // Ensure the unit belongs to the specified company
         if ($unit->company_id != $company) {
@@ -89,7 +89,7 @@ class ScheduleLinkController extends Controller
 
             if ($nextWeekHasAvailableDays) {
                 // Redirect to next week if it has available days
-                return redirect()->route('schedule-link.show', [
+                return redirect()->route('schedule-link.personal-info', [
                     'company' => $company,
                     'unit' => $unit->id,
                     'week_start' => $nextWeekStart
@@ -105,7 +105,7 @@ class ScheduleLinkController extends Controller
 
         $hasMultipleUnits = $allUnits->count() > 1;
 
-        return view('schedule-link.show', [
+        return view('schedule-link.personal-info', [
             'unit' => $unit,
             'unitSettings' => $unit->unitSettings,
             'serviceTypes' => $unit->unitServiceTypes,
@@ -234,7 +234,7 @@ class ScheduleLinkController extends Controller
             ]);
 
             return redirect()
-                ->route('schedule-link.success', ['company' => $company, 'unit' => $unit->id, 'uuid' => $schedule->uuid])
+                ->route('schedule-link.payment', ['company' => $company, 'unit' => $unit->id, 'uuid' => $schedule->uuid])
                 ->with('status', Lang::get('schedule_link.messages.created'))
                 ->with('schedule_data', (new PublicScheduleResource($schedule))->toArray(request()));
         } catch (OutsideWorkingDaysException $e) {
@@ -255,7 +255,7 @@ class ScheduleLinkController extends Controller
     /**
      * Success page.
      */
-    public function success($company, Unit $unit, string $uuid, Request $request): View
+    public function payment($company, Unit $unit, string $uuid, Request $request): View
     {
         $schedule = $this->scheduleRepository->findByUuid($uuid);
 
@@ -301,7 +301,7 @@ class ScheduleLinkController extends Controller
         $schedule->loadMissing('customer');
         $customerUuid = $schedule->customer?->uuid;
 
-        return view('schedule-link.success', [
+        return view('schedule-link.payment', [
             'unit' => $unit,
             'company' => $company,
             'schedule' => $scheduleData,

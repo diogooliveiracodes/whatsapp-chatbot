@@ -114,7 +114,7 @@ class WhatsappWebhookProcessReceivedMessageJob implements ShouldQueue
             // TO DO: pegar a mensagem personalizada do Customer
             $personalizedMessage = "Olá {$customer->name}! Obrigado por entrar em contato. " .
                 "Para agendar um horário, acesse: " .
-                route('schedule-link.show', ['company' => $this->companyId]);
+                route('schedule-link.index', ['company' => $this->companyId]);
 
             WhatsappSendPersonalizedMessageJob::dispatch(
                 $phone,
