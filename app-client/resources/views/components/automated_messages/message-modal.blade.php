@@ -9,7 +9,8 @@
                 </h3>
                 <button onclick="closeMessageModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                     </svg>
                 </button>
             </div>
@@ -17,10 +18,14 @@
             <!-- Loading -->
             <div id="messageModalLoading" class="text-center py-8">
                 <svg class="animate-spin h-8 w-8 text-blue-500 mx-auto" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
                 </svg>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('automated-messages.loading_messages') }}</p>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ __('automated-messages.loading_messages') }}
+                </p>
             </div>
 
             <!-- Messages List -->
@@ -31,15 +36,22 @@
 
                 <!-- No messages message -->
                 <div id="noMessagesMessage" class="hidden text-center py-8">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                        </path>
                     </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">{{ __('automated-messages.no_messages_available') }}</h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('automated-messages.create_message_first') }}</p>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                        {{ __('automated-messages.no_messages_available') }}</h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        {{ __('automated-messages.create_message_first') }}</p>
                     <div class="mt-6">
-                        <a href="{{ route('automated-messages.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <a href="{{ route('automated-messages.create') }}"
+                            class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
                             {{ __('automated-messages.create_message') }}
                         </a>
@@ -49,7 +61,8 @@
 
             <!-- Footer -->
             <div class="flex justify-end mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <button onclick="closeMessageModal()" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                <button onclick="closeMessageModal()"
+                    class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                     {{ __('automated-messages.cancel') }}
                 </button>
             </div>
@@ -58,70 +71,72 @@
 </div>
 
 <script>
-let currentScheduleData = null;
+    let currentScheduleData = null;
 
-function openMessageModal(scheduleId, customerName, customerPhone, scheduleDate, scheduleTime, serviceName, unitName, companyName) {
-    currentScheduleData = {
-        scheduleId,
-        customerName,
-        customerPhone,
-        scheduleDate,
-        scheduleTime,
-        serviceName,
-        unitName,
-        companyName
-    };
+    function openMessageModal(scheduleId, customerName, customerPhone, scheduleDate, scheduleTime, serviceName,
+        unitName, companyName) {
+        currentScheduleData = {
+            scheduleId,
+            customerName,
+            customerPhone,
+            scheduleDate,
+            scheduleTime,
+            serviceName,
+            unitName,
+            companyName
+        };
 
-    // Show modal and loading
-    document.getElementById('messageModal').classList.remove('hidden');
-    document.getElementById('messageModalLoading').classList.remove('hidden');
-    document.getElementById('messageModalContent').classList.add('hidden');
+        // Show modal and loading
+        document.getElementById('messageModal').classList.remove('hidden');
+        document.getElementById('messageModalLoading').classList.remove('hidden');
+        document.getElementById('messageModalContent').classList.add('hidden');
 
-    // Load messages
-    loadAutomatedMessages();
-}
+        // Load messages
+        loadAutomatedMessages();
+    }
 
-function closeMessageModal() {
-    document.getElementById('messageModal').classList.add('hidden');
-    currentScheduleData = null;
-}
+    function closeMessageModal() {
+        document.getElementById('messageModal').classList.add('hidden');
+        currentScheduleData = null;
+    }
 
-function loadAutomatedMessages() {
-    // Get unit ID from current user or from the schedule data
-    const unitId = {{ auth()->user()->unit_id }};
+    function loadAutomatedMessages() {
+        // Get unit ID from current user or from the schedule data
+        const unitId = {{ auth()->user()->unit_id }};
 
-    fetch(`{{ route('automated-messages.get-by-unit') }}?unit_id=${unitId}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('messageModalLoading').classList.add('hidden');
-            document.getElementById('messageModalContent').classList.remove('hidden');
+        fetch(`{{ route('automated-messages.get-by-unit') }}?unit_id=${unitId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('messageModalLoading').classList.add('hidden');
+                document.getElementById('messageModalContent').classList.remove('hidden');
 
-            if (data.messages && data.messages.length > 0) {
-                displayMessages(data.messages);
-                document.getElementById('noMessagesMessage').classList.add('hidden');
-            } else {
-                document.getElementById('messagesList').innerHTML = '';
+                if (data.messages && data.messages.length > 0) {
+                    displayMessages(data.messages);
+                    document.getElementById('noMessagesMessage').classList.add('hidden');
+                } else {
+                    document.getElementById('messagesList').innerHTML = '';
+                    document.getElementById('noMessagesMessage').classList.remove('hidden');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading messages:', error);
+                document.getElementById('messageModalLoading').classList.add('hidden');
+                document.getElementById('messageModalContent').classList.remove('hidden');
                 document.getElementById('noMessagesMessage').classList.remove('hidden');
-            }
-        })
-        .catch(error => {
-            console.error('Error loading messages:', error);
-            document.getElementById('messageModalLoading').classList.add('hidden');
-            document.getElementById('messageModalContent').classList.remove('hidden');
-            document.getElementById('noMessagesMessage').classList.remove('hidden');
-        });
-}
+            });
+    }
 
-function displayMessages(messages) {
-    const messagesList = document.getElementById('messagesList');
-    messagesList.innerHTML = '';
+    function displayMessages(messages) {
+        const messagesList = document.getElementById('messagesList');
+        messagesList.innerHTML = '';
 
-    messages.forEach(message => {
-        const messageElement = document.createElement('div');
-        messageElement.className = 'p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200';
-        messageElement.onclick = () => sendMessage(message);
+        messages.forEach(message => {
+            const messageElement = document.createElement('div');
+            messageElement.className =
+                'p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200';
+            messageElement.onclick = () => sendMessage(message);
 
-        messageElement.innerHTML = `
+            messageElement.innerHTML = `
             <div class="flex items-start justify-between">
                 <div class="flex-1">
                     <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100">${message.name}</h4>
@@ -136,97 +151,89 @@ function displayMessages(messages) {
             </div>
         `;
 
-        messagesList.appendChild(messageElement);
-    });
-}
-
-function sendMessage(message) {
-    if (!currentScheduleData) return;
-
-    // Process message with schedule data
-    const processedMessage = processMessageContent(message.content, currentScheduleData);
-
-    // Get WhatsApp number from unit settings
-    const whatsappNumber = '{{ auth()->user()->unit->unitSettings->whatsapp_number ?? "" }}';
-
-    if (!whatsappNumber) {
-        alert('{{ __("automated-messages.whatsapp_not_configured") }}');
-        return;
+            messagesList.appendChild(messageElement);
+        });
     }
 
-    // Format customer phone number for WhatsApp
-    let phone = formatPhoneForWhatsApp(currentScheduleData.customerPhone);
+    function sendMessage(message) {
+        if (!currentScheduleData) return;
 
-    if (!phone) {
-        alert('{{ __("automated-messages.invalid_phone") }}');
-        return;
-    }
+        // Process message with schedule data
+        const processedMessage = processMessageContent(message.content, currentScheduleData);
 
-    // Create WhatsApp URL
-    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(processedMessage)}`;
+        // Format customer phone number for WhatsApp
+        let phone = formatPhoneForWhatsApp(currentScheduleData.customerPhone);
 
-    // Open WhatsApp
-    window.open(whatsappUrl, '_blank');
-
-    // Close modal
-    closeMessageModal();
-}
-
-function formatPhoneForWhatsApp(phone) {
-    if (!phone) {
-        return null;
-    }
-
-    if (typeof phone !== 'string') {
-        return null;
-    }
-
-    // Remove all non-digit characters
-    let cleanPhone = phone.replace(/\D/g, '');
-
-    // Handle different Brazilian phone formats
-    if (cleanPhone.length === 11) {
-        // Format: 11999999999 (Brazilian mobile with 9)
-        return '55' + cleanPhone;
-    } else if (cleanPhone.length === 10) {
-        // Format: 1199999999 (Brazilian landline without 9)
-        return '55' + cleanPhone;
-    } else if (cleanPhone.length === 13 && cleanPhone.startsWith('55')) {
-        // Already in international format
-        return cleanPhone;
-    } else if (cleanPhone.length === 12 && cleanPhone.startsWith('55')) {
-        // Already in international format
-        return cleanPhone;
-    }
-
-    // If none of the above formats match, return null
-    return null;
-}
-
-function processMessageContent(content, data) {
-    return content
-        .replace(/{customer_name}/g, data.customerName || '')
-        .replace(/{customer_phone}/g, data.customerPhone || '')
-        .replace(/{schedule_date}/g, formatDate(data.scheduleDate) || '')
-        .replace(/{schedule_time}/g, data.scheduleTime || '')
-        .replace(/{service_name}/g, data.serviceName || '')
-        .replace(/{unit_name}/g, data.unitName || '')
-        .replace(/{company_name}/g, data.companyName || '');
-}
-
-function formatDate(dateString) {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
-}
-
-// Close modal when clicking outside
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('messageModal');
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            closeMessageModal();
+        if (!phone) {
+            alert('{{ __('automated-messages.invalid_phone') }}');
+            return;
         }
+
+        // Create WhatsApp URL
+        const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(processedMessage)}`;
+
+        // Open WhatsApp
+        window.open(whatsappUrl, '_blank');
+
+        // Close modal
+        closeMessageModal();
+    }
+
+    function formatPhoneForWhatsApp(phone) {
+        if (!phone) {
+            return null;
+        }
+
+        if (typeof phone !== 'string') {
+            return null;
+        }
+
+        // Remove all non-digit characters
+        let cleanPhone = phone.replace(/\D/g, '');
+
+        // Handle different Brazilian phone formats
+        if (cleanPhone.length === 11) {
+            // Format: 11999999999 (Brazilian mobile with 9)
+            return '55' + cleanPhone;
+        } else if (cleanPhone.length === 10) {
+            // Format: 1199999999 (Brazilian landline without 9)
+            return '55' + cleanPhone;
+        } else if (cleanPhone.length === 13 && cleanPhone.startsWith('55')) {
+            // Already in international format
+            return cleanPhone;
+        } else if (cleanPhone.length === 12 && cleanPhone.startsWith('55')) {
+            // Already in international format
+            return cleanPhone;
+        }
+
+        // If none of the above formats match, return null
+        return null;
+    }
+
+    function processMessageContent(content, data) {
+        return content
+            .replace(/{customer_name}/g, data.customerName || '')
+            .replace(/{customer_phone}/g, data.customerPhone || '')
+            .replace(/{schedule_date}/g, formatDate(data.scheduleDate) || '')
+            .replace(/{schedule_time}/g, data.scheduleTime || '')
+            .replace(/{service_name}/g, data.serviceName || '')
+            .replace(/{unit_name}/g, data.unitName || '')
+            .replace(/{company_name}/g, data.companyName || '');
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR');
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('messageModal');
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeMessageModal();
+            }
+        });
     });
-});
 </script>
