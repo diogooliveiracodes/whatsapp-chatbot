@@ -715,24 +715,28 @@
         let value = input.value.replace(/\D/g, '').substring(0, 11);
         let formattedValue = '';
 
-        if (value.length > 0) {
-            let ddd = value.substring(0, 2);
-            let firstPart = '';
-            let secondPart = '';
-
-            if (value.length >= 7) {
-                if (value.length === 11) {
-                    firstPart = value.substring(2, 7);
-                    secondPart = value.substring(7, 11);
-                } else {
-                    firstPart = value.substring(2, 6);
-                    secondPart = value.substring(6, 10);
-                }
-            } else {
-                firstPart = value.substring(2);
-            }
-
-            formattedValue = `(${ddd}) ${firstPart}${secondPart ? '-' + secondPart : ''}`;
+        if (value.length === 0) {
+            formattedValue = '';
+        } else if (value.length <= 2) {
+            // Show raw digits while typing DDD to allow easy deletion
+            formattedValue = value;
+        } else if (value.length <= 6) {
+            // DDD + start of number, no hyphen yet
+            const ddd = value.substring(0, 2);
+            const firstPart = value.substring(2);
+            formattedValue = `(${ddd}) ${firstPart}`;
+        } else if (value.length === 11) {
+            // Mobile: (DD) 99999-9999
+            const ddd = value.substring(0, 2);
+            const firstPart = value.substring(2, 7);
+            const secondPart = value.substring(7, 11);
+            formattedValue = `(${ddd}) ${firstPart}-${secondPart}`;
+        } else {
+            // Landline: (DD) 9999-9999 (7-10 digits beyond DDD)
+            const ddd = value.substring(0, 2);
+            const firstPart = value.substring(2, 6);
+            const secondPart = value.substring(6, 10);
+            formattedValue = `(${ddd}) ${firstPart}-${secondPart}`;
         }
 
         input.value = formattedValue;
