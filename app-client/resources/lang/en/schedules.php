@@ -51,6 +51,7 @@ return [
     'start_time' => 'Start Time',
     'end_time' => 'End Time',
     'service_type' => 'Service Type',
+    'service_type_label' => 'Select Service',
     'status' => 'Status',
     'statuses' => [
         'pending' => 'Pending',

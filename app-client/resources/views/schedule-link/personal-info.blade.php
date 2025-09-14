@@ -123,7 +123,7 @@
                                     <div
                                         class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                                         2</div>
-                                    <h2 class="text-xl font-semibold text-white">{{ __('schedules.service_type') }}
+                                    <h2 class="text-xl font-semibold text-white">{{ __('schedules.service_type_label') }}
                                     </h2>
                                 </div>
 

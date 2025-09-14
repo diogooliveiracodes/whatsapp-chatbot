@@ -55,6 +55,7 @@ return [
     'start_time' => 'Horário de Início',
     'end_time' => 'Horário de Término',
     'service_type' => 'Tipo de Serviço',
+    'service_type_label' => 'Selecione o Serviço',
     'status' => 'Status',
     'statuses' => [
         'pending' => 'Pendente',
