@@ -42,21 +42,19 @@
                                             $activeDaysCount++;
                                         }
                                     }
+                                    $imgUrl = $unit->image_path ? Storage::disk('s3')->url($unit->image_path) : null;
                                 @endphp
 
                                 <a href="{{ $unitSettingsId ? route('unitSettings.show', $unitSettingsId) : route('units.show', $unit->id) }}"
                                     class="group block bg-gray-50 dark:bg-gray-800 rounded-xl p-4 sm:p-5 shadow-sm border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-md transition">
                                     <div class="flex items-start justify-between">
                                         <div class="flex items-center space-x-3">
-                                            <div
-                                                class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
-                                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                                                    </path>
-                                                </svg>
+                                            <div class="w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                                @if($imgUrl)
+                                                    <img src="{{ $imgUrl }}" alt="{{ $unit->name }}" class="h-full w-full object-cover" />
+                                                @else
+                                                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ substr($unit->name, 0, 1) }}</span>
+                                                @endif
                                             </div>
                                             <div>
                                                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
