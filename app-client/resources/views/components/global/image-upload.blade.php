@@ -113,8 +113,8 @@
             formData.append('image', file);
             formData.append('directory', '{{ $directory }}');
 
-            // Client-side guardrails (2MB, types)
-            const maxSize = 2 * 1024 * 1024;
+            // Client-side guardrails (20MB, types)
+            const maxSize = 20 * 1024 * 1024;
             const allowed = ['image/jpeg','image/png','image/jpg','image/gif','image/svg+xml'];
             if (!allowed.includes(file.type)) {
                 errorEl.textContent = '{{ __('validation.image', ['attribute' => 'image']) }}';
@@ -122,7 +122,7 @@
                 return;
             }
             if (file.size > maxSize) {
-                errorEl.textContent = '{{ __('validation.max.file', ['attribute' => 'image', 'max' => 2048]) }}';
+                errorEl.textContent = '{{ __('validation.max.file', ['attribute' => 'image', 'max' => 20480]) }}';
                 errorEl.classList.remove('hidden');
                 return;
             }
