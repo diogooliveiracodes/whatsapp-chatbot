@@ -6,9 +6,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
 use App\Services\ErrorLog\ErrorLogService;
+use Illuminate\Support\Facades\Log;
 
 class ImageStoreService
 {
@@ -58,26 +57,119 @@ class ImageStoreService
                 ];
             }
 
-            // Resize raster images (JPEG/PNG/etc.) to width 512px keeping aspect ratio without upscaling
-            $manager = new ImageManager(new Driver());
-            $image = $manager->read($uploadedFile->getPathname());
-            $image->scaleDown(width: 512);
+            // Process raster images with native libraries (prefer Imagick)
+            $sourcePath = $uploadedFile->getPathname();
+            $binary = null;
+            $filename = null;
 
-            // Re-encode based on original type (default to JPEG)
-            $usePng = $extension === 'png' || $mimeType === 'image/png';
-            if ($usePng) {
-                $encoded = $image->toPng();
-                $filename = $name . '.png';
+            if (extension_loaded('imagick') && class_exists('\\Imagick')) {
+                $imagickClass = '\\Imagick';
+                $img = new $imagickClass();
+                $img->readImage($sourcePath);
+
+                $img->autoOrientImage();
+
+                $w = $img->getImageWidth();
+                if ($w > 512) {
+                    $img->thumbnailImage(512, 512, true, true);
+                }
+                $img->stripImage();
+
+                $usePng = $extension === 'png' || $mimeType === 'image/png';
+                if ($usePng) {
+                    $img->setImageFormat('png');
+                    $filename = $name . '.png';
+                } else {
+                    $img->setImageFormat('jpeg');
+                    $img->setImageCompressionQuality(85);
+                    $filename = $name . '.jpg';
+                }
+
+                $binary = $img->getImagesBlob();
+                $img->clear();
+                $img->destroy();
             } else {
-                $encoded = $image->toJpeg(quality: 85);
-                $filename = $name . '.jpg';
+                // Fallback: GD with EXIF orientation handling
+                $usePng = $extension === 'png' || $mimeType === 'image/png';
+
+                if (!$usePng) {
+                    $src = @imagecreatefromjpeg($sourcePath);
+                } else {
+                    $src = @imagecreatefrompng($sourcePath);
+                }
+                if (!$src) {
+                    throw new \Exception('Failed to decode image.');
+                }
+
+                $srcWidth = imagesx($src);
+                $srcHeight = imagesy($src);
+                $exifOrientation = null;
+
+                if (!$usePng && function_exists('exif_read_data')) {
+                    $exif = @exif_read_data($sourcePath);
+                    $exifOrientation = $exif['Orientation'] ?? null;
+                    if (!empty($exifOrientation)) {
+                        $orientation = (int) $exifOrientation;
+                        switch ($orientation) {
+                            case 3:
+                                $src = imagerotate($src, 180, 0);
+                                break;
+                            case 6:
+                                $src = imagerotate($src, -90, 0);
+                                $tmp = $srcWidth; $srcWidth = $srcHeight; $srcHeight = $tmp;
+                                break;
+                            case 8:
+                                $src = imagerotate($src, 90, 0);
+                                $tmp = $srcWidth; $srcWidth = $srcHeight; $srcHeight = $tmp;
+                                break;
+                        }
+                    }
+                }
+
+
+                // Fallback: if no EXIF and image appears to be landscape (width > height),
+                // assume it's a portrait photo that needs 90° clockwise rotation
+                if (empty($exifOrientation) && $srcWidth > $srcHeight) {
+                    $src = imagerotate($src, -90, 0);
+                    $tmp = $srcWidth; $srcWidth = $srcHeight; $srcHeight = $tmp;
+                }
+
+                $target = $src;
+                if ($srcWidth > 512) {
+                    $newWidth = 512;
+                    $newHeight = (int) round(($srcHeight * $newWidth) / max(1, $srcWidth));
+
+                    $target = imagecreatetruecolor($newWidth, $newHeight);
+                    if ($usePng) {
+                        imagealphablending($target, false);
+                        imagesavealpha($target, true);
+                        $transparent = imagecolorallocatealpha($target, 0, 0, 0, 127);
+                        imagefill($target, 0, 0, $transparent);
+                    }
+                    imagecopyresampled($target, $src, 0, 0, 0, 0, $newWidth, $newHeight, $srcWidth, $srcHeight);
+                }
+
+                ob_start();
+                if ($usePng) {
+                    imagepng($target);
+                    $filename = $name . '.png';
+                } else {
+                    imagejpeg($target, null, 85);
+                    $filename = $name . '.jpg';
+                }
+                $binary = ob_get_clean();
+
+                if (is_object($src) || (function_exists('is_resource') && is_resource($src))) { imagedestroy($src); }
+                if (isset($target) && $target !== $src && (is_object($target) || (function_exists('is_resource') && is_resource($target)))) { imagedestroy($target); }
             }
 
             // Store processed image on configured disk
-            $put = Storage::disk($this->disk)->put($directory . '/' . $filename, $encoded->toString());
+            $path = $directory . '/' . $filename;
+            $put = Storage::disk($this->disk)->put($path, $binary);
             if (!$put) {
                 throw new \Exception('Failed to upload image.');
             }
+
 
             return [
                 'image_name' => $name,
