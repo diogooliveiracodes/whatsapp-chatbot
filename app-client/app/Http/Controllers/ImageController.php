@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\Storage\ImageStoreService;
 use App\Services\ErrorLog\ErrorLogService;
 use Illuminate\Validation\ValidationException;
+use App\Http\Requests\StoreImageRequest;
 
 class ImageController extends Controller
 {
@@ -21,7 +22,7 @@ class ImageController extends Controller
         protected ImageStoreService $imageStoreService
     ) {}
 
-    public function upload(Request $request)
+    public function upload(StoreImageRequest $request)
     {
         try {
             // Early detection of low-level PHP upload errors
@@ -36,11 +37,6 @@ class ImageController extends Controller
                     ], 422);
                 }
             }
-
-            $request->validate([
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'directory' => 'required|string',
-            ]);
 
             $imageData = $this->imageStoreService->uploadImage($request);
 
