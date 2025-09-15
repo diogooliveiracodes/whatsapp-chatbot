@@ -15,7 +15,7 @@
                             <p class="mt-3 text-gray-400">{{ __('schedule_link.no_units_available') ?? 'Nenhuma unidade disponível' }}</p>
                         </div>
                     @else
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 gap-4">
                             @foreach ($units as $unit)
                                 @php $imgUrl = $unit->image_path ? Storage::disk('s3')->url($unit->image_path) : null; @endphp
                                 <a href="{{ route('schedule-link.personal-info', ['company' => $company, 'unit' => $unit->id]) }}"
