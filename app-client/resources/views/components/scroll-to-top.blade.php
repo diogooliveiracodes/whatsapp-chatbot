@@ -12,7 +12,7 @@
 <!-- Scroll to top button -->
 <div id="{{ $uniqueId }}" class="scroll-to-top-button fixed {{ $position }} z-50 hidden">
     <button type="button"
-            class="scroll-to-top-btn bg-{{ $color }}-600 dark:bg-{{ $color }}-500 hover:bg-{{ $color }}-700 dark:hover:bg-{{ $color }}-600 text-white rounded-full {{ $size }} shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-{{ $color }}-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+            class="scroll-to-top-btn bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-600 text-white rounded-full {{ $size }} shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
         <svg class="{{ $iconSize }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
         </svg>

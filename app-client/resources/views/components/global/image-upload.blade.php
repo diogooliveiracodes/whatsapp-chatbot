@@ -15,11 +15,12 @@
 
 @php
     $uid = $uid ?? uniqid('img_');
+    // Use static classes instead of dynamic ones for better Tailwind CSS support
     $btnSelectClasses = 'inline-flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2 '
         . 'border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest '
         . 'transition ease-in-out duration-150 cursor-pointer '
-        . 'bg-' . $successColor . '-600 hover:bg-' . $successColor . '-500 focus:bg-' . $successColor . '-700 active:bg-' . $successColor . '-700 '
-        . 'focus:outline-none focus:ring-2 focus:ring-' . $successColor . '-500 focus:ring-offset-2';
+        . 'bg-green-600 hover:bg-green-500 focus:bg-green-700 active:bg-green-700 '
+        . 'focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2';
 @endphp
 
 <div class="space-y-3">

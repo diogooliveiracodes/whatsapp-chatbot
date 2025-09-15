@@ -16,6 +16,15 @@
                         <div class="space-y-6">
                             <!-- Mobile-first grid: stack on mobile, two columns on md+ -->
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <!-- Image Upload / Replace card (component) -->
+                                <div class="space-y-3 order-1 md:order-1">
+                                    <x-global.image-upload directory="units"
+                                                          :initialImageName="old('image_name', $unit->image_name)"
+                                                          :initialImagePath="old('image_path', $unit->image_path)"
+                                                          nameImageName="image_name"
+                                                          nameImagePath="image_path" />
+                                </div>
+
                                 <!-- Identity card -->
                                 <div class="space-y-4 order-2 md:order-2">
                                     <div>
@@ -28,15 +37,6 @@
                                     <div>
                                         <x-buttons.toggle-switch name="active" :label="__('fields.active')" :value="old('active', $unit->active)" />
                                     </div>
-                                </div>
-
-                                <!-- Image Upload / Replace card (component) -->
-                                <div class="space-y-3 order-1 md:order-1">
-                                    <x-global.image-upload directory="units"
-                                                          :initialImageName="old('image_name', $unit->image_name)"
-                                                          :initialImagePath="old('image_path', $unit->image_path)"
-                                                          nameImageName="image_name"
-                                                          nameImagePath="image_path" />
                                 </div>
                             </div>
                         </div>
