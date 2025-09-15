@@ -13,6 +13,15 @@
                         @csrf
 
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <!-- Image upload (component) -->
+                            <div class="md:col-span-2">
+                                <x-global.image-upload directory="unit-service-types"
+                                                      :initialImageName="old('image_name')"
+                                                      :initialImagePath="old('image_path')"
+                                                      nameImageName="image_name"
+                                                      nameImagePath="image_path" />
+                            </div>
+
                             <div>
                                 <x-input-label for="unit_id" :value="__('unit-service-types.unit')" />
                                 <select id="unit_id" name="unit_id"

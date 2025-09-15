@@ -9,6 +9,16 @@
                 <div class="p-4 sm:p-6 text-gray-900 dark:text-gray-100 space-y-6">
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div>
+                            <div class="mt-2">
+                                @if(!empty($unitServiceType->image_path))
+                                    <img src="{{ Storage::disk('s3')->url($unitServiceType->image_path) }}" alt="{{ $unitServiceType->name }}" class="h-[120px] w-[120px] rounded-full object-cover ring-1 ring-gray-300 dark:ring-gray-700 mx-auto md:mx-0">
+                                @else
+                                    <span class="text-gray-500 dark:text-gray-400">—</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div>
                             <label class="block text-sm font-medium text-gray-500 dark:text-gray-300">{{ __('fields.name') }}</label>
                             <p class="mt-1 text-gray-900 dark:text-gray-100">{{ $unitServiceType->name }}</p>
                         </div>

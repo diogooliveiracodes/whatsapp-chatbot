@@ -25,6 +25,8 @@ class UnitServiceType extends Model
         'friday',
         'saturday',
         'sunday',
+        'image_name',
+        'image_path',
     ];
 
     protected $casts = [
