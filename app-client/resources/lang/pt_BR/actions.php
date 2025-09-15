@@ -9,4 +9,7 @@ return [
     'view' => 'Visualizar',
     'settings' => 'Configurações',
     'back' => 'Voltar',
+    'remove' => 'Remover',
+    'select_image' => 'Selecionar imagem',
+    'remove_image' => 'Remover imagem',
 ];

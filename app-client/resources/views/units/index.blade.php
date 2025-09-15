@@ -25,9 +25,6 @@
                                         {{ __('units.name') }}</th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
-                                        {{ __('units.active') }}</th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
                                         {{ __('units.actions') }}</th>
                                 </tr>
                             </thead>
@@ -36,11 +33,17 @@
                                     <tr>
                                         <td
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                            {{ $unit->name }}
-                                        </td>
-                                        <td
-                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                            {{ $unit->active ? __('units.yes') : __('units.no') }}
+                                            @php $imgUrl = $unit->image_path ? Storage::disk('s3')->url($unit->image_path) : null; @endphp
+                                            <div class="flex items-center">
+                                                <div class="mr-3 h-10 w-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                                    @if($imgUrl)
+                                                        <img src="{{ $imgUrl }}" alt="{{ $unit->name }}" class="h-full w-full object-cover" />
+                                                    @else
+                                                        <span class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ substr($unit->name, 0, 1) }}</span>
+                                                    @endif
+                                                </div>
+                                                <span>{{ $unit->name }}</span>
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex items-center space-x-2">
@@ -64,17 +67,18 @@
                             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-sm">
                                 <div class="flex justify-between items-start mb-3">
                                     <div class="flex-1">
-                                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                            {{ $unit->name }}</h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">
-                                            {{ __('units.active') }}:
-                                            {{ $unit->active ? __('units.yes') : __('units.no') }}
-                                        </p>
+                                        @php $imgUrl = $unit->image_path ? Storage::disk('s3')->url($unit->image_path) : null; @endphp
+                                        <div class="flex items-center gap-3">
+                                            <div class="h-10 w-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                                @if($imgUrl)
+                                                    <img src="{{ $imgUrl }}" alt="{{ $unit->name }}" class="h-full w-full object-cover" />
+                                                @else
+                                                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ substr($unit->name, 0, 1) }}</span>
+                                                @endif
+                                            </div>
+                                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $unit->name }}</h3>
+                                        </div>
                                     </div>
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $unit->active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' }}">
-                                        {{ $unit->active ? __('units.active') : __('units.inactive') }}
-                                    </span>
                                 </div>
 
                                 <div class="flex justify-end space-x-2">

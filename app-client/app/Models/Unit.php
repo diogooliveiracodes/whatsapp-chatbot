@@ -20,6 +20,8 @@ class Unit extends Model
         'address',
         'city',
         'active',
+        'image_name',
+        'image_path',
     ];
 
     protected $table = 'units';

@@ -11,36 +11,57 @@
 
                     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <div>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="mt-2">
+                                        @if (!empty($unit->image_path))
+                                            <img src="{{ Storage::disk('s3')->url($unit->image_path) }}"
+                                                alt="{{ $unit->name }}"
+                                                class="h-[150px] w-[150px] rounded-full object-cover ring-1 ring-gray-300 dark:ring-gray-700 mx-auto md:mx-0">
+                                        @else
+                                            <span class="text-gray-500 dark:text-gray-400">—</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                                 {{ __('units.details') }}</h3>
 
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.name') }}</label>
+                                    <label
+                                        class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.name') }}</label>
                                     <p class="mt-1 text-gray-900 dark:text-gray-100">{{ $unit->name }}</p>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.active') }}</label>
+                                    <label
+                                        class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.active') }}</label>
                                     <div class="mt-1">
                                         <label class="relative inline-flex items-center cursor-not-allowed">
                                             <input type="checkbox" class="sr-only peer" disabled
                                                 {{ $unit->active ? 'checked' : '' }}>
-                                            <div class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600 opacity-75">
+                                            <div
+                                                class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600 opacity-75">
                                             </div>
                                         </label>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.created_at') }}</label>
+                                    <label
+                                        class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.created_at') }}</label>
                                     <p class="mt-1 text-gray-900 dark:text-gray-100">
                                         {{ \Carbon\Carbon::parse($unit->created_at)->format('d/m/Y H:i') }}
                                     </p>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.updated_at') }}</label>
+                                    <label
+                                        class="block text-sm font-medium text-gray-500 dark:text-gray-400">{{ __('units.updated_at') }}</label>
                                     <p class="mt-1 text-gray-900 dark:text-gray-100">
                                         {{ \Carbon\Carbon::parse($unit->updated_at)->format('d/m/Y H:i') }}
                                     </p>

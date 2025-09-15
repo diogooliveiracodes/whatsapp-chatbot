@@ -9,6 +9,7 @@ return [
     'update' => 'Atualizar',
     'back' => 'Voltar',
     'details' => 'Detalhes da Unidade',
+    'image' => 'Imagem',
     'yes' => 'Sim',
     'no' => 'Não',
     'create' => 'Criar Unidade',
@@ -34,6 +35,8 @@ return [
     'attributes' => [
         'name' => 'nome',
         'active' => 'ativo',
+        'image_name' => 'nome da imagem',
+        'image_path' => 'caminho da imagem',
     ],
     'success' => [
         'created' => 'Unidade criada com sucesso',
@@ -51,7 +54,9 @@ return [
         'deactivate' => 'Falha ao desativar unidade',
         'activate' => 'Falha ao ativar unidade',
         'active_schedules' => 'Não é possível desativar a unidade pois existem agendamentos ativos.',
+        'image_upload' => 'Falha ao enviar a imagem',
     ],
     'settings' => 'Configurações',
     'unit' => 'Unidade',
+    'image_help' => 'JPG, PNG, GIF ou SVG até 2MB.',
 ];

@@ -35,6 +35,8 @@ class UpdateUnitRequest extends FormRequest
                 })->ignore($this->route('unit'))
             ],
             'active' => ['nullable', 'boolean'],
+            'image_name' => ['nullable', 'string', 'max:255'],
+            'image_path' => ['nullable', 'string', 'max:2048'],
         ];
     }
 
@@ -50,6 +52,10 @@ class UpdateUnitRequest extends FormRequest
             'name.string' => __('validation.string', ['attribute' => __('units.attributes.name')]),
             'name.max' => __('validation.max.string', ['attribute' => __('units.attributes.name'), 'max' => 255]),
             'active.boolean' => __('validation.boolean', ['attribute' => __('units.attributes.active')]),
+            'image_name.string' => __('validation.string', ['attribute' => __('units.attributes.image_name')]),
+            'image_name.max' => __('validation.max.string', ['attribute' => __('units.attributes.image_name'), 'max' => 255]),
+            'image_path.string' => __('validation.string', ['attribute' => __('units.attributes.image_path')]),
+            'image_path.max' => __('validation.max.string', ['attribute' => __('units.attributes.image_path'), 'max' => 2048]),
         ];
     }
 

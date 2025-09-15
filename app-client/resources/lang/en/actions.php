@@ -9,4 +9,7 @@ return [
     'view' => 'View',
     'settings' => 'Settings',
     'back' => 'Back',
+    'remove' => 'Remove',
+    'select_image' => 'Select image',
+    'remove_image' => 'Remove image',
 ];
