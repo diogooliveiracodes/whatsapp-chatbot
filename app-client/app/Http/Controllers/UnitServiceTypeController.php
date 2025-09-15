@@ -35,9 +35,15 @@ class UnitServiceTypeController extends Controller
     public function index(): View
     {
         try {
-            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypes();
+            $selectedUnitId = (int) request()->query('unit_id', 0);
+            $unitServiceTypes = $this->unitServiceTypeService->getUnitServiceTypes($selectedUnitId ?: null);
+            $units = $this->unitService->getUnits();
 
-            return view('unit-service-types.index', compact('unitServiceTypes'));
+            return view('unit-service-types.index', [
+                'unitServiceTypes' => $unitServiceTypes,
+                'units' => $units,
+                'selectedUnitId' => $selectedUnitId,
+            ]);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'index',
@@ -45,7 +51,12 @@ class UnitServiceTypeController extends Controller
                 'request_url' => request()->url(),
             ]);
 
-            return view('unit-service-types.index', ['unitServiceTypes' => [], 'error' => __('unit-service-types.error.load')]);
+            return view('unit-service-types.index', [
+                'unitServiceTypes' => [],
+                'units' => collect(),
+                'selectedUnitId' => 0,
+                'error' => __('unit-service-types.error.load'),
+            ]);
         }
     }
 

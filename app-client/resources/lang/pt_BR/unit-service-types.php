@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'service' => 'Serviço',
     'unit' => 'Unidade',
     'unitServiceType' => 'Tipo de Serviço',
     'unitName' => 'Nome da Unidade',
@@ -75,4 +76,5 @@ return [
         'saturday' => 'Sábado',
         'sunday' => 'Domingo',
     ],
+    'all_units' => 'Todas as unidades',
 ];

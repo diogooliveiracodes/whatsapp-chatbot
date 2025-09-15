@@ -19,13 +19,18 @@ class UnitServiceTypeRepository
      *
      * @return Collection
      */
-    public function getUnitServiceTypes(): Collection
+    public function getUnitServiceTypes(?int $unitId = null): Collection
     {
-        return $this
+        $query = $this
             ->model
             ->where('company_id', Auth::user()->company_id)
-            ->where('active', true)
-            ->get();
+            ->where('active', true);
+
+        if ($unitId) {
+            $query->where('unit_id', $unitId);
+        }
+
+        return $query->get();
     }
 
     /**

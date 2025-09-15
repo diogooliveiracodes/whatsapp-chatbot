@@ -23,15 +23,50 @@
                             :route="route('unitServiceTypes.deactivated')"
                             :text="__('unit-service-types.deactivated')"
                         />
+                        @isset($units)
+                            <div class="hidden md:block ml-auto">
+                                <form method="GET" action="{{ route('unitServiceTypes.index') }}">
+                                    <label for="unit_id_md" class="sr-only">{{ __('unit-service-types.unit') }}</label>
+                                    <select id="unit_id_md" name="unit_id"
+                                            class="block w-56 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100"
+                                            onchange="this.form.submit()">
+                                        <option value="">{{ __('unit-service-types.all_units') }}</option>
+                                        @foreach($units as $unitOption)
+                                            <option value="{{ $unitOption->id }}" {{ (isset($selectedUnitId) && (int)$selectedUnitId === (int)$unitOption->id) ? 'selected' : '' }}>
+                                                {{ $unitOption->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                            </div>
+                        @endisset
                     </div>
+
+                    @isset($units)
+                        <div class="md:hidden mb-4">
+                            <form method="GET" action="{{ route('unitServiceTypes.index') }}">
+                                <label for="unit_id_sm" class="sr-only">{{ __('unit-service-types.unit') }}</label>
+                                <select id="unit_id_sm" name="unit_id"
+                                        class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100"
+                                        onchange="this.form.submit()">
+                                    <option value="">{{ __('unit-service-types.all_units') }}</option>
+                                    @foreach($units as $unitOption)
+                                        <option value="{{ $unitOption->id }}" {{ (isset($selectedUnitId) && (int)$selectedUnitId === (int)$unitOption->id) ? 'selected' : '' }}>
+                                            {{ $unitOption->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        </div>
+                    @endisset
 
                     <!-- Tabela para desktop -->
                     <div class="hidden md:block">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.name') }}</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('units.name') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.service') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.unit') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('fields.price') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.week_days.title') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.actions') }}</th>
