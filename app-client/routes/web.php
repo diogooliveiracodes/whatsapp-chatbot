@@ -40,6 +40,7 @@ Route::prefix('{company}/schedule-link')->group(function () {
     Route::get('/{unit}', [ScheduleLinkController::class, 'personalInfo'])->name('schedule-link.personal-info');
     Route::get('/{unit}/week-days', [ScheduleLinkController::class, 'weekDays'])->name('schedule-link.week-days');
     Route::get('/{unit}/available-times', [ScheduleLinkController::class, 'availableTimes'])->name('schedule-link.available-times');
+    Route::get('/{unit}/blocked', [ScheduleLinkController::class, 'blocked'])->name('schedule-link.blocked');
     Route::post('/{unit}', [ScheduleLinkController::class, 'store'])->name('schedule-link.store');
     Route::get('/{unit}/success/{uuid}', [ScheduleLinkController::class, 'payment'])->name('schedule-link.payment');
 });

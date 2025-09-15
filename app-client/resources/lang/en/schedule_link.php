@@ -40,6 +40,10 @@ return [
     'success_message' => 'Your appointment has been created successfully. You may receive updates on WhatsApp if this unit uses that feature.',
     'book_another' => 'Book another time',
 
+    // Blocked customer
+    'blocked_title' => 'Access blocked',
+    'blocked_message' => 'Your registration is inactive and cannot make appointments at the moment. Contact the unit to regularize.',
+
     // Payment section
     'payment_section_title' => 'Appointment Payment',
     'payment_amount' => '$:amount',
@@ -85,6 +89,7 @@ return [
         'created' => 'Schedule created successfully.',
         'unexpected_error' => 'An unexpected error occurred while creating the schedule.',
         'no_user_available' => 'There is no available user in this unit to receive the appointment.',
+        'customer_inactive' => 'Your registration is inactive. Contact the unit to regularize.',
     ],
 
     // Labels

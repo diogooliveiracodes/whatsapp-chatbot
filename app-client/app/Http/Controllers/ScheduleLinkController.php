@@ -211,6 +211,8 @@ class ScheduleLinkController extends Controller
                     'name' => $validated['name'],
                     'phone' => $validated['phone'],
                 ]);
+            } else if ($customer && $customer->active == false) {
+                return redirect()->route('schedule-link.blocked', ['company' => $company, 'unit' => $unit->id]);
             }
 
             // Pick a responsible user for the unit
@@ -250,6 +252,22 @@ class ScheduleLinkController extends Controller
 
             return back()->withErrors(['general' => Lang::get('schedule_link.messages.unexpected_error')])->withInput();
         }
+    }
+
+    /**
+     * Blocked customer notice page.
+     */
+    public function blocked($company, Unit $unit): View
+    {
+        // Ensure the unit belongs to the specified company
+        if ($unit->company_id != $company) {
+            abort(404);
+        }
+
+        return view('schedule-link.customer-blocked', [
+            'unit' => $unit,
+            'company' => $company,
+        ]);
     }
 
     /**

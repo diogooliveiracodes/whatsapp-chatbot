@@ -40,6 +40,10 @@ return [
     'success_message' => 'Seu agendamento foi criado com sucesso. Você receberá informações no WhatsApp se sua unidade utilizar este recurso.',
     'book_another' => 'Agendar outro horário',
 
+    // Blocked customer
+    'blocked_title' => 'Acesso bloqueado',
+    'blocked_message' => 'Seu cadastro está inativo e não pode realizar agendamentos no momento. Entre em contato com a unidade para regularizar.',
+
     // Payment section
     'payment_section_title' => 'Pagamento do Agendamento',
     'payment_amount' => 'R$ :amount',
@@ -85,6 +89,7 @@ return [
         'created' => 'Agendamento criado com sucesso.',
         'unexpected_error' => 'Ocorreu um erro inesperado ao criar o agendamento.',
         'no_user_available' => 'Não há usuário disponível para receber o agendamento nesta unidade.',
+        'customer_inactive' => 'Seu cadastro está inativo. Entre em contato com a unidade para regularizar.',
     ],
 
     // Labels
