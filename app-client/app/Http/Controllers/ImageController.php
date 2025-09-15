@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\Storage\ImageStoreService;
 use App\Services\ErrorLog\ErrorLogService;
+use Illuminate\Validation\ValidationException;
 
 class ImageController extends Controller
 {
@@ -23,6 +24,19 @@ class ImageController extends Controller
     public function upload(Request $request)
     {
         try {
+            // Early detection of low-level PHP upload errors
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                if (!$file->isValid()) {
+                    return response()->json([
+                        'message' => $file->getErrorMessage(),
+                        'errors' => [
+                            'image' => [$file->getErrorMessage()],
+                        ],
+                    ], 422);
+                }
+            }
+
             $request->validate([
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'directory' => 'required|string',
@@ -34,6 +48,11 @@ class ImageController extends Controller
                 'image_name' => $imageData['image_name'],
                 'image_path' => $imageData['image_path'],
             ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'upload',
@@ -41,7 +60,7 @@ class ImageController extends Controller
             ]);
 
             return response()->json([
-                'message' => 'Error uploading image',
+                'message' => $e->getMessage() ?: 'Error uploading image',
             ], 500);
         }
     }
@@ -70,6 +89,11 @@ class ImageController extends Controller
                 'success' => true,
                 'message' => 'Image deleted successfully',
             ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'errors' => $e->errors(),
+            ], 422);
         } catch (\Exception $e) {
             $this->errorLogService->logError($e, [
                 'action' => 'delete',
@@ -78,7 +102,7 @@ class ImageController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Error deleting image',
+                'message' => $e->getMessage() ?: 'Error deleting image',
             ], 500);
         }
     }
