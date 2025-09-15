@@ -43,6 +43,13 @@
                 <span>{{ $removeText }}</span>
             </button>
 
+            <span id="spinner-{{ $uid }}" class="hidden inline-flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                <svg class="animate-spin h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+            </span>
+
             <p id="help-{{ $uid }}" class="text-xs text-gray-500 dark:text-gray-400 {{ $initialImagePath ? 'hidden' : '' }}">{{ $help }}</p>
             <p id="error-{{ $uid }}" class="text-sm text-red-600 dark:text-red-400 hidden"></p>
         </div>
@@ -62,12 +69,22 @@
         const errorEl = document.getElementById('error-{{ $uid }}');
         const nameInput = document.getElementById('name-{{ $uid }}');
         const pathInput = document.getElementById('path-{{ $uid }}');
+        const spinnerEl = document.getElementById('spinner-{{ $uid }}');
 
         function togglePreview(show) {
             previewImg.classList.toggle('hidden', !show);
             removeBtn.classList.toggle('hidden', !show);
             selectLabel.classList.toggle('hidden', show);
             if (helpEl) helpEl.classList.toggle('hidden', show);
+        }
+
+        function setLoading(isLoading) {
+            if (!spinnerEl) return;
+            spinnerEl.classList.toggle('hidden', !isLoading);
+            fileInput.disabled = isLoading;
+            removeBtn.disabled = isLoading;
+            selectLabel.classList.toggle('pointer-events-none', isLoading);
+            selectLabel.classList.toggle('opacity-50', isLoading);
         }
 
         async function deleteCurrentIfAny() {
@@ -110,6 +127,7 @@
                 return;
             }
 
+            setLoading(true);
             const res = await fetch("{{ route('upload-image') }}", {
                 method: 'POST',
                 headers: {
@@ -140,12 +158,14 @@
                 if (!msg) msg = '{{ __('units.error.image_upload') }}';
                 errorEl.textContent = msg;
                 errorEl.classList.remove('hidden');
+                setLoading(false);
                 return;
             }
             errorEl.textContent = '';
             errorEl.classList.add('hidden');
             nameInput.value = data.image_name;
             pathInput.value = data.image_path;
+            setLoading(false);
 
             const reader = new FileReader();
             reader.onload = function(e) {
