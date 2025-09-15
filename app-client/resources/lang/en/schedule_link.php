@@ -3,7 +3,7 @@
 return [
     // Page
     'page_title_default' => 'Appointment',
-    'choose_unit' => 'Choose a unit for your appointment',
+    'choose_professional' => 'Choose a professional for your appointment',
     'back' => 'Back',
     'title' => 'Book an appointment with :unit',
     'name' => 'Your name',

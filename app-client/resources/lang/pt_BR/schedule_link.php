@@ -3,7 +3,7 @@
 return [
     // Page
     'page_title_default' => 'Agendamento',
-    'choose_unit' => 'Escolha a unidade para o atendimento',
+    'choose_professional' => 'Escolha o profissional para o atendimento',
     'back' => 'Voltar',
     'title' => 'Agendar atendimento com :unit',
     'name' => 'Seu nome',
