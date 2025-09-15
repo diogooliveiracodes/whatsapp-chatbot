@@ -14,6 +14,15 @@
                         @method('PUT')
 
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                            <!-- Image upload (component) -->
+                            <div class="md:col-span-2">
+                                <x-global.image-upload directory="unit-service-types"
+                                                      :initialImageName="old('image_name', $unitServiceType->image_name)"
+                                                      :initialImagePath="old('image_path', $unitServiceType->image_path)"
+                                                      nameImageName="image_name"
+                                                      nameImagePath="image_path" />
+                            </div>
+
                             <div>
                                 <x-input-label for="name" :value="__('fields.name')" />
                                 <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $unitServiceType->name)"

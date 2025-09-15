@@ -33,6 +33,8 @@ class StoreUnitServiceTypeRequest extends FormRequest
             'friday' => ['nullable', 'boolean'],
             'saturday' => ['nullable', 'boolean'],
             'sunday' => ['nullable', 'boolean'],
+            'image_name' => ['nullable', 'string', 'max:255'],
+            'image_path' => ['nullable', 'string', 'max:2048'],
         ];
     }
 
@@ -52,7 +54,11 @@ class StoreUnitServiceTypeRequest extends FormRequest
             'price.required' => 'O preço é obrigatório',
             'price.numeric' => 'O preço deve ser um número',
             'price.min' => 'O preço deve ser maior que 0',
-            'description.string' => 'A descrição deve ser um texto'
+            'description.string' => 'A descrição deve ser um texto',
+            'image_name.string' => __('validation.string', ['attribute' => 'image_name']),
+            'image_name.max' => __('validation.max.string', ['attribute' => 'image_name', 'max' => 255]),
+            'image_path.string' => __('validation.string', ['attribute' => 'image_path']),
+            'image_path.max' => __('validation.max.string', ['attribute' => 'image_path', 'max' => 2048]),
         ];
     }
 }

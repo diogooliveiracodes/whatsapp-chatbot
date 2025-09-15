@@ -9,6 +9,7 @@ return [
     'update' => 'Update',
     'back' => 'Back',
     'details' => 'Unit Details',
+    'image' => 'Image',
     'yes' => 'Yes',
     'no' => 'No',
     'create' => 'Create Unit',
@@ -34,6 +35,8 @@ return [
     'attributes' => [
         'name' => 'name',
         'active' => 'active',
+        'image_name' => 'image name',
+        'image_path' => 'image path',
     ],
     'success' => [
         'created' => 'Unit created successfully',
@@ -51,7 +54,9 @@ return [
         'deactivate' => 'Failed to deactivate unit',
         'activate' => 'Failed to activate unit',
         'active_schedules' => 'Cannot deactivate unit because there are active schedules.',
+        'image_upload' => 'Failed to upload image',
     ],
     'settings' => 'Settings',
     'unit' => 'Unit',
+    'image_help' => 'JPG, PNG, GIF or SVG up to 2MB.',
 ];

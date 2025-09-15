@@ -18,6 +18,7 @@ use App\Http\Controllers\CustomerSchedulesController;
 use App\Http\Controllers\AutomatedMessageController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\WhatsappWebhookController;
+use App\Http\Controllers\ImageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -156,6 +157,9 @@ Route::middleware('auth', 'company.active', 'subscription.active', 'user.active'
         Route::delete('/{automatedMessage}', [AutomatedMessageController::class, 'destroy'])->name('automated-messages.destroy');
         Route::get('/get-by-unit', [AutomatedMessageController::class, 'getByUnit'])->name('automated-messages.get-by-unit');
     });
+
+    Route::post('/upload-image', [ImageController::class, 'upload'])->name('upload-image');
+    Route::delete('/delete-image', [ImageController::class, 'delete'])->name('delete-image');
 });
 
 require __DIR__ . '/admin.php';

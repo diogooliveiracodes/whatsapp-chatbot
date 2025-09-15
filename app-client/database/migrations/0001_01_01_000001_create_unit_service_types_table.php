@@ -26,6 +26,8 @@ return new class extends Migration
             $table->boolean('friday')->default(true);
             $table->boolean('saturday')->default(true);
             $table->boolean('sunday')->default(true);
+            $table->string('image_name')->nullable();
+            $table->string('image_path')->nullable();
             $table->timestamps();
         });
     }

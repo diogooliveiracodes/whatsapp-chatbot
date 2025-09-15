@@ -23,15 +23,50 @@
                             :route="route('unitServiceTypes.deactivated')"
                             :text="__('unit-service-types.deactivated')"
                         />
+                        @isset($units)
+                            <div class="hidden md:block ml-auto">
+                                <form method="GET" action="{{ route('unitServiceTypes.index') }}">
+                                    <label for="unit_id_md" class="sr-only">{{ __('unit-service-types.unit') }}</label>
+                                    <select id="unit_id_md" name="unit_id"
+                                            class="block w-56 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100"
+                                            onchange="this.form.submit()">
+                                        <option value="">{{ __('unit-service-types.all_units') }}</option>
+                                        @foreach($units as $unitOption)
+                                            <option value="{{ $unitOption->id }}" {{ (isset($selectedUnitId) && (int)$selectedUnitId === (int)$unitOption->id) ? 'selected' : '' }}>
+                                                {{ $unitOption->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </form>
+                            </div>
+                        @endisset
                     </div>
+
+                    @isset($units)
+                        <div class="md:hidden mb-4">
+                            <form method="GET" action="{{ route('unitServiceTypes.index') }}">
+                                <label for="unit_id_sm" class="sr-only">{{ __('unit-service-types.unit') }}</label>
+                                <select id="unit_id_sm" name="unit_id"
+                                        class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-gray-100"
+                                        onchange="this.form.submit()">
+                                    <option value="">{{ __('unit-service-types.all_units') }}</option>
+                                    @foreach($units as $unitOption)
+                                        <option value="{{ $unitOption->id }}" {{ (isset($selectedUnitId) && (int)$selectedUnitId === (int)$unitOption->id) ? 'selected' : '' }}>
+                                            {{ $unitOption->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        </div>
+                    @endisset
 
                     <!-- Tabela para desktop -->
                     <div class="hidden md:block">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.name') }}</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('units.name') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.service') }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.unit') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('fields.price') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.week_days.title') }}</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">{{ __('unit-service-types.actions') }}</th>
@@ -41,7 +76,17 @@
                                 @foreach ($unitServiceTypes as $type)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                            {{ $type->name }}
+                                            @php $imgUrl = $type->image_path ? Storage::disk('s3')->url($type->image_path) : null; @endphp
+                                            <div class="flex items-center">
+                                                <div class="mr-3 h-10 w-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                                    @if($imgUrl)
+                                                        <img src="{{ $imgUrl }}" alt="{{ $type->name }}" class="h-full w-full object-cover" />
+                                                    @else
+                                                        <span class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ substr($type->name, 0, 1) }}</span>
+                                                    @endif
+                                                </div>
+                                                <span>{{ $type->name }}</span>
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                                             {{ $type->unit?->name ?? '-' }}
@@ -77,8 +122,20 @@
                             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-sm">
                                 <div class="flex justify-between items-start mb-3">
                                     <div class="flex-1">
-                                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $type->name }}</h3>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $type->unit?->name ?? '-' }}</p>
+                                        @php $imgUrl = $type->image_path ? Storage::disk('s3')->url($type->image_path) : null; @endphp
+                                        <div class="flex items-center gap-3">
+                                            <div class="h-10 w-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                                                @if($imgUrl)
+                                                    <img src="{{ $imgUrl }}" alt="{{ $type->name }}" class="h-full w-full object-cover" />
+                                                @else
+                                                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">{{ substr($type->name, 0, 1) }}</span>
+                                                @endif
+                                            </div>
+                                            <div>
+                                                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ $type->name }}</h3>
+                                                <p class="text-sm text-gray-600 dark:text-gray-400">{{ $type->unit?->name ?? '-' }}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                         R$ {{ number_format($type->price, 2, ',', '.') }}

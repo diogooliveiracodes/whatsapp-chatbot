@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->string('name', 100);
             $table->foreignId('company_id')->constrained('companies');
             $table->boolean('active')->default(true);
+            $table->string('image_name')->nullable();
+            $table->string('image_path')->nullable();
             $table->timestamps();
         });
     }

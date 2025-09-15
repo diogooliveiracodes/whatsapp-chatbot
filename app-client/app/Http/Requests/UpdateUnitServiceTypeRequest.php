@@ -33,6 +33,8 @@ class UpdateUnitServiceTypeRequest extends FormRequest
             'friday' => ['nullable', 'boolean'],
             'saturday' => ['nullable', 'boolean'],
             'sunday' => ['nullable', 'boolean'],
+            'image_name' => ['nullable', 'string', 'max:255'],
+            'image_path' => ['nullable', 'string', 'max:2048'],
         ];
     }
 
@@ -51,6 +53,10 @@ class UpdateUnitServiceTypeRequest extends FormRequest
             'price.required' => 'O preço é obrigatório',
             'price.string' => 'O preço deve ser um texto',
             'price.max' => 'O preço não pode ter mais de 10 caracteres',
+            'image_name.string' => __('validation.string', ['attribute' => 'image_name']),
+            'image_name.max' => __('validation.max.string', ['attribute' => 'image_name', 'max' => 255]),
+            'image_path.string' => __('validation.string', ['attribute' => 'image_path']),
+            'image_path.max' => __('validation.max.string', ['attribute' => 'image_path', 'max' => 2048]),
         ];
     }
 }

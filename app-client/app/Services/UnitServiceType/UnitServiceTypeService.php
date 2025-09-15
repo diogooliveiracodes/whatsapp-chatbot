@@ -16,9 +16,9 @@ class UnitServiceTypeService
      *
      * @return Collection
      */
-    public function getUnitServiceTypes(): Collection
+    public function getUnitServiceTypes(?int $unitId = null): Collection
     {
-        return $this->unitServiceTypeRepository->getUnitServiceTypes();
+        return $this->unitServiceTypeRepository->getUnitServiceTypes($unitId);
     }
 
     /**

@@ -99,4 +99,5 @@ return [
     'status_label' => 'Status',
     'notes_label' => 'Notes',
     'professional_label' => 'Professional',
+    'service_days' => 'Service days',
 ];
