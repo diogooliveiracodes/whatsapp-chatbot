@@ -384,7 +384,7 @@ class ScheduleService
         $scheduleData = array_merge($utcData, [
             'unit_id' => $unit->id,
             'user_id' => Auth::id(),
-            'status' => 'pending',
+            'status' => $utcData['status'] ?? 'pending',
             'is_confirmed' => true,
         ]);
 

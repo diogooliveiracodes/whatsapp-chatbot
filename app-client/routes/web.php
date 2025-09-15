@@ -107,6 +107,7 @@ Route::middleware('auth', 'company.active', 'subscription.active', 'user.active'
     });
 
     Route::get('/schedules', [ScheduleController::class, 'weekly'])->name('schedules.weekly');
+    Route::get('/schedules/available-times', [ScheduleController::class, 'availableTimes'])->name('schedules.available-times');
     Route::get('/schedules/daily', [ScheduleController::class, 'daily'])->name('schedules.daily');
     Route::get('/schedules/create', [ScheduleController::class, 'create'])->name('schedules.create');
     Route::get('/schedules/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');

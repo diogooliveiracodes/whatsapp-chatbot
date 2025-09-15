@@ -23,12 +23,15 @@ use Illuminate\View\View;
 use Carbon\Carbon;
 use App\Services\Schedule\ScheduleService;
 use App\Services\Schedule\ScheduleBlockService;
+use App\Services\Schedule\ScheduleTimeService;
+use App\Services\Schedule\AvailableTimesService;
 use App\Services\UnitServiceType\UnitServiceTypeService;
 use App\Services\Unit\UnitService;
 use Illuminate\Support\Facades\Auth;
 use App\Enum\DaysOfWeekEnum;
 use App\Enum\UserRoleEnum;
 use App\Exceptions\Schedule\InsideBreakPeriodException;
+use Illuminate\Http\JsonResponse;
 
 /**
  * Controller responsible for managing schedules in the application.
@@ -52,7 +55,9 @@ class ScheduleController extends Controller
         protected CustomerService $customerService,
         protected HttpResponseService $httpResponse,
         protected UnitServiceTypeService $unitServiceTypeService,
-        protected UnitService $unitService
+        protected UnitService $unitService,
+        protected ScheduleTimeService $scheduleTimeService,
+        protected AvailableTimesService $availableTimesService
     ) {}
 
     /**
@@ -463,5 +468,35 @@ class ScheduleController extends Controller
 
             return redirect()->back()->with('error', __('schedules.messages.delete_error'));
         }
+    }
+
+    /**
+     * JSON: Available times for a given date (YYYY-MM-DD) in the selected unit's timezone,
+     * filtered against existing schedules and blocks.
+     */
+    public function availableTimes(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        // Determine selected unit (owners may change via query string)
+        $selectedUnit = $user->unit;
+        if ($user->isOwner()) {
+            $units = $this->unitService->getUnits();
+            if ($units->count() > 1) {
+                $selectedUnitId = $request->get('unit_id', $user->unit_id);
+                $selectedUnit = $units->firstWhere('id', $selectedUnitId) ?? $user->unit;
+            } else {
+                $selectedUnit = $units->first();
+            }
+        }
+
+        $date = (string) $request->get('date');
+        if (!$date) {
+            return response()->json(['times' => []]);
+        }
+
+        $times = $this->availableTimesService->getAvailableTimesForDate($selectedUnit, $date);
+        return response()->json(['times' => $times]);
     }
 }

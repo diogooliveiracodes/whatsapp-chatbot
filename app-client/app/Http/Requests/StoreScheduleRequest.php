@@ -8,6 +8,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Log;
 use App\Rules\FutureDateRule;
 use App\Rules\FutureTimeRule;
+use App\Enum\ScheduleStatusEnum;
 
 class StoreScheduleRequest extends FormRequest
 {
@@ -24,6 +25,7 @@ class StoreScheduleRequest extends FormRequest
             'start_time' => ['required', 'date_format:H:i', new FutureTimeRule()],
             'unit_service_type_id' => 'required|exists:unit_service_types,id',
             'notes' => 'nullable|string|max:1000',
+            'status' => 'required|in:' . implode(',', ScheduleStatusEnum::values()),
         ];
     }
 
@@ -40,6 +42,8 @@ class StoreScheduleRequest extends FormRequest
             'unit_service_type_id.required' => __('schedules.messages.service_type_required'),
             'unit_service_type_id.exists' => __('schedules.messages.service_type_not_found'),
             'notes.max' => __('schedules.messages.notes_too_long'),
+            'status.required' => __('schedules.messages.status_required'),
+            'status.in' => __('schedules.messages.invalid_status'),
         ];
     }
 

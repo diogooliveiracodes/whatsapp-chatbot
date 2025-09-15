@@ -67,13 +67,18 @@
                         </div>
 
                         <div>
-                            <label for="start_time" class="block font-medium text-sm text-gray-300">
+                            <label class="block font-medium text-sm text-gray-300">
                                 {{ __('schedules.start_time') }}
                             </label>
-                            <input id="start_time" type="time" name="start_time"
-                                value="{{ request('start_time', old('start_time')) }}"
-                                class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 [color-scheme:light] dark:[color-scheme:dark] @error('start_time') border-red-500 @enderror"
-                                required />
+                            <input id="start_time" type="hidden" name="start_time" value="{{ request('start_time', old('start_time')) }}" />
+                            <div id="times"
+                                 class="mt-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2"
+                                 aria-label="{{ __('schedule_link.time_selection_aria') }}">
+                                <!-- Times will be rendered here -->
+                            </div>
+                            <p id="times-helper" class="text-sm text-gray-400 mt-2">
+                                {{ __('schedule_link.choose_time') }}
+                            </p>
                             <x-input-error :messages="$errors->get('start_time')" class="mt-2" />
                         </div>
 
@@ -92,6 +97,26 @@
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('unit_service_type_id')" class="mt-2" />
+                        </div>
+
+                        <div>
+                            <label for="status" class="block font-medium text-sm text-gray-300">
+                                {{ __('schedules.status') }}
+                            </label>
+                            <select id="status" name="status"
+                                class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50 @error('status') border-red-500 @enderror"
+                                required>
+                                <option value="pending"
+                                    {{ old('status', App\Enum\ScheduleStatusEnum::PENDING->value) === App\Enum\ScheduleStatusEnum::PENDING->value ? 'selected' : '' }}>
+                                    {{ __('schedules.statuses.pending') }}</option>
+                                <option value="confirmed"
+                                    {{ old('status') === App\Enum\ScheduleStatusEnum::CONFIRMED->value ? 'selected' : '' }}>
+                                    {{ __('schedules.statuses.confirmed') }}</option>
+                                <option value="cancelled"
+                                    {{ old('status') === App\Enum\ScheduleStatusEnum::CANCELLED->value ? 'selected' : '' }}>
+                                    {{ __('schedules.statuses.cancelled') }}</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('status')" class="mt-2" />
                         </div>
 
                         <div>
@@ -128,6 +153,10 @@
             const customerId = document.getElementById('customer_id');
             const customerResults = document.getElementById('customer_results');
             const submitButton = document.getElementById('submit-button');
+            const scheduleDateInput = document.getElementById('schedule_date');
+            const startTimeHidden = document.getElementById('start_time');
+            const timesEl = document.getElementById('times');
+            const unitIdHidden = document.querySelector('input[name="unit_id"]');
 
             // Dados dos clientes disponíveis na página
             const customers = @json($customers);
@@ -306,6 +335,83 @@
                     customerResults.classList.add('hidden');
                 }
             });
+
+            // --- Times fetching similar to public link ---
+            function clearTimes(messageHtml = '') {
+                timesEl.innerHTML = messageHtml || '';
+                startTimeHidden.value = '';
+                updateSubmitDisabled();
+            }
+
+            function renderTimeButtons(times) {
+                timesEl.innerHTML = '';
+                (times || []).forEach(time => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'px-3 py-3 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 text-white text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 border border-gray-600 hover:border-gray-500';
+                    btn.textContent = time;
+                    btn.setAttribute('aria-label', `Selecionar horário ${time}`);
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('#times button').forEach(x => {
+                            x.classList.remove('ring-2', 'ring-blue-500', 'scale-105', 'from-blue-600', 'to-blue-700', 'hover:from-blue-700', 'hover:to-blue-800');
+                            x.classList.add('from-gray-700', 'to-gray-800', 'hover:from-gray-600', 'hover:to-gray-700');
+                        });
+                        btn.classList.add('ring-2', 'ring-blue-500', 'scale-105', 'from-blue-600', 'to-blue-700', 'hover:from-blue-700', 'hover:to-blue-800');
+                        startTimeHidden.value = time;
+                        updateSubmitDisabled();
+                        setTimeout(() => submitButton.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
+                    });
+                    timesEl.appendChild(btn);
+                });
+            }
+
+            function fetchTimesForDate(dateStr) {
+                if (!dateStr) {
+                    clearTimes('<div class="col-span-full text-gray-400 text-sm">Selecione uma data para ver horários.</div>');
+                    return;
+                }
+
+                // Loading
+                timesEl.innerHTML = '<div class="col-span-full flex justify-center py-6"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div></div>';
+                startTimeHidden.value = '';
+
+                const unitId = unitIdHidden ? unitIdHidden.value : '';
+                const url = new URL(`{{ route('schedules.available-times') }}`, window.location.origin);
+                url.searchParams.set('date', dateStr);
+                if (unitId) url.searchParams.set('unit_id', unitId);
+
+                fetch(url.toString())
+                    .then(r => r.json())
+                    .then(data => {
+                        const times = (data && data.times) ? data.times : [];
+                        if (times.length === 0) {
+                            clearTimes('<div class="col-span-full text-center py-6 text-gray-400 text-sm">Nenhum horário disponível para esta data.</div>');
+                            return;
+                        }
+                        renderTimeButtons(times);
+                    })
+                    .catch(() => {
+                        clearTimes('<div class="col-span-full text-center py-6 text-red-400 text-sm">Erro ao carregar horários.</div>');
+                    });
+            }
+
+            function updateSubmitDisabled() {
+                // Keep existing customer validation, and also require start_time
+                const disabledByCustomer = submitButton.disabled;
+                const hasStart = !!startTimeHidden.value;
+                submitButton.disabled = disabledByCustomer || !hasStart;
+            }
+
+            scheduleDateInput.addEventListener('change', function() {
+                fetchTimesForDate(this.value);
+            });
+
+            // If page opened with a preselected date, fetch immediately
+            if (scheduleDateInput.value) {
+                fetchTimesForDate(scheduleDateInput.value);
+            } else {
+                clearTimes('<div class="col-span-full text-gray-400 text-sm">Selecione uma data para ver horários.</div>');
+            }
         });
 
         // Função para mudar a unidade selecionada
