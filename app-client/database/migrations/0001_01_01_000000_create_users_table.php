@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreignId('unit_id')->constrained('units');
             $table->boolean('active')->default(true);
             $table->string('password');
+            $table->string('image_name')->nullable();
+            $table->string('image_path')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

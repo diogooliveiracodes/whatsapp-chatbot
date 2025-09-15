@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('document_number', 20)->nullable()->unique();
             $table->tinyInteger('document_type')->nullable();
             $table->boolean('active')->default(true)->comment('1 - active, 0 - inactive');
+            $table->string('image_name')->nullable();
+            $table->string('image_path')->nullable();
             $table->timestamps();
         });
     }
