@@ -139,21 +139,26 @@
                                                     name="unit_service_type_id" value="{{ $type->id }}"
                                                     @checked(old('unit_service_type_id') == $type->id) class="sr-only" required>
                                                 <label for="service_{{ $type->id }}"
-                                                    class="block w-full h-24 p-4 rounded-xl border-2 border-gray-600 bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-800">
-                                                    <div class="flex items-center space-x-3">
+                                                    class="block w-full p-4 rounded-xl border-2 border-gray-600 bg-gradient-to-br from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 focus-within:ring-offset-gray-800">
+                                                    <div class="flex items-center gap-4">
+                                                        @php $imgUrl = $type->image_path ? Storage::disk('s3')->url($type->image_path) : null; @endphp
+                                                        <div class="h-16 w-16 rounded-xl overflow-hidden bg-gray-600 flex items-center justify-center shrink-0">
+                                                            @if($imgUrl)
+                                                                <img src="{{ $imgUrl }}" alt="{{ $type->name }}" class="h-full w-full object-cover" loading="lazy" />
+                                                            @else
+                                                                <span class="text-sm font-medium text-gray-300">{{ mb_substr($type->name, 0, 1) }}</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="text-white font-medium truncate">{{ $type->name }}</div>
+                                                            <div class="text-indigo-300 text-sm font-semibold mt-0.5">R$ {{ number_format($type->price, 2, ',', '.') }}</div>
+                                                            @if ($type->description)
+                                                                <div class="text-gray-400 text-sm mt-1 truncate">{{ $type->description }}</div>
+                                                            @endif
+                                                        </div>
                                                         <div
                                                             class="w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center transition-all duration-200">
-                                                            <div
-                                                                class="w-2.5 h-2.5 rounded-full bg-blue-500 opacity-0 transition-all duration-200">
-                                                            </div>
-                                                        </div>
-                                                        <div class="flex-1">
-                                                            <div class="text-white font-medium">{{ $type->name }}
-                                                            </div>
-                                                            @if ($type->description)
-                                                                <div class="text-gray-400 text-sm mt-1">
-                                                                    {{ $type->description }}</div>
-                                                            @endif
+                                                            <div class="w-2.5 h-2.5 rounded-full bg-blue-500 opacity-0 transition-all duration-200"></div>
                                                         </div>
                                                     </div>
                                                 </label>
