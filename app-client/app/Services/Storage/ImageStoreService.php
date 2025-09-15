@@ -5,6 +5,7 @@ namespace App\Services\Storage;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ImageStoreService
 {
@@ -22,7 +23,7 @@ class ImageStoreService
     public function uploadImage(Request $request): array
     {
 
-        $name = $request->file('image')->getClientOriginalName();
+        $name = Str::uuid();
         $path = $request->file('image')->store(
             'public/upload/files/' . Auth::user()->company_id . '/' . $request->directory,
             's3'
