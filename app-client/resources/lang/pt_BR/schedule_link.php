@@ -3,7 +3,7 @@
 return [
     // Page
     'page_title_default' => 'Agendamento',
-    'choose_professional' => 'Escolha o profissional para o atendimento',
+    'choose_professional' => 'Escolha o profissional para realizar o seu atendimento',
     'back' => 'Voltar',
     'title' => 'Agendar atendimento com :unit',
     'name' => 'Seu nome',
@@ -99,4 +99,5 @@ return [
     'status_label' => 'Status',
     'notes_label' => 'Observações',
     'professional_label' => 'Profissional',
+    'service_days' => 'Dias de atendimento',
 ];
