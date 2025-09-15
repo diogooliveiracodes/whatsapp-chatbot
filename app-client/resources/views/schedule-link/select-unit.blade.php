@@ -17,7 +17,31 @@
                     @else
                         <div class="grid grid-cols-1 gap-4">
                             @foreach ($units as $unit)
-                                @php $imgUrl = $unit->image_path ? Storage::disk('s3')->url($unit->image_path) : null; @endphp
+                                @php
+                                    $imgUrl = $unit->image_path ? Storage::disk('s3')->url($unit->image_path) : null;
+                                    $settings = $unit->unitSettings ?? ($unit->UnitSettingsId ?? null);
+                                    $days = [
+                                        ['key' => 'sunday', 'label' => 'DOM'],
+                                        ['key' => 'monday', 'label' => 'SEG'],
+                                        ['key' => 'tuesday', 'label' => 'TER'],
+                                        ['key' => 'wednesday', 'label' => 'QUA'],
+                                        ['key' => 'thursday', 'label' => 'QUI'],
+                                        ['key' => 'friday', 'label' => 'SEX'],
+                                        ['key' => 'saturday', 'label' => 'SAB'],
+                                    ];
+
+                                    $hasWorkingDays = false;
+                                    if($settings) {
+                                        foreach($days as $d) {
+                                            if(data_get($settings, $d['key'])) {
+                                                $hasWorkingDays = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                @endphp
+
+                                @if($hasWorkingDays)
                                 <a href="{{ route('schedule-link.personal-info', ['company' => $company, 'unit' => $unit->id]) }}"
                                    aria-label="{{ $unit->name }}"
                                    class="group block rounded-xl border border-gray-700/70 bg-gray-700/30 p-4 ring-1 ring-transparent transition hover:border-indigo-500 hover:bg-gray-700/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400">
@@ -39,35 +63,20 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                         </svg>
                                     </div>
-                                    @php
-                                        $settings = $unit->unitSettings ?? ($unit->UnitSettingsId ?? null);
-                                        $days = [
-                                            ['key' => 'sunday', 'label' => 'DOM'],
-                                            ['key' => 'monday', 'label' => 'SEG'],
-                                            ['key' => 'tuesday', 'label' => 'TER'],
-                                            ['key' => 'wednesday', 'label' => 'QUA'],
-                                            ['key' => 'thursday', 'label' => 'QUI'],
-                                            ['key' => 'friday', 'label' => 'SEX'],
-                                            ['key' => 'saturday', 'label' => 'SAB'],
-                                        ];
-                                    @endphp
                                     <div class="mt-3">
                                         <p class="text-xs text-gray-400 mb-1">{{ __('schedule_link.service_days') }}</p>
                                         <div class="flex flex-wrap gap-1">
-                                            @if($settings)
-                                                @foreach($days as $d)
-                                                    @if(data_get($settings, $d['key']))
-                                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                                                            {{ $d['label'] }}
-                                                        </span>
-                                                    @endif
-                                                @endforeach
-                                            @else
-                                                <span class="text-xs text-gray-500">—</span>
-                                            @endif
+                                            @foreach($days as $d)
+                                                @if(data_get($settings, $d['key']))
+                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                                        {{ $d['label'] }}
+                                                    </span>
+                                                @endif
+                                            @endforeach
                                         </div>
                                     </div>
                                 </a>
+                                @endif
                             @endforeach
                         </div>
                     @endif
