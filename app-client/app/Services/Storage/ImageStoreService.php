@@ -127,9 +127,9 @@ class ImageStoreService
                 }
 
 
-                // Fallback: if no EXIF and image appears to be landscape (width > height),
-                // assume it's a portrait photo that needs 90° clockwise rotation
-                if (empty($exifOrientation) && $srcWidth > $srcHeight) {
+                // Fallback: Apenas rotaciona se for JPEG sem EXIF e estiver em landscape
+                // (assumindo que fotos landscape sem EXIF são portraits mal orientadas)
+                if (!$usePng && empty($exifOrientation) && $srcWidth > $srcHeight) {
                     $src = imagerotate($src, -90, 0);
                     $tmp = $srcWidth; $srcWidth = $srcHeight; $srcHeight = $tmp;
                 }
