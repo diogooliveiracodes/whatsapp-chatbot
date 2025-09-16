@@ -16,7 +16,7 @@
                     name="{{ $day->value }}"
                     type="checkbox"
                     value="1"
-                    {{ $model && $model->{$day->value} ? 'checked' : '' }}
+                    {{ $model ? ($model->{$day->value} ? 'checked' : '') : 'checked' }}
                     {{ $attributes->merge(['class' => 'h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded']) }}
                 >
                 <label for="{{ $day->value }}" class="ml-2 block text-sm text-gray-900 dark:text-gray-100">
